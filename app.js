@@ -41,8 +41,8 @@ const I18N = {
     hero_chip: "בהזמנה בלבד. בקבוצות קטנות.",
     hero_title_a: "לצאת עם ",
     hero_title_mark: "צוות משלך",
-    hero_title_b: ", והדבר הראשון שבנית איתו.",
-    hero_sub: "מפגש חי אחד, שלוש שעות, למעצבים. מקימים צוות של סוכני AI שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהולכים הביתה.",
+    hero_title_b: ", ועם דרך חדשה לבנות כל דבר.",
+    hero_sub: "מפגש חי אחד, שלוש שעות, למי שרוצה לבנות עם AI, לא רק להשתמש בו. מקימים צוות סוכנים שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהולכים הביתה.",
     hero_points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח־על של בנייה"],
 
     why_eyebrow: "למה עכשיו",
@@ -87,9 +87,17 @@ const I18N = {
     proof_glimps_link: "לצפייה ב-Glimps",
 
     ofir_eyebrow: "למה שיחה איתי",
+    roster_title: "אני, והצוות שבניתי",
+    lead_label: "מוביל הסדנה",
+    crew_label: "צוות הסוכנים שמלווה אותך",
     ofir_name: "אופיר רושינק",
-    ofir_role: "מוצר ועיצוב",
-    ofir_bio: "אני אופיר. שתים עשרה שנה אני מעצב מוצרים, מתוכן חמש בהובלת עיצוב בעולם הסייבר, והקמתי שני מערכי עיצוב מאפס. בזמן האחרון אני בונה עם צוותי AI כל יום, וככה בניתי את Glimps, מוצר חי. זה שינה לי את דרך העבודה יותר מכל כלי אחר.",
+    ofir_role: "ראש הצוות",
+    agents: [
+      { img: "agent-cto", role: "CTO", b: "אחראי על הבסיס הטכני, ולוקח רעיון גולמי והופך אותו למשהו שבאמת רץ." },
+      { img: "agent-cpo", role: "CPO", b: "אחראי על המוצר, ומחליט מה שווה לבנות וממה לוותר." },
+      { img: "agent-pd", role: "מעצב מוצר", b: "אחראי על הקראפט, וגורם לכל החלטה להיראות ולהרגיש נכון עד הפרט האחרון." },
+    ],
+    ofir_bio: "אני אופיר. שתים עשרה שנה בעיצוב מוצר, רובן בהובלת צוותי עיצוב שהקמתי מאפס, בסייבר, בשירות שטח, במדיה ועוד. בזמן האחרון אני בונה עם צוותי AI כל יום, וככה בניתי את Glimps, מוצר חי. כשנדבר, לא תקבל תיאוריה, אלא איך אני עובד באמת היום.",
     ofir_why: "המפגש בהזמנה בלבד וקטן בכוונה. לפני שמצטרפים, אני רוצה שנדבר. מה אתה בונה, ואם זה מתאים לך. בלי פיץ'. תתאם זמן ונדבר.",
 
     quotes_eyebrow: "המלצות",
@@ -117,6 +125,17 @@ const I18N = {
     final_title: "בוא תבנה איתנו.",
     final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות AI משלך לקחת הביתה. זה בהזמנה בלבד, והצעד הראשון הוא שיחה איתי.",
 
+    // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
+    login_eyebrow: "אזור התלמידים",
+    login_title: "כניסת תלמידים",
+    login_sub: "אזור התלמידים בדרך. כאן תיכנס אליו ברגע שייפתח.",
+    login_email_label: "אימייל",
+    login_email_ph: "you@email.com",
+    login_pass_label: "סיסמה",
+    login_pass_ph: "הסיסמה שלך",
+    login_submit: "כניסה",
+    login_soon: "אזור התלמידים עדיין לא פתוח. הוא ייפתח בקרוב.",
+
     footer_line: "Product Lab. סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
     footer_contact: "יצירת קשר",
   },
@@ -129,8 +148,8 @@ const I18N = {
     hero_chip: "Invite-only. Small groups.",
     hero_title_a: "Walk out with ",
     hero_title_mark: "a crew of your own",
-    hero_title_b: ", and the first thing you built with it.",
-    hero_sub: "A live, 3-hour session for designers. You set up a team of AI agents that works the way you do, then build something real with it before you go home.",
+    hero_title_b: ", and a new way to build anything.",
+    hero_sub: "A live, 3-hour session for people who want to build with AI, not just use it. You set up a team of agents that works the way you do, and build something real with it before you go home.",
     hero_points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
 
     why_eyebrow: "Why now",
@@ -175,9 +194,17 @@ const I18N = {
     proof_glimps_link: "See Glimps",
 
     ofir_eyebrow: "Why a call with me",
+    roster_title: "Me, and the team I built",
+    lead_label: "Leads the workshop",
+    crew_label: "The AI crew that comes with you",
     ofir_name: "Ofir Rushinek",
-    ofir_role: "Product & Design",
-    ofir_bio: "I am Ofir. I have spent [X years] designing products [placeholder: role/companies for Ofir to fill], and lately I build with AI teams every day. It has changed how I work more than any tool before it.",
+    ofir_role: "The operator",
+    agents: [
+      { img: "agent-cto", role: "CTO", b: "Owns the technical foundation, and turns a rough idea into something that actually runs." },
+      { img: "agent-cpo", role: "CPO", b: "Owns the product calls, and decides what's worth building and what to cut." },
+      { img: "agent-pd", role: "Product Designer", b: "Owns the craft, and makes every decision look and feel right down to the last detail." },
+    ],
+    ofir_bio: "I'm Ofir. Twelve years in product design, most of them leading design teams I built from scratch, across cyber, field service, media and more. Lately I build with AI teams every day, and that's how I built Glimps, a live product. When we talk, you won't get theory, you'll get how I actually work now.",
     ofir_why: "This is invite-only and small on purpose. Before you join, I want a real conversation. What you are working on, and whether this is a fit. No pitch. Book a time and we will talk.",
 
     quotes_eyebrow: "Testimonials",
@@ -203,6 +230,17 @@ const I18N = {
     final_chip: "Invite-only. Small groups.",
     final_title: "Come build with us.",
     final_sub: "One afternoon, a small group, and your own AI team to take home. It is invite-only, and the first step is a call with me.",
+
+    // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
+    login_eyebrow: "Student area",
+    login_title: "Student sign in",
+    login_sub: "The student area is on its way. This is where you sign in once it opens.",
+    login_email_label: "Email",
+    login_email_ph: "you@email.com",
+    login_pass_label: "Password",
+    login_pass_ph: "Your password",
+    login_submit: "Sign in",
+    login_soon: "The student area is not open yet. It opens soon.",
 
     footer_line: "Product Lab. Invite-only workshops on AI-led product design.",
     footer_contact: "Get in touch",
@@ -235,8 +273,8 @@ function render(lang) {
     <div class="nav__right">
       <button class="langtoggle" data-toggle-lang aria-label="Switch language">${lang === "he" ? "ע" : "E"}</button>
       <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
-      <!-- Student entrance: placeholder sign-in, leads nowhere for now. Will gate the workshop one-pager content later. -->
-      <a class="btn btn--ghost btn--sm nav__student" href="#">${I.login} ${t.nav_student}</a>
+      <!-- Student entrance: opens the sign-in modal (placeholder). -->
+      <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open>${I.login} ${t.nav_student}</button>
     </div>
   </div></header>
 
@@ -334,15 +372,34 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 7 MEET OFIR -->
+  <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath -->
   <section class="section"><div class="wrap">
-    <div class="reveal"><span class="eyebrow">${t.ofir_eyebrow}</span></div>
-    <div class="bio" style="margin-top:1.5rem">
-      <div class="bio__photo reveal"><img src="assets/ofir.jpeg" alt="${t.ofir_name}" /></div>
-      <div class="bio__text reveal">
-        <div class="bio__name">${t.ofir_name}</div>
-        <div class="bio__role">${t.ofir_role}</div>
-        <p>${t.ofir_bio}</p><p>${t.ofir_why}</p>
+    <div class="reveal">
+      <span class="eyebrow">${t.ofir_eyebrow}</span>
+      <h2 class="section-title">${t.roster_title}</h2>
+    </div>
+    <!-- ONE bounded panel: leader on top, the AI crew grouped in a band below -->
+    <div class="team reveal">
+      <div class="team__lead">
+        <div class="team__photo"><img src="assets/ofir.jpeg" alt="${t.ofir_name}" /></div>
+        <div class="team__leadtext">
+          <span class="team__kicker">${t.lead_label}</span>
+          <div class="team__name">${t.ofir_name}</div>
+          <p>${t.ofir_bio}</p><p>${t.ofir_why}</p>
+        </div>
+      </div>
+      <div class="team__crew">
+        <div class="team__crewhead">${t.crew_label}</div>
+        <div class="team__agents">
+          ${t.agents.map((a) => `
+            <div class="agentcard">
+              <div class="agentcard__illo"><img src="assets/${a.img}.png" alt="" /></div>
+              <div class="agentcard__body">
+                <div class="agentcard__role">${a.role}</div>
+                <p>${a.b}</p>
+              </div>
+            </div>`).join("")}
+        </div>
       </div>
     </div>
   </div></section>
@@ -383,7 +440,32 @@ function render(lang) {
 
   <!-- 10 FINAL CTA -->
   ${ctaBand(t, t.final_title, t.final_sub)}
+
   </main>
+
+  <!-- Student sign-in MODAL — opens from the header button, hidden by default -->
+  <div class="modal" data-student-modal hidden>
+    <div class="modal__overlay" data-student-close></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-label="${t.login_title}">
+      <button class="modal__close" type="button" data-student-close aria-label="Close">${I.x}</button>
+      <div class="login__ico">${I.login}</div>
+      <span class="eyebrow">${t.login_eyebrow}</span>
+      <h2 class="login__title">${t.login_title}</h2>
+      <p class="login__sub">${t.login_sub}</p>
+      <form class="login__form" data-student-form novalidate>
+        <div class="field">
+          <label class="field__label" for="student-email">${t.login_email_label}</label>
+          <input class="input" id="student-email" name="email" type="email" dir="ltr" placeholder="${t.login_email_ph}" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label class="field__label" for="student-pass">${t.login_pass_label}</label>
+          <input class="input" id="student-pass" name="password" type="password" placeholder="${t.login_pass_ph}" autocomplete="current-password" />
+        </div>
+        <button class="btn btn--primary login__submit" type="submit">${t.login_submit}</button>
+        <p class="login__note" data-student-note hidden>${I.check}<span>${t.login_soon}</span></p>
+      </form>
+    </div>
+  </div>
 
   <!-- 12 FOOTER -->
   <footer class="footer"><div class="wrap footer__in">
@@ -394,6 +476,23 @@ function render(lang) {
 
   wireLang();
   wireReveal();
+  wireStudent();
+}
+
+/* ---- Student sign-in (placeholder) --------------------------------------- */
+/* Non-functional on purpose: no backend, no auth, no validation. Clicking
+   submit just reveals the "coming soon" note. Real logic will replace this. */
+function wireStudent() {
+  const modal = document.querySelector("[data-student-modal]");
+  if (!modal) return;
+  const open = () => { modal.hidden = false; document.body.classList.add("modal-open"); };
+  const close = () => { modal.hidden = true; document.body.classList.remove("modal-open"); };
+  document.querySelectorAll("[data-student-open]").forEach((b) => b.addEventListener("click", open));
+  modal.querySelectorAll("[data-student-close]").forEach((b) => b.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
+  const form = modal.querySelector("[data-student-form]");
+  const note = form && form.querySelector("[data-student-note]");
+  if (form) form.addEventListener("submit", (e) => { e.preventDefault(); if (note) note.hidden = false; });
 }
 
 /* ---- Language ------------------------------------------------------------ */

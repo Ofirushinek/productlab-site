@@ -404,6 +404,58 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .footer a { color: var(--pl-fg); font-weight: 600; text-decoration: none; }
 .footer a:hover { color: var(--pl-accent); }
 
+/* ---- Form controls + Student login (placeholder, non-functional) ---------
+   Base .input/.field are the system's first form-control component. Tokens only,
+   appearance stripped (native-chrome-free), strong-contrast border, accent focus
+   ring. The .login card is a placeholder student sign-in: submit is wired to a
+   gentle "coming soon" note (data-student-form / data-student-note in app.js),
+   no auth, no validation. Real logic lands later. */
+.field { display: grid; gap: 0.4rem; text-align: start; }
+.field__label { font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); line-height: 1.3; }
+
+.input {
+  width: 100%; height: 3rem; padding-inline: 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--pl-border-strong);
+  background: var(--pl-surface); color: var(--pl-fg);
+  font-family: inherit; font-size: var(--text-body); font-weight: 500; line-height: 1.4;
+  -webkit-appearance: none; appearance: none;
+  transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+}
+.input::placeholder { color: var(--pl-fg-muted); font-weight: 500; opacity: 1; }
+.input:hover { border-color: var(--pl-fg-secondary); }
+.input:focus {
+  outline: none; border-color: var(--pl-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent);
+}
+
+.login {
+  max-width: 440px; margin-inline: auto; text-align: center;
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-xl); padding: clamp(1.75rem, 4vw, 2.5rem);
+  box-shadow: var(--shadow-pl-md);
+}
+.login__ico {
+  width: 48px; height: 48px; border-radius: var(--radius-md); margin: 0 auto 1.1rem;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--pl-accent) 12%, transparent);
+  color: var(--pl-accent);
+}
+.login__ico svg { width: 24px; height: 24px; }
+.login .eyebrow { justify-content: center; }
+.login__title { font-size: var(--text-h2); letter-spacing: -0.02em; }
+.login__sub { margin-top: 0.6rem; color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body); }
+.login__form { display: grid; gap: 1rem; margin-top: 1.75rem; text-align: start; }
+.login__submit { width: 100%; margin-top: 0.25rem; }
+.login__note {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  margin-top: 0.25rem; padding: 0.75rem 0.95rem; border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--pl-accent) 10%, transparent);
+  color: var(--pl-accent); font-weight: 600; font-size: var(--text-sm);
+}
+.login__note[hidden] { display: none; }
+.login__note svg { width: 18px; height: 18px; flex: none; }
+
 /* ---- WHY NOW — centered in LTR, right-aligned (start) in RTL -------------- */
 .why { text-align: center; }
 .why .why__title { max-width: 22ch; margin-inline: auto; }
@@ -448,14 +500,59 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .faq details[open] > summary .faq__q svg { color: var(--pl-accent); }
 
 /* mobile nav — keep it from overflowing on phones (drop the secondary student
-   button, tighten spacing, ease the wordmark down) */
-html, body { overflow-x: hidden; }
+   button, tighten spacing, ease the wordmark down).
+   NOTE: do NOT put overflow-x:hidden on html/body — it breaks position:sticky. */
 @media (max-width: 620px) {
   .nav__in { height: 60px; gap: 0.5rem; }
   .nav__brand--text { font-size: 1.3rem; }
   .nav__right { gap: 0.5rem; }
   .nav__student { display: none; }
 }
+
+/* ===== THE TEAM — one bounded panel: leader on top, AI crew grouped below ===== */
+.team { margin-top: 2rem; border: 1px solid var(--pl-border); border-radius: var(--radius-2xl);
+  background: var(--pl-surface); box-shadow: var(--shadow-pl-md); overflow: hidden; }
+.team__lead { display: grid; grid-template-columns: 1fr; gap: clamp(1.25rem, 3vw, 2rem);
+  align-items: center; padding: clamp(1.5rem, 4vw, 2.5rem); }
+@media (min-width: 760px) { .team__lead { grid-template-columns: auto 1fr; } }
+.team__photo { width: clamp(120px, 22vw, 176px); border-radius: var(--radius-xl); overflow: hidden;
+  border: 1px solid var(--pl-border); box-shadow: var(--shadow-pl-sm); }
+[dir="rtl"] .team__photo { justify-self: start; }
+.team__photo img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: center top; display: block; }
+.team__kicker { display: inline-block; font-size: var(--text-caption); font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--pl-accent); margin-bottom: 0.5rem; }
+.team__name { font-size: var(--text-h2); font-weight: 700; color: var(--pl-fg); margin-bottom: 0.75rem; }
+.team__leadtext p { color: var(--pl-fg-body); font-weight: 500; margin-bottom: 0.75rem; }
+.team__leadtext p:last-child { margin-bottom: 0; }
+/* the crew band — tinted so the three read as one grouped set */
+.team__crew { background: var(--pl-bg-alt); border-top: 1px solid var(--pl-border); padding: clamp(1.5rem, 4vw, 2rem); }
+.team__crewhead { font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg-secondary); text-align: center;
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.25rem; }
+.team__agents { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .team__agents { grid-template-columns: repeat(3, 1fr); } }
+.agentcard { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
+  border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm); }
+.agentcard__illo { height: 10rem; overflow: hidden; background: #e9e0cd; }
+.agentcard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.agentcard__body { padding: 1.1rem 1.25rem; }
+.agentcard__role { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); margin-bottom: 0.35rem; }
+.agentcard__body p { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
+
+/* ===== Student sign-in MODAL (opens from the header button) ===== */
+body.modal-open { overflow: hidden; }
+.modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 1.25rem; }
+.modal[hidden] { display: none; }
+.modal__overlay { position: absolute; inset: 0; background: rgb(10 8 6 / 0.55); backdrop-filter: blur(2px); }
+.modal__card { position: relative; z-index: 1; width: 100%; max-width: 27rem; text-align: center;
+  background: var(--pl-surface); border: 1px solid var(--pl-border); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pl-lg); padding: clamp(1.75rem, 5vw, 2.5rem);
+  animation: modalIn 0.22s var(--ease-pl); }
+@keyframes modalIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+.modal__close { position: absolute; top: 0.85rem; inset-inline-end: 0.85rem; width: 2rem; height: 2rem;
+  display: grid; place-items: center; border: 0; background: transparent; color: var(--pl-fg-secondary);
+  border-radius: var(--radius-md); transition: background-color 0.2s var(--ease-pl), color 0.2s var(--ease-pl); }
+.modal__close:hover { background: var(--pl-bg-alt); color: var(--pl-fg); }
+.modal__close svg { width: 18px; height: 18px; }
 
 /* ===== HERO SCENE — title ALWAYS overlays the image (mobile + desktop) ===== */
 .hero--scene { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 82vh; }
