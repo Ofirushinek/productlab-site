@@ -491,9 +491,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 /* ---- Ofir revisions (2026-08-03) ---------------------------------------- */
 /* text wordmark replaces logo image (nav + footer) */
-.nav__logo { height: 30px; width: auto; display: block; }
-@media (max-width: 620px) { .nav__logo { height: 26px; } }
-.nav__brand--text { font-weight: 700; color: var(--pl-fg); font-size: 1.6rem; letter-spacing: -0.03em; text-decoration: none; }
+.nav__brand--text { font-weight: 700; color: var(--pl-fg); font-size: 2rem; letter-spacing: -0.03em; text-decoration: none; }
 .footer__wordmark { font-weight: 700; color: var(--pl-fg); font-size: 1.35rem; letter-spacing: -0.03em; }
 
 /* icon on every accordion row in the unified Details section */
@@ -506,12 +504,25 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    NOTE: do NOT put overflow-x:hidden on html/body — it breaks position:sticky. */
 @media (max-width: 620px) {
   .nav__in { height: 60px; gap: 0.5rem; }
-  .nav__brand--text { font-size: 1.3rem; }
+  .nav__brand--text { font-size: 1.6rem; }
   .nav__right { gap: 0.4rem; }
   /* WhatsApp + Student become ICON-ONLY square buttons on mobile */
   .nav__book .btn__label, .nav__student .btn__label { display: none; }
   .nav__book, .nav__student { width: 2.5rem; padding-inline: 0; gap: 0; }
+
+  /* hero 3-point line -> a clean stacked BULLET LIST on mobile */
+  .hero__points { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .hero__points li { display: flex; align-items: baseline; gap: 0.55rem; }
+  .hero__points li::before,
+  .hero__points li:not(:first-child)::before { content: "•"; color: #c4b5fd; font-weight: 700; margin-inline-end: 0; }
+
+  /* agenda cards -> stacked (badge on top, then title, then description) */
+  .phase { grid-template-columns: 1fr; gap: 0.75rem; }
+  .phase__time { justify-self: start; }
 }
+
+/* on phones use the PORTRAIT hero image as-is (no mirror) so it reads clearly */
+@media (max-width: 760px) { [dir="ltr"] .hero__media img { transform: none; } }
 
 /* ===== THE TEAM — one bounded panel: leader on top, AI crew grouped below ===== */
 .team { margin-top: 2rem; border: 1px solid var(--pl-border); border-radius: var(--radius-2xl);

@@ -35,14 +35,17 @@ MAN = ("a man in his 30s in a casual violet t-shirt with short dark hair, seen F
        "on the RIGHT side of the table, only a sliver of profile showing, face mostly hidden")
 
 BASE = (f"{MAN}, sitting at a round wooden cafe table with his HANDS RESTING ON THE TABLE, "
-        f"clearly visible. An open laptop sits on the table CLEARLY VISIBLE and fully in "
-        f"view, NOT blocked or cut off. {CAST} are seated EVENLY spread ALL THE WAY AROUND "
-        "the round table together with the man, naturally sharing the table like a group of "
-        "friends - some nearer, one seen partly from the side/behind - NOT bunched on one "
-        "side, a natural full gathering with no large empty gap. Coffee mugs around the "
-        "table. ZOOM OUT MORE so everyone is noticeably SMALLER in the frame and you see the "
-        "whole table and the cozy cafe around it. The man stays on the right with his back "
-        "to us. " + STYLE)
+        f"clearly visible. An open laptop sits on the table clearly visible and not blocked; "
+        f"the LAPTOP SCREEN shows a SOFTLY BLURRED, out-of-focus colorful website landing "
+        f"page with a simple header bar, glowing gently, suggesting a web page being built "
+        f"(not sharp, not detailed). {CAST} are seated spread AROUND the round table with "
+        "the man, naturally sharing it like friends, no large empty gap. SEATING ORDER FROM "
+        "LEFT TO RIGHT (important): the CORAL-ORANGE character sits FIRST at the FAR LEFT as "
+        "the most prominent one; the TEAL-BLUE character sits SECOND, next to the orange, "
+        "present but less emphasized; then the small mustard-YELLOW one; then the "
+        "lavender-PURPLE one; and the MAN sits on the FAR RIGHT with his back to us. "
+        "Coffee mugs around the table. ZOOM OUT so everyone is smaller in the frame and you "
+        "see the whole table and the cozy cafe. " + STYLE)
 
 VARIANTS = {
     "hero-v2-1": BASE,
