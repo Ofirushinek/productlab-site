@@ -29,6 +29,7 @@ const I = {
   calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
   claude: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7v10l10 5 10-5V7L12 2ZM2 7l10 5 10-5M12 22V12"/></svg>',
   login: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
 };
 
 /* ---- COPY (final, Copywriter 2026-08-03) -------------------------------- */
@@ -128,13 +129,13 @@ const I18N = {
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "אזור התלמידים",
     login_title: "כניסת תלמידים",
-    login_sub: "אזור התלמידים בדרך. כאן תיכנס אליו ברגע שייפתח.",
+    login_sub: "כניסה לאזור התלמידים עם הפרטים שקיבלת.",
     login_email_label: "אימייל",
     login_email_ph: "you@email.com",
     login_pass_label: "סיסמה",
     login_pass_ph: "הסיסמה שלך",
     login_submit: "כניסה",
-    login_soon: "אזור התלמידים עדיין לא פתוח. הוא ייפתח בקרוב.",
+    login_soon: "הפרטים לא תואמים. אם אתה משתתף ולא מצליח להיכנס, כתוב לי.",
 
     footer_line: "Product Lab. סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
     footer_contact: "יצירת קשר",
@@ -234,13 +235,13 @@ const I18N = {
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "Student area",
     login_title: "Student sign in",
-    login_sub: "The student area is on its way. This is where you sign in once it opens.",
+    login_sub: "Sign in to the student area with the details you received.",
     login_email_label: "Email",
     login_email_ph: "you@email.com",
     login_pass_label: "Password",
     login_pass_ph: "Your password",
     login_submit: "Sign in",
-    login_soon: "The student area is not open yet. It opens soon.",
+    login_soon: "Those details don't match an account. If you're a participant and can't get in, message me.",
 
     footer_line: "Product Lab. Invite-only workshops on AI-led product design.",
     footer_contact: "Get in touch",
@@ -269,12 +270,12 @@ function render(lang) {
   document.getElementById("app").innerHTML = `
   <!-- NAV — logo hidden for now (decide later); wordmark text + WhatsApp only -->
   <header class="nav"><div class="wrap nav__in">
-    <a class="nav__brand nav__brand--text" href="#top">Product Lab</a>
+    <a class="nav__brand" href="#top"><img class="nav__logo" src="assets/logo/logo-solo-t.png" alt="" /><span class="nav__brand--text">Product Lab</span></a>
     <div class="nav__right">
-      <button class="langtoggle" data-toggle-lang aria-label="Switch language">${lang === "he" ? "ע" : "E"}</button>
-      <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+      <button class="langtoggle" data-toggle-lang aria-label="Switch language">${lang === "he" ? "עב" : "EN"}</button>
+      <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
       <!-- Student entrance: opens the sign-in modal (placeholder). -->
-      <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open>${I.login} ${t.nav_student}</button>
+      <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}">${I.login}<span class="btn__label">${t.nav_student}</span></button>
     </div>
   </div></header>
 
@@ -404,24 +405,9 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 8 TESTIMONIALS -->
-  <section class="section section--alt"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${t.quotes_eyebrow}</span>
-      <h2 class="section-title">${t.quotes_title}</h2>
-    </div>
-    <div class="quotes" style="margin-top:2rem">
-      ${t.quotes.map((q) => `
-        <figure class="quote reveal" style="margin:0">
-          <div class="quote__mark">&ldquo;</div>
-          <blockquote style="margin:0"><p>${q.q}</p></blockquote>
-          <figcaption class="quote__who">
-            <span class="quote__av">${q.n.charAt(0)}</span>
-            <span><span class="quote__name">${q.n}</span><br><span class="quote__meta">${q.m}</span></span>
-          </figcaption>
-        </figure>`).join("")}
-    </div>
-  </div></section>
+  <!-- 8 TESTIMONIALS — HIDDEN until Ofir has real, approved quotes.
+       Data (t.quotes_eyebrow / t.quotes_title / t.quotes) still lives in I18N;
+       to restore, re-add a <section class="section section--alt"> using it. -->
 
   <!-- 9 DETAILS — ONE unified accordion (logistics + FAQ), icon on every row -->
   <section class="section"><div class="wrap narrow">
@@ -462,7 +448,7 @@ function render(lang) {
           <input class="input" id="student-pass" name="password" type="password" placeholder="${t.login_pass_ph}" autocomplete="current-password" />
         </div>
         <button class="btn btn--primary login__submit" type="submit">${t.login_submit}</button>
-        <p class="login__note" data-student-note hidden>${I.check}<span>${t.login_soon}</span></p>
+        <p class="login__note" data-student-note hidden>${I.info}<span>${t.login_soon}</span></p>
       </form>
     </div>
   </div>
