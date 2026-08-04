@@ -47,13 +47,13 @@ const I18N = {
     hero_points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח־על של בנייה"],
 
     why_eyebrow: "למה עכשיו",
-    why_title: "הדרך שבה בונים מוצר משתנה. אתה יכול להוביל אותה.",
-    why_body: "לפני שנה, לבנות עם צוות של סוכני AI היה הדגמה של חוקרים. היום זו כבר הדרך שבה יותר ויותר אנשי מוצר עובדים באמת, וכמעט אף אחד עדיין לא הפך את זה למשהו שאפשר ללמוד בתוך אחר צהריים אחד. זה בדיוק אחר הצהריים הזה. תיכנס עכשיו, כל עוד זה עדיין יתרון.",
+    why_title: "הדרך שבה בונים מוצר משתנה. אתם יכולים להוביל אותה.",
+    why_body: "לפני שנה, לבנות עם צוות של סוכני AI היה הדגמה של חוקרים. היום זו כבר הדרך שבה יותר ויותר אנשי מוצר עובדים באמת, וכמעט אף אחד עדיין לא הפך את זה למשהו שאפשר ללמוד בתוך אחר צהריים אחד. זה בדיוק אחר הצהריים הזה. תיכנסו עכשיו, כל עוד זה עדיין יתרון.",
 
     walk_eyebrow: "מה לוקחים הביתה",
-    walk_title: "עם מה תצא מפה",
+    walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "צוות AI משלך.", b: "הסוכנים שתקים במפגש, מכוונים לעבוד לצידך." },
+      { t: "צוות AI משלך.", b: "הסוכנים שמקימים במפגש, מכוונים לעבוד לצידך." },
       { t: "זיכרון משותף שכולם שואבים ממנו,", b: "כך שהם נעשים חדים יותר ככל שאתם עובדים יחד." },
       { t: "שיטת עבודה שאפשר לחזור עליה", b: "כבר ביום שני בבוקר, בפרויקטים שלך." },
       { t: "דבר אמיתי אחד שבנית במפגש עצמו,", b: "לא שקופית שמספרת עליו." },
@@ -63,7 +63,7 @@ const I18N = {
     who_for_title: "מתאים ל",
     who_tiles: [
       { t: "מעצבי מוצר", b: "מעצבים שמרגישים שהם מאבדים אחיזה במשחק ה-AI ורוצים להיות צעד קדימה, עם הכלים והבסיס להמשיך משם. גם מובילי עיצוב, וגם המעצב היחיד שהוא כל צוות העיצוב." },
-      { t: "בונים", b: "כל מי שרוצה לבנות משהו, אבל מרגיש שחסר לו הבסיס, עם מי להתייעץ, ואיך לנהל את זה בצורה בת-קיימא." },
+      { t: "בונים", b: "כל מי שרוצה לבנות משהו, אבל מרגישים שחסר להם הבסיס, עם מי להתייעץ, ואיך לנהל את זה בצורה בת-קיימא." },
       { t: "הצעד הבא עם AI", b: "כל מי שרוצה להוציא את המרב ממה ש-AI מציע היום. לנהל עסק עצמאי, לאטמט משימות, או לצמצם עבודה ידנית שחוזרת על עצמה." },
     ],
     who_not: "מתאים פחות למי שמחפש כפתור קסם. אם בא לך להפשיל שרוולים ולבנות בעצמך, יש לך מקום סביב השולחן.",
@@ -81,14 +81,14 @@ const I18N = {
     proof_lead: "שום דבר פה הוא לא הדמיה של הרעיון. זה הרעיון עצמו, פועל.",
     proof_self_tag: "הדף הזה",
     proof_self_t: "הדף הזה",
-    proof_self_b: "עוצב ונבנה על ידי אותו סוג של צוות AI שתקים, בעבודה משותפת עם אופיר.",
+    proof_self_b: "עוצב ונבנה על ידי אותו סוג של צוות AI שתקימו, בעבודה משותפת עם אופיר.",
     proof_glimps_tag: "מוצר אמיתי",
     proof_glimps_t: "Glimps",
-    proof_glimps_b: "מוצר אמיתי, שנבנה ככה. תראה בעצמך.",
+    proof_glimps_b: "מוצר אמיתי, שנבנה ככה. תראו בעצמכם.",
     proof_glimps_link: "לצפייה ב-Glimps",
 
     ofir_eyebrow: "למה שיחה איתי",
-    roster_title: "אני, והצוות שבניתי",
+    roster_title: "אני והחבר׳ה",
     lead_label: "מוביל הסדנה",
     crew_label: "צוות הסוכנים שמלווה אותך",
     ofir_name: "אופיר רושינק",
@@ -98,8 +98,8 @@ const I18N = {
       { img: "agent-cpo", role: "CPO", b: "אחראי על המוצר, ומחליט מה שווה לבנות וממה לוותר." },
       { img: "agent-pd", role: "מעצב מוצר", b: "אחראי על הקראפט, וגורם לכל החלטה להיראות ולהרגיש נכון עד הפרט האחרון." },
     ],
-    ofir_bio: "אני אופיר. שתים עשרה שנה בעיצוב מוצר, רובן בהובלת צוותי עיצוב שהקמתי מאפס, בסייבר, בשירות שטח, במדיה ועוד. בזמן האחרון אני בונה עם צוותי AI כל יום, וככה בניתי את Glimps, מוצר חי. כשנדבר, לא תקבל תיאוריה, אלא איך אני עובד באמת היום.",
-    ofir_why: "המפגש בהזמנה בלבד וקטן בכוונה. לפני שמצטרפים, אני רוצה שנדבר. מה אתה בונה, ואם זה מתאים לך. בלי פיץ'. תתאם זמן ונדבר.",
+    ofir_bio: "אני אופיר. שתים עשרה שנה בעיצוב מוצר, רובן בהובלת צוותי עיצוב שהקמתי מאפס, בסייבר, בשירות שטח, במדיה ועוד. בזמן האחרון אני בונה עם צוותי AI כל יום, וככה בניתי את Glimps, מוצר חי, וגם את האתר הזה ואת הסדנה שלפניכם. כשנדבר, לא תקבלו תיאוריה, אלא איך אני עובד באמת היום.",
+    ofir_why: "המפגש בהזמנה בלבד וקטן בכוונה. לפני שמצטרפים, אני רוצה שנדבר. מה אתם בונים, ואם זה מתאים לכם. בלי פיץ'. תאמו זמן ונדבר.",
 
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
@@ -115,15 +115,15 @@ const I18N = {
       { ico: "seat",     q: "איפה ואיך זה מתנהל?", a: "מפגש חי ופיזי בקבוצה קטנה. נפגשים פנים אל פנים, כדי שלכל אחד תהיה תשומת לב אישית." },
       { ico: "clock",    q: "כמה זמן זה לוקח?", a: "כשלוש שעות רצופות עם הפסקה אחת. מגיעים בלי צוות AI, יוצאים עם אחד." },
       { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונה לאורך כל הדרך, לא צופה מהצד. יוצאים עם משהו אמיתי שבנית בעצמך." },
-      { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. אם אתה יודע לכתוב בריף ברור, אתה יכול לעשות את זה. בונים על Claude, בשפה רגילה, בלי קוד." },
-      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ וחשבון Claude. זהו. נגיד לך מה להכין עוד לפני המפגש." },
-      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. אתה יוצא עם צוות AI עובד ועם משהו אמיתי שבנית. לאן לוקחים את זה משם, כבר תלוי בך." },
-      { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא כמעצב יחיד, או להביא כמה אנשים מהצוות." },
-      { ico: "calendar", q: "ומה אם אני לא יכול בתאריך?", a: "תגיד לי בשיחה. הקבוצות קטנות והמפגשים חוזרים על עצמם, אז נמצא מועד שמתאים לך." },
+      { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. אם יודעים לכתוב בריף ברור, אפשר לעשות את זה. בונים על Claude, בשפה רגילה, בלי קוד." },
+      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ וחשבון Claude. זהו. נגיד לכם מה להכין עוד לפני המפגש." },
+      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם צוות AI עובד ועם משהו אמיתי שבניתם. לאן לוקחים את זה משם, כבר תלוי בכם." },
+      { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד, או להביא כמה אנשים מהצוות." },
+      { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "נדבר על זה בשיחה. הקבוצות קטנות והמפגשים חוזרים על עצמם, אז נמצא מועד שמתאים לכם." },
     ],
 
     final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
-    final_title: "בוא תבנה איתנו.",
+    final_title: "בואו תבנו איתנו.",
     final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות AI משלך לקחת הביתה. זה בהזמנה בלבד, והצעד הראשון הוא שיחה איתי.",
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
@@ -135,7 +135,7 @@ const I18N = {
     login_pass_label: "סיסמה",
     login_pass_ph: "הסיסמה שלך",
     login_submit: "כניסה",
-    login_soon: "הפרטים לא תואמים. אם אתה משתתף ולא מצליח להיכנס, כתוב לי.",
+    login_soon: "הפרטים לא תואמים. אם אתם משתתפים ולא מצליחים להיכנס, כתבו לי.",
 
     footer_line: "Product Lab. סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
     footer_contact: "יצירת קשר",
@@ -205,7 +205,7 @@ const I18N = {
       { img: "agent-cpo", role: "CPO", b: "Owns the product calls, and decides what's worth building and what to cut." },
       { img: "agent-pd", role: "Product Designer", b: "Owns the craft, and makes every decision look and feel right down to the last detail." },
     ],
-    ofir_bio: "I'm Ofir. Twelve years in product design, most of them leading design teams I built from scratch, across cyber, field service, media and more. Lately I build with AI teams every day, and that's how I built Glimps, a live product. When we talk, you won't get theory, you'll get how I actually work now.",
+    ofir_bio: "I'm Ofir. Twelve years in product design, most of them leading design teams I built from scratch, across cyber, field service, media and more. Lately I build with AI teams every day, and that's how I built Glimps, a live product, and this very site and the workshop you're looking at. When we talk, you won't get theory, you'll get how I actually work now.",
     ofir_why: "This is invite-only and small on purpose. Before you join, I want a real conversation. What you are working on, and whether this is a fit. No pitch. Book a time and we will talk.",
 
     quotes_eyebrow: "Testimonials",
@@ -270,7 +270,7 @@ function render(lang) {
   document.getElementById("app").innerHTML = `
   <!-- NAV — logo hidden for now (decide later); wordmark text + WhatsApp only -->
   <header class="nav"><div class="wrap nav__in">
-    <a class="nav__brand" href="#top"><img class="nav__logo" src="assets/logo/logo-solo-t.png" alt="" /><span class="nav__brand--text">Product Lab</span></a>
+    <a class="nav__brand nav__brand--text" href="#top">Product Lab</a>
     <div class="nav__right">
       <button class="langtoggle" data-toggle-lang aria-label="Switch language">${lang === "he" ? "עב" : "EN"}</button>
       <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
@@ -291,7 +291,12 @@ function render(lang) {
         ${t.hero_points.map((p) => `<li>${p}</li>`).join("")}
       </ul>
     </div>
-    <div class="hero__media"><img src="assets/hero-v2-3.png" alt="" /></div>
+    <div class="hero__media">
+      <picture>
+        <source media="(max-width: 760px)" srcset="assets/hero-mobile-2.png?v=3" />
+        <img src="assets/hero-v2-3.png?v=3" alt="" />
+      </picture>
+    </div>
   </section>
 
   <!-- 2 WHY NOW -->
@@ -327,7 +332,7 @@ function render(lang) {
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
         <div class="tilecard reveal">
-          <div class="tilecard__illo"><img src="assets/${["tile-designer", "tile-builder", "tile-nextai"][i]}.png" alt="" /></div>
+          <div class="tilecard__illo"><img src="assets/${["tile-designer", "tile-builder", "tile-nextai"][i]}.png?v=2" alt="" /></div>
           <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
         </div>`).join("")}
     </div>
@@ -394,7 +399,7 @@ function render(lang) {
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.png" alt="" /></div>
+              <div class="agentcard__illo"><img src="assets/${a.img}.png?v=2" alt="" /></div>
               <div class="agentcard__body">
                 <div class="agentcard__role">${a.role}</div>
                 <p>${a.b}</p>
