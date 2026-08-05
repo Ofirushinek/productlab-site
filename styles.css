@@ -666,9 +666,12 @@ body.modal-open { overflow: hidden; }
 .ctaband .btn--wa-solid { background: #25D366; color: #ffffff; }
 .ctaband .btn--wa-solid:hover { background: #1eb455; }
 
-/* ---- TESTIMONIALS — clean, premium cards: big photo + bold high-contrast quote */
-.quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+/* ---- TESTIMONIALS — clean, premium cards: big photo + bold high-contrast quote
+   Grid spans the full section width so the cards' outer edges line up with the
+   section title/eyebrow above (no inset). */
+.quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .quote-card {
+  margin: 0;                              /* reset default <figure> 40px side margin */
   background: var(--pl-surface); border: 1px solid var(--pl-border);
   border-radius: var(--radius-xl); padding: clamp(1.9rem, 3vw, 2.5rem);
   display: flex; flex-direction: column; gap: 1.5rem; box-shadow: var(--shadow-pl-md);
@@ -679,14 +682,14 @@ body.modal-open { overflow: hidden; }
 /* attribution header: big prominent photo + name/role */
 .quote-card__head { display: flex; align-items: center; gap: 1.1rem; }
 .quote-card__avatar {
-  width: 76px; height: 76px; border-radius: 999px; background: var(--pl-illo-bg); flex: none;
+  width: 88px; height: 88px; border-radius: 999px; background: var(--pl-illo-bg); flex: none;
   display: grid; place-items: center; overflow: hidden;
   box-shadow: 0 0 0 3px var(--pl-surface), 0 0 0 5px var(--pl-accent);
 }
 .quote-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
-.quote-card__avatar svg { width: 34px; height: 34px; color: var(--pl-accent); }
-.quote-card__who { display: flex; flex-direction: column; gap: 0.2rem; }
-.quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body-lg); line-height: 1.2; }
+.quote-card__avatar svg { width: 40px; height: 40px; color: var(--pl-accent); }
+.quote-card__who { display: flex; flex-direction: column; gap: 0.25rem; }
+.quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); line-height: 1.2; }
 .quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--pl-accent); }
 
 /* the quote: bold, high-contrast, clean — separated by a hairline, no watermark */
