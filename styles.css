@@ -669,7 +669,8 @@ body.modal-open { overflow: hidden; }
 }
 .quote-card blockquote { margin: 0; font-size: var(--text-body-lg); font-weight: 600; color: var(--pl-fg-body); line-height: 1.55; }
 .quote-card figcaption { display: flex; align-items: center; gap: 0.75rem; }
-.quote-card__avatar { width: 42px; height: 42px; border-radius: 999px; background: var(--pl-illo-bg); flex: none; }
+.quote-card__avatar { width: 42px; height: 42px; border-radius: 999px; background: var(--pl-illo-bg); flex: none; display: grid; place-items: center; overflow: hidden; }
+.quote-card__avatar svg { width: 22px; height: 22px; color: var(--pl-fg-secondary); }
 .quote-card__who { display: flex; flex-direction: column; gap: 0.1rem; }
 .quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body); }
 .quote-card__who span { font-size: var(--text-sm); color: var(--pl-fg-secondary); }
@@ -677,6 +678,7 @@ body.modal-open { overflow: hidden; }
 .quote-card--ph { border-style: dashed; border-color: var(--pl-border-strong); background: transparent; box-shadow: none; }
 .quote-card--ph blockquote { color: var(--pl-fg-muted); }
 .quote-card--ph .quote-card__avatar { background: transparent; border: 1px dashed var(--pl-border-strong); }
+.quote-card--ph .quote-card__avatar svg { color: var(--pl-fg-muted); }
 .quote-card--ph .quote-card__who strong { color: var(--pl-fg-secondary); }
 @media (max-width: 700px) { .quote-grid { grid-template-columns: 1fr; } }
 

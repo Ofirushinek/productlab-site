@@ -25,11 +25,13 @@ const I = {
   spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M5 12H1M23 12h-4M6.3 6.3 3.5 3.5M20.5 20.5l-2.8-2.8M17.7 6.3l2.8-2.8M3.5 20.5l2.8-2.8"/></svg>',
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
   seat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3M5 9a2 2 0 0 0-2 2v5h18v-5a2 2 0 0 0-2-2M5 16v3M19 16v3"/></svg>',
+  video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>',
   hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2a8 8 0 0 1-7.4-4.9L3 15"/></svg>',
   calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
   claude: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7v10l10 5 10-5V7L12 2ZM2 7l10 5 10-5M12 22V12"/></svg>',
   login: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>',
   info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>',
 };
 
 /* ---- COPY (final, Copywriter 2026-08-03) -------------------------------- */
@@ -119,11 +121,11 @@ const I18N = {
     incl_title: "כל מה שצריך לדעת",
     // ONE unified accordion. `open:true` = logistics facts shown by default.
     detail_items: [
-      { ico: "seat",     q: "איפה ואיך זה מתנהל?", a: "מפגש חי ופיזי בקבוצה קטנה. נפגשים פנים אל פנים, כדי שלכל אחד תהיה תשומת לב אישית." },
+      { ico: "video",    q: "איפה ואיך זה מתנהל?", a: "מפגש חי בזום, בקבוצה קטנה, כדי שלכל אחד תהיה תשומת לב אישית." },
       { ico: "clock",    q: "כמה זמן זה לוקח?", a: "כשלוש שעות רצופות עם הפסקה אחת. מגיעים בלי צוות AI, יוצאים עם אחד." },
       { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונה לאורך כל הדרך, לא צופה מהצד. יוצאים עם משהו אמיתי שבנית בעצמך." },
       { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. אם יודעים לכתוב בריף ברור, אפשר לעשות את זה. בונים על Claude, בשפה רגילה, בלי קוד." },
-      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ וחשבון Claude. זהו. נגיד לכם מה להכין עוד לפני המפגש." },
+      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ, חשבון Claude, וחיבור אינטרנט יציב. כדאי גם פינה שקטה שבה תוכלו להתרכז. נגיד לכם מה עוד להכין לפני המפגש." },
       { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם צוות AI עובד ועם משהו אמיתי שבניתם. לאן לוקחים את זה משם, כבר תלוי בכם." },
       { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד, או להביא כמה אנשים מהצוות." },
       { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "נדבר על זה בשיחה. הקבוצות קטנות והמפגשים חוזרים על עצמם, אז נמצא מועד שמתאים לכם." },
@@ -232,11 +234,11 @@ const I18N = {
     incl_eyebrow: "The details",
     incl_title: "Everything you need to know",
     detail_items: [
-      { ico: "seat",     q: "Where and how does it run?", a: "A live, in-person session in a small group. We meet face to face so everyone gets real attention." },
+      { ico: "video",    q: "Where and how does it run?", a: "A live session over Zoom, in a small group, so everyone gets real personal attention." },
       { ico: "clock",    q: "How long does it take?", a: "About three hours straight, with one break. You come in without an AI team and leave with one." },
       { ico: "hand",     q: "Do I build it myself or watch?", a: "You build the whole way through, not watch from the side. You leave with something real you made yourself." },
       { ico: "laptop",   q: "Do I need to know how to code?", a: "No. If you can write a clear brief, you can do this. We build on Claude, in plain language, no code." },
-      { ico: "box",      q: "What do I need to bring?", a: "A laptop and a Claude account. That's it. We'll tell you what to set up before the session." },
+      { ico: "box",      q: "What do I need to bring?", a: "A laptop, a Claude account, and a stable internet connection. A quiet spot to focus helps too. We'll tell you what else to set up before the session." },
       { ico: "spark",    q: "Is it really just one session?", a: "Yes. You leave with a working AI team and something real you built. Where you take it from there is up to you." },
       { ico: "users",    q: "Is this for teams or individuals?", a: "Both. Come solo, or bring a couple of people from your team." },
       { ico: "calendar", q: "What if I can't make the date?", a: "Tell me on the call. The groups are small and sessions run regularly, so we'll find one that fits." },
@@ -467,7 +469,7 @@ function render(lang) {
         <figure class="quote-card quote-card--ph reveal">
           <blockquote>${qt.q}</blockquote>
           <figcaption>
-            <span class="quote-card__avatar"></span>
+            <span class="quote-card__avatar">${I.user}</span>
             <span class="quote-card__who"><strong>${qt.n}</strong><span>${qt.m}</span></span>
           </figcaption>
         </figure>`).join("")}
