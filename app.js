@@ -3,11 +3,11 @@
    ALL copy lives in the I18N object below (final copy from Copywriter,
    productlab-onepager-copy.md, 2026-08-03). To update copy, edit strings here.
    OPEN: Section 7 bio ([X years]/role) + Section 8 testimonials are labeled
-   placeholders for OFIR to fill. Booking link is live (Calendly); WhatsApp
-   number is still a placeholder (wa.me) pending Ofir's number.
+   placeholders for OFIR to fill. Contact is WhatsApp-only (no booking funnel);
+   WA number is live: 054-2259730.
    ========================================================================== */
 
-const BOOK_URL = "https://calendly.com/ofir-rushinek/productlab"; // live
+// WhatsApp only — no booking funnel. Ofir wants direct contact.
 const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2259730
 
 /* ---- Icons (inline, currentColor) --------------------------------------- */
@@ -35,8 +35,6 @@ const I = {
 /* ---- COPY (final, Copywriter 2026-08-03) -------------------------------- */
 const I18N = {
   he: {
-    nav_book: "לתאם שיחה",
-    cta_book: "לתאם שיחה",
     cta_wa: "דברו איתי",
     nav_student: "כניסת תלמידים",
     hero_chip: "בהזמנה בלבד. בקבוצות קטנות.",
@@ -45,6 +43,15 @@ const I18N = {
     hero_title_b: ", ועם דרך חדשה ליצור.",
     hero_sub: "מפגש חי אחד, שלוש שעות, למי שרוצה לבנות עם AI, לא רק להשתמש בו. מקימים צוות סוכנים שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהמפגש נגמר.",
     hero_points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח־על של בנייה"],
+    session: {
+      badge: "המחזור הראשון",
+      when_label: "מתי?",
+      when_value: ["יום ה׳, 3 בספטמבר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
+      where_label: "איפה?",
+      where_value: ["אונליין בזום", "מכל מקום בעולם"],
+      cta: "דברו איתי",
+      limited_note: "מספר מקומות מוגבל",
+    },
 
     why_eyebrow: "למה עכשיו",
     why_title: "הדרך שבה בונים מוצר משתנה. אתם יכולים להוביל אותה.",
@@ -99,7 +106,7 @@ const I18N = {
       { img: "agent-pd", role: "מעצב מוצר", b: "אחראי על הקראפט, וגורם לכל החלטה להיראות ולהרגיש נכון עד הפרט האחרון." },
     ],
     ofir_bio: "אני אופיר. שתים עשרה שנה בעיצוב מוצר, רובן בהובלת צוותי עיצוב שהקמתי מאפס, בסייבר, בשירות שטח, במדיה ועוד. בזמן האחרון אני בונה עם צוותי AI כל יום, וככה בניתי את Glimps, מוצר חי, וגם את האתר הזה ואת הסדנה שלפניכם. כשנדבר, לא תקבלו תיאוריה, אלא איך אני עובד באמת היום.",
-    ofir_why: "המפגש בהזמנה בלבד וקטן בכוונה. לפני שמצטרפים, אני רוצה שנדבר. מה אתם בונים, ואם זה מתאים לכם. בלי פיץ'. תאמו זמן ונדבר.",
+    ofir_why: "המפגש בהזמנה בלבד וקטן בכוונה. לפני שמצטרפים, אני רוצה שנדבר. מה אתם בונים, ואם זה מתאים לכם. בלי פיץ'. שלחו לי הודעה ונדבר.",
 
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
@@ -142,8 +149,6 @@ const I18N = {
   },
 
   en: {
-    nav_book: "Book a call",
-    cta_book: "Book a call",
     cta_wa: "Talk to me",
     nav_student: "Student entrance",
     hero_chip: "Invite-only. Small groups.",
@@ -206,7 +211,7 @@ const I18N = {
       { img: "agent-pd", role: "Product Designer", b: "Owns the craft, and makes every decision look and feel right down to the last detail." },
     ],
     ofir_bio: "I'm Ofir. Twelve years in product design, most of them leading design teams I built from scratch, across cyber, field service, media and more. Lately I build with AI teams every day, and that's how I built Glimps, a live product, and this very site and the workshop you're looking at. When we talk, you won't get theory, you'll get how I actually work now.",
-    ofir_why: "This is invite-only and small on purpose. Before you join, I want a real conversation. What you are working on, and whether this is a fit. No pitch. Book a time and we will talk.",
+    ofir_why: "This is invite-only and small on purpose. Before you join, I want a real conversation. What you are working on, and whether this is a fit. No pitch. Message me and we will talk.",
 
     quotes_eyebrow: "Testimonials",
     quotes_title: "From people who've done it",
