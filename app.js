@@ -131,7 +131,7 @@ const I18N = {
       { t: "עושים את זה שלכם", b: "משנים תפקיד, מוסיפים כישור, מקימים סוכן חדש." },
     ],
     agenda_p3_items: [
-      { t: "נותנים בריף", b: "אומרים ל-CPO מה לבנות, והוא מעצב את הפיצ'רים איתכם." },
+      { t: "נותנים בריף", b: "אומרים ל-CPO מה אתם רוצים לבנות, והוא מתעדף, מנהל ומתזמר את העבודה — כמו מנהל מוצר." },
       { t: "רואים את הצוות עובד", b: "המעצב מתייעץ עם ה-CPO וה-CTO, התזמור בזמן אמת." },
       { t: "בונים את העמוד שלכם", b: "רעיון המוצר שלכם, בתצוגה מקדימה." },
       { t: "מעכשיו אתם עצמאיים", b: "צוות להתייעץ איתו מתי שבא לכם, ואני כאן גם. לכו תבנו." },
@@ -320,7 +320,7 @@ const I18N = {
       { t: "Make it yours", b: "Adjust a role, add a skill, spin up a new agent." },
     ],
     agenda_p3_items: [
-      { t: "Brief it", b: "Tell your CPO what to build, it shapes the features with you." },
+      { t: "Brief it", b: "Tell your CPO what you want to build, and it prioritizes, manages, and orchestrates the work — like a product manager." },
       { t: "Watch the team work", b: "The designer consults the CPO and CTO, the orchestration in real time." },
       { t: "Build your one-pager", b: "Your own product idea, live in preview." },
       { t: "You're independent now", b: "A team to consult whenever, and I'm here too. Go build." },
