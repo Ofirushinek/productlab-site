@@ -103,8 +103,8 @@ const I18N = {
     who_for_title: "מתאים ל",
     who_tiles: [
       { t: "מעצבי מוצר", b: "מעצבים שמרגישים שהם מאבדים אחיזה במשחק ה-AI ורוצים להיות צעד קדימה, עם הכלים והבסיס להמשיך משם. גם מובילי עיצוב, וגם המעצב היחיד שהוא כל צוות העיצוב." },
-      { t: "בונים", b: "כל מי שרוצה לבנות משהו, אבל מרגישים שחסר להם הבסיס, עם מי להתייעץ, ואיך לנהל את זה בצורה בת-קיימא." },
-      { t: "הצעד הבא עם AI", b: "כל מי שרוצה להוציא את המרב ממה ש-AI מציע היום. לנהל עסק עצמאי, לאטמט משימות, או לצמצם עבודה ידנית שחוזרת על עצמה." },
+      { t: "בונים ויזמים", b: "כל מי שרוצה לבנות משהו, אבל מרגישים שחסר להם הבסיס, עם מי להתייעץ, ואיך לנהל את זה בצורה בת-קיימא." },
+      { t: "מרחיבי אופקים", b: "כל מי שרוצה להוציא את המרב ממה ש-AI מציע היום. לנהל עסק עצמאי, לאטמט משימות, או לצמצם עבודה ידנית שחוזרת על עצמה." },
     ],
     who_not: "מתאים פחות למי שמחפש כפתור קסם. אם בא לך להפשיל שרוולים ולבנות בעצמך, יש לך מקום סביב השולחן.",
 
@@ -271,8 +271,8 @@ const I18N = {
     who_for_title: "Who this is for",
     who_tiles: [
       { t: "Product designers", b: "Designers who feel they're losing their grip on the AI game and want to be a step ahead, with the tools and the base to take it from there. Design leaders too, and the solo designer who is the whole design team." },
-      { t: "Builders", b: "Anyone who wants to build something but feels they lack the base, someone to consult with, and a sustainable way to manage it." },
-      { t: "Your next step with AI", b: "Anyone who wants to get the most out of what AI offers now. Run your own business, automate specific tasks, or cut the manual work you still do by hand." },
+      { t: "Builders & founders", b: "Anyone who wants to build something but feels they lack the base, someone to consult with, and a sustainable way to manage it." },
+      { t: "The AI-curious", b: "Anyone who wants to get the most out of what AI offers now. Run your own business, automate specific tasks, or cut the manual work you still do by hand." },
     ],
     who_not: "Less of a fit for anyone after a magic button. If you'd rather roll up your sleeves and build it yourself, there's a chair at the table.",
 
