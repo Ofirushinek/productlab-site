@@ -117,7 +117,7 @@ const I18N = {
     ],
     agenda_toggle: "מה יש בפנים",
     agenda_p1_items: [
-      { t: "איפה הטכנולוגיה עומדת עכשיו", b: "מה השתנה השנה, ולמה לבנות עם סוכנים זה כבר אמיתי." },
+      { t: "מבט־על טכנולוגי", b: "מה השתנה השנה, ולמה לבנות עם סוכנים זה כבר אמיתי." },
       { t: "כלי vibe-coding מול Claude, ChatGPT ו-Gemini", b: "למה כל אחד טוב, ולמה אנחנו בונים על Claude." },
       { t: "AI חכם יותר דווקא כשממקדים אותו", b: "קודם תפקיד, אחר כך כישורים וכלים, ואז זיכרון." },
       { t: "המוח המשותף (Obsidian)", b: "צוות שנשאר מסונכרן ומתחדד ככל שעובדים." },
@@ -306,7 +306,7 @@ const I18N = {
     ],
     agenda_toggle: "What's inside",
     agenda_p1_items: [
-      { t: "Where the tech stands now", b: "What changed this year, and why building with agents is real now." },
+      { t: "Technology overview", b: "What changed this year, and why building with agents is real now." },
       { t: "Vibe-coding tools vs. Claude, ChatGPT, or Gemini", b: "What each is good for, and why we build on Claude." },
       { t: "Make an AI smarter by narrowing it", b: "A role first, then skills and tools, then memory." },
       { t: "The shared brain (Obsidian)", b: "A team that stays in sync and gets sharper as you work." },
