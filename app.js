@@ -115,6 +115,27 @@ const I18N = {
       { time: "כ-90 דקות", t: "להקים את הצוות", b: "מרימים את צוות ה-AI שלך מפרומפטים מוכנים, מחוברים לזיכרון משותף." },
       { time: "כ-60 דקות", t: "לבנות תוצר אמיתי", b: "מפעילים את הצוות ומוציאים לפועל תוצר אחד, ביחד." },
     ],
+    agenda_toggle: "מה יש בפנים",
+    agenda_p1_items: [
+      { t: "איפה הטכנולוגיה עומדת עכשיו", b: "מה השתנה השנה, ולמה לבנות עם סוכנים זה כבר אמיתי." },
+      { t: "כלי vibe-coding מול Claude, ChatGPT ו-Gemini", b: "למה כל אחד טוב, ולמה אנחנו בונים על Claude." },
+      { t: "AI חכם יותר דווקא כשמצמצמים אותו", b: "קודם תפקיד, אחר כך כישורים וכלים, ואז זיכרון." },
+      { t: "המוח המשותף (Obsidian)", b: "צוות שנשאר מסונכרן ומתחדד ככל שעובדים." },
+      { t: "המפה לשעתיים וחצי הקרובות", b: "איך שאר המפגש מתנהל." },
+    ],
+    agenda_p2_items: [
+      { t: "מקימים את סביבת העבודה", b: "Claude, מחובר למוח המשותף שלכם." },
+      { t: "בונים את הסוכן הראשון: ה-CTO", b: "מתחילים מפרומפט מוכן: תפקיד, כישורים, כלים." },
+      { t: "מוסיפים CPO ומעצב מוצר", b: "צוות שמחליט מה לבנות, וגם דואג שזה ייראה נכון." },
+      { t: "מחברים אותם למוח המשותף", b: "זיכרון אחד, ששום דבר לא ילך לאיבוד ביניהם." },
+      { t: "עושים את זה שלכם", b: "משנים תפקיד, מוסיפים כישור, מקימים סוכן חדש." },
+    ],
+    agenda_p3_items: [
+      { t: "נותנים בריף", b: "אומרים ל-CPO מה לבנות, והוא מעצב את הפיצ'רים איתכם." },
+      { t: "רואים את הצוות עובד", b: "המעצב מתייעץ עם ה-CPO וה-CTO, התזמור בזמן אמת." },
+      { t: "בונים את העמוד שלכם", b: "רעיון המוצר שלכם, בתצוגה מקדימה." },
+      { t: "מעכשיו אתם עצמאיים", b: "צוות להתייעץ איתו מתי שבא לכם, ואני כאן גם. לכו תבנו." },
+    ],
 
     proof_eyebrow: "הוכחה, לא הבטחה",
     proof_title: "בנוי בדיוק כמו שתבנה",
@@ -282,6 +303,27 @@ const I18N = {
       { time: "30 min", t: "The lay of the land", b: "What we are building, why these tools, and where the technology actually stands right now." },
       { time: "about 90 min", t: "Build your team", b: "Stand up your AI team from ready-made prompts, wired to a shared memory." },
       { time: "about 60 min", t: "Build a finished piece", b: "Put the team to work and ship one finished piece, together." },
+    ],
+    agenda_toggle: "What's inside",
+    agenda_p1_items: [
+      { t: "Where the tech stands now", b: "What changed this year, and why building with agents is real now." },
+      { t: "Vibe-coding tools vs. Claude, ChatGPT, or Gemini", b: "What each is good for, and why we build on Claude." },
+      { t: "Make an AI smarter by narrowing it", b: "A role first, then skills and tools, then memory." },
+      { t: "The shared brain (Obsidian)", b: "A team that stays in sync and gets sharper as you work." },
+      { t: "The map of the next 2.5 hours", b: "How the rest of the session runs." },
+    ],
+    agenda_p2_items: [
+      { t: "Set up your workspace", b: "Claude, connected to your shared brain." },
+      { t: "Build your first agent: the CTO", b: "Start from a ready-made prompt: role, skills, tools." },
+      { t: "Add the CPO and Product Designer", b: "A team that decides what to build, and makes it look right." },
+      { t: "Wire them to the shared brain", b: "One memory, so nothing gets lost between them." },
+      { t: "Make it yours", b: "Adjust a role, add a skill, spin up a new agent." },
+    ],
+    agenda_p3_items: [
+      { t: "Brief it", b: "Tell your CPO what to build, it shapes the features with you." },
+      { t: "Watch the team work", b: "The designer consults the CPO and CTO, the orchestration in real time." },
+      { t: "Build your one-pager", b: "Your own product idea, live in preview." },
+      { t: "You're independent now", b: "A team to consult whenever, and I'm here too. Go build." },
     ],
 
     proof_eyebrow: "Proof, not claims",
@@ -576,11 +618,21 @@ function render(lang) {
       <h2 class="section-title">${t.agenda_title}</h2>
     </div>
     <div class="agenda" style="margin-top:2rem">
-      ${t.agenda_phases.map((p) => `
-        <div class="phase reveal">
-          <span class="phase__time">${p.time}</span>
-          <div><h3>${p.t}</h3><p>${p.b}</p></div>
-        </div>`).join("")}
+      ${t.agenda_phases.map((p, i) => {
+        const items = [t.agenda_p1_items, t.agenda_p2_items, t.agenda_p3_items][i] || [];
+        return `
+        <details class="aphase reveal" open>
+          <summary class="aphase__head">
+            <span class="phase__time">${p.time}</span>
+            <div class="aphase__intro"><h3>${p.t}</h3><p>${p.b}</p></div>
+            <span class="aphase__toggle">${t.agenda_toggle}${I.chev}</span>
+          </summary>
+          <div class="aphase__items">
+            ${items.map((it) => `
+            <div class="aphase__item"><h4>${it.t}</h4><p>${it.b}</p></div>`).join("")}
+          </div>
+        </details>`;
+      }).join("")}
     </div>
   </div></section>
 
