@@ -12,33 +12,38 @@ KEY = re.search(r"sk-proj-[A-Za-z0-9_\-]{20,}",
                 Path("/Users/admin/PersonAi/api_key.txt").read_text()).group(0)
 OUT = Path("/Users/admin/productlab-site/assets")
 
-CAST = ("a fixed crew of FOUR original fuzzy felt PUPPET creatures (classic felt "
-        "variety-show spirit but ENTIRELY ORIGINAL, NOT trademarked), each with a DISTINCT "
-        "sophisticated expression full of character - NONE with a big naive goofy grin: "
-        "(1) a TALL teal-blue one with a long soft snout, wearing a cool, slightly serious, "
-        "mildly unimpressed deadpan look, a touch disappointed but cool; "
-        "(2) a ROUND coral-orange one with a relaxed, content, subtly pleased half-smile; "
-        "(3) a SMALL mustard-yellow one with a curious tuft of hair, the CHEERIEST of the "
-        "group - brighter and a little more openly happy and cheered up (the small one is "
-        "allowed to be a bit goofy); "
-        "(4) a FLUFFY lavender-purple one with a cool, satisfied, easy-going expression. "
-        "Real hand-crafted puppets, real fur and texture. Sophisticated, relaxed, enjoying "
-        "themselves, NOT naive, NOT childish, NOT sad")
+CAST = ("a fixed crew of FOUR original fuzzy felt PUPPET creatures (ORIGINAL, NOT "
+        "trademarked), each with a DISTINCT expression and real character, beautifully lit "
+        "with great proportions, NOT goofy: (1) a TALL teal-blue one with a long soft "
+        "snout, COOL and INDIFFERENT, unbothered and deadpan-neutral (NOT sad, NOT droopy, "
+        "NOT gloomy), with calm HALF-CLOSED, heavy-lidded eyes (NOT big fully-open round "
+        "white eyes) - relaxed and characterful; (2) a coral-orange one with a NORMAL, "
+        "WELL-PROPORTIONED body (NOT fat, NOT chubby, NOT bloated) and a warm, POSITIVE, "
+        "friendly expression; (3) a SMALL mustard-yellow one with a curious tuft of hair, "
+        "the HAPPIEST and most cheerful of the group, bright and joyful (the little one); "
+        "(4) a FLUFFY lavender-purple one, cool, relaxed, easy-going and chill. "
+        "Vibrant, sharp, characterful felt puppets with real fur. "
+        "CRITICAL CONSISTENCY RULE: NONE of the four creatures has EARS - every one has a "
+        "smooth rounded head with absolutely NO ears, NO ear shapes, NO bear ears, nothing "
+        "sticking out from the sides or top of the head. Keep them simple and consistent, "
+        "just rounded felt heads with eyes and a mouth")
 
 STYLE = ("A warm, cozy, PHOTOREALISTIC candid documentary PHOTOGRAPH inside a real quiet "
          "softly lit coffee shop, WIDER ZOOMED-OUT view showing the whole round table and "
          "the cozy cafe around it, natural proportions, shallow depth of field, warm window "
-         "light and gentle bokeh, everything physically real and tactile. Relaxed and "
+         "light and gentle bokeh, everything physically real and tactile. Relaxed, vibrant, sharp, beautifully and warmly lit, high quality. "
          "candid. No text.")
 
 MAN = ("a man in his 30s in a casual violet t-shirt with short dark hair, seen FROM BEHIND "
        "on the RIGHT side of the table, only a sliver of profile showing, face mostly hidden")
 
 BASE = (f"{MAN}, sitting at a round wooden cafe table with his HANDS RESTING ON THE TABLE, "
-        f"clearly visible. An open laptop sits on the table clearly visible and not blocked; "
-        f"the LAPTOP SCREEN shows a SOFTLY BLURRED, out-of-focus colorful website landing "
-        f"page with a simple header bar, glowing gently, suggesting a web page being built "
-        f"(not sharp, not detailed). {CAST} are seated spread AROUND the round table with "
+        f"clearly visible. An open laptop sits on the table, TURNED at a slight angle so we "
+        f"see NO interface at all - the glossy dark screen catches only a soft, AMBIGUOUS, "
+        f"BLURRED reflection of a bright window and the room, indistinct and unclear (no "
+        f"recognizable image, NO figures, NO puppets, NO UI, NO app, NO text, NO icons) - "
+        f"just a realistic, natural screen glare and window reflection. {CAST} are seated "
+        f"spread AROUND the round table with "
         "the man, naturally sharing it like friends, no large empty gap. SEATING ORDER FROM "
         "LEFT TO RIGHT (important): the CORAL-ORANGE character sits FIRST at the FAR LEFT as "
         "the most prominent one; the TEAL-BLUE character sits SECOND, next to the orange, "
