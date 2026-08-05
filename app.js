@@ -43,7 +43,7 @@ const I18N = {
     hero_title_a: "לצאת עם ",
     hero_title_mark: "צוות משלך",
     hero_title_b: ", ועם דרך חדשה ליצור.",
-    hero_sub: "מפגש חי אחד, שלוש שעות, למי שרוצה לבנות עם AI, לא רק להשתמש בו. מקימים צוות סוכנים שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהולכים הביתה.",
+    hero_sub: "מפגש חי אחד, שלוש שעות, למי שרוצה לבנות עם AI, לא רק להשתמש בו. מקימים צוות סוכנים שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהמפגש נגמר.",
     hero_points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח־על של בנייה"],
 
     why_eyebrow: "למה עכשיו",
@@ -150,7 +150,7 @@ const I18N = {
     hero_title_a: "Walk out with ",
     hero_title_mark: "a crew of your own",
     hero_title_b: ", and a new way to create.",
-    hero_sub: "A live, 3-hour session for people who want to build with AI, not just use it. You set up a team of agents that works the way you do, and build something real with it before you go home.",
+    hero_sub: "A live, 3-hour session for people who want to build with AI, not just use it. You set up a team of agents that works the way you do, and build something real with it before the session ends.",
     hero_points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
 
     why_eyebrow: "Why now",
