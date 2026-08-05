@@ -193,6 +193,9 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* full language name on desktop, 2-letter code on mobile */
 .langtoggle .lang-short { display: none; }
 .nav__book { }
+/* Nav button icons — larger so they fill the button and read as inviting
+   (button size stays the same; the icon just occupies more of it). */
+.nav__book svg, .nav__student svg { width: 22px; height: 22px; }
 
 /* ---- Hero ---------------------------------------------------------------- */
 .hero { position: relative; overflow: hidden; padding-top: clamp(2.5rem, 6vw, 4.5rem); }
@@ -566,6 +569,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   /* WhatsApp + Student become ICON-ONLY square buttons on mobile */
   .nav__book .btn__label, .nav__student .btn__label { display: none; }
   .nav__book, .nav__student { width: 2.5rem; padding-inline: 0; gap: 0; }
+  /* icon-only on mobile → make the glyph bigger so it fills the square */
+  .nav__book svg, .nav__student svg { width: 26px; height: 26px; }
   /* language toggle → 2-letter code on mobile (EN / עב) */
   .langtoggle .lang-full { display: none; }
   .langtoggle .lang-short { display: inline; }
