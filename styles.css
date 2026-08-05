@@ -666,43 +666,35 @@ body.modal-open { overflow: hidden; }
 .ctaband .btn--wa-solid { background: #25D366; color: #ffffff; }
 .ctaband .btn--wa-solid:hover { background: #1eb455; }
 
-/* ---- TESTIMONIALS — vibrant quote cards, one crew colour per card ------------ */
+/* ---- TESTIMONIALS — clean, premium cards: big photo + bold high-contrast quote */
 .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 .quote-card {
-  --qc: var(--pl-accent);              /* per-card accent (set below) */
-  position: relative; overflow: hidden;
   background: var(--pl-surface); border: 1px solid var(--pl-border);
-  border-radius: var(--radius-xl); padding: 2rem 1.9rem 1.75rem;
-  display: flex; flex-direction: column; gap: 1.25rem; box-shadow: var(--shadow-pl-md);
+  border-radius: var(--radius-xl); padding: clamp(1.9rem, 3vw, 2.5rem);
+  display: flex; flex-direction: column; gap: 1.5rem; box-shadow: var(--shadow-pl-md);
   transition: transform 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
-/* colour bar down the leading edge + big watermark quote mark, both in the crew colour */
-.quote-card::before {
-  content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: 5px; background: var(--qc);
-}
-.quote-card::after {
-  content: "\201D"; position: absolute; top: 0.35rem; inset-inline-start: 1.4rem;
-  font-family: Georgia, "Times New Roman", serif; font-size: 4.5rem; line-height: 1;
-  color: var(--qc); opacity: 0.18; pointer-events: none;
-}
-.quote-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-pl-lg); }
-.quote-card:nth-child(4n+1) { --qc: var(--pl-crew-teal); }
-.quote-card:nth-child(4n+2) { --qc: var(--pl-crew-orange); }
-.quote-card:nth-child(4n+3) { --qc: var(--pl-crew-purple); }
-.quote-card:nth-child(4n+4) { --qc: var(--pl-crew-yellow); }
+.quote-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-pl-lg); }
 
-.quote-card blockquote { margin: 0; position: relative; z-index: 1; font-size: var(--text-body-lg); font-weight: 600; color: var(--pl-fg); line-height: 1.55; }
-.quote-card figcaption { display: flex; align-items: center; gap: 0.85rem; margin-top: auto; }
+/* attribution header: big prominent photo + name/role */
+.quote-card__head { display: flex; align-items: center; gap: 1.1rem; }
 .quote-card__avatar {
-  width: 52px; height: 52px; border-radius: 999px; background: var(--pl-illo-bg); flex: none;
+  width: 76px; height: 76px; border-radius: 999px; background: var(--pl-illo-bg); flex: none;
   display: grid; place-items: center; overflow: hidden;
-  box-shadow: 0 0 0 2px var(--pl-surface), 0 0 0 4px var(--qc);
+  box-shadow: 0 0 0 3px var(--pl-surface), 0 0 0 5px var(--pl-accent);
 }
 .quote-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
-.quote-card__avatar svg { width: 26px; height: 26px; color: var(--qc); }
-.quote-card__who { display: flex; flex-direction: column; gap: 0.15rem; }
-.quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body); }
-.quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--qc); }
+.quote-card__avatar svg { width: 34px; height: 34px; color: var(--pl-accent); }
+.quote-card__who { display: flex; flex-direction: column; gap: 0.2rem; }
+.quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body-lg); line-height: 1.2; }
+.quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--pl-accent); }
+
+/* the quote: bold, high-contrast, clean — separated by a hairline, no watermark */
+.quote-card blockquote {
+  margin: 0; padding-top: 1.4rem; border-top: 1px solid var(--pl-border);
+  font-size: var(--text-h3); font-weight: 700; color: var(--pl-fg);
+  line-height: 1.4; letter-spacing: -0.01em;
+}
 @media (max-width: 700px) { .quote-grid { grid-template-columns: 1fr; } }
 
 /* centered hero placeholder visual (swiss-army-knife until the real graphic lands) */
@@ -711,6 +703,50 @@ body.modal-open { overflow: hidden; }
 /* "who it's not for" quiet line under the three tiles */
 .who__not { margin-top: 1.75rem; text-align: center; max-width: 62ch; margin-inline: auto;
   color: var(--pl-fg-secondary); font-weight: 500; font-size: var(--text-sm); }
+
+/* ---- Footer links (Privacy / Terms / Contact) ---------------------------- */
+.footer__links { display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: center; }
+.footer__links a { color: var(--pl-fg); font-weight: 600; text-decoration: none; font-size: var(--text-sm); }
+.footer__links a:hover { color: var(--pl-accent); }
+
+/* ---- Sub-pages (prep / legal) -------------------------------------------- */
+.page { min-height: 60vh; }
+.prep__title { max-width: 26ch; }
+.prep__h { font-size: var(--text-h2); margin-bottom: 1rem; }
+
+/* Session facts — label/value rows split by hairlines, one bounded panel */
+.facts { display: grid; gap: 0; margin: 0; border: 1px solid var(--pl-border);
+  border-radius: var(--radius-lg); overflow: hidden; background: var(--pl-surface); box-shadow: var(--shadow-pl-sm); }
+.facts__row { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem;
+  padding: 1rem 1.4rem; border-top: 1px solid var(--pl-border); }
+.facts__row:first-child { border-top: 0; }
+.facts dt { font-weight: 700; color: var(--pl-fg); margin: 0; }
+.facts dd { margin: 0; color: var(--pl-fg-body); font-weight: 500; }
+@media (max-width: 560px) { .facts__row { grid-template-columns: 1fr; gap: 0.2rem; } }
+
+/* Setup checklist — numbered cards */
+.prep-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.prep-step { display: flex; gap: 1rem; align-items: flex-start;
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-lg); padding: 1.4rem 1.5rem; box-shadow: var(--shadow-pl-sm); }
+.prep-step__num { flex: none; width: 2rem; height: 2rem; border-radius: 999px;
+  display: grid; place-items: center; font-weight: 700; font-size: var(--text-sm);
+  background: var(--pl-illo-bg); color: var(--pl-accent); }
+.prep-step h3 { font-size: var(--text-h3); margin-bottom: 0.3rem; }
+.prep-step p { color: var(--pl-fg-body); font-weight: 500; }
+
+/* Note callout (echoes the login note styling) */
+.prep-note { display: flex; gap: 0.7rem; align-items: flex-start;
+  background: var(--pl-bg-alt); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-lg); padding: 1.1rem 1.3rem;
+  color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
+.prep-note svg { flex: none; width: 20px; height: 20px; color: var(--pl-accent); margin-top: 1px; }
+
+/* Legal pages (Privacy / Terms) */
+.legal { margin-top: 2.25rem; display: grid; gap: 1.75rem; }
+.legal__item h2 { font-size: var(--text-h3); margin-bottom: 0.5rem; }
+.legal__item p { color: var(--pl-fg-body); font-weight: 500; }
+.legal__updated { margin-top: 2.5rem; color: var(--pl-fg-muted); font-weight: 500; font-size: var(--text-sm); }
 
 /* reveal on scroll */
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease-pl), transform 0.6s var(--ease-pl); }

@@ -10,6 +10,37 @@
 // WhatsApp only — no booking funnel. Ofir wants direct contact.
 const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2259730
 
+// When a gated redirect bounces a signed-out visitor home, this asks wireStudent
+// to auto-open the sign-in modal on the next render.
+let pendingStudentOpen = false;
+
+/* ---- Cohort gate (client-side, no backend) ------------------------------- *
+   The student prep page is gated by a single shared cohort password. There is
+   NO per-user auth today: the entered password is SHA-256 hashed in the browser
+   and compared to the digest below. To change the cohort password, hash the new
+   one (`printf '%s' 'newpassword' | shasum -a 256`) and paste the hex here.
+   The email field in the sign-in modal is intentionally hidden (not deleted) so
+   per-user email auth can be re-enabled later without a rebuild.                */
+// COHORT_PW_SHA256 — swap to change the cohort password. (temp password: "productlab")
+const COHORT_PW_SHA256 = "a995d8e42770381fd158706d638eb5061ab56173beba0358f2de9c92113d4168";
+
+/* SHA-256 → lowercase hex, via the Web Crypto API. */
+async function sha256hex(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/* The ONE isolated auth check. Today: hash the password, compare to the cohort
+   digest. Swap the body later (e.g. per-user email + backend) without touching
+   callers. Resolves { ok, token } — token is stored on success, checked as the
+   prep-page guard flag (the check itself never guards the page). */
+async function authenticate(creds) {
+  const hex = await sha256hex((creds && creds.password) || "");
+  const ok = hex === COHORT_PW_SHA256;
+  const token = ok ? (crypto.randomUUID ? crypto.randomUUID() : hex) : null;
+  return { ok, token };
+}
+
 /* ---- Icons (inline, currentColor) --------------------------------------- */
 const I = {
   wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.02h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.24 8.24 0 0 1-1.26-4.05c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.82c0 4.54-3.7 8.23-8.23 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.79.97-.14.16-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.76-1.85-.2-.48-.4-.42-.56-.43l-.48-.01c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.54.12.16 1.73 2.64 4.19 3.7.58.25 1.04.4 1.4.51.59.19 1.12.16 1.54.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>',
@@ -146,6 +177,60 @@ const I18N = {
     login_submit: "כניסה",
     login_soon: "הפרטים לא תואמים. אם אתם משתתפים ולא מצליחים להיכנס, כתבו לי.",
 
+    // ---- Student prep page (gated by pl_auth) — copy Copywriter 2026-08-05
+    prep_page_title: "אזור התלמידים",
+    prep_welcome_title: "אתם בפנים. ברוכים הבאים למחזור הראשון של Product Lab.",
+    prep_welcome_body: "הדף הזה הוא נקודת הבית שלכם למפגש. כל מה שצריך נמצא כאן, והוא יתמלא ככל שהתאריך מתקרב.",
+    prep_facts_title: "פרטי המפגש",
+    prep_facts: [
+      { l: "מתי", v: "יום ה׳, 3 בספטמבר, 17:30-20:30" },
+      { l: "כמה זמן", v: "מפגש יחיד, שלוש שעות" },
+      { l: "איפה", v: "אונליין בזום" },
+      { l: "מי", v: "בהזמנה בלבד, קבוצה קטנה" },
+    ],
+    prep_setup_title: "מה להכין לפני שמתחילים",
+    prep_setup: [
+      { t: "לפטופ", b: "לפטופ, לא טלפון או טאבלט. אתם הולכים לבנות, וצריך מסך מלא ומקלדת." },
+      { t: "חשבון Claude Pro", b: "חשבון Claude בתוכנית Pro (בערך 17$ לחודש). כדאי להקים אותו מראש. זה מה שמאפשר לסוכנים לרוץ חלק לאורך שלוש השעות. זה נדרש, וזה מהיר להקמה." },
+      { t: "זום מותקן ובדוק", b: "התקינו את זום ובדקו שהוא עובד. הקישור למפגש יופיע בדף הזה לפני התאריך." },
+      { t: "אינטרנט, שקט ואוזניות", b: "חיבור אינטרנט יציב, פינה שקטה, ואוזניות. שלוש שעות של בנייה מרוכזת עוברות טוב יותר בלי הפרעות." },
+    ],
+    prep_expect_title: "איך נראות שלוש השעות",
+    prep_expect_lead: "נכנסים בלי כלום. יוצאים עם צוות AI עובד, ועם הדבר האמיתי הראשון שבניתם איתו.",
+    prep_expect: [
+      { time: "30 דקות", t: "להבין את השטח", b: "איפה הטכנולוגיה עומדת עכשיו, מה בונים, ולמה דווקא הכלים האלה." },
+      { time: "כ-90 דקות", t: "להקים את צוות ה-AI שלכם", b: "מקימים צוות סוכנים משלכם, מכוון לעבוד בשיטה שלכם." },
+      { time: "כ-60 דקות", t: "לבנות תוצר אמיתי ביחד", b: "מפעילים את הצוות ומוציאים לפועל דבר אמיתי אחד, בשידור חי." },
+    ],
+    prep_help_title: "שאלה, או תקועים?",
+    prep_help_body: "תקועים בהכנות או שיש שאלה? כתבו לי בוואטסאפ. עדיף לסדר את זה עכשיו ולא ב-17:30 ביום המפגש.",
+    prep_note: "הקישור לזום והחומרים יופיעו בדף הזה קרוב לתאריך. תבדקו כאן שוב לפני שמתחילים.",
+
+    // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
+    privacy_title: "מדיניות פרטיות",
+    privacy_intro: "בקצרה: אנחנו אוספים כמה שפחות, ולעולם לא מוכרים את המידע שלכם. הנה התמונה המלאה.",
+    privacy_items: [
+      { t: "מה אנחנו אוספים", b: "הכניסה לאזור התלמידים לא אוספת ממכם שום מידע אישי. אם נבקש מכם אימייל, בהרשמה או בשאלון קצר, תדעו בדיוק מתי אתם מוסרים אותו." },
+      { t: "למה אנחנו משתמשים בו", b: "כל פרט שתמסרו משמש רק כדי להריץ את הסדנה: ליצור אתכם קשר לגבי המפגש, לשלוח חומרים, ולעקוב אחרי מה שצריך. זהו." },
+      { t: "מה אנחנו לא עושים", b: "אנחנו לא מוכרים את המידע שלכם, ולא משתפים אותו עם אף אחד מחוץ לסדנה." },
+      { t: "יצירת קשר", b: "שאלה לגבי המידע שלכם? כתבו לי בוואטסאפ ואענה." },
+    ],
+    privacy_updated: "עודכן לאחרונה: 5 באוגוסט 2026",
+
+    // ---- Legal: Terms (terms_*) — copy Copywriter 2026-08-05
+    terms_title: "תנאי שימוש",
+    terms_intro: "בקצרה: זו סדנה בהזמנה בלבד, החומרים שלכם לשימוש אישי אבל לא להעברה, והתוכן הוא שלי. הנה הפירוט.",
+    terms_items: [
+      { t: "בהזמנה בלבד", b: "הגישה לסדנה ולאזור התלמידים היא בהזמנה. אל תשתפו את פרטי הכניסה שלכם." },
+      { t: "החומרים", b: "הפרומפטים, התבניות והחומרים שנשתף הם לשימוש אישי שלכם. אל תפיצו, תמכרו או תפרסמו אותם מחדש." },
+      { t: "התוכן", b: "כל תוכן הסדנה הוא © אופיר רושינק / Product Lab." },
+      { t: "יצירת קשר", b: "משהו לא ברור? כתבו לי בוואטסאפ." },
+    ],
+    terms_updated: "עודכן לאחרונה: 5 באוגוסט 2026",
+
+    footer_privacy: "מדיניות פרטיות",
+    footer_terms: "תנאי שימוש",
+
     footer_line: "Product Lab. סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
     footer_contact: "יצירת קשר",
   },
@@ -259,6 +344,60 @@ const I18N = {
     login_submit: "Sign in",
     login_soon: "Those details don't match an account. If you're a participant and can't get in, message me.",
 
+    // ---- Student prep page (gated by pl_auth) — copy Copywriter 2026-08-05
+    prep_page_title: "Student area",
+    prep_welcome_title: "You're in. Welcome to cohort #1 of Product Lab.",
+    prep_welcome_body: "This page is your home base for the session. Everything you need is here, and it fills in as the date gets closer.",
+    prep_facts_title: "Session details",
+    prep_facts: [
+      { l: "When", v: "Thursday, 3 September, 17:30-20:30" },
+      { l: "How long", v: "One session, three hours" },
+      { l: "Where", v: "Online, over Zoom" },
+      { l: "Who", v: "Invite-only, a small group" },
+    ],
+    prep_setup_title: "Set this up before we start",
+    prep_setup: [
+      { t: "A laptop", b: "A laptop, not a phone or tablet. You'll be building, and you need the full screen and keyboard." },
+      { t: "A Claude Pro account", b: "A Claude account on the Pro plan (about $17/mo). Set it up in advance. It's what lets the agents run smoothly across the three hours. It's required, and it's quick to set up." },
+      { t: "Zoom installed and tested", b: "Install Zoom and check it works. The session link will appear on this page before the date." },
+      { t: "Internet, quiet, headphones", b: "A stable internet connection, a quiet space, and headphones. Three hours of focused building go better without interruptions." },
+    ],
+    prep_expect_title: "What the three hours look like",
+    prep_expect_lead: "You come in with nothing. You leave with a working AI team, and the first real thing you built with it.",
+    prep_expect: [
+      { time: "30 min", t: "Understand the field", b: "Where the technology stands now, what we're building, and why these tools." },
+      { time: "about 90 min", t: "Build your AI team", b: "Stand up your own team of agents, set up to work the way you do." },
+      { time: "about 60 min", t: "Build one real thing together", b: "Put the team to work and ship one real thing, live." },
+    ],
+    prep_help_title: "Questions, or stuck?",
+    prep_help_body: "Stuck on the setup, or have a question? Message me on WhatsApp. Better to sort it now than at 17:30 on the day.",
+    prep_note: "The Zoom link and any materials will show up on this page closer to the date. Check back here before we start.",
+
+    // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
+    privacy_title: "Privacy Policy",
+    privacy_intro: "Short version: we collect as little as possible, and we never sell your data. Here's the full picture.",
+    privacy_items: [
+      { t: "What we collect", b: "Signing in to the student area collects no personal information from you. If we ever ask for your email, whether to sign up or in a short survey, you'll know exactly when you're giving it." },
+      { t: "How we use it", b: "Anything you share is used only to run the workshop: to reach you about your session, send materials, and follow up. That's it." },
+      { t: "What we don't do", b: "We never sell your information, and we never share it with anyone outside the workshop." },
+      { t: "Contact", b: "Questions about your data? Message me on WhatsApp and I'll answer." },
+    ],
+    privacy_updated: "Last updated: 5 August 2026",
+
+    // ---- Legal: Terms (terms_*) — copy Copywriter 2026-08-05
+    terms_title: "Terms of Use",
+    terms_intro: "Short version: this is an invite-only workshop, the materials are yours to use but not to pass on, and the content is mine. Here's the detail.",
+    terms_items: [
+      { t: "Invite-only", b: "Access to the workshop and this student area is by invitation. Please don't share your sign-in details." },
+      { t: "The materials", b: "The prompts, templates, and materials we share are for your personal use. Please don't redistribute, resell, or republish them." },
+      { t: "The content", b: "All workshop content is © Ofir Rushinek / Product Lab." },
+      { t: "Contact", b: "Anything unclear? Message me on WhatsApp." },
+    ],
+    terms_updated: "Last updated: 5 August 2026",
+
+    footer_privacy: "Privacy Policy",
+    footer_terms: "Terms of Use",
+
     footer_line: "Product Lab. Invite-only workshops on AI-led product design.",
     footer_contact: "Get in touch",
   },
@@ -280,20 +419,64 @@ const ctaBand = (t, title, sub) => `
     </div>
   </div></section>`;
 
+/* ---- Shared chrome (nav + student modal + footer), used on every page ----- */
+// NAV — logo hidden for now (decide later); wordmark text + WhatsApp only.
+// Brand links to "#/" (home route) so it works from sub-pages too.
+const navHeader = (t, lang) => `
+  <header class="nav"><div class="wrap nav__in">
+    <a class="nav__brand nav__brand--text" href="#/">Product Lab</a>
+    <div class="nav__right">
+      <button class="langtoggle" data-toggle-lang aria-label="Switch language"><span class="lang-full">${lang === "he" ? "English" : "עברית"}</span><span class="lang-short">${lang === "he" ? "EN" : "עב"}</span></button>
+      <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
+      <!-- Student entrance: opens the sign-in modal (cohort gate). -->
+      <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}">${I.login}<span class="btn__label">${t.nav_student}</span></button>
+    </div>
+  </div></header>`;
+
+// Student sign-in MODAL. The email field is intentionally HIDDEN (not deleted)
+// so per-user email auth can be re-enabled later without a rebuild. Submit runs
+// authenticate(): on success it stores the pl_auth guard flag and routes to #/prep.
+const studentModal = (t) => `
+  <div class="modal" data-student-modal hidden>
+    <div class="modal__overlay" data-student-close></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-label="${t.login_title}">
+      <button class="modal__close" type="button" data-student-close aria-label="Close">${I.x}</button>
+      <div class="login__ico">${I.login}</div>
+      <span class="eyebrow">${t.login_eyebrow}</span>
+      <h2 class="login__title">${t.login_title}</h2>
+      <p class="login__sub">${t.login_sub}</p>
+      <form class="login__form" data-student-form novalidate>
+        <div class="field" hidden>
+          <label class="field__label" for="student-email">${t.login_email_label}</label>
+          <input class="input" id="student-email" name="email" type="email" dir="ltr" placeholder="${t.login_email_ph}" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label class="field__label" for="student-pass">${t.login_pass_label}</label>
+          <input class="input" id="student-pass" name="password" type="password" placeholder="${t.login_pass_ph}" autocomplete="current-password" />
+        </div>
+        <button class="btn btn--primary login__submit" type="submit">${t.login_submit}</button>
+        <p class="login__note" data-student-note hidden>${I.info}<span>${t.login_soon}</span></p>
+      </form>
+    </div>
+  </div>`;
+
+// FOOTER — now carries the Privacy + Terms routes alongside contact.
+const siteFooter = (t) => `
+  <footer class="footer"><div class="wrap footer__in">
+    <div class="footer__brand"><span class="footer__wordmark">Product Lab</span></div>
+    <div class="footer__meta">${t.footer_line}</div>
+    <nav class="footer__links">
+      <a href="#/privacy">${t.footer_privacy}</a>
+      <a href="#/terms">${t.footer_terms}</a>
+      <a href="${WA_URL}" target="_blank" rel="noopener">${t.footer_contact}</a>
+    </nav>
+  </div></footer>`;
+
 function render(lang) {
   const t = I18N[lang];
 
   document.getElementById("app").innerHTML = `
-  <!-- NAV — logo hidden for now (decide later); wordmark text + WhatsApp only -->
-  <header class="nav"><div class="wrap nav__in">
-    <a class="nav__brand nav__brand--text" href="#top">Product Lab</a>
-    <div class="nav__right">
-      <button class="langtoggle" data-toggle-lang aria-label="Switch language"><span class="lang-full">${lang === "he" ? "English" : "עברית"}</span><span class="lang-short">${lang === "he" ? "EN" : "עב"}</span></button>
-      <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
-      <!-- Student entrance: opens the sign-in modal (placeholder). -->
-      <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}">${I.login}<span class="btn__label">${t.nav_student}</span></button>
-    </div>
-  </div></header>
+  ${navHeader(t, lang)}
 
   <main id="top">
   <!-- 1 HERO — full-bleed COZY CAFE SCENE as the background (the visual IS the bg).
@@ -467,11 +650,11 @@ function render(lang) {
     <div class="quote-grid" style="margin-top:2rem">
       ${t.quotes.map((qt) => `
         <figure class="quote-card reveal">
-          <blockquote>${qt.q}</blockquote>
-          <figcaption>
+          <figcaption class="quote-card__head">
             <span class="quote-card__avatar">${qt.img ? `<img src="assets/${qt.img}.jpg?v=1" alt="${qt.n}" loading="lazy" />` : I.user}</span>
             <span class="quote-card__who"><strong>${qt.n}</strong><span>${qt.m}</span></span>
           </figcaption>
+          <blockquote>${qt.q}</blockquote>
         </figure>`).join("")}
     </div>
   </div></section>
@@ -496,45 +679,144 @@ function render(lang) {
 
   </main>
 
-  <!-- Student sign-in MODAL — opens from the header button, hidden by default -->
-  <div class="modal" data-student-modal hidden>
-    <div class="modal__overlay" data-student-close></div>
-    <div class="modal__card" role="dialog" aria-modal="true" aria-label="${t.login_title}">
-      <button class="modal__close" type="button" data-student-close aria-label="Close">${I.x}</button>
-      <div class="login__ico">${I.login}</div>
-      <span class="eyebrow">${t.login_eyebrow}</span>
-      <h2 class="login__title">${t.login_title}</h2>
-      <p class="login__sub">${t.login_sub}</p>
-      <form class="login__form" data-student-form novalidate>
-        <div class="field">
-          <label class="field__label" for="student-email">${t.login_email_label}</label>
-          <input class="input" id="student-email" name="email" type="email" dir="ltr" placeholder="${t.login_email_ph}" autocomplete="email" />
-        </div>
-        <div class="field">
-          <label class="field__label" for="student-pass">${t.login_pass_label}</label>
-          <input class="input" id="student-pass" name="password" type="password" placeholder="${t.login_pass_ph}" autocomplete="current-password" />
-        </div>
-        <button class="btn btn--primary login__submit" type="submit">${t.login_submit}</button>
-        <p class="login__note" data-student-note hidden>${I.info}<span>${t.login_soon}</span></p>
-      </form>
-    </div>
-  </div>
+  ${studentModal(t)}
+  ${siteFooter(t)}`;
 
-  <!-- 12 FOOTER -->
-  <footer class="footer"><div class="wrap footer__in">
-    <div class="footer__brand"><span class="footer__wordmark">Product Lab</span></div>
-    <div class="footer__meta">${t.footer_line}</div>
-    <a href="${WA_URL}" target="_blank" rel="noopener">${t.footer_contact}</a>
-  </div></footer>`;
+  afterRender();
+}
 
+/* ---- Student PREP page — gated by the pl_auth sessionStorage flag --------- */
+/* The single guard: no pl_auth token → bounce home and pop the sign-in modal.
+   authenticate() sets pl_auth on success; this page only reads it. */
+function renderPrep(lang) {
+  const t = I18N[lang];
+  let authed = false;
+  try { authed = !!sessionStorage.getItem("pl_auth"); } catch (e) {}
+  if (!authed) { pendingStudentOpen = true; location.hash = "#/"; return; }
+
+  document.getElementById("app").innerHTML = `
+  ${navHeader(t, lang)}
+
+  <main id="top" class="page">
+    <section class="section"><div class="wrap narrow">
+      <div class="reveal">
+        <span class="eyebrow">${t.prep_page_title}</span>
+        <h1 class="section-title prep__title">${t.prep_welcome_title}</h1>
+        <p class="section-lead">${t.prep_welcome_body}</p>
+      </div>
+
+      <!-- Session facts -->
+      <div class="reveal" style="margin-top:2.75rem">
+        <h2 class="prep__h">${t.prep_facts_title}</h2>
+        <dl class="facts">
+          ${t.prep_facts.map((f) => `<div class="facts__row"><dt>${f.l}</dt><dd>${f.v}</dd></div>`).join("")}
+        </dl>
+      </div>
+
+      <!-- Setup checklist -->
+      <div class="reveal" style="margin-top:2.75rem">
+        <h2 class="prep__h">${t.prep_setup_title}</h2>
+        <ol class="prep-steps">
+          ${t.prep_setup.map((s, i) => `
+            <li class="prep-step">
+              <span class="prep-step__num">${i + 1}</span>
+              <div><h3>${s.t}</h3><p>${s.b}</p></div>
+            </li>`).join("")}
+        </ol>
+      </div>
+
+      <!-- What the three hours look like -->
+      <div class="reveal" style="margin-top:2.75rem">
+        <h2 class="prep__h">${t.prep_expect_title}</h2>
+        <p class="section-lead" style="margin-top:.5rem">${t.prep_expect_lead}</p>
+        <div class="agenda" style="margin-top:1.5rem">
+          ${t.prep_expect.map((p) => `
+            <div class="phase">
+              <span class="phase__time">${p.time}</span>
+              <div><h3>${p.t}</h3><p>${p.b}</p></div>
+            </div>`).join("")}
+        </div>
+      </div>
+
+      <!-- Help + WhatsApp -->
+      <div class="reveal" style="margin-top:2.75rem">
+        <h2 class="prep__h">${t.prep_help_title}</h2>
+        <p class="section-lead" style="margin-top:.5rem">${t.prep_help_body}</p>
+        <div class="cta-row" style="margin-top:1.25rem">
+          <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+        </div>
+      </div>
+
+      <p class="prep-note reveal" style="margin-top:2.25rem">${I.info}<span>${t.prep_note}</span></p>
+    </div></section>
+  </main>
+
+  ${studentModal(t)}
+  ${siteFooter(t)}`;
+
+  afterRender();
+}
+
+/* ---- Legal pages (Privacy / Terms) — shared template --------------------- */
+function renderLegal(lang, kind) {
+  const t = I18N[lang];
+  const isP = kind === "privacy";
+  const title = isP ? t.privacy_title : t.terms_title;
+  const intro = isP ? t.privacy_intro : t.terms_intro;
+  const items = isP ? t.privacy_items : t.terms_items;
+  const updated = isP ? t.privacy_updated : t.terms_updated;
+  const eyebrow = isP ? t.footer_privacy : t.footer_terms;
+
+  document.getElementById("app").innerHTML = `
+  ${navHeader(t, lang)}
+
+  <main id="top" class="page">
+    <section class="section"><div class="wrap narrow">
+      <div class="reveal">
+        <span class="eyebrow">${eyebrow}</span>
+        <h1 class="section-title">${title}</h1>
+        <p class="section-lead">${intro}</p>
+      </div>
+      <div class="legal reveal">
+        ${items.map((x) => `<section class="legal__item"><h2>${x.t}</h2><p>${x.b}</p></section>`).join("")}
+      </div>
+      <p class="legal__updated reveal">${updated}</p>
+    </div></section>
+  </main>
+
+  ${studentModal(t)}
+  ${siteFooter(t)}`;
+
+  afterRender();
+}
+
+/* Post-render wiring shared by every page. */
+function afterRender() {
   wireLang();
   wireReveal();
   wireStudent();
 }
 
-/* ---- Student sign-in (placeholder) --------------------------------------- */
-/* Non-functional on purpose: no backend, no auth, no validation. Clicking
-   submit just reveals the "coming soon" note. Real logic will replace this. */
+/* ---- Router — hash routes: #/prep, #/privacy, #/terms, else home ---------- */
+function currentRoute() {
+  const h = (location.hash || "").replace(/^#\/?/, "");
+  if (h === "prep") return "prep";
+  if (h === "privacy") return "privacy";
+  if (h === "terms") return "terms";
+  return "home";
+}
+function route(lang) {
+  const r = currentRoute();
+  if (r === "prep") renderPrep(lang);
+  else if (r === "privacy") renderLegal(lang, "privacy");
+  else if (r === "terms") renderLegal(lang, "terms");
+  else render(lang);
+}
+
+/* ---- Student sign-in (cohort gate) --------------------------------------- */
+/* Submit runs the isolated authenticate() check. On success we store the
+   pl_auth token (the prep-page guard flag) and route to #/prep. On failure we
+   reveal the note. If a gated redirect asked for it, auto-open on render. */
 function wireStudent() {
   const modal = document.querySelector("[data-student-modal]");
   if (!modal) return;
@@ -543,9 +825,24 @@ function wireStudent() {
   document.querySelectorAll("[data-student-open]").forEach((b) => b.addEventListener("click", open));
   modal.querySelectorAll("[data-student-close]").forEach((b) => b.addEventListener("click", close));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
+
   const form = modal.querySelector("[data-student-form]");
   const note = form && form.querySelector("[data-student-note]");
-  if (form) form.addEventListener("submit", (e) => { e.preventDefault(); if (note) note.hidden = false; });
+  const pass = form && form.querySelector('[name="password"]');
+  if (form) form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (note) note.hidden = true;
+    const { ok, token } = await authenticate({ password: pass ? pass.value : "" });
+    if (ok) {
+      try { sessionStorage.setItem("pl_auth", token); } catch (er) {}
+      close();
+      location.hash = "#/prep";
+    } else if (note) {
+      note.hidden = false;
+    }
+  });
+
+  if (pendingStudentOpen) { pendingStudentOpen = false; open(); }
 }
 
 /* ---- Language ------------------------------------------------------------ */
@@ -554,7 +851,7 @@ function setLang(lang) {
   html.lang = lang;
   html.dir = lang === "he" ? "rtl" : "ltr";
   try { localStorage.setItem("pl_lang", lang); } catch (e) {}
-  render(lang);
+  route(lang);
 }
 function wireLang() {
   const lt = document.querySelector("[data-toggle-lang]");
@@ -574,6 +871,11 @@ function wireReveal() {
 }
 
 /* ---- Boot ---------------------------------------------------------------- */
+// Re-render on hash route changes, scrolling to top on navigation.
+window.addEventListener("hashchange", () => {
+  route(document.documentElement.lang || "he");
+  window.scrollTo(0, 0);
+});
 (function () {
   let lang = "he";
   try { lang = localStorage.getItem("pl_lang") || "he"; } catch (e) {}
