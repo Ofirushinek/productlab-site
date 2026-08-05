@@ -95,7 +95,7 @@ const I18N = {
     walk_items: [
       { t: "צוות AI משלך.", b: "הסוכנים שמקימים במפגש, מכוונים לעבוד לצידך." },
       { t: "זיכרון משותף שכולם שואבים ממנו,", b: "כך שהם נעשים חדים יותר ככל שאתם עובדים יחד." },
-      { t: "שיטת עבודה שאפשר לחזור עליה", b: "כבר ביום שני בבוקר, בפרויקטים שלך." },
+      { t: "שיטת עבודה שאפשר לחזור עליה", b: "כבר למחרת בבוקר, בפרויקטים שלך." },
       { t: "דבר אמיתי אחד שבנית במפגש עצמו,", b: "לא שקופית שמספרת עליו." },
     ],
 
@@ -263,7 +263,7 @@ const I18N = {
     walk_items: [
       { t: "Your own AI team.", b: "The agents you build in the session, set up to work alongside you." },
       { t: "A shared memory they all draw from,", b: "so they get sharper the more you work together." },
-      { t: "A build workflow you can repeat", b: "on Monday morning, on your own projects." },
+      { t: "A build workflow you can repeat", b: "by the very next morning, on your own projects." },
       { t: "A real thing you built live,", b: "not a slide about it." },
     ],
 
