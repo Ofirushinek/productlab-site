@@ -50,7 +50,7 @@ const I18N = {
       where_label: "איפה?",
       where_value: ["אונליין בזום", "מכל מקום בעולם"],
       cta: "דברו איתי",
-      limited_note: "מספר מקומות מוגבל",
+      limited_note: "מקומות מוגבלים",
     },
 
     why_eyebrow: "למה עכשיו",
@@ -157,6 +157,15 @@ const I18N = {
     hero_title_b: ", and a new way to create.",
     hero_sub: "A live, 3-hour session for people who want to build with AI, not just use it. You set up a team of agents that works the way you do, and build something real with it before the session ends.",
     hero_points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
+    session: {
+      badge: "First cohort",
+      when_label: "When?",
+      when_value: ["Thursday, 3 September", "17:30-20:30", "One session, 3 hours"],
+      where_label: "Where?",
+      where_value: ["Online, over Zoom", "From anywhere"],
+      cta: "Talk to me",
+      limited_note: "Spots are limited",
+    },
 
     why_eyebrow: "Why now",
     why_title: "The way product gets built is changing. You can lead it.",
@@ -277,7 +286,7 @@ function render(lang) {
   <header class="nav"><div class="wrap nav__in">
     <a class="nav__brand nav__brand--text" href="#top">Product Lab</a>
     <div class="nav__right">
-      <button class="langtoggle" data-toggle-lang aria-label="Switch language">${lang === "he" ? "English" : "עברית"}</button>
+      <button class="langtoggle" data-toggle-lang aria-label="Switch language"><span class="lang-full">${lang === "he" ? "English" : "עברית"}</span><span class="lang-short">${lang === "he" ? "EN" : "עב"}</span></button>
       <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
       <!-- Student entrance: opens the sign-in modal (placeholder). -->
       <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}">${I.login}<span class="btn__label">${t.nav_student}</span></button>
@@ -301,6 +310,37 @@ function render(lang) {
         <source media="(max-width: 760px)" srcset="assets/hero-mobile-2.png?v=3" />
         <img src="assets/hero-even-2.png?v=7" alt="" />
       </picture>
+    </div>
+  </section>
+
+  <!-- 1b NEXT SESSION — a FLAT full-width STRIP (like the site's other section bands),
+       flush below the hero so a hint peeks above the fold. NOT a floating/rounded card.
+       Same structure/content: badge + when/where columns divided by hairlines + CTA. -->
+  <section class="session-strip-band">
+    <div class="wrap">
+      <div class="session-strip reveal">
+        <span class="ss-badge">${I.spark} ${t.session.badge}</span>
+        <div class="ss-col">
+          <div class="ss-label">${t.session.when_label}</div>
+          <div class="ss-val">
+            <strong>${t.session.when_value[0]}</strong>
+            <span>${t.session.when_value[1]}, ${t.session.when_value[2]}</span>
+          </div>
+        </div>
+        <div class="ss-div"></div>
+        <div class="ss-col">
+          <div class="ss-label">${t.session.where_label}</div>
+          <div class="ss-val">
+            <strong>${t.session.where_value[0]}</strong>
+            <span>${t.session.where_value[1]}</span>
+          </div>
+        </div>
+        <div class="ss-div"></div>
+        <div class="ss-col ss-col--cta">
+          <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.session.cta}</a>
+          <div class="ss-note">${t.session.limited_note}</div>
+        </div>
+      </div>
     </div>
   </section>
 
