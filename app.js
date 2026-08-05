@@ -42,7 +42,7 @@ const I18N = {
     hero_chip: "בהזמנה בלבד. בקבוצות קטנות.",
     hero_title_a: "לצאת עם ",
     hero_title_mark: "צוות משלך",
-    hero_title_b: ", ועם דרך חדשה לבנות כל דבר.",
+    hero_title_b: ", ועם דרך חדשה ליצור.",
     hero_sub: "מפגש חי אחד, שלוש שעות, למי שרוצה לבנות עם AI, לא רק להשתמש בו. מקימים צוות סוכנים שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהולכים הביתה.",
     hero_points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח־על של בנייה"],
 
@@ -73,7 +73,7 @@ const I18N = {
     agenda_phases: [
       { time: "30 דקות", t: "להבין את השטח", b: "מה בונים, למה דווקא הכלים האלה, ואיפה הטכנולוגיה עומדת בדיוק עכשיו." },
       { time: "כ-90 דקות", t: "להקים את הצוות", b: "מרימים את צוות ה-AI שלך מפרומפטים מוכנים, מחוברים לזיכרון משותף." },
-      { time: "כ-60 דקות", t: "לבנות משהו אמיתי", b: "מפעילים את הצוות ומוציאים לפועל דבר אמיתי אחד, ביחד." },
+      { time: "כ-60 דקות", t: "לבנות תוצר אמיתי", b: "מפעילים את הצוות ומוציאים לפועל תוצר אחד, ביחד." },
     ],
 
     proof_eyebrow: "הוכחה, לא הבטחה",
@@ -149,7 +149,7 @@ const I18N = {
     hero_chip: "Invite-only. Small groups.",
     hero_title_a: "Walk out with ",
     hero_title_mark: "a crew of your own",
-    hero_title_b: ", and a new way to build anything.",
+    hero_title_b: ", and a new way to create.",
     hero_sub: "A live, 3-hour session for people who want to build with AI, not just use it. You set up a team of agents that works the way you do, and build something real with it before you go home.",
     hero_points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
 
@@ -180,7 +180,7 @@ const I18N = {
     agenda_phases: [
       { time: "30 min", t: "The lay of the land", b: "What we are building, why these tools, and where the technology actually stands right now." },
       { time: "about 90 min", t: "Build your team", b: "Stand up your AI team from ready-made prompts, wired to a shared memory." },
-      { time: "about 60 min", t: "Build something real", b: "Put the team to work and ship one real thing, together." },
+      { time: "about 60 min", t: "Build a finished piece", b: "Put the team to work and ship one finished piece, together." },
     ],
 
     proof_eyebrow: "Proof, not claims",
