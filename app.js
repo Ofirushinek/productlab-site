@@ -138,7 +138,7 @@ const I18N = {
     ],
 
     proof_eyebrow: "הוכחה, לא הבטחה",
-    proof_title: "בנוי בדיוק כמו שתבנה",
+    proof_title: "הכול פה נבנה בדיוק ככה",
     proof_lead: "שום דבר פה הוא לא הדמיה של הרעיון. זה הרעיון עצמו, פועל.",
     proof_self_tag: "הדף הזה",
     proof_self_t: "הדף הזה",
@@ -327,7 +327,7 @@ const I18N = {
     ],
 
     proof_eyebrow: "Proof, not claims",
-    proof_title: "Built the way you'll build",
+    proof_title: "All of this was built exactly this way",
     proof_lead: "Nothing here is a mockup of the idea. It is the idea, running.",
     proof_self_tag: "This page",
     proof_self_t: "This page",
