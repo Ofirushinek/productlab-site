@@ -660,6 +660,26 @@ body.modal-open { overflow: hidden; }
 .ctaband .btn--wa-solid { background: #25D366; color: #ffffff; }
 .ctaband .btn--wa-solid:hover { background: #1eb455; }
 
+/* ---- TESTIMONIALS — placeholder quote cards (dashed until real quotes land) --- */
+.quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.quote-card {
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-lg); padding: 1.75rem;
+  display: flex; flex-direction: column; gap: 1.25rem; box-shadow: var(--shadow-pl-sm);
+}
+.quote-card blockquote { margin: 0; font-size: var(--text-body-lg); font-weight: 600; color: var(--pl-fg-body); line-height: 1.55; }
+.quote-card figcaption { display: flex; align-items: center; gap: 0.75rem; }
+.quote-card__avatar { width: 42px; height: 42px; border-radius: 999px; background: var(--pl-illo-bg); flex: none; }
+.quote-card__who { display: flex; flex-direction: column; gap: 0.1rem; }
+.quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body); }
+.quote-card__who span { font-size: var(--text-sm); color: var(--pl-fg-secondary); }
+/* placeholder state: clearly intentional, so reviewers see where their quote goes */
+.quote-card--ph { border-style: dashed; border-color: var(--pl-border-strong); background: transparent; box-shadow: none; }
+.quote-card--ph blockquote { color: var(--pl-fg-muted); }
+.quote-card--ph .quote-card__avatar { background: transparent; border: 1px dashed var(--pl-border-strong); }
+.quote-card--ph .quote-card__who strong { color: var(--pl-fg-secondary); }
+@media (max-width: 700px) { .quote-grid { grid-template-columns: 1fr; } }
+
 /* centered hero placeholder visual (swiss-army-knife until the real graphic lands) */
 .hero__art--center { max-width: 320px; margin-inline: auto; margin-top: 2.75rem; }
 

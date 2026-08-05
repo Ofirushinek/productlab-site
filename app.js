@@ -111,8 +111,8 @@ const I18N = {
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
     quotes: [
-      { q: "[ציטוט - ממתין לאופיר]", n: "שם", m: "תפקיד, חברה" },
-      { q: "[ציטוט - ממתין לאופיר]", n: "שם", m: "תפקיד, חברה" },
+      { q: "כאן תופיע ההמלצה שלכם.", n: "השם שלכם", m: "תפקיד, חברה" },
+      { q: "כאן תופיע ההמלצה שלכם.", n: "השם שלכם", m: "תפקיד, חברה" },
     ],
 
     incl_eyebrow: "הפרטים",
@@ -225,8 +225,8 @@ const I18N = {
     quotes_eyebrow: "Testimonials",
     quotes_title: "From people who've done it",
     quotes: [
-      { q: "[Testimonial line - placeholder for Ofir]", n: "Name", m: "Role, Company" },
-      { q: "[Testimonial line - placeholder for Ofir]", n: "Name", m: "Role, Company" },
+      { q: "Your testimonial will appear here.", n: "Your name", m: "Role, Company" },
+      { q: "Your testimonial will appear here.", n: "Your name", m: "Role, Company" },
     ],
 
     incl_eyebrow: "The details",
@@ -455,9 +455,24 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 8 TESTIMONIALS — HIDDEN until Ofir has real, approved quotes.
-       Data (t.quotes_eyebrow / t.quotes_title / t.quotes) still lives in I18N;
-       to restore, re-add a <section class="section section--alt"> using it. -->
+  <!-- 8 TESTIMONIALS — shown as intentional PLACEHOLDER cards (dashed) so people
+       reviewing the page see where their quote will go. Swap q/n/m in I18N for real. -->
+  <section class="section section--alt"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${t.quotes_eyebrow}</span>
+      <h2 class="section-title">${t.quotes_title}</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      ${t.quotes.map((qt) => `
+        <figure class="quote-card quote-card--ph reveal">
+          <blockquote>${qt.q}</blockquote>
+          <figcaption>
+            <span class="quote-card__avatar"></span>
+            <span class="quote-card__who"><strong>${qt.n}</strong><span>${qt.m}</span></span>
+          </figcaption>
+        </figure>`).join("")}
+    </div>
+  </div></section>
 
   <!-- 9 DETAILS — ONE unified accordion (logistics + FAQ), icon on every row -->
   <section class="section"><div class="wrap narrow">
