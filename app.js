@@ -99,7 +99,7 @@ const I18N = {
     ofir_eyebrow: "למה שיחה איתי",
     roster_title: "אני והחבר׳ה",
     lead_label: "מוביל הסדנה",
-    crew_label: "צוות הסוכנים שמלווה אותך",
+    crew_label: "צוות סוכני ה-AI שמלווה אותך",
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
@@ -113,8 +113,8 @@ const I18N = {
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
     quotes: [
-      { q: "כאן תופיע ההמלצה שלכם.", n: "השם שלכם", m: "תפקיד, חברה" },
-      { q: "כאן תופיע ההמלצה שלכם.", n: "השם שלכם", m: "תפקיד, חברה" },
+      { q: "ההמלצה תופיע כאן בקרוב.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
+      { q: "ההמלצה תופיע כאן בקרוב.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
     ],
 
     incl_eyebrow: "הפרטים",
