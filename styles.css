@@ -491,7 +491,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 /* ---- Ofir revisions (2026-08-03) ---------------------------------------- */
 /* text wordmark replaces logo image (nav + footer) */
-.nav__brand--text { font-weight: 700; color: var(--pl-fg); font-size: 2rem; letter-spacing: -0.03em; text-decoration: none; }
+.nav__brand--text { font-weight: 700; color: var(--pl-fg); font-size: 1.75rem; letter-spacing: -0.03em; text-decoration: none; }
 .footer__wordmark { font-weight: 700; color: var(--pl-fg); font-size: 1.35rem; letter-spacing: -0.03em; }
 
 /* icon on every accordion row in the unified Details section */
@@ -511,10 +511,11 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .nav__book, .nav__student { width: 2.5rem; padding-inline: 0; gap: 0; }
 
   /* hero 3-point line -> a clean stacked BULLET LIST on mobile */
-  .hero__points { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-  .hero__points li { display: flex; align-items: baseline; gap: 0.55rem; }
-  .hero__points li::before,
-  .hero__points li:not(:first-child)::before { content: "•"; color: #c4b5fd; font-weight: 700; margin-inline-end: 0; }
+  /* .hero--scene prefix beats the base `.hero__points{align-items:center}` (specificity) */
+  .hero--scene .hero__points { flex-direction: column; align-items: flex-start; gap: 0.5rem; width: 100%; }
+  .hero--scene .hero__points li { display: flex; align-items: baseline; gap: 0.55rem; }
+  .hero--scene .hero__points li::before,
+  .hero--scene .hero__points li:not(:first-child)::before { content: "•"; color: #c4b5fd; font-weight: 700; margin-inline-end: 0; }
 
   /* agenda cards -> stacked (badge on top, then title, then description) */
   .phase { grid-template-columns: 1fr; gap: 0.75rem; }
@@ -591,9 +592,17 @@ body.modal-open { overflow: hidden; }
 /* DESKTOP: taller, and the scrim shifts to the reading side; title sits on your side,
    puppet faces stay clear. EN mirrors the image so faces swing to the far side. */
 @media (min-width: 860px) {
-  .hero--scene { min-height: 660px; }
-  [dir="rtl"] .hero--scene::after { background: linear-gradient(to left, rgb(18 12 8 / 0.70) 0%, rgb(18 12 8 / 0.34) 42%, rgb(18 12 8 / 0) 64%); }
-  [dir="ltr"] .hero--scene::after { background: linear-gradient(to right, rgb(18 12 8 / 0.70) 0%, rgb(18 12 8 / 0.34) 42%, rgb(18 12 8 / 0) 64%); }
+  /* Fixed crop FRAME (aspect-ratio), so object-fit:cover shows the same slice of the
+     photo at every window width -> no "sudden zoom" when the viewport widens/goes
+     fullscreen. Bounded so it never gets too short or too tall. */
+  .hero--scene { aspect-ratio: 20 / 9; min-height: 660px; max-height: 900px; }
+  /* two-layer scrim: darkens the BOTTOM (for the small text) + the reading side (for the title) */
+  [dir="rtl"] .hero--scene::after { background:
+    linear-gradient(to top, rgb(12 8 5 / 0.82) 0%, rgb(12 8 5 / 0.40) 26%, rgb(12 8 5 / 0) 50%),
+    linear-gradient(to left, rgb(14 10 6 / 0.70) 0%, rgb(14 10 6 / 0.32) 46%, rgb(14 10 6 / 0) 70%); }
+  [dir="ltr"] .hero--scene::after { background:
+    linear-gradient(to top, rgb(12 8 5 / 0.82) 0%, rgb(12 8 5 / 0.40) 26%, rgb(12 8 5 / 0) 50%),
+    linear-gradient(to right, rgb(14 10 6 / 0.70) 0%, rgb(14 10 6 / 0.32) 46%, rgb(14 10 6 / 0) 70%); }
   .hero__inner { display: flex; flex-direction: column; justify-content: center; min-height: 660px; max-width: 42rem; padding-block: 2rem; }
 }
 

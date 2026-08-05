@@ -294,7 +294,7 @@ function render(lang) {
     <div class="hero__media">
       <picture>
         <source media="(max-width: 760px)" srcset="assets/hero-mobile-2.png?v=3" />
-        <img src="assets/hero-v2-3.png?v=3" alt="" />
+        <img src="assets/hero-even-2.png?v=7" alt="" />
       </picture>
     </div>
   </section>
@@ -332,7 +332,7 @@ function render(lang) {
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
         <div class="tilecard reveal">
-          <div class="tilecard__illo"><img src="assets/${["tile-designer", "tile-builder", "tile-nextai"][i]}.png?v=2" alt="" /></div>
+          <div class="tilecard__illo"><img src="assets/${["tile-designer", "tile-builder", "tile-nextai"][i]}.png?v=3" alt="" /></div>
           <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
         </div>`).join("")}
     </div>
@@ -399,7 +399,7 @@ function render(lang) {
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.png?v=2" alt="" /></div>
+              <div class="agentcard__illo"><img src="assets/${a.img}.png?v=3" alt="" /></div>
               <div class="agentcard__body">
                 <div class="agentcard__role">${a.role}</div>
                 <p>${a.b}</p>
