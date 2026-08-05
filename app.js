@@ -272,7 +272,7 @@ function render(lang) {
   <header class="nav"><div class="wrap nav__in">
     <a class="nav__brand nav__brand--text" href="#top">Product Lab</a>
     <div class="nav__right">
-      <button class="langtoggle" data-toggle-lang aria-label="Switch language">${lang === "he" ? "עב" : "EN"}</button>
+      <button class="langtoggle" data-toggle-lang aria-label="Switch language">${lang === "he" ? "English" : "עברית"}</button>
       <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
       <!-- Student entrance: opens the sign-in modal (placeholder). -->
       <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}">${I.login}<span class="btn__label">${t.nav_student}</span></button>
