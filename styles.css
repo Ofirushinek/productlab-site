@@ -27,6 +27,12 @@
   --pl-grid-dot: rgb(10 10 10 / 0.05);
   --pl-illo-bg: #ece8f5;
 
+  /* crew palette — the felt-puppet character colors, for playful accents */
+  --pl-crew-orange: #e0763c;
+  --pl-crew-teal: #3f9a97;
+  --pl-crew-purple: #8b6fc0;
+  --pl-crew-yellow: #d99b33;
+
   --shadow-pl-sm: 0 1px 2px 0 rgb(10 10 10 / 0.06);
   --shadow-pl-md: 0 8px 24px -10px rgb(10 10 10 / 0.12);
   --shadow-pl-lg: 0 24px 60px -20px rgb(10 10 10 / 0.18);
@@ -660,26 +666,43 @@ body.modal-open { overflow: hidden; }
 .ctaband .btn--wa-solid { background: #25D366; color: #ffffff; }
 .ctaband .btn--wa-solid:hover { background: #1eb455; }
 
-/* ---- TESTIMONIALS — placeholder quote cards (dashed until real quotes land) --- */
-.quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+/* ---- TESTIMONIALS — vibrant quote cards, one crew colour per card ------------ */
+.quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 .quote-card {
+  --qc: var(--pl-accent);              /* per-card accent (set below) */
+  position: relative; overflow: hidden;
   background: var(--pl-surface); border: 1px solid var(--pl-border);
-  border-radius: var(--radius-lg); padding: 1.75rem;
-  display: flex; flex-direction: column; gap: 1.25rem; box-shadow: var(--shadow-pl-sm);
+  border-radius: var(--radius-xl); padding: 2rem 1.9rem 1.75rem;
+  display: flex; flex-direction: column; gap: 1.25rem; box-shadow: var(--shadow-pl-md);
+  transition: transform 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
-.quote-card blockquote { margin: 0; font-size: var(--text-body-lg); font-weight: 600; color: var(--pl-fg-body); line-height: 1.55; }
-.quote-card figcaption { display: flex; align-items: center; gap: 0.75rem; }
-.quote-card__avatar { width: 42px; height: 42px; border-radius: 999px; background: var(--pl-illo-bg); flex: none; display: grid; place-items: center; overflow: hidden; }
-.quote-card__avatar svg { width: 22px; height: 22px; color: var(--pl-fg-secondary); }
-.quote-card__who { display: flex; flex-direction: column; gap: 0.1rem; }
+/* colour bar down the leading edge + big watermark quote mark, both in the crew colour */
+.quote-card::before {
+  content: ""; position: absolute; inset-block: 0; inset-inline-start: 0; width: 5px; background: var(--qc);
+}
+.quote-card::after {
+  content: "\201D"; position: absolute; top: 0.35rem; inset-inline-start: 1.4rem;
+  font-family: Georgia, "Times New Roman", serif; font-size: 4.5rem; line-height: 1;
+  color: var(--qc); opacity: 0.18; pointer-events: none;
+}
+.quote-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-pl-lg); }
+.quote-card:nth-child(4n+1) { --qc: var(--pl-crew-teal); }
+.quote-card:nth-child(4n+2) { --qc: var(--pl-crew-orange); }
+.quote-card:nth-child(4n+3) { --qc: var(--pl-crew-purple); }
+.quote-card:nth-child(4n+4) { --qc: var(--pl-crew-yellow); }
+
+.quote-card blockquote { margin: 0; position: relative; z-index: 1; font-size: var(--text-body-lg); font-weight: 600; color: var(--pl-fg); line-height: 1.55; }
+.quote-card figcaption { display: flex; align-items: center; gap: 0.85rem; margin-top: auto; }
+.quote-card__avatar {
+  width: 52px; height: 52px; border-radius: 999px; background: var(--pl-illo-bg); flex: none;
+  display: grid; place-items: center; overflow: hidden;
+  box-shadow: 0 0 0 2px var(--pl-surface), 0 0 0 4px var(--qc);
+}
+.quote-card__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.quote-card__avatar svg { width: 26px; height: 26px; color: var(--qc); }
+.quote-card__who { display: flex; flex-direction: column; gap: 0.15rem; }
 .quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body); }
-.quote-card__who span { font-size: var(--text-sm); color: var(--pl-fg-secondary); }
-/* placeholder state: clearly intentional, so reviewers see where their quote goes */
-.quote-card--ph { border-style: dashed; border-color: var(--pl-border-strong); background: transparent; box-shadow: none; }
-.quote-card--ph blockquote { color: var(--pl-fg-muted); }
-.quote-card--ph .quote-card__avatar { background: transparent; border: 1px dashed var(--pl-border-strong); }
-.quote-card--ph .quote-card__avatar svg { color: var(--pl-fg-muted); }
-.quote-card--ph .quote-card__who strong { color: var(--pl-fg-secondary); }
+.quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--qc); }
 @media (max-width: 700px) { .quote-grid { grid-template-columns: 1fr; } }
 
 /* centered hero placeholder visual (swiss-army-knife until the real graphic lands) */

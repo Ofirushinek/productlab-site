@@ -227,8 +227,8 @@ const I18N = {
     quotes_eyebrow: "Testimonials",
     quotes_title: "From people who've done it",
     quotes: [
-      { q: "Your testimonial will appear here.", n: "Your name", m: "Role, Company" },
-      { q: "Your testimonial will appear here.", n: "Your name", m: "Role, Company" },
+      { q: "Testimonial coming soon.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
+      { q: "Testimonial coming soon.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
     ],
 
     incl_eyebrow: "The details",
@@ -466,10 +466,10 @@ function render(lang) {
     </div>
     <div class="quote-grid" style="margin-top:2rem">
       ${t.quotes.map((qt) => `
-        <figure class="quote-card quote-card--ph reveal">
+        <figure class="quote-card reveal">
           <blockquote>${qt.q}</blockquote>
           <figcaption>
-            <span class="quote-card__avatar">${I.user}</span>
+            <span class="quote-card__avatar">${qt.img ? `<img src="assets/${qt.img}.jpg?v=1" alt="${qt.n}" loading="lazy" />` : I.user}</span>
             <span class="quote-card__who"><strong>${qt.n}</strong><span>${qt.m}</span></span>
           </figcaption>
         </figure>`).join("")}
