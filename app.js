@@ -132,7 +132,7 @@ const I18N = {
       { t: "עושים את זה שלכם", b: "משנים תפקיד, מוסיפים כישור, מקימים סוכן חדש." },
     ],
     agenda_p3_items: [
-      { t: "נותנים בריף", b: "אומרים ל-CPO מה אתם רוצים לבנות, והוא מתעדף, מנהל ומתזמר את העבודה — כמו מנהל מוצר." },
+      { t: "נותנים בריף", b: "אומרים ל-CPO מה אתם רוצים לבנות, והוא מתעדף, מנהל ומתזמר את העבודה, כמו מנהל מוצר." },
       { t: "רואים את הצוות עובד", b: "המעצב מתייעץ עם ה-CPO וה-CTO, התזמור בזמן אמת." },
       { t: "בונים את העמוד שלכם", b: "רעיון המוצר שלכם, בתצוגה מקדימה." },
       { t: "מעכשיו אתם עצמאיים", b: "צוות להתייעץ איתו מתי שבא לכם, ואני כאן גם. לכו תבנו." },
@@ -166,7 +166,7 @@ const I18N = {
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
     quotes: [
-      { q: "ההמלצה תופיע כאן בקרוב.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
+      { q: "יצאתי מצוידת עם אנשי צוות (agents) מקצועיים ברמה הכי גבוהה, הצלחתי ליצור תוצרים משלי ישר אחרי המפגש ולקבל אינפוט שלא הצלחתי לקבל לפני. ממליצה בחום.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
       { q: "ההמלצה תופיע כאן בקרוב.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
     ],
 
@@ -321,7 +321,7 @@ const I18N = {
       { t: "Make it yours", b: "Adjust a role, add a skill, spin up a new agent." },
     ],
     agenda_p3_items: [
-      { t: "Brief it", b: "Tell your CPO what you want to build, and it prioritizes, manages, and orchestrates the work — like a product manager." },
+      { t: "Brief it", b: "Tell your CPO what you want to build, and it prioritizes, manages, and orchestrates the work, like a product manager." },
       { t: "Watch the team work", b: "The designer consults the CPO and CTO, the orchestration in real time." },
       { t: "Build your one-pager", b: "Your own product idea, live in preview." },
       { t: "You're independent now", b: "A team to consult whenever, and I'm here too. Go build." },
@@ -355,7 +355,7 @@ const I18N = {
     quotes_eyebrow: "Testimonials",
     quotes_title: "From people who've done it",
     quotes: [
-      { q: "Testimonial coming soon.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
+      { q: "I came away with a top-tier professional team (agents), created my own work right after the session, and got input I couldn't get before. Highly recommend.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
       { q: "Testimonial coming soon.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
     ],
 
