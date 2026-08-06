@@ -74,7 +74,7 @@ const I18N = {
     hero_chip: "בהזמנה בלבד. בקבוצות קטנות.",
     hero_title_a: "לצאת עם ",
     hero_title_mark: "צוות משלך",
-    hero_title_b: ", ועם דרך חדשה ליצור.",
+    hero_title_b: ", ועם משהו אמיתי שבנית איתו.",
     hero_sub: "מפגש חי אחד, שלוש שעות, למי שרוצה לבנות עם AI, לא רק להשתמש בו. מקימים צוות סוכנים שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהמפגש נגמר.",
     hero_points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח־על של בנייה"],
     session: {
@@ -94,10 +94,10 @@ const I18N = {
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "צוות AI משלך.", b: "הסוכנים שמקימים במפגש, מכוונים לעבוד לצידך." },
-      { t: "זיכרון משותף שכולם שואבים ממנו,", b: "כך שהם נעשים חדים יותר ככל שאתם עובדים יחד." },
-      { t: "שיטת עבודה שאפשר לחזור עליה", b: "כבר למחרת בבוקר, בפרויקטים שלך." },
-      { t: "דבר אמיתי אחד שבנית במפגש עצמו,", b: "לא שקופית שמספרת עליו." },
+      { t: "דבר אמיתי שבניתם במפגש עצמו,", b: "המוצר או השירות שלכם, לא שקופית שמספרת עליו." },
+      { t: "צוות משלכם שבנה אותו איתכם,", b: "וממשיך לבנות לצידכם גם אחרי." },
+      { t: "זיכרון משותף שכולם שואבים ממנו,", b: "כך שהם נעשים חדים יותר ככל שעובדים יחד." },
+      { t: "שיטת עבודה שאפשר לחזור עליה", b: "כבר למחרת בבוקר, בפרויקטים שלכם." },
     ],
 
     who_eyebrow: "למי זה מתאים",
@@ -185,8 +185,8 @@ const I18N = {
     ],
 
     final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
-    final_title: "בואו תבנו איתנו.",
-    final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות AI משלך לקחת הביתה. זה בהזמנה בלבד, והצעד הראשון הוא שיחה איתי.",
+    final_title: "בואו תבנו משהו אמיתי.",
+    final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות משלכם שבונה אותו איתכם ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "אזור התלמידים",
@@ -263,7 +263,7 @@ const I18N = {
     hero_chip: "Invite-only. Small groups.",
     hero_title_a: "Walk out with ",
     hero_title_mark: "a crew of your own",
-    hero_title_b: ", and a new way to create.",
+    hero_title_b: ", and something real you built with it.",
     hero_sub: "A live, 3-hour session for people who want to build with AI, not just use it. You set up a team of agents that works the way you do, and build something real with it before the session ends.",
     hero_points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
     session: {
@@ -283,10 +283,10 @@ const I18N = {
     walk_eyebrow: "What you take home",
     walk_title: "What you leave with",
     walk_items: [
-      { t: "Your own AI team.", b: "The agents you build in the session, set up to work alongside you." },
+      { t: "Something real you built live,", b: "your own product or service, not a slide about it." },
+      { t: "A team of your own that built it with you,", b: "and keeps building alongside you after." },
       { t: "A shared memory they all draw from,", b: "so they get sharper the more you work together." },
       { t: "A build workflow you can repeat", b: "by the very next morning, on your own projects." },
-      { t: "A real thing you built live,", b: "not a slide about it." },
     ],
 
     who_eyebrow: "Who it is for",
@@ -373,8 +373,8 @@ const I18N = {
     ],
 
     final_chip: "Invite-only. Small groups.",
-    final_title: "Come build with us.",
-    final_sub: "One afternoon, a small group, and your own AI team to take home. It is invite-only, and the first step is a call with me.",
+    final_title: "Come build something real.",
+    final_sub: "One afternoon, a small group, and a team of your own that builds it with you, and stays yours long after. The first step is a call with me.",
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "Student area",
