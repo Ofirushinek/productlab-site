@@ -700,6 +700,16 @@ body.modal-open { overflow: hidden; }
     linear-gradient(to top, rgb(12 8 5 / 0.82) 0%, rgb(12 8 5 / 0.40) 26%, rgb(12 8 5 / 0) 50%),
     linear-gradient(to right, rgb(14 10 6 / 0.70) 0%, rgb(14 10 6 / 0.32) 46%, rgb(14 10 6 / 0) 70%); }
   .hero__inner { display: flex; flex-direction: column; justify-content: center; min-height: 660px; max-width: 42rem; padding-block: 2rem; }
+  /* RTL: pin the title block to the reading side (right), aligned to the page's
+     content column. The .hero__inner carries `.wrap` (margin-inline:auto), which
+     otherwise CENTERS the block; combined with the aspect-ratio/min-height box
+     inflation on mid-width desktops this drifted the HE headline left ("LTR-looking").
+     100vw escapes the inflated flex box so the block's start edge lands on the
+     same column edge as the rest of the page. EN keeps .wrap's auto margins. */
+  [dir="rtl"] .hero__inner {
+    margin-inline-start: max(0px, calc((100vw - var(--maxw)) / 2));
+    margin-inline-end: auto;
+  }
 }
 
 /* ---- NEXT-SESSION strip — a FLAT full-width band like the site's other sections,
