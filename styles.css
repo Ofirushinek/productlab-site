@@ -202,9 +202,9 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* full language name on desktop, 2-letter code on mobile */
 .langtoggle .lang-short { display: none; }
 .nav__book { }
-/* Nav button icons — larger so they fill the button and read as inviting
-   (button size stays the same; the icon just occupies more of it). */
-.nav__book svg, .nav__student svg { width: 22px; height: 22px; }
+/* Student nav icon fills its button. The WhatsApp nav icon is intentionally NOT
+   sized here — it inherits the persistent 20px from .btn--wa-solid svg. */
+.nav__student svg { width: 22px; height: 22px; }
 
 /* ---- Hero ---------------------------------------------------------------- */
 .hero { position: relative; overflow: hidden; padding-top: clamp(2.5rem, 6vw, 4.5rem); }
@@ -580,7 +580,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .nav__book { position: absolute; left: var(--pad-x); top: 50%; transform: translateY(-50%);
     width: 2.5rem; padding-inline: 0; gap: 0; }
   .nav__book .btn__label { display: none; }
-  .nav__book svg { width: 26px; height: 26px; }
+  /* icon-only on mobile, but the WhatsApp glyph stays the persistent 20px */
+  .nav__book svg { width: 20px; height: 20px; }
   .nav__burger { position: absolute; right: var(--pad-x); top: 50%; transform: translateY(-50%); display: inline-grid; }
 
   /* language + student collapse into a dropdown TRAY under the header */
@@ -746,7 +747,9 @@ body.modal-open { overflow: hidden; }
    Green WhatsApp-brand button with the logo. */
 .btn--wa-solid { background: #25D366; color: #ffffff; border-color: transparent; box-shadow: var(--shadow-pl-md); }
 .btn--wa-solid:hover { background: #1eb455; }
-.btn--wa-solid svg { color: #ffffff; }
+/* WhatsApp glyph is PERSISTENT: one fixed size in every wa button, every
+   breakpoint, regardless of button proportion. Do not size the icon per-location. */
+.btn--wa-solid svg { color: #ffffff; width: 20px; height: 20px; }
 .ctaband .btn--wa-solid { background: #25D366; color: #ffffff; }
 .ctaband .btn--wa-solid:hover { background: #1eb455; }
 
