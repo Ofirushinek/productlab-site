@@ -63,6 +63,7 @@ const I = {
   login: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>',
   info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
 };
 
 /* ---- COPY (final, Copywriter 2026-08-03) -------------------------------- */
@@ -466,13 +467,16 @@ const ctaBand = (t, title, sub) => `
 // Brand links to "#/" (home route) so it works from sub-pages too.
 const navHeader = (t, lang) => `
   <header class="nav"><div class="wrap nav__in">
+    <!-- MOBILE layout: WhatsApp left · wordmark center · hamburger right.
+         The hamburger opens .nav__menu as a tray below (language + student). -->
     <a class="nav__brand nav__brand--text" href="#/">Product Lab</a>
-    <div class="nav__right">
+    <div class="nav__menu" id="navMenu">
       <button class="langtoggle" data-toggle-lang aria-label="Switch language"><span class="lang-full">${lang === "he" ? "English" : "עברית"}</span><span class="lang-short">${lang === "he" ? "EN" : "עב"}</span></button>
-      <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
       <!-- Student entrance: opens the sign-in modal (cohort gate). -->
       <button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}">${I.login}<span class="btn__label">${t.nav_student}</span></button>
     </div>
+    <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
+    <button class="nav__burger" type="button" data-nav-toggle aria-label="${lang === "he" ? "תפריט" : "Menu"}" aria-expanded="false" aria-controls="navMenu">${I.menu}</button>
   </div></header>`;
 
 // Student sign-in MODAL. The email field is intentionally HIDDEN (not deleted)
@@ -842,11 +846,35 @@ function renderLegal(lang, kind) {
   afterRender();
 }
 
+/* ---- Mobile nav tray (hamburger) ---------------------------------------- */
+function wireNav() {
+  const burger = document.querySelector("[data-nav-toggle]");
+  const menu = document.getElementById("navMenu");
+  if (!burger || !menu) return;
+  const setOpen = (o) => {
+    menu.classList.toggle("is-open", o);
+    burger.setAttribute("aria-expanded", o ? "true" : "false");
+  };
+  burger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setOpen(!menu.classList.contains("is-open"));
+  });
+  // selecting student closes the tray (language switch re-renders, closing it)
+  menu.querySelectorAll("[data-student-open]").forEach((b) =>
+    b.addEventListener("click", () => setOpen(false)));
+  // close on outside click / Escape
+  document.addEventListener("click", (e) => {
+    if (menu.classList.contains("is-open") && !menu.contains(e.target) && !burger.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+}
+
 /* Post-render wiring shared by every page. */
 function afterRender() {
   wireLang();
   wireReveal();
   wireStudent();
+  wireNav();
 }
 
 /* ---- Router — hash routes: #/prep, #/privacy, #/terms, else home ---------- */
