@@ -167,7 +167,7 @@ const I18N = {
     quotes_title: "ממי שכבר עבר את זה",
     quotes: [
       { q: "יצאתי מצוידת עם אנשי צוות (agents) מקצועיים ברמה הכי גבוהה, הצלחתי ליצור תוצרים משלי ישר אחרי המפגש ולקבל אינפוט שלא הצלחתי לקבל לפני. ממליצה בחום.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
-      { q: "ההמלצה תופיע כאן בקרוב.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
+      { q: "אופיר לימד אותי לבנות ולנהל צוות של סוכני בינה מלאכותית (AI Agents) אוטונומיים, ללא צורך בכתיבת קוד. בעבודה משותפת הוא עזר לי לבנות בסיס עבודה מוצק לרעיון שליווה אותי הרבה זמן ולא הצלחתי להוציא לפועל, ומשם כבר יצאתי לדרך. ממליצה בחום למי שרוצה ללמוד איך באמת להשתמש ב-AI כדי לבנות דברים, לא רק לדבר עליהם.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
     ],
 
     incl_eyebrow: "הפרטים",
@@ -356,7 +356,7 @@ const I18N = {
     quotes_title: "From people who've done it",
     quotes: [
       { q: "I came away with a top-tier professional team (agents), created my own work right after the session, and got input I couldn't get before. Highly recommend.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella" },
-      { q: "Testimonial coming soon.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
+      { q: "Ofir taught me to build and manage a team of autonomous AI agents, with no code required. Working together, he helped me build a solid foundation for an idea I'd carried for a long time and hadn't managed to execute, and from there I was off and running. Highly recommend to anyone who wants to learn how to really use AI to build things, not just talk about them.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona" },
     ],
 
     incl_eyebrow: "The details",
