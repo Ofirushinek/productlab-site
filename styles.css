@@ -789,11 +789,20 @@ body.modal-open { overflow: hidden; }
 .quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); line-height: 1.2; }
 .quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--pl-accent); }
 
-/* the quote: bold, high-contrast, clean — separated by a hairline, no watermark */
+/* the quote: softer + lighter than the attribution (medium weight, gray ink),
+   opened by a large decorative quote mark. Separated by a hairline. */
 .quote-card blockquote {
   margin: 0; padding-top: 1.4rem; border-top: 1px solid var(--pl-border);
-  font-size: var(--text-h3); font-weight: 700; color: var(--pl-fg);
-  line-height: 1.4; letter-spacing: -0.01em;
+  font-size: var(--text-h3); font-weight: 500; color: var(--pl-fg-secondary);
+  line-height: 1.5; letter-spacing: -0.01em;
+}
+/* big decorative quotation mark above the text (start-aligned → right in RTL) */
+.quote-card blockquote::before {
+  content: "\201C";
+  display: block;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 3.25rem; line-height: 0.4; height: 0.6em;
+  color: var(--pl-accent); opacity: 0.35;
 }
 @media (max-width: 700px) { .quote-grid { grid-template-columns: 1fr; } }
 
