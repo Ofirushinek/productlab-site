@@ -52,6 +52,7 @@ const I = {
   brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.99.14 4 4 0 0 0-1.66 6.16A3.5 3.5 0 0 0 6 18a3 3 0 0 0 6 0V5ZM12 5a3 3 0 1 1 5.99.14 4 4 0 0 1 1.66 6.16A3.5 3.5 0 0 1 18 18a3 3 0 0 1-6 0"/></svg>',
   flow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg>',
   box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-9 5-9-5V8l9-5 9 5v8ZM3.3 7 12 12l8.7-5M12 22V12"/></svg>',
+  repeat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3"/></svg>',
   laptop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9M2 20h20"/></svg>',
   spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M5 12H1M23 12h-4M6.3 6.3 3.5 3.5M20.5 20.5l-2.8-2.8M17.7 6.3l2.8-2.8M3.5 20.5l2.8-2.8"/></svg>',
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
@@ -94,10 +95,10 @@ const I18N = {
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "דבר אמיתי שבניתם במפגש עצמו,", b: "המוצר או השירות שלכם, לא שקופית שמספרת עליו." },
-      { t: "צוות משלכם שבנה אותו איתכם,", b: "וממשיך לבנות לצידכם גם אחרי." },
-      { t: "זיכרון משותף שכולם שואבים ממנו,", b: "כך שהם נעשים חדים יותר ככל שעובדים יחד." },
-      { t: "שיטת עבודה שאפשר לחזור עליה", b: "כבר למחרת בבוקר, בפרויקטים שלכם." },
+      { t: "צוות AI אישי שבנית בעצמך", b: "תיצרו צוות סוכני AI שמותאם בדיוק לאופן שבו אתם עובדים, עם תפקידים ברורים וידע משותף." },
+      { t: "זיכרון משותף שכל הצוות עובד ממנו", b: "כל הסוכנים עובדים מאותו מקור ידע, מכירים את הפרויקט ומשתפים ביניהם הקשר ומידע לאורך כל העבודה." },
+      { t: "הפרויקט הראשון שכבר התחלתם לבנות", b: "כבר במהלך הסדנה תתחילו לעבוד עם הצוות שבניתם על הפרויקט שלכם, במקום לצאת רק עם ידע תיאורטי." },
+      { t: "שיטת עבודה שתמשיך איתכם גם אחרי הסדנה", b: "תצאו עם צוות, זיכרון ותהליך עבודה שתוכלו להמשיך לפתח ולהשתמש בהם גם בפרויקטים הבאים." },
     ],
 
     who_eyebrow: "למי זה מתאים",
@@ -283,10 +284,10 @@ const I18N = {
     walk_eyebrow: "What you take home",
     walk_title: "What you leave with",
     walk_items: [
-      { t: "Something real you built live,", b: "your own product or service, not a slide about it." },
-      { t: "A team of your own that built it with you,", b: "and keeps building alongside you after." },
-      { t: "A shared memory they all draw from,", b: "so they get sharper the more you work together." },
-      { t: "A build workflow you can repeat", b: "by the very next morning, on your own projects." },
+      { t: "A personal AI team you built yourself", b: "You'll create a team of AI agents tuned to exactly how you work, with clear roles and shared knowledge." },
+      { t: "A shared memory the whole team works from", b: "Every agent works from the same source of knowledge, knows the project, and shares context and information across the entire process." },
+      { t: "Your first project, already underway", b: "During the workshop itself you'll start working with the team you built on your own project, instead of leaving with only theory." },
+      { t: "A way of working that stays with you after the workshop", b: "You'll leave with a team, a memory, and a workflow you can keep developing and using on your next projects too." },
     ],
 
     who_eyebrow: "Who it is for",
@@ -593,7 +594,7 @@ function render(lang) {
     <div class="grid grid--2" style="margin-top:2rem">
       ${t.walk_items.map((d, i) => `
         <div class="card reveal">
-          <div class="card__ico">${[I.users, I.brain, I.flow, I.box][i] || I.check}</div>
+          <div class="card__ico">${[I.users, I.brain, I.box, I.repeat][i] || I.check}</div>
           <h3>${d.t}</h3><p>${d.b}</p>
         </div>`).join("")}
     </div>
