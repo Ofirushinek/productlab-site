@@ -772,6 +772,11 @@ body.modal-open { overflow: hidden; }
 .footer__links { display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: center; }
 .footer__links a { color: var(--pl-fg); font-weight: 600; text-decoration: none; font-size: var(--text-sm); }
 .footer__links a:hover { color: var(--pl-accent); }
+/* MOBILE: stack the footer blocks one above the other, centered. */
+@media (max-width: 620px) {
+  .footer__in { flex-direction: column; align-items: center; text-align: center; gap: 1.25rem; }
+  .footer__links { justify-content: center; }
+}
 
 /* ---- Sub-pages (prep / legal) -------------------------------------------- */
 .page { min-height: 60vh; }

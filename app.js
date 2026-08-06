@@ -252,7 +252,7 @@ const I18N = {
     footer_privacy: "מדיניות פרטיות",
     footer_terms: "תנאי שימוש",
 
-    footer_line: "Product Lab. סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
+    footer_line: "סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
     footer_contact: "יצירת קשר",
   },
 
@@ -440,7 +440,7 @@ const I18N = {
     footer_privacy: "Privacy Policy",
     footer_terms: "Terms of Use",
 
-    footer_line: "Product Lab. Invite-only workshops on AI-led product design.",
+    footer_line: "Invite-only workshops on AI-led product design.",
     footer_contact: "Get in touch",
   },
 };
