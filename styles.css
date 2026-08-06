@@ -202,9 +202,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* full language name on desktop, 2-letter code on mobile */
 .langtoggle .lang-short { display: none; }
 .nav__book { }
-/* Student nav icon fills its button. The WhatsApp nav icon is intentionally NOT
-   sized here — it inherits the persistent 20px from .btn--wa-solid svg. */
-.nav__student svg { width: 22px; height: 22px; }
+/* WhatsApp nav icon is intentionally NOT sized here — it inherits the persistent
+   20px from .btn--wa-solid svg. (Student entrance is text-only, no icon.) */
 
 /* ---- Hero ---------------------------------------------------------------- */
 .hero { position: relative; overflow: hidden; padding-top: clamp(2.5rem, 6vw, 4.5rem); }
