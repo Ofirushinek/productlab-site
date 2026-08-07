@@ -90,6 +90,12 @@ h1, h2, h3, h4 {
 
 p { margin: 0; }
 
+/* Sticky footer: on short pages (legal / prep / login) keep the footer pinned to
+   the viewport bottom so the paper background never shows as dead space below it.
+   On the long home page this is a no-op (content already exceeds the viewport). */
+#app { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+#app > main { flex: 1 0 auto; }
+
 img { max-width: 100%; display: block; }
 
 /* Clickable things always signal it. */
