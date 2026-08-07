@@ -102,11 +102,12 @@ const I18N = {
     ],
 
     who_eyebrow: "למי זה מתאים",
-    who_for_title: "מתאים ל",
+    who_for_title: "אם אתם רוצים לבנות בעצמכם, אבל לא לבד.",
+    who_intro: "לא משנה אם אתם אנשי מוצר ועיצוב, יזמים, בוני מוצרים או אנשי מקצוע שרוצים לעבוד אחרת. אם אתם רוצים להפוך את ה-AI לשותף אמיתי בתהליך העבודה שלכם, אתם במקום הנכון.",
     who_tiles: [
-      { t: "מעצבי מוצר", b: "מעצבים שמרגישים שהם מאבדים אחיזה במשחק ה-AI ורוצים להיות צעד קדימה, עם הכלים והבסיס להמשיך משם. גם מובילי עיצוב, וגם המעצב היחיד שהוא כל צוות העיצוב." },
-      { t: "בונים ויזמים", b: "כל מי שרוצה לבנות משהו, אבל מרגישים שחסר להם הבסיס, עם מי להתייעץ, ואיך לנהל את זה בצורה בת-קיימא." },
-      { t: "מרחיבי אופקים", b: "כל מי שרוצה להוציא את המרב ממה ש-AI מציע היום. לנהל עסק עצמאי, לאטמט משימות, או לצמצם עבודה ידנית שחוזרת על עצמה." },
+      { t: "אנשי מוצר ועיצוב", b: "בין אם אתם מעצבי מוצר, מובילי עיצוב, מנהלי מוצר או האדם שמוביל את המוצר בארגון, הסדנה תראה לכם איך לעבוד עם צוות AI שמרחיב את היכולות שלכם, מאיץ את העבודה ומשאיר אתכם להתמקד במה שאף כלי לא יכול לעשות: לחשוב, להחליט ולהוביל." },
+      { t: "בונים ויזמים", b: "יש לכם רעיון, מוצר או עסק שאתם רוצים לבנות או לקדם. בסדנה תבנו צוות AI שחושב איתכם, מתכנן, מאתגר רעיונות ועוזר להפוך אותם למוצר אמיתי." },
+      { t: "מרחיבי אופקים", b: "אם אתם מרגישים שהדרך שבה עובדים משתנה, ורוצים להבין איך באמת עובדים עם AI, לא רק לשאול שאלות אלא לבנות תהליך עבודה שלם, הסדנה הזו בשבילכם." },
     ],
     who_not: "מתאים פחות למי שמחפש כפתור קסם. אם בא לך להפשיל שרוולים ולבנות בעצמך, יש לך מקום סביב השולחן.",
 
@@ -291,11 +292,12 @@ const I18N = {
     ],
 
     who_eyebrow: "Who it is for",
-    who_for_title: "Who this is for",
+    who_for_title: "If you want to build on your own, but not alone.",
+    who_intro: "It doesn't matter if you're in product and design, a founder, a product builder, or a professional who wants to work differently. If you want to make AI a real partner in the way you work, you're in the right place.",
     who_tiles: [
-      { t: "Product designers", b: "Designers who feel they're losing their grip on the AI game and want to be a step ahead, with the tools and the base to take it from there. Design leaders too, and the solo designer who is the whole design team." },
-      { t: "Builders & founders", b: "Anyone who wants to build something but feels they lack the base, someone to consult with, and a sustainable way to manage it." },
-      { t: "The AI-curious", b: "Anyone who wants to get the most out of what AI offers now. Run your own business, automate specific tasks, or cut the manual work you still do by hand." },
+      { t: "Product and design people", b: "Whether you're a product designer, a design lead, a product manager, or the person who owns the product in your company, the workshop shows you how to work with an AI team that extends what you can do, speeds up the work, and frees you to focus on what no tool can: thinking, deciding, and leading." },
+      { t: "Builders and founders", b: "You have an idea, a product, or a business you want to build or grow. In the workshop you'll build an AI team that thinks with you, plans, challenges ideas, and helps turn them into a real product." },
+      { t: "Expanding your horizons", b: "If you feel the way we work is changing, and you want to understand how to really work with AI, not just ask it questions but build a whole way of working, this workshop is for you." },
     ],
     who_not: "Less of a fit for anyone after a magic button. If you'd rather roll up your sleeves and build it yourself, there's a chair at the table.",
 
@@ -605,6 +607,7 @@ function render(lang) {
     <div class="reveal">
       <span class="eyebrow">${t.who_eyebrow}</span>
       <h2 class="section-title">${t.who_for_title}</h2>
+      <p class="section-lead">${t.who_intro}</p>
     </div>
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
