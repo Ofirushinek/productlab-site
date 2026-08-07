@@ -191,7 +191,7 @@ const I18N = {
     ],
 
     final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
-    final_title: "בואו תבנו משהו אמיתי.",
+    final_title: "בואו נבנה ביחד",
     final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות משלכם שבונה אותו איתכם ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
@@ -384,7 +384,7 @@ const I18N = {
     ],
 
     final_chip: "Invite-only. Small groups.",
-    final_title: "Come build something real.",
+    final_title: "Let's build together",
     final_sub: "One afternoon, a small group, and a team of your own that builds it with you, and stays yours long after. The first step is a call with me.",
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
