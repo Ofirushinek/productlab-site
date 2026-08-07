@@ -653,6 +653,9 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm); }
 .agentcard__illo { height: 10rem; overflow: hidden; background: #e9e0cd; }
 .agentcard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+/* mobile: cards go full-width, so the fixed 10rem strip crops the character to
+   just the face. Give the illo more height to reveal the hands/props it's holding. */
+@media (max-width: 719.98px) { .agentcard__illo { height: 17rem; } }
 .agentcard__body { padding: 1.1rem 1.25rem; }
 .agentcard__role { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); margin-bottom: 0.35rem; }
 .agentcard__body p { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
