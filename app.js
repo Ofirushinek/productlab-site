@@ -151,19 +151,22 @@ const I18N = {
     proof_glimps_b: "מוצר אמיתי, שנבנה ככה. תראו בעצמכם.",
     proof_glimps_link: "לצפייה ב-Glimps",
 
-    ofir_eyebrow: "למה שיחה איתי",
-    roster_title: "אני והחבר׳ה",
+    ofir_eyebrow: "מי תכירו בסדנה",
+    roster_title: "תכירו את הצוות שאיתו אני עובד בכל יום.",
     lead_label: "מוביל הסדנה",
-    crew_label: "צוות סוכני ה-AI שמלווה אותך",
+    crew_label: "השותפים שלי לעבודה",
+    crew_title: "אלה השותפים שאיתם אני בונה כל מוצר.",
+    crew_intro: "לכל אחד מהשותפים שלי יש תחום אחריות אחר. יחד הם עוזרים לי לחשוב, לקבל החלטות, לעצב ולבנות מוצרים.\n\nבמהלך הסדנה תבנו גרסה משלכם לאותו צוות, שתותאם בדיוק לאופן שבו אתם עובדים.\n\nבסוף הסדנה, אלה כבר לא יהיו רק השותפים שלי. הם יהיו גם שלכם.",
+    crew_close: "כשתצאו מכאן, יהיה גם לכם צוות כזה. וכבר לא תבנו לבד.",
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "agent-cto", role: "CTO", b: "אחראי על הבסיס הטכני, ולוקח רעיון גולמי והופך אותו למשהו שבאמת רץ." },
-      { img: "agent-cpo", role: "CPO", b: "אחראי על המוצר, ומחליט מה שווה לבנות וממה לוותר." },
-      { img: "agent-pd", role: "מעצב מוצר", b: "אחראי על הקראפט, וגורם לכל החלטה להיראות ולהרגיש נכון עד הפרט האחרון." },
+      { img: "agent-cto", role: "הארכיטקט - המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
+      { img: "agent-cpo", role: "האסטרטג - מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
+      { img: "agent-pd", role: "המעצב - מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
     ],
-    ofir_bio: "אני אופיר. שתים עשרה שנה בעיצוב מוצר, רובן בהובלת צוותי עיצוב שהקמתי מאפס, בסייבר, בשירות שטח, במדיה ועוד. בזמן האחרון אני בונה עם צוותי AI כל יום, וככה בניתי את Glimps, מוצר חי, וגם את האתר הזה ואת הסדנה שלפניכם. כשנדבר, לא תקבלו תיאוריה, אלא איך אני עובד באמת היום.",
-    ofir_why: "המפגש בהזמנה בלבד וקטן בכוונה. לפני שמצטרפים, אני רוצה שנדבר. מה אתם בונים, ואם זה מתאים לכם. בלי פיץ'. שלחו לי הודעה ונדבר.",
+    ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה.\n\nיחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
+    ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
 
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
@@ -341,19 +344,22 @@ const I18N = {
     proof_glimps_b: "A real product, built this way. See it for yourself.",
     proof_glimps_link: "See Glimps",
 
-    ofir_eyebrow: "Why a call with me",
-    roster_title: "Me, and the team I built",
+    ofir_eyebrow: "Who you'll meet in the workshop",
+    roster_title: "Meet the team I work with every day.",
     lead_label: "Leads the workshop",
-    crew_label: "The AI crew that comes with you",
+    crew_label: "My work partners",
+    crew_title: "These are the partners I build every product with.",
+    crew_intro: "Each of my partners owns a different area. Together they help me think, make decisions, design, and build products.\n\nDuring the workshop you'll build your own version of this team, tuned to exactly how you work.\n\nBy the end, these won't just be my partners. They'll be yours too.",
+    crew_close: "When you leave here, you'll have a team like this too. And you won't build alone anymore.",
     ofir_name: "Ofir Rushinek",
     ofir_role: "The operator",
     agents: [
-      { img: "agent-cto", role: "CTO", b: "Owns the technical foundation, and turns a rough idea into something that actually runs." },
-      { img: "agent-cpo", role: "CPO", b: "Owns the product calls, and decides what's worth building and what to cut." },
-      { img: "agent-pd", role: "Product Designer", b: "Owns the craft, and makes every decision look and feel right down to the last detail." },
+      { img: "agent-cto", role: "The Architect - the lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
+      { img: "agent-cpo", role: "The Strategist - the product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
+      { img: "agent-pd", role: "The Designer - the product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
     ],
-    ofir_bio: "I'm Ofir. Twelve years in product design, most of them leading design teams I built from scratch, across cyber, field service, media and more. Lately I build with AI teams every day, and that's how I built Glimps, a live product, and this very site and the workshop you're looking at. When we talk, you won't get theory, you'll get how I actually work now.",
-    ofir_why: "This is invite-only and small on purpose. Before you join, I want a real conversation. What you are working on, and whether this is a fit. No pitch. Message me and we will talk.",
+    ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with an AI team I built for myself - partners in thinking, planning, design, and building.\n\nTogether we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
+    ofir_why: "Now I want to help you build a team like that for yourself too.",
 
     quotes_eyebrow: "Testimonials",
     quotes_title: "From people who've done it",
@@ -681,11 +687,13 @@ function render(lang) {
         <div class="team__leadtext">
           <span class="team__kicker">${t.lead_label}</span>
           <div class="team__name">${t.ofir_name}</div>
-          <p>${t.ofir_bio}</p><p>${t.ofir_why}</p>
+          ${t.ofir_bio.split("\n\n").map((p) => `<p>${p}</p>`).join("")}<p>${t.ofir_why}</p>
         </div>
       </div>
       <div class="team__crew">
-        <div class="team__crewhead">${t.crew_label}</div>
+        <span class="eyebrow">${t.crew_label}</span>
+        <div class="team__name">${t.crew_title}</div>
+        ${t.crew_intro.split("\n\n").map((p) => `<p class="section-lead">${p}</p>`).join("")}
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
@@ -696,6 +704,7 @@ function render(lang) {
               </div>
             </div>`).join("")}
         </div>
+        <p class="section-lead">${t.crew_close}</p>
       </div>
     </div>
   </div></section>
