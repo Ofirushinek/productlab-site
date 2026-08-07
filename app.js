@@ -65,6 +65,7 @@ const I = {
   info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>',
   menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
 };
 
 /* ---- COPY (final, Copywriter 2026-08-03) -------------------------------- */
@@ -759,67 +760,240 @@ function render(lang) {
 
 /* ---- Student PREP page — gated by the pl_auth sessionStorage flag --------- */
 /* The single guard: no pl_auth token → bounce home and pop the sign-in modal.
-   authenticate() sets pl_auth on success; this page only reads it. */
+   authenticate() sets pl_auth on success; this page only reads it.
+   CONTENT: rendered from window.WORKSHOP_CONTENT (content.js). This is the
+   POST-workshop content vault. Teaching copy is ENGLISH for this pass (HE is a
+   Copywriter follow-up); prompts are technical and stay English in both toggle
+   states. The whole vault region is forced dir="ltr" so this English content
+   reads correctly whether the site toggle is HE or EN. */
+
+/* Copyable prompt card: label + intro + Copy button (copies only the raw text
+   below the divider) + a monospace prompt frame. Restyled to the current DS. */
+function promptCard(p) {
+  const src = (window.WORKSHOP_CONTENT && window.WORKSHOP_CONTENT.prompts) || {};
+  const text = src[p.key] || "";
+  return `
+    <div class="prompt">
+      <div class="prompt__head">
+        <div class="prompt__row">
+          <span class="prompt__label">${p.label}</span>
+          <button type="button" class="prompt__copy" data-copy-key="${p.key}" aria-live="polite">
+            <span class="prompt__copy-ico">${I.copy}</span><span class="prompt__copy-label">Copy</span>
+          </button>
+        </div>
+        <p class="prompt__intro">${p.intro}</p>
+      </div>
+      <pre class="prompt__text" data-prompt="${p.key}">${escapeHtml(text)}</pre>
+    </div>`;
+}
+
+/* Minimal HTML-escape so prompt text renders literally inside <pre>. */
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/* One collapsible plan step: number + title header over the body (checklist
+   and/or copyable prompt cards). Step 01 open by default. Native <details>. */
+function planStep(step, open) {
+  const checklist = step.checklist ? `
+    <ul class="pchecklist">
+      ${step.checklist.map((c) => `
+        <li class="pchecklist__item">
+          <span class="pchecklist__dot" aria-hidden="true"></span>
+          <div class="pchecklist__body">
+            <div class="pchecklist__top">
+              <span class="pchecklist__name">${c.name}</span>
+              ${c.tag ? `<span class="pchecklist__tag">${c.tag}</span>` : ""}
+            </div>
+            <p class="pchecklist__note">${c.note}</p>
+          </div>
+        </li>`).join("")}
+    </ul>` : "";
+  const note = step.note ? `
+    <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p>${step.note}</p></div>` : "";
+  const prompts = step.prompts ? `
+    <div class="prompts">${step.prompts.map(promptCard).join("")}</div>` : "";
+  return `
+    <details class="pstep reveal"${open ? " open" : ""}>
+      <summary class="pstep__head">
+        <span class="pstep__num">${step.n}</span>
+        <span class="pstep__title">${step.title}</span>
+        <span class="pstep__chev">${I.chev}</span>
+      </summary>
+      <div class="pstep__body">
+        <p class="pstep__lead">${step.body}</p>
+        ${note}
+        ${checklist}
+        ${prompts}
+      </div>
+    </details>`;
+}
+
+/* The narrowing-focus funnel — general AI narrowed, tier by tier, to one sharp
+   agent. Tokenized (fills use --pl-accent). Labels tie to the numbered stages. */
+function focusFunnel(tiers, pointLabel) {
+  const cx = 190, h = 66, gap = 12;
+  const geo = [
+    { top: 360, bot: 300 },
+    { top: 300, bot: 234 },
+    { top: 234, bot: 166 },
+    { top: 166, bot: 92 },
+  ];
+  const rows = tiers.map((t, i) => {
+    const g = geo[i]; const y = 16 + i * (h + gap);
+    const x1t = cx - g.top / 2, x2t = cx + g.top / 2;
+    const x1b = cx - g.bot / 2, x2b = cx + g.bot / 2;
+    const midY = y + h / 2; const rightMid = cx + (g.top + g.bot) / 4;
+    const op = 0.22 + i * 0.24;
+    return `
+      <polygon points="${x1t},${y} ${x2t},${y} ${x2b},${y + h} ${x1b},${y + h}"
+        fill="var(--pl-accent)" fill-opacity="${op}" stroke="var(--pl-accent)" stroke-opacity="0.55" stroke-width="1.5" />
+      <text x="${cx}" y="${midY + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="var(--pl-fg)">${i + 1}</text>
+      <line x1="${rightMid}" y1="${midY}" x2="404" y2="${midY}" stroke="var(--pl-border-strong)" stroke-width="1" />
+      <circle cx="${rightMid}" cy="${midY}" r="2.5" fill="var(--pl-accent)" />
+      <text x="410" y="${midY + 5}" font-size="15" font-weight="700" fill="var(--pl-fg-secondary)">${t.label}</text>`;
+  }).join("");
+  const neckY = 16 + 4 * (h + gap) - gap;
+  return `
+    <svg viewBox="0 0 520 384" class="funnel" role="img" aria-label="A general AI narrowed stage by stage into one sharp, accurate agent">
+      ${rows}
+      <polygon points="${cx - 46},${neckY} ${cx + 46},${neckY} ${cx},${neckY + 40}" fill="var(--pl-accent)" />
+      <text x="${cx}" y="${neckY + 62}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--pl-fg)">${pointLabel}</text>
+    </svg>`;
+}
+
 function renderPrep(lang) {
   const t = I18N[lang];
   let authed = false;
   try { authed = !!sessionStorage.getItem("pl_auth"); } catch (e) {}
   if (!authed) { pendingStudentOpen = true; location.hash = "#/"; return; }
 
+  const C = window.WORKSHOP_CONTENT;
+  // Defensive: if content.js failed to load, keep the page usable.
+  if (!C) {
+    document.getElementById("app").innerHTML = `
+    ${navHeader(t, lang)}
+    <main id="top" class="page"><section class="section"><div class="wrap narrow">
+      <span class="eyebrow">${t.prep_page_title}</span>
+      <h1 class="section-title">${t.prep_welcome_title}</h1>
+      <p class="section-lead">Content is loading. If this persists, refresh the page.</p>
+    </div></section></main>
+    ${studentModal(t)}${siteFooter(t)}`;
+    afterRender();
+    return;
+  }
+
   document.getElementById("app").innerHTML = `
   ${navHeader(t, lang)}
 
-  <main id="top" class="page">
+  <main id="top" class="page vault" dir="ltr">
+    <!-- 1 — The promise (hero) -->
     <section class="section"><div class="wrap narrow">
       <div class="reveal">
-        <span class="eyebrow">${t.prep_page_title}</span>
-        <h1 class="section-title prep__title">${t.prep_welcome_title}</h1>
-        <p class="section-lead">${t.prep_welcome_body}</p>
+        <span class="eyebrow">${C.hero.kicker}</span>
+        <h1 class="section-title prep__title">${C.hero.titleBefore}<span class="mark">${C.hero.titleMark}</span>${C.hero.titleAfter}</h1>
+        <p class="section-lead">${C.hero.body}</p>
       </div>
+    </div></section>
 
-      <!-- Session facts -->
-      <div class="reveal" style="margin-top:2.75rem">
-        <h2 class="prep__h">${t.prep_facts_title}</h2>
-        <dl class="facts">
-          ${t.prep_facts.map((f) => `<div class="facts__row"><dt>${f.l}</dt><dd>${f.v}</dd></div>`).join("")}
-        </dl>
+    <!-- 2 — By the end of today (three parts) -->
+    <section class="section section--alt"><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${C.end.kicker}</span>
+        <h2 class="section-title">${C.end.title}</h2>
+        <p class="section-lead">${C.end.subtitle}</p>
       </div>
-
-      <!-- Setup checklist -->
-      <div class="reveal" style="margin-top:2.75rem">
-        <h2 class="prep__h">${t.prep_setup_title}</h2>
-        <ol class="prep-steps">
-          ${t.prep_setup.map((s, i) => `
-            <li class="prep-step">
-              <span class="prep-step__num">${i + 1}</span>
-              <div><h3>${s.t}</h3><p>${s.b}</p></div>
-            </li>`).join("")}
-        </ol>
-      </div>
-
-      <!-- What the three hours look like -->
-      <div class="reveal" style="margin-top:2.75rem">
-        <h2 class="prep__h">${t.prep_expect_title}</h2>
-        <p class="section-lead" style="margin-top:.5rem">${t.prep_expect_lead}</p>
-        <div class="agenda" style="margin-top:1.5rem">
-          ${t.prep_expect.map((p) => `
-            <div class="phase">
-              <span class="phase__time">${p.time}</span>
-              <div><h3>${p.t}</h3><p>${p.b}</p></div>
-            </div>`).join("")}
+      <div class="grid grid--3" style="margin-top:2rem">
+        <div class="card reveal">
+          <div class="card__ico">${I.users}</div>
+          <span class="card__kicker">${C.end.team.kicker}</span>
+          <h3>${C.end.team.title}</h3>
+          <ul class="teammates">
+            ${C.end.team.teammates.map((m) => `
+              <li><span class="teammates__name">${m.name}</span> <span class="teammates__charter">${m.charter}</span><p>${m.body}</p></li>`).join("")}
+          </ul>
+        </div>
+        <div class="card reveal">
+          <div class="card__ico">${I.box}</div>
+          <span class="card__kicker">${C.end.foundation.kicker}</span>
+          <h3>${C.end.foundation.title}</h3>
+          <p>${C.end.foundation.body}</p>
+        </div>
+        <div class="card card--feature reveal">
+          <div class="card__ico">${I.repeat}</div>
+          <span class="card__tag">${C.end.home.tag}</span>
+          <h3>${C.end.home.title}</h3>
+          <p>${C.end.home.body}</p>
         </div>
       </div>
+    </div></section>
 
-      <!-- Help + WhatsApp -->
-      <div class="reveal" style="margin-top:2.75rem">
+    <!-- 3 — Technical overview (mental model + funnel) -->
+    <section class="section"><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${C.technical.kicker}</span>
+        <h2 class="section-title">${C.technical.title}</h2>
+        <p class="section-lead">${C.technical.subtitle}</p>
+      </div>
+      <div class="tech" style="margin-top:2rem">
+        <ol class="stage-list reveal">
+          ${C.technical.stages.map((s, i) => `
+            <li class="stage"><span class="stage__num">${i + 1}</span><div><h3>${s.title}</h3><p>${s.body}</p></div></li>`).join("")}
+        </ol>
+        <div class="tech__figure reveal">${focusFunnel(C.technical.funnelTiers, C.technical.funnelPoint)}</div>
+      </div>
+      <p class="tech__closing reveal">${C.technical.closing}</p>
+    </div></section>
+
+    <!-- 4 — Choosing your stack (two tools) -->
+    <section class="section section--alt"><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${C.tools.kicker}</span>
+        <h2 class="section-title">${C.tools.title}</h2>
+        <p class="section-lead">${C.tools.subtitle}</p>
+      </div>
+      <div class="grid grid--2" style="margin-top:2rem">
+        ${C.tools.options.map((o) => `
+          <div class="card ${o.featured ? "card--feature" : ""} reveal">
+            <div class="card__ico">${I[o.icon] || I.box}</div>
+            <span class="card__kicker">${o.kicker}</span>
+            <h3>${o.title}</h3>
+            <p class="tool__lede">${o.lede}</p>
+            <ul class="tool__benefits">
+              ${o.benefits.map((b) => `<li><span class="tool__dot" aria-hidden="true"></span><span>${b}</span></li>`).join("")}
+            </ul>
+            <div class="tool__note">
+              <span class="tool__notelabel">${o.noteLabel}</span>
+              <p>${o.note}</p>
+            </div>
+          </div>`).join("")}
+      </div>
+      <p class="tech__closing reveal">${C.tools.closing}</p>
+    </div></section>
+
+    <!-- 5 — The plan (numbered steps with copyable prompt cards) -->
+    <section class="section"><div class="wrap narrow">
+      <div class="reveal">
+        <span class="eyebrow">${C.plan.kicker}</span>
+        <h2 class="section-title">${C.plan.title}</h2>
+        <p class="section-lead">${C.plan.subtitle}</p>
+      </div>
+      <div class="plan" style="margin-top:2rem">
+        ${C.plan.steps.map((s, i) => planStep(s, i === 0)).join("")}
+      </div>
+      <p class="tech__closing reveal">${C.plan.closing}</p>
+    </div></section>
+
+    <!-- Help + WhatsApp (site copy — bilingual, follows the toggle) -->
+    <section class="section section--alt"><div class="wrap narrow" dir="${lang === "he" ? "rtl" : "ltr"}">
+      <div class="reveal">
         <h2 class="prep__h">${t.prep_help_title}</h2>
         <p class="section-lead" style="margin-top:.5rem">${t.prep_help_body}</p>
         <div class="cta-row" style="margin-top:1.25rem">
           <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
         </div>
       </div>
-
-      <p class="prep-note reveal" style="margin-top:2.25rem">${I.info}<span>${t.prep_note}</span></p>
     </div></section>
   </main>
 
@@ -885,12 +1059,38 @@ function wireNav() {
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
 }
 
+/* ---- Copyable prompt cards (gated vault) --------------------------------- */
+/* Each Copy button copies the raw prompt text from window.WORKSHOP_CONTENT
+   (the single source of truth), shows a 2s "Copied" confirmation, then resets.
+   Reads from the data model, not the DOM, so whitespace is preserved exactly. */
+function wirePrompts() {
+  const src = (window.WORKSHOP_CONTENT && window.WORKSHOP_CONTENT.prompts) || {};
+  document.querySelectorAll("[data-copy-key]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const text = src[btn.getAttribute("data-copy-key")] || "";
+      const label = btn.querySelector(".prompt__copy-label");
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.classList.add("is-copied");
+        if (label) label.textContent = "Copied";
+        setTimeout(() => {
+          btn.classList.remove("is-copied");
+          if (label) label.textContent = "Copy";
+        }, 2000);
+      } catch (e) {
+        /* clipboard blocked (e.g. non-secure context) — no-op */
+      }
+    });
+  });
+}
+
 /* Post-render wiring shared by every page. */
 function afterRender() {
   wireLang();
   wireReveal();
   wireStudent();
   wireNav();
+  wirePrompts();
 }
 
 /* ---- Router — hash routes: #/prep, #/privacy, #/terms, else home ---------- */
