@@ -74,6 +74,7 @@ const I18N = {
     cta_wa: "דברו איתי",
     nav_student: "כניסת תלמידים",
     nav_signout: "יציאה",
+    nav_account: "התפריט שלך",
     hero_chip: "בהזמנה בלבד. בקבוצות קטנות.",
     hero_title_a: "לבנות את הפרויקט הראשון שלך עם ",
     hero_title_mark: "צוות AI",
@@ -246,6 +247,7 @@ const I18N = {
     cta_wa: "Talk to me",
     nav_student: "Student entrance",
     nav_signout: "Sign out",
+    nav_account: "Your menu",
     hero_chip: "Invite-only. Small groups.",
     hero_title_a: "Build your first project with an ",
     hero_title_mark: "AI team",
@@ -433,9 +435,37 @@ const ctaBand = (t, title, sub) => `
 /* ---- Shared chrome (nav + student modal + footer), used on every page ----- */
 // NAV — logo hidden for now (decide later); wordmark text + WhatsApp only.
 // Brand links to "#/" (home route) so it works from sub-pages too.
-const navHeader = (t, lang) => {
-  // Signed-in participants (pl_auth set) see a Sign out action here instead of
-  // the entrance gate. Clicking it clears pl_auth and returns to the main page.
+// opts.account = true renders the SIGNED-IN student-area variant (only used by
+// renderPrep, i.e. the #/prep path): the WhatsApp contact button is replaced by
+// a user-avatar button that opens a Sign out dropdown, and the hamburger tray
+// holds ONLY the language toggle. Everywhere else (main page, legal pages) the
+// header is untouched (WhatsApp + full tray as today).
+const navHeader = (t, lang, opts = {}) => {
+  const langToggle = `<button class="langtoggle" data-toggle-lang aria-label="Switch language"><span class="lang-full">${lang === "he" ? "English" : "עברית"}</span><span class="lang-short">${lang === "he" ? "EN" : "עב"}</span></button>`;
+
+  if (opts.account) {
+    // Student-area header: avatar (icon-only) opens a menu; on mobile the label
+    // lives inside the menu since the avatar is icon-only in the bar.
+    return `
+  <header class="nav"><div class="wrap nav__in nav__in--account">
+    <!-- MOBILE layout: avatar left · wordmark center · hamburger right.
+         The hamburger tray below holds the language toggle only. -->
+    <a class="nav__brand nav__brand--text" href="#/">Product Lab</a>
+    <div class="nav__menu" id="navMenu">
+      ${langToggle}
+    </div>
+    <div class="nav__account" data-account>
+      <button class="nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}">${I.user}</button>
+      <div class="nav__accmenu" role="menu" aria-label="${t.nav_account}" data-account-menu hidden>
+        <button class="nav__accmenu-item" type="button" role="menuitem" data-signout>${t.nav_signout}</button>
+      </div>
+    </div>
+    <button class="nav__burger" type="button" data-nav-toggle aria-label="${lang === "he" ? "תפריט" : "Menu"}" aria-expanded="false" aria-controls="navMenu">${I.menu}</button>
+  </div></header>`;
+  }
+
+  // Public / signed-out header (unchanged). Signed-in participants who land on
+  // the main page still get a text Sign out action here in place of the gate.
   let authed = false;
   try { authed = !!sessionStorage.getItem("pl_auth"); } catch (e) {}
   const studentBtn = authed
@@ -447,7 +477,7 @@ const navHeader = (t, lang) => {
          The hamburger opens .nav__menu as a tray below (language + student). -->
     <a class="nav__brand nav__brand--text" href="#/">Product Lab</a>
     <div class="nav__menu" id="navMenu">
-      <button class="langtoggle" data-toggle-lang aria-label="Switch language"><span class="lang-full">${lang === "he" ? "English" : "עברית"}</span><span class="lang-short">${lang === "he" ? "EN" : "עב"}</span></button>
+      ${langToggle}
       <!-- Entrance gate when signed out; Sign out when pl_auth is set. Text-only, no icon. -->
       ${studentBtn}
     </div>
@@ -842,7 +872,7 @@ function renderPrep(lang) {
   // Defensive: if content.js failed to load, keep the page usable.
   if (!W) {
     document.getElementById("app").innerHTML = `
-    ${navHeader(t, lang)}
+    ${navHeader(t, lang, { account: true })}
     <main id="top" class="page"><section class="section"><div class="wrap narrow">
       <span class="eyebrow">${t.prep_page_title}</span>
       <h1 class="section-title">${t.prep_welcome_title}</h1>
@@ -856,7 +886,7 @@ function renderPrep(lang) {
   const C = W[lang] || W.en;
 
   document.getElementById("app").innerHTML = `
-  ${navHeader(t, lang)}
+  ${navHeader(t, lang, { account: true })}
 
   <main id="top" class="page vault" dir="${lang === "he" ? "rtl" : "ltr"}">
     <!-- 1 — The promise (hero) -->
@@ -1055,6 +1085,33 @@ function wirePrompts() {
   });
 }
 
+/* ---- Account menu (student-area avatar dropdown) ------------------------- */
+/* Only present on the #/prep header variant. The avatar toggles a small menu
+   whose single item is Sign out (wired separately via [data-signout]). Closes
+   on outside-click and Escape; keeps aria-expanded in sync. */
+function wireAccountMenu() {
+  const wrap = document.querySelector("[data-account]");
+  if (!wrap) return;
+  const btn = wrap.querySelector("[data-account-toggle]");
+  const menu = wrap.querySelector("[data-account-menu]");
+  if (!btn || !menu) return;
+  const setOpen = (o) => {
+    menu.hidden = !o;
+    wrap.classList.toggle("is-open", o);
+    btn.setAttribute("aria-expanded", o ? "true" : "false");
+  };
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setOpen(menu.hidden);
+  });
+  document.addEventListener("click", (e) => {
+    if (!menu.hidden && !wrap.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !menu.hidden) { setOpen(false); btn.focus(); }
+  });
+}
+
 /* ---- Sign out ------------------------------------------------------------ */
 /* When pl_auth is set, the nav student button becomes a sign-out action.
    Clicking clears pl_auth and returns to the main page. If already on home
@@ -1076,6 +1133,7 @@ function afterRender() {
   wireReveal();
   wireStudent();
   wireNav();
+  wireAccountMenu();
   wireSignout();
   wirePrompts();
 }

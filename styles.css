@@ -211,6 +211,35 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* WhatsApp nav icon is intentionally NOT sized here — it inherits the persistent
    20px from .btn--wa-solid svg. (Student entrance is text-only, no icon.) */
 
+/* ---- Student-area account avatar + dropdown (#/prep header variant) ------ */
+/* Replaces the WhatsApp button when signed in. Icon-only in the bar; the
+   Sign out label lives inside the dropdown. Aligns to the inline-end edge in
+   both LTR and RTL on desktop. */
+.nav__account { position: relative; flex: none; }
+.nav__avatar {
+  display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem;
+  border: 1px solid var(--pl-border); border-radius: 999px; background: transparent;
+  color: var(--pl-fg); cursor: pointer;
+  transition: background-color 0.2s var(--ease-pl), border-color 0.2s var(--ease-pl);
+}
+.nav__avatar svg { width: 20px; height: 20px; }
+.nav__avatar:hover,
+.nav__account.is-open .nav__avatar { background: var(--pl-bg-alt); border-color: var(--pl-border-strong); }
+.nav__accmenu {
+  position: absolute; top: calc(100% + 8px); inset-inline-end: 0; min-width: 168px;
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-pl-md);
+  padding: 0.35rem; z-index: 60;
+}
+.nav__accmenu[hidden] { display: none; }
+.nav__accmenu-item {
+  display: block; width: 100%; text-align: start; cursor: pointer;
+  padding: 0.6rem 0.75rem; border: 0; background: transparent; border-radius: var(--radius-sm);
+  color: var(--pl-fg); font-family: inherit; font-weight: 600; font-size: var(--text-body); line-height: 1;
+  transition: background-color 0.15s var(--ease-pl);
+}
+.nav__accmenu-item:hover { background: var(--pl-bg-alt); }
+
 /* ---- Hero ---------------------------------------------------------------- */
 .hero { position: relative; overflow: hidden; padding-top: clamp(2.5rem, 6vw, 4.5rem); }
 .hero__grid {
@@ -588,6 +617,12 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   /* icon-only on mobile, but the WhatsApp glyph stays the persistent 20px */
   .nav__book svg { width: 20px; height: 20px; }
   .nav__burger { position: absolute; right: var(--pad-x); top: 50%; transform: translateY(-50%); display: inline-grid; }
+
+  /* Account avatar takes the physical-left slot (same as WhatsApp on the main
+     page). Menu opens toward center from the left-anchored avatar so it stays
+     on-screen in both HE and EN. */
+  .nav__account { position: absolute; left: var(--pad-x); top: 50%; transform: translateY(-50%); }
+  .nav__accmenu { inset-inline-end: auto; inset-inline-start: auto; left: 0; right: auto; }
 
   /* language + student collapse into a dropdown TRAY under the header */
   .nav__menu {
