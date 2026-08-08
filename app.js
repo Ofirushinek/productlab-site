@@ -206,34 +206,13 @@ const I18N = {
     login_submit: "כניסה",
     login_soon: "הפרטים לא תואמים. אם אתם משתתפים ולא מצליחים להיכנס, כתבו לי.",
 
-    // ---- Student prep page (gated by pl_auth) — copy Copywriter 2026-08-05
+    // ---- Student prep page (gated by pl_auth). Teaching copy lives in
+    // content.js (WORKSHOP_CONTENT). These keys are the two used by the
+    // defensive no-content fallback plus the bilingual Help/WhatsApp block.
     prep_page_title: "אזור התלמידים",
     prep_welcome_title: "אתם בפנים. ברוכים הבאים למחזור הראשון של Product Lab.",
-    prep_welcome_body: "הדף הזה הוא נקודת הבית שלכם למפגש. כל מה שצריך נמצא כאן, והוא יתמלא ככל שהתאריך מתקרב.",
-    prep_facts_title: "פרטי המפגש",
-    prep_facts: [
-      { l: "מתי", v: "יום ה׳, 3 בספטמבר, 17:30-20:30" },
-      { l: "כמה זמן", v: "מפגש יחיד, שלוש שעות" },
-      { l: "איפה", v: "אונליין בזום" },
-      { l: "מי", v: "בהזמנה בלבד, קבוצה קטנה" },
-    ],
-    prep_setup_title: "מה להכין לפני שמתחילים",
-    prep_setup: [
-      { t: "לפטופ", b: "לפטופ, לא טלפון או טאבלט. אתם הולכים לבנות, וצריך מסך מלא ומקלדת." },
-      { t: "חשבון Claude Pro", b: "חשבון Claude בתוכנית Pro (בערך 17$ לחודש). כדאי להקים אותו מראש. זה מה שמאפשר לסוכנים לרוץ חלק לאורך שלוש השעות. זה נדרש, וזה מהיר להקמה." },
-      { t: "זום מותקן ובדוק", b: "התקינו את זום ובדקו שהוא עובד. הקישור למפגש יופיע בדף הזה לפני התאריך." },
-      { t: "אינטרנט, שקט ואוזניות", b: "חיבור אינטרנט יציב, פינה שקטה, ואוזניות. שלוש שעות של בנייה מרוכזת עוברות טוב יותר בלי הפרעות." },
-    ],
-    prep_expect_title: "איך נראות שלוש השעות",
-    prep_expect_lead: "נכנסים בלי כלום. יוצאים עם צוות AI עובד, ועם הדבר האמיתי הראשון שבניתם איתו.",
-    prep_expect: [
-      { time: "30 דקות", t: "להבין את השטח", b: "איפה הטכנולוגיה עומדת עכשיו, מה בונים, ולמה דווקא הכלים האלה." },
-      { time: "כ-90 דקות", t: "להקים את צוות ה-AI שלכם", b: "מקימים צוות סוכנים משלכם, מכוון לעבוד בשיטה שלכם." },
-      { time: "כ-60 דקות", t: "לבנות תוצר אמיתי ביחד", b: "מפעילים את הצוות ומוציאים לפועל דבר אמיתי אחד, בשידור חי." },
-    ],
     prep_help_title: "שאלה, או תקועים?",
     prep_help_body: "תקועים בהכנות או שיש שאלה? כתבו לי בוואטסאפ. עדיף לסדר את זה עכשיו ולא ב-17:30 ביום המפגש.",
-    prep_note: "הקישור לזום והחומרים יופיעו בדף הזה קרוב לתאריך. תבדקו כאן שוב לפני שמתחילים.",
 
     // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
     privacy_title: "מדיניות פרטיות",
@@ -399,34 +378,13 @@ const I18N = {
     login_submit: "Sign in",
     login_soon: "Those details don't match an account. If you're a participant and can't get in, message me.",
 
-    // ---- Student prep page (gated by pl_auth) — copy Copywriter 2026-08-05
+    // ---- Student prep page (gated by pl_auth). Teaching copy lives in
+    // content.js (WORKSHOP_CONTENT). These keys are the two used by the
+    // defensive no-content fallback plus the bilingual Help/WhatsApp block.
     prep_page_title: "Student area",
     prep_welcome_title: "You're in. Welcome to cohort #1 of Product Lab.",
-    prep_welcome_body: "This page is your home base for the session. Everything you need is here, and it fills in as the date gets closer.",
-    prep_facts_title: "Session details",
-    prep_facts: [
-      { l: "When", v: "Thursday, 3 September, 17:30-20:30" },
-      { l: "How long", v: "One session, three hours" },
-      { l: "Where", v: "Online, over Zoom" },
-      { l: "Who", v: "Invite-only, a small group" },
-    ],
-    prep_setup_title: "Set this up before we start",
-    prep_setup: [
-      { t: "A laptop", b: "A laptop, not a phone or tablet. You'll be building, and you need the full screen and keyboard." },
-      { t: "A Claude Pro account", b: "A Claude account on the Pro plan (about $17/mo). Set it up in advance. It's what lets the agents run smoothly across the three hours. It's required, and it's quick to set up." },
-      { t: "Zoom installed and tested", b: "Install Zoom and check it works. The session link will appear on this page before the date." },
-      { t: "Internet, quiet, headphones", b: "A stable internet connection, a quiet space, and headphones. Three hours of focused building go better without interruptions." },
-    ],
-    prep_expect_title: "What the three hours look like",
-    prep_expect_lead: "You come in with nothing. You leave with a working AI team, and the first real thing you built with it.",
-    prep_expect: [
-      { time: "30 min", t: "Understand the field", b: "Where the technology stands now, what we're building, and why these tools." },
-      { time: "about 90 min", t: "Build your AI team", b: "Stand up your own team of agents, set up to work the way you do." },
-      { time: "about 60 min", t: "Build one real thing together", b: "Put the team to work and ship one real thing, live." },
-    ],
     prep_help_title: "Questions, or stuck?",
     prep_help_body: "Stuck on the setup, or have a question? Message me on WhatsApp. Better to sort it now than at 17:30 on the day.",
-    prep_note: "The Zoom link and any materials will show up on this page closer to the date. Check back here before we start.",
 
     // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
     privacy_title: "Privacy Policy",
@@ -762,10 +720,11 @@ function render(lang) {
 /* The single guard: no pl_auth token → bounce home and pop the sign-in modal.
    authenticate() sets pl_auth on success; this page only reads it.
    CONTENT: rendered from window.WORKSHOP_CONTENT (content.js). This is the
-   POST-workshop content vault. Teaching copy is ENGLISH for this pass (HE is a
-   Copywriter follow-up); prompts are technical and stay English in both toggle
-   states. The whole vault region is forced dir="ltr" so this English content
-   reads correctly whether the site toggle is HE or EN. */
+   POST-workshop content vault. Teaching copy is BILINGUAL: renderPrep reads
+   WORKSHOP_CONTENT[lang] (fallback en) and sets the vault <main> direction to
+   match the toggle (rtl for HE, ltr for EN). Prompts are technical and stay
+   English in both toggle states; the copyable prompt body is forced dir="ltr"
+   so the English prompt renders correctly even inside an RTL page. */
 
 /* Copyable prompt card: label + intro + Copy button (copies only the raw text
    below the divider) + a monospace prompt frame. Restyled to the current DS. */
@@ -783,7 +742,7 @@ function promptCard(p) {
         </div>
         <p class="prompt__intro">${p.intro}</p>
       </div>
-      <pre class="prompt__text" data-prompt="${p.key}">${escapeHtml(text)}</pre>
+      <pre class="prompt__text" data-prompt="${p.key}" dir="ltr">${escapeHtml(text)}</pre>
     </div>`;
 }
 
@@ -830,9 +789,15 @@ function planStep(step, open) {
     </details>`;
 }
 
-/* The narrowing-focus funnel — general AI narrowed, tier by tier, to one sharp
-   agent. Tokenized (fills use --pl-accent). Labels tie to the numbered stages. */
-function focusFunnel(tiers, pointLabel) {
+/* The narrowing-focus funnel - general AI narrowed, tier by tier, to one sharp
+   agent. Tokenized (fills use --pl-accent). Labels tie to the numbered stages.
+   RTL: SVG coordinates do not follow dir, so we mirror every x around the 520
+   viewBox (X helper) and flip the label anchor to end. In HE the funnel sits on
+   the right and the tier labels read out to the left, so it reads correctly. */
+function focusFunnel(tiers, pointLabel, lang) {
+  const mirror = lang === "he";
+  const W = 520;
+  const X = (v) => (mirror ? W - v : v);
   const cx = 190, h = 66, gap = 12;
   const geo = [
     { top: 360, bot: 300 },
@@ -840,6 +805,7 @@ function focusFunnel(tiers, pointLabel) {
     { top: 234, bot: 166 },
     { top: 166, bot: 92 },
   ];
+  const anchor = mirror ? "end" : "start";
   const rows = tiers.map((t, i) => {
     const g = geo[i]; const y = 16 + i * (h + gap);
     const x1t = cx - g.top / 2, x2t = cx + g.top / 2;
@@ -847,19 +813,19 @@ function focusFunnel(tiers, pointLabel) {
     const midY = y + h / 2; const rightMid = cx + (g.top + g.bot) / 4;
     const op = 0.22 + i * 0.24;
     return `
-      <polygon points="${x1t},${y} ${x2t},${y} ${x2b},${y + h} ${x1b},${y + h}"
+      <polygon points="${X(x1t)},${y} ${X(x2t)},${y} ${X(x2b)},${y + h} ${X(x1b)},${y + h}"
         fill="var(--pl-accent)" fill-opacity="${op}" stroke="var(--pl-accent)" stroke-opacity="0.55" stroke-width="1.5" />
-      <text x="${cx}" y="${midY + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="var(--pl-fg)">${i + 1}</text>
-      <line x1="${rightMid}" y1="${midY}" x2="404" y2="${midY}" stroke="var(--pl-border-strong)" stroke-width="1" />
-      <circle cx="${rightMid}" cy="${midY}" r="2.5" fill="var(--pl-accent)" />
-      <text x="410" y="${midY + 5}" font-size="15" font-weight="700" fill="var(--pl-fg-secondary)">${t.label}</text>`;
+      <text x="${X(cx)}" y="${midY + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="var(--pl-fg)">${i + 1}</text>
+      <line x1="${X(rightMid)}" y1="${midY}" x2="${X(404)}" y2="${midY}" stroke="var(--pl-border-strong)" stroke-width="1" />
+      <circle cx="${X(rightMid)}" cy="${midY}" r="2.5" fill="var(--pl-accent)" />
+      <text x="${X(410)}" y="${midY + 5}" text-anchor="${anchor}" font-size="15" font-weight="700" fill="var(--pl-fg-secondary)">${t.label}</text>`;
   }).join("");
   const neckY = 16 + 4 * (h + gap) - gap;
   return `
     <svg viewBox="0 0 520 384" class="funnel" role="img" aria-label="A general AI narrowed stage by stage into one sharp, accurate agent">
       ${rows}
-      <polygon points="${cx - 46},${neckY} ${cx + 46},${neckY} ${cx},${neckY + 40}" fill="var(--pl-accent)" />
-      <text x="${cx}" y="${neckY + 62}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--pl-fg)">${pointLabel}</text>
+      <polygon points="${X(cx - 46)},${neckY} ${X(cx + 46)},${neckY} ${X(cx)},${neckY + 40}" fill="var(--pl-accent)" />
+      <text x="${X(cx)}" y="${neckY + 62}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--pl-fg)">${pointLabel}</text>
     </svg>`;
 }
 
@@ -869,9 +835,9 @@ function renderPrep(lang) {
   try { authed = !!sessionStorage.getItem("pl_auth"); } catch (e) {}
   if (!authed) { pendingStudentOpen = true; location.hash = "#/"; return; }
 
-  const C = window.WORKSHOP_CONTENT;
+  const W = window.WORKSHOP_CONTENT;
   // Defensive: if content.js failed to load, keep the page usable.
-  if (!C) {
+  if (!W) {
     document.getElementById("app").innerHTML = `
     ${navHeader(t, lang)}
     <main id="top" class="page"><section class="section"><div class="wrap narrow">
@@ -883,11 +849,13 @@ function renderPrep(lang) {
     afterRender();
     return;
   }
+  // Bilingual content model: pick the toggled language, fall back to English.
+  const C = W[lang] || W.en;
 
   document.getElementById("app").innerHTML = `
   ${navHeader(t, lang)}
 
-  <main id="top" class="page vault" dir="ltr">
+  <main id="top" class="page vault" dir="${lang === "he" ? "rtl" : "ltr"}">
     <!-- 1 — The promise (hero) -->
     <section class="section"><div class="wrap narrow">
       <div class="reveal">
@@ -941,7 +909,7 @@ function renderPrep(lang) {
           ${C.technical.stages.map((s, i) => `
             <li class="stage"><span class="stage__num">${i + 1}</span><div><h3>${s.title}</h3><p>${s.body}</p></div></li>`).join("")}
         </ol>
-        <div class="tech__figure reveal">${focusFunnel(C.technical.funnelTiers, C.technical.funnelPoint)}</div>
+        <div class="tech__figure reveal">${focusFunnel(C.technical.funnelTiers, C.technical.funnelPoint, lang)}</div>
       </div>
       <p class="tech__closing reveal">${C.technical.closing}</p>
     </div></section>
@@ -985,8 +953,8 @@ function renderPrep(lang) {
       <p class="tech__closing reveal">${C.plan.closing}</p>
     </div></section>
 
-    <!-- Help + WhatsApp (site copy — bilingual, follows the toggle) -->
-    <section class="section section--alt"><div class="wrap narrow" dir="${lang === "he" ? "rtl" : "ltr"}">
+    <!-- Help + WhatsApp (site copy - bilingual, inherits the main dir) -->
+    <section class="section section--alt"><div class="wrap narrow">
       <div class="reveal">
         <h2 class="prep__h">${t.prep_help_title}</h2>
         <p class="section-lead" style="margin-top:.5rem">${t.prep_help_body}</p>

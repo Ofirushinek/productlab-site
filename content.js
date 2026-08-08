@@ -19,17 +19,19 @@
    fetchable regardless of the password gate. That is FINE for these prompts —
    students receive them anyway. Do NOT put anything truly secret in this file.
 
-   LANGUAGE: the surrounding teaching copy below is ENGLISH for this pass. Hebrew
-   translation of the non-prompt copy is a COPYWRITER follow-up (flagged, not
-   invented here). The gated page renders this English content in both toggle
-   states (the content region is forced dir="ltr" so English reads correctly).
+   LANGUAGE: the teaching copy is BILINGUAL. The content model exists twice, under
+   `en` and `he`, with identical shape. app.js picks WORKSHOP_CONTENT[lang] from
+   the site toggle (fallback `en`) and sets the prep <main> direction (ltr / rtl)
+   to match. The four prompt BODIES stay ENGLISH in both states (technical text);
+   only the labels/intros around them are translated. EN is the original verbatim
+   copy; HE was authored by the Copywriter (approved parity, dash-clean).
    ========================================================================== */
 
 window.WORKSHOP_CONTENT = (function () {
 
   /* ---- The four copyable prompts — VERBATIM from the workshop source -------
      Migrated as-is. Do not rewrite. (Ofir will refine the 2-vs-4 prompt
-     structure later while iterating.) ------------------------------------- */
+     structure later while iterating.) Shared across HE and EN. ------------- */
 
   const CTO_CREATE = `I want you to create a reusable agent called "CTO" and save it to my user-level agents folder so I can call it in EVERY future session and project, not just this one.
 
@@ -140,16 +142,16 @@ Then make sure we document our components in Storybook: explain in one line why 
 
 Start with your first question now.`;
 
-  /* ---- The content model app.js renders -------------------------------- */
-  return {
-    /* Prompts, keyed. Step cards reference these by key. */
-    prompts: {
-      ctoCreate: CTO_CREATE,
-      ctoOrchestrate: CTO_ORCHESTRATE,
-      cpoBrief: CPO_BRIEF,
-      pdBrief: PD_BRIEF,
-    },
+  /* ---- Prompts, keyed. Step cards reference these by key (shared HE + EN). */
+  const PROMPTS = {
+    ctoCreate: CTO_CREATE,
+    ctoOrchestrate: CTO_ORCHESTRATE,
+    cpoBrief: CPO_BRIEF,
+    pdBrief: PD_BRIEF,
+  };
 
+  /* ---- ENGLISH content model (original, verbatim) ---------------------- */
+  const EN = {
     /* 1 — The promise (hero). */
     hero: {
       kicker: "Your workshop vault",
@@ -309,5 +311,175 @@ Start with your first question now.`;
       closing:
         "Take a breath. By the end of today you have a team, and a first real thing you built together. Let's begin.",
     },
+  };
+
+  /* ---- HEBREW content model (Copywriter, approved parity, dash-clean) --- */
+  const HE = {
+    /* 1 — ההבטחה (hero). */
+    hero: {
+      kicker: "המרחב שלכם לסדנה",
+      titleBefore: "אתם מעצבים. צוות ה-AI שלכם בונה את זה ",
+      titleMark: "יחד אתכם.",
+      titleAfter: "",
+      body:
+        "הרעש סביב ה-AI מציף. היום עושים בו סדר: תקימו צוות סוכני AI משלכם, מכוון לדרך שבה אתם עובדים, ותעבדו איתו בידיים כדי לבנות משהו אמיתי. ככה תצאו בטוחים ומצוידים, לא מהופנטים ואבודים.",
+    },
+
+    /* 2 — עד סוף היום (שלושה חלקים). */
+    end: {
+      kicker: "מתחילים מהסוף",
+      title: "עד סוף היום",
+      subtitle:
+        "שני דברים שאתם לוקחים איתכם היום, ואחד שתסיימו בבית.",
+      team: {
+        kicker: "מקימים את הצוות",
+        title: "שלושה שותפים שאתם מנהלים",
+        teammates: [
+          { name: "ה-CTO שלכם", charter: "שותף טכני", body: "גורם לחלקים המפחידים פשוט להיעלם." },
+          { name: "ה-CPO שלכם", charter: "מנהל המוצר", body: "שומר אתכם חדים וממוקדים." },
+          { name: "מעצב המוצר שלכם", charter: "האומנות שלכם, מורחבת", body: "המשך ישיר של האומנות שלכם, שממשיכה לצמוח יחד אתכם." },
+        ],
+      },
+      foundation: {
+        kicker: "היסוד של המוצר שלכם",
+        title: "גרסה ראשונה אמיתית",
+        body:
+          "גרסה ראשונה ואמיתית של תיק העבודות שלכם, בשפת העיצוב שלכם, שנשענת על Design System ב-Storybook.",
+      },
+      home: {
+        tag: "משימת בית",
+        title: "ואז לוקחים את זה הביתה",
+        body:
+          "עם ה-CTO שלכם לצידכם תסיימו את האתר, תחברו GitHub, תשיגו דומיין ותפרסמו אותו לאוויר, בעצמכם.",
+      },
+    },
+
+    /* 3 — איך זה עובד באמת (המודל המנטלי + המשפך). */
+    technical: {
+      kicker: "איך זה עובד באמת",
+      title: "למה AI ממוקד יותר הוא AI חכם יותר",
+      subtitle:
+        "כל השיטה ברעיון אחד: לא הופכים סוכן לחכם יותר בכך שמעמיסים עליו עוד ועוד, אלא מחדדים אותו דווקא מתוך מיקוד במה שהוא עושה.",
+      stages: [
+        { title: "מוח כללי ועצום", body: "מהקופסה, AI יודע קצת על כמעט הכול. עוצמתי, אבל רחב מדי, ומאבד פוקוס בקלות." },
+        { title: "נותנים לו תפקיד", body: "ממקדים אותו בעבודה אחת ובזהות אחת. מנדט צר יותר הופך אותו לחד ומדויק בהרבה, בדיוק במה שאתם צריכים." },
+        { title: "נותנים לו כישורים וכלים", body: "מוסרים לו כישורים וכלים שהוא באמת יכול להפעיל. עכשיו הוא לא רק חושב, הוא פועל, וממקד את עצמו עוד יותר." },
+        { title: "נותנים לו זיכרון והקשר", body: "מחברים לו מערכת תקשורת כך שהוא תמיד יודע על מה אתם עובדים ומה כבר נעשה עד עכשיו. את זה אנחנו בונים על Obsidian, המוח המשותף ששומר את כל הצוות בהקשר." },
+      ],
+      funnelTiers: [
+        { label: "מוח כללי" },
+        { label: "+ תפקיד" },
+        { label: "+ כישורים וכלים" },
+        { label: "+ זיכרון" },
+      ],
+      funnelPoint: "סוכן אחד חד",
+      closing:
+        "אינטליגנציה רחבה, ממוקדת לכדי שותף חד, מצויד בכלים ומודע להקשר. זו התזמור שתקימו היום, וזו הסיבה שמה שאתם בונים ממשיך לעבוד גם מחר.",
+    },
+
+    /* 4 — בוחרים את הכלים (שתי דרכים, איך לבחור). */
+    tools: {
+      kicker: "בוחרים את הכלים",
+      title: "שתי דרכים לבנות, ואיך לבחור ביניהן",
+      subtitle:
+        "כל דרך נמצאת איפשהו בין כלי אחד שעושה הכול בשבילכם, לבין ארגז כלים פתוח שאתם מרכיבים בעצמכם. הנה השיקול, כדי שהבחירה של היום תהיה ברורה.",
+      options: [
+        {
+          icon: "box",
+          kicker: "כלים הכול-באחד",
+          title: "כלי Vibe-coding",
+          lede: "Lovable, Base ודומיהם: מקום אחד שמעצב, בונה ומשגר בשבילכם.",
+          benefits: [
+            "הכול כלול: בלי התקנות, בלי חיווט, בלי לצאת מהחדר.",
+            "מתקדמים מהר ורואים משהו אמיתי כבר בהתחלה, עם כמה שפחות סיבוכים.",
+            "נקודת הכניסה הכי רכה שיש, מושלמת כדי להניע פרויקט אישי.",
+          ],
+          noteLabel: "כדאי לדעת",
+          note: "הכי מתאים לפרויקטים עצמאיים. ברגע שפרויקט גדל, נעשה מורכב, או צריך להתחבר לכלים חיצוניים, הם עלולים לתסכל. ורוב הארגונים עם צוותי עיצוב עדיין לא עובדים איתם.",
+          featured: false,
+        },
+        {
+          icon: "claude",
+          kicker: "ארגז הכלים המקצועי",
+          title: "Claude Code",
+          lede: "ארגז הכלים של האומן, זה שנקים יחד היום.",
+          benefits: [
+            "הכי גמיש בגדול: בונים כמעט הכול, מתחברים כמעט לכל דבר.",
+            "הבחירה הראשונה בצוותי עיצוב מוצר אמיתיים היום.",
+            "זה גם הכלי המרכזי של המהנדסים, כך שהעבודה שלכם זורמת ישר לשלהם.",
+          ],
+          noteLabel: "כדאי לדעת",
+          note: "עקומת למידה תלולה יותר, ופחות ידידותי למעצבים בהתחלה. זה המחיר תמורת טווח, פוטנציאל ועמידות לאורך זמן.",
+          featured: true,
+        },
+      ],
+      closing:
+        "היום אנחנו בונים על Claude, ההתחלה הקשה יותר שממשיכה להשתלם, וזו שמתחברת ישר לדרך שבה צוותים אמיתיים עובדים.",
+    },
+
+    /* 5 — התוכנית (שלבים ממוספרים עם כרטיסי פרומפט להעתקה). */
+    plan: {
+      kicker: "התוכנית",
+      title: "איך נגיע לשם",
+      subtitle: "חמישה שלבים. קודם בונים את הצוות, ואז הצוות בונה יחד אתכם.",
+      steps: [
+        {
+          n: "01",
+          title: "מקימים את סביבת העבודה",
+          body: "מסדרים את שלושת הכלים. רק הראשון עולה כסף היום.",
+          checklist: [
+            { name: "Claude", tag: "20$ לחודש", note: "סביבת העבודה שלכם, המקום שבו כל צוות ה-AI חי ועובד. צריך את תוכנית ה-Pro, הכלי היחיד בתשלום היום." },
+            { name: "Obsidian", tag: "חינם", note: "המוח המשותף שלכם, מותקן על המחשב שלכם. זה המקום שבו כל סוכן קורא וכותב את מה שהצוות יודע." },
+            { name: "Figma", tag: "אופציונלי", note: "רק אם אתם מעצבים שרוצים אותו, לעיצוב שפה חזותית. אחרת, אפשר לדלג." },
+          ],
+        },
+        {
+          n: "02",
+          title: "בונים קודם את ה-CTO שלכם",
+          body: "השותף הטכני שלכם קודם, כי הוא זה שמקים את כל השאר. שני פרומפטים: הראשון יוצר את ה-CTO שלכם, והשני מפעיל אותו לתכנן את הצוות.",
+          prompts: [
+            { label: "פרומפט 1 - יצירת ה-CTO שלכם", intro: "הדביקו את זה בצ'אט חדש לגמרי ב-Claude Code. הוא יוצר את ה-CTO שלכם, השותף הטכני, ושומר אותו כך שתוכלו לקרוא לו שוב בכל רגע.", key: "ctoCreate" },
+            { label: "פרומפט 2 - תדרוך ל-CTO לבניית הצוות", intro: "אחרי שה-CTO שלכם קיים, הדביקו את זה כדי להפעיל אותו. הוא לא יבנה בשקט, קודם הוא יראיין אתכם על הצוות שאתם רוצים.", key: "ctoOrchestrate" },
+          ],
+        },
+        {
+          n: "03",
+          title: "מכירים את ה-CPO שלכם",
+          body: "ה-CTO שלכם כבר בנה את ה-CPO שלכם, השותף למוצר, זה ששומר אתכם ממוקדים ומחליט מה בונים קודם. עכשיו תפעילו אותו ותנו לו לחלץ מכם את המטרה האמיתית שלכם.",
+          prompts: [
+            { label: "פרומפט - תדרוך ל-CPO להגדרת המטרה", intro: "פתחו צ'אט חדש עם ה-CPO שה-CTO שלכם בנה, והדביקו את זה. הוא קצר בכוונה, התשובות האמיתיות מגיעות מכם, בשיחה שהוא פותח.", key: "cpoBrief" },
+          ],
+        },
+        {
+          n: "04",
+          title: "מכירים את מעצב המוצר שלכם",
+          body: "ה-CTO שלכם כבר בנה את מעצב המוצר שלכם, השותף לעיצוב, המשך ישיר של האומנות שלכם. עכשיו תפתחו צ'אט חדש ותנו לו לעצב יחד אתכם את השפה החזותית ולהקים Storybook.",
+          note: "אופציונלי: אם אתם משתמשים ב-Figma, מעצב המוצר שלכם יכול להתחבר אליו ישירות דרך ה-Figma MCP ולעבוד מקבצי העיצוב האמיתיים שלכם. רק אם בא לכם Figma.",
+          prompts: [
+            { label: "פרומפט - תדרוך למעצב המוצר", intro: "פתחו צ'אט חדש עם מעצב המוצר שה-CTO שלכם בנה, והדביקו את זה. הוא ישאל מה אתם מחפשים וילווה אתכם בהקמת Storybook.", key: "pdBrief" },
+          ],
+        },
+        {
+          n: "05",
+          title: "מעלים לאוויר",
+          body: "את החלק הזה תסיימו בבית, עם הצוות שלכם לצידכם. הישענו על הסוכנים שלכם בכל צעד, ועל ה-CTO בכל דבר טכני, הוא מעביר אתכם דרך החלקים המפחידים.",
+          checklist: [
+            { name: "מסיימים את העמוד", note: "מלטשים את הטיוטה הראשונה למשהו שתשמחו להראות." },
+            { name: "משיגים דומיין", tag: "לפי הצורך", note: "רוצים כתובת אינטרנט משלכם? הקימו אחת. ה-CTO שלכם ילווה אתכם." },
+            { name: "מקימים GitHub", tag: "לפי הצורך", note: "פתחו חשבון GitHub ושמרו שם את הפרויקט, כך שהוא שמור ומוכן לפרסום. ה-CTO שלכם מדריך אתכם." },
+            { name: "עולים לאוויר", note: "מבצעים את הצעדים הטכניים לפרסום לרשת, כשה-CTO שלכם מטפל בחלקים המפחידים לצידכם." },
+          ],
+        },
+      ],
+      closing:
+        "קחו אוויר. עד סוף היום יש לכם צוות, ודבר אמיתי ראשון שבניתם יחד. בואו נתחיל.",
+    },
+  };
+
+  /* ---- The exported model app.js renders ------------------------------- */
+  return {
+    prompts: PROMPTS,
+    en: EN,
+    he: HE,
   };
 })();

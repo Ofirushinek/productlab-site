@@ -874,9 +874,12 @@ body.modal-open { overflow: hidden; }
 
 /* =============================================================================
    GATED WORKSHOP VAULT (#/prep) — migrated workshop content, current DS.
-   Rendered from window.WORKSHOP_CONTENT (content.js). The .vault region is
-   forced dir="ltr" (English content this pass; HE copy is a Copywriter
-   follow-up). All values reference existing tokens — no inline hex.
+   Rendered from window.WORKSHOP_CONTENT (content.js). Teaching copy is
+   bilingual; the .vault <main> takes dir from the toggle (rtl HE / ltr EN).
+   Layout uses flex/grid + logical properties, so it flows in both directions.
+   The copyable prompt body (.prompt__text) is forced dir="ltr" inline so the
+   English prompt reads correctly inside an RTL page. All values reference
+   existing tokens — no inline hex.
    ========================================================================== */
 .vault .mark { color: var(--pl-accent); }
 
