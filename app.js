@@ -197,14 +197,12 @@ const I18N = {
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "אזור התלמידים",
-    login_title: "כניסת תלמידים",
-    login_sub: "כניסה לאזור התלמידים עם הפרטים שקיבלת.",
-    login_email_label: "אימייל",
-    login_email_ph: "you@email.com",
-    login_pass_label: "סיסמה",
-    login_pass_ph: "הסיסמה שלך",
+    login_title: "כניסה עם הקוד שלך",
+    login_sub: "האזור הזה נועד למשתתפי הסדנה. הזינו את קוד הגישה ששלחתי לכם.",
+    login_pass_label: "קוד גישה",
+    login_pass_ph: "הקוד ששלחתי לך",
     login_submit: "כניסה",
-    login_soon: "הפרטים לא תואמים. אם אתם משתתפים ולא מצליחים להיכנס, כתבו לי.",
+    login_soon: "הקוד לא נכון. תבדקו את ההודעה ששלחתי לכם. אם זה לא מסתדר, פשוט תענו לי עליה.",
 
     // ---- Student prep page (gated by pl_auth). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
@@ -369,14 +367,12 @@ const I18N = {
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "Student area",
-    login_title: "Student sign in",
-    login_sub: "Sign in to the student area with the details you received.",
-    login_email_label: "Email",
-    login_email_ph: "you@email.com",
-    login_pass_label: "Password",
-    login_pass_ph: "Your password",
-    login_submit: "Sign in",
-    login_soon: "Those details don't match an account. If you're a participant and can't get in, message me.",
+    login_title: "Enter with your code",
+    login_sub: "This area is for workshop participants. Enter the access code I sent you.",
+    login_pass_label: "Access code",
+    login_pass_ph: "The code I sent you",
+    login_submit: "Enter",
+    login_soon: "That code isn't right. Check the message I sent you. If you're still stuck, just reply to it.",
 
     // ---- Student prep page (gated by pl_auth). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
@@ -462,13 +458,9 @@ const studentModal = (t) => `
       <h2 class="login__title">${t.login_title}</h2>
       <p class="login__sub">${t.login_sub}</p>
       <form class="login__form" data-student-form novalidate>
-        <div class="field" hidden>
-          <label class="field__label" for="student-email">${t.login_email_label}</label>
-          <input class="input" id="student-email" name="email" type="email" dir="ltr" placeholder="${t.login_email_ph}" autocomplete="email" />
-        </div>
         <div class="field">
           <label class="field__label" for="student-pass">${t.login_pass_label}</label>
-          <input class="input" id="student-pass" name="password" type="password" placeholder="${t.login_pass_ph}" autocomplete="current-password" />
+          <input class="input" id="student-pass" name="password" type="password" placeholder="${t.login_pass_ph}" autocomplete="off" />
         </div>
         <button class="btn btn--primary login__submit" type="submit">${t.login_submit}</button>
         <p class="login__note" data-student-note hidden>${I.info}<span>${t.login_soon}</span></p>
