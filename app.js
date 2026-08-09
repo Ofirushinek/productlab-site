@@ -82,7 +82,7 @@ const I18N = {
     hero_sub: "בסדנה מעשית אחת תיצרו צוות AI אישי, תלמדו לנהל אותו, ותתחילו לעבוד על הפרויקט שלכם כבר במהלך הסדנה.",
     hero_points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח־על של בנייה"],
     session: {
-      badge: "המחזור הראשון",
+      badge: "המפגש הבא",
       when_label: "מתי?",
       when_value: ["יום ה׳, 3 בספטמבר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
@@ -255,7 +255,7 @@ const I18N = {
     hero_sub: "In one hands-on workshop you'll create your own AI team, learn to run it, and start working on your project during the workshop itself.",
     hero_points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
     session: {
-      badge: "First cohort",
+      badge: "Next session",
       when_label: "When?",
       when_value: ["Thursday, 3 September", "17:30-20:30", "One session, 3 hours"],
       where_label: "Where?",
