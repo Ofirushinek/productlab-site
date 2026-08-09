@@ -30,10 +30,14 @@
   <meta name="twitter:title" content="לצאת עם צוות משלך, ועם דרך חדשה ליצור." />
   <meta name="twitter:description" content="מפגש חי אחד, שלוש שעות, למי שרוצה לבנות עם AI, לא רק להשתמש בו. מקימים צוות סוכנים שעובד בשיטה שלך, ובונים איתו משהו אמיתי עוד לפני שהמפגש נגמר." />
   <meta name="twitter:image" content="https://productlab.studio/assets/og-cover.png" />
+  <!-- Preload the above-the-fold hero (responsive: mobile vs desktop WebP) so it
+       downloads first and paints fast. Matches the <picture> media breakpoints. -->
+  <link rel="preload" as="image" href="assets/hero-even-2.webp?v=1" type="image/webp" media="(min-width: 761px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/hero-mobile-2.webp?v=1" type="image/webp" media="(max-width: 760px)" fetchpriority="high" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260808c" />
+  <link rel="stylesheet" href="styles.css?v=20260809a" />
 </head>
 <body>
   <div id="app"></div>
@@ -41,6 +45,6 @@
   <!-- Gated workshop content (window.WORKSHOP_CONTENT) — MUST load before app.js.
        Bump ?v= when content.js changes so browsers fetch the new version. -->
   <script src="content.js?v=20260808b"></script>
-  <script src="app.js?v=20260808d"></script>
+  <script src="app.js?v=20260809a"></script>
 </body>
 </html>

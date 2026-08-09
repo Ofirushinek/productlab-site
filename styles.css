@@ -713,9 +713,18 @@ body.modal-open { overflow: hidden; }
 
 /* ===== HERO SCENE — title ALWAYS overlays the image (mobile + desktop) ===== */
 .hero--scene { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 82vh; }
-.hero__media { position: absolute; inset: 0; z-index: 0; }
+/* LQIP blur-up: a ~28px blurred data-URI shows INSTANTLY behind the hero image
+   so the fold is never an empty gray box; the sharp img fades in over it. */
+.hero__media { position: absolute; inset: 0; z-index: 0; background-color: #1a120b;
+  background-image: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAATABwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCnHIOlQ3LfMKghkz3pZpOK5pKzsbxd43Lgl/cYrMeN2YkU9pCsdQi6wK1SIZFCxz1qZifWiipluEdhshOyqh60UVURSP/Z");
+  background-size: cover; background-position: center; }
 .hero__media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.hero__img { opacity: 0; transition: opacity 0.6s ease; }
+.hero__img.is-loaded { opacity: 1; }
 [dir="ltr"] .hero__media img { transform: scaleX(-1); }
+@media (prefers-reduced-motion: reduce) {
+  .hero__img { transition: none; }
+}
 /* scrim — mobile default: vertical wash, darkest at the top behind the title */
 .hero--scene::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background: linear-gradient(180deg, rgb(16 11 7 / 0.76) 0%, rgb(16 11 7 / 0.50) 42%, rgb(16 11 7 / 0.34) 100%); }

@@ -541,8 +541,10 @@ function render(lang) {
     </div>
     <div class="hero__media">
       <picture>
-        <source media="(max-width: 760px)" srcset="assets/hero-mobile-2.png?v=3" />
-        <img src="assets/hero-even-2.png?v=7" alt="" />
+        <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-mobile-2.webp?v=1" />
+        <source type="image/webp" srcset="assets/hero-even-2.webp?v=1" />
+        <source type="image/jpeg" media="(max-width: 760px)" srcset="assets/hero-mobile-2.jpg?v=1" />
+        <img class="hero__img" src="assets/hero-even-2.jpg?v=1" alt="" width="1536" height="1024" fetchpriority="high" decoding="async" onload="this.classList.add('is-loaded')" />
       </picture>
     </div>
   </section>
@@ -1131,6 +1133,7 @@ function wireSignout() {
 function afterRender() {
   wireLang();
   wireReveal();
+  wireHeroImage();
   wireStudent();
   wireNav();
   wireAccountMenu();
@@ -1199,6 +1202,16 @@ function wireLang() {
   if (lt) lt.addEventListener("click", () =>
     setLang(document.documentElement.lang === "he" ? "en" : "he")
   );
+}
+
+/* ---- Hero image fade-in -------------------------------------------------- */
+/* The onload handler covers a fresh load; this catches the cached case, where
+   the image is already complete before the handler is attached. The LQIP blur
+   sits behind until .is-loaded fades the sharp image in (see styles.css). */
+function wireHeroImage() {
+  document.querySelectorAll(".hero__img").forEach((img) => {
+    if (img.complete && img.naturalWidth > 0) img.classList.add("is-loaded");
+  });
 }
 
 /* ---- Reveal on scroll ---------------------------------------------------- */
