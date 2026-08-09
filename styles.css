@@ -525,6 +525,10 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
 .input::placeholder { color: var(--pl-fg-muted); font-weight: 500; opacity: 1; }
+/* Access-code masking without the password heuristic: keeps the dots look on a
+   type="text" field so browsers do not vault or autofill it as a login. */
+.input--masked { -webkit-text-security: disc; text-security: disc; letter-spacing: 0.15em; }
+.input--masked::placeholder { -webkit-text-security: none; text-security: none; letter-spacing: normal; }
 .input:hover { border-color: var(--pl-fg-secondary); }
 .input:focus {
   outline: none; border-color: var(--pl-accent);

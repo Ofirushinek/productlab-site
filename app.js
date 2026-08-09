@@ -500,8 +500,8 @@ const studentModal = (t) => `
       <p class="login__sub">${t.login_sub}</p>
       <form class="login__form" data-student-form novalidate>
         <div class="field">
-          <label class="field__label" for="student-pass">${t.login_pass_label}</label>
-          <input class="input" id="student-pass" name="password" type="password" placeholder="${t.login_pass_ph}" autocomplete="off" />
+          <label class="field__label" for="access-code">${t.login_pass_label}</label>
+          <input class="input input--masked" id="access-code" name="access-code" type="text" inputmode="text" placeholder="${t.login_pass_ph}" autocomplete="one-time-code" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" />
         </div>
         <button class="btn btn--primary login__submit" type="submit">${t.login_submit}</button>
         <p class="login__note" data-student-note hidden>${I.info}<span>${t.login_soon}</span></p>
@@ -1172,7 +1172,7 @@ function wireStudent() {
 
   const form = modal.querySelector("[data-student-form]");
   const note = form && form.querySelector("[data-student-note]");
-  const pass = form && form.querySelector('[name="password"]');
+  const pass = form && form.querySelector('[name="access-code"]');
   if (form) form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (note) note.hidden = true;
