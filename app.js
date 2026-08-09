@@ -200,11 +200,11 @@ const I18N = {
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "אזור התלמידים",
     login_title: "כניסה עם הקוד שלך",
-    login_sub: "האזור הזה נועד למשתתפי הסדנה. הזינו את קוד הגישה ששלחתי לכם.",
+    login_sub: "האזור הזה נועד למשתתפי הסדנה. הזינו את קוד הגישה שקיבלתם.",
     login_pass_label: "קוד גישה",
-    login_pass_ph: "הקוד ששלחתי לך",
+    login_pass_ph: "קוד הגישה שקיבלתם",
     login_submit: "כניסה",
-    login_soon: "הקוד לא נכון. תבדקו את ההודעה ששלחתי לכם. אם זה לא מסתדר, פשוט תענו לי עליה.",
+    login_soon: "הקוד לא נכון. בדקו שוב את ההודעה עם הקוד. אם זה עדיין לא עובד, כתבו לנו.",
 
     // ---- Student prep page (gated by pl_auth). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
@@ -372,11 +372,11 @@ const I18N = {
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "Student area",
     login_title: "Enter with your code",
-    login_sub: "This area is for workshop participants. Enter the access code I sent you.",
+    login_sub: "This area is for workshop participants. Enter the access code you received.",
     login_pass_label: "Access code",
-    login_pass_ph: "The code I sent you",
+    login_pass_ph: "Your access code",
     login_submit: "Enter",
-    login_soon: "That code isn't right. Check the message I sent you. If you're still stuck, just reply to it.",
+    login_soon: "That code isn't right. Check the message with your code. If you're still stuck, write to us.",
 
     // ---- Student prep page (gated by pl_auth). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
