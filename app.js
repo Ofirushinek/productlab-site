@@ -580,6 +580,65 @@ function render(lang) {
     </div>
   </section>
 
+  <!-- 6 PROOF OF CRAFT -->
+  <section class="section section--alt"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${t.proof_eyebrow}</span>
+      <h2 class="section-title">${t.proof_title}</h2>
+      <p class="section-lead">${t.proof_lead}</p>
+    </div>
+    <div class="proof" style="margin-top:2rem">
+      <div class="proof__block reveal">
+        <div class="proof__shot"><img src="assets/thispage.png" alt="" /></div>
+        <div class="proof__body">
+          <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
+        </div>
+      </div>
+      <div class="proof__block reveal">
+        <div class="proof__shot"><img src="assets/glimps.png" alt="Glimps" /></div>
+        <div class="proof__body">
+          <h3>${t.proof_glimps_t}</h3><p>${t.proof_glimps_b}</p>
+          <a class="linkline" href="https://glimps.design" target="_blank" rel="noopener">${t.proof_glimps_link} ${I.arrow}</a>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath -->
+  <section class="section"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${t.ofir_eyebrow}</span>
+      <h2 class="section-title">${t.roster_title}</h2>
+    </div>
+    <!-- ONE bounded panel: leader on top, the AI crew grouped in a band below -->
+    <div class="team reveal">
+      <div class="team__lead">
+        <div class="team__photo"><img src="assets/ofir.jpeg" alt="${t.ofir_name}" /></div>
+        <div class="team__leadtext">
+          <span class="team__kicker">${t.lead_label}</span>
+          <div class="team__name">${t.ofir_name}</div>
+          ${t.ofir_bio.split("\n\n").map((p) => `<p>${p}</p>`).join("")}<p>${t.ofir_why}</p>
+        </div>
+      </div>
+      <div class="team__crew">
+        <span class="eyebrow">${t.crew_label}</span>
+        <div class="team__name">${t.crew_title}</div>
+        ${t.crew_intro.split("\n\n").map((p) => `<p class="section-lead">${p}</p>`).join("")}
+        <div class="team__agents">
+          ${t.agents.map((a) => `
+            <div class="agentcard">
+              <div class="agentcard__illo"><img src="assets/${a.img}.png?v=3" alt="" /></div>
+              <div class="agentcard__body">
+                <div class="agentcard__role">${a.role}</div>
+                <p>${a.b}</p>
+              </div>
+            </div>`).join("")}
+        </div>
+        <p class="section-lead">${t.crew_close}</p>
+      </div>
+    </div>
+  </div></section>
+
   <!-- 2 WHY NOW -->
   <section class="section section--alt"><div class="wrap narrow why">
     <div class="reveal">
@@ -644,65 +703,6 @@ function render(lang) {
           </div>
         </details>`;
       }).join("")}
-    </div>
-  </div></section>
-
-  <!-- 6 PROOF OF CRAFT -->
-  <section class="section section--alt"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${t.proof_eyebrow}</span>
-      <h2 class="section-title">${t.proof_title}</h2>
-      <p class="section-lead">${t.proof_lead}</p>
-    </div>
-    <div class="proof" style="margin-top:2rem">
-      <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/thispage.png" alt="" /></div>
-        <div class="proof__body">
-          <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
-        </div>
-      </div>
-      <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/glimps.png" alt="Glimps" /></div>
-        <div class="proof__body">
-          <h3>${t.proof_glimps_t}</h3><p>${t.proof_glimps_b}</p>
-          <a class="linkline" href="https://glimps.design" target="_blank" rel="noopener">${t.proof_glimps_link} ${I.arrow}</a>
-        </div>
-      </div>
-    </div>
-  </div></section>
-
-  <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath -->
-  <section class="section"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${t.ofir_eyebrow}</span>
-      <h2 class="section-title">${t.roster_title}</h2>
-    </div>
-    <!-- ONE bounded panel: leader on top, the AI crew grouped in a band below -->
-    <div class="team reveal">
-      <div class="team__lead">
-        <div class="team__photo"><img src="assets/ofir.jpeg" alt="${t.ofir_name}" /></div>
-        <div class="team__leadtext">
-          <span class="team__kicker">${t.lead_label}</span>
-          <div class="team__name">${t.ofir_name}</div>
-          ${t.ofir_bio.split("\n\n").map((p) => `<p>${p}</p>`).join("")}<p>${t.ofir_why}</p>
-        </div>
-      </div>
-      <div class="team__crew">
-        <span class="eyebrow">${t.crew_label}</span>
-        <div class="team__name">${t.crew_title}</div>
-        ${t.crew_intro.split("\n\n").map((p) => `<p class="section-lead">${p}</p>`).join("")}
-        <div class="team__agents">
-          ${t.agents.map((a) => `
-            <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.png?v=3" alt="" /></div>
-              <div class="agentcard__body">
-                <div class="agentcard__role">${a.role}</div>
-                <p>${a.b}</p>
-              </div>
-            </div>`).join("")}
-        </div>
-        <p class="section-lead">${t.crew_close}</p>
-      </div>
     </div>
   </div></section>
 
