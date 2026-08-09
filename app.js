@@ -456,12 +456,12 @@ const navHeader = (t, lang, opts = {}) => {
       ${langToggle}
     </div>
     <div class="nav__account" data-account>
-      <button class="nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}">${I.user}</button>
+      <button class="nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}" data-tooltip="${t.nav_account}">${I.user}</button>
       <div class="nav__accmenu" role="menu" aria-label="${t.nav_account}" data-account-menu hidden>
         <button class="nav__accmenu-item" type="button" role="menuitem" data-signout>${t.nav_signout}</button>
       </div>
     </div>
-    <button class="nav__burger" type="button" data-nav-toggle aria-label="${lang === "he" ? "תפריט" : "Menu"}" aria-expanded="false" aria-controls="navMenu">${I.menu}</button>
+    <button class="nav__burger" type="button" data-nav-toggle aria-label="${lang === "he" ? "תפריט" : "Menu"}" data-tooltip="${lang === "he" ? "תפריט" : "Menu"}" aria-expanded="false" aria-controls="navMenu">${I.menu}</button>
   </div></header>`;
   }
 
@@ -483,7 +483,7 @@ const navHeader = (t, lang, opts = {}) => {
       ${studentBtn}
     </div>
     <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
-    <button class="nav__burger" type="button" data-nav-toggle aria-label="${lang === "he" ? "תפריט" : "Menu"}" aria-expanded="false" aria-controls="navMenu">${I.menu}</button>
+    <button class="nav__burger" type="button" data-nav-toggle aria-label="${lang === "he" ? "תפריט" : "Menu"}" data-tooltip="${lang === "he" ? "תפריט" : "Menu"}" aria-expanded="false" aria-controls="navMenu">${I.menu}</button>
   </div></header>`;
 };
 
@@ -494,7 +494,7 @@ const studentModal = (t) => `
   <div class="modal" data-student-modal hidden>
     <div class="modal__overlay" data-student-close></div>
     <div class="modal__card" role="dialog" aria-modal="true" aria-label="${t.login_title}">
-      <button class="modal__close" type="button" data-student-close aria-label="Close">${I.x}</button>
+      <button class="modal__close" type="button" data-student-close aria-label="Close" data-tooltip="Close">${I.x}</button>
       <div class="login__ico">${I.login}</div>
       <span class="eyebrow">${t.login_eyebrow}</span>
       <h2 class="login__title">${t.login_title}</h2>
@@ -534,7 +534,7 @@ function render(lang) {
        (warm gradient) until the generated cafe image lands (OpenAI billing gate). -->
   <section class="hero hero--scene">
     <div class="wrap hero__inner reveal">
-      <h1 class="hero__title">${t.hero_title_a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</h1>
+      <h1 class="hero__title">${t.hero_title_a}<br class="hero__br"><span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</h1>
       <p class="hero__sub">${t.hero_sub}</p>
       <ul class="hero__points">
         ${t.hero_points.map((p) => `<li>${p}</li>`).join("")}
@@ -718,8 +718,11 @@ function render(lang) {
       ${t.quotes.map((qt) => `
         <figure class="quote-card reveal">
           <figcaption class="quote-card__head">
-            <span class="quote-card__avatar">${qt.img ? `<img src="assets/${qt.img}.jpg?v=1" alt="${qt.n}" loading="lazy" />` : I.user}</span>
-            <span class="quote-card__who"><span class="quote-card__name"><strong>${qt.n}</strong>${qt.li ? `<a class="quote-card__li" href="${qt.li}" target="_blank" rel="noopener" aria-label="${qt.n} on LinkedIn">${I.linkedin}</a>` : ""}</span><span>${qt.m}</span></span>
+            <span class="quote-card__avatarwrap">
+              <span class="quote-card__avatar">${qt.img ? `<img src="assets/${qt.img}.jpg?v=1" alt="${qt.n}" loading="lazy" />` : I.user}</span>
+              ${qt.li ? `<a class="quote-card__li" href="${qt.li}" target="_blank" rel="noopener" aria-label="${qt.n} on LinkedIn" data-tooltip="LinkedIn" data-tip-pos="top">${I.linkedin}</a>` : ""}
+            </span>
+            <span class="quote-card__who"><span class="quote-card__name"><strong>${qt.n}</strong></span><span class="quote-card__role">${qt.m}</span></span>
           </figcaption>
           <blockquote>${qt.q}</blockquote>
         </figure>`).join("")}

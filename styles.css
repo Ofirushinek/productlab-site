@@ -27,6 +27,10 @@
   --pl-grid-dot: rgb(10 10 10 / 0.05);
   --pl-illo-bg: #ece8f5;
 
+  /* tooltip — dark bubble for icon-only controls (design-system token) */
+  --pl-tooltip-bg: #1a1a1a;
+  --pl-tooltip-fg: #ffffff;
+
   /* crew palette — the felt-puppet character colors, for playful accents */
   --pl-crew-orange: #e0763c;
   --pl-crew-teal: #3f9a97;
@@ -89,6 +93,46 @@ h1, h2, h3, h4 {
 }
 
 p { margin: 0; }
+
+/* ---- Tooltip (design-system) --------------------------------------------
+   Dark bubble for ICON-ONLY controls (buttons/links with no visible text).
+   RULE: any control that shows only an icon MUST carry `data-tooltip="Label"`
+   (keep the label in sync with its aria-label). Appears on hover AND
+   keyboard focus. Default position = below, centered; add `data-tip-pos="top"`
+   to flip above (e.g. controls near the bottom of the viewport).             */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute; left: 50%; top: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px);
+  background: var(--pl-tooltip-bg); color: var(--pl-tooltip-fg);
+  font-size: var(--text-caption); font-weight: 600; line-height: 1;
+  white-space: nowrap; padding: 0.4rem 0.55rem; border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pl-md);
+  opacity: 0; pointer-events: none; z-index: 100;
+  transition: opacity 0.12s var(--ease-pl), transform 0.12s var(--ease-pl);
+}
+[data-tooltip]::before {
+  content: ""; position: absolute; left: 50%; top: calc(100% + 3px);
+  transform: translateX(-50%);
+  border: 5px solid transparent; border-bottom-color: var(--pl-tooltip-bg);
+  opacity: 0; pointer-events: none; z-index: 100;
+  transition: opacity 0.12s var(--ease-pl);
+}
+[data-tooltip]:hover::after, [data-tooltip]:focus-visible::after {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+[data-tooltip]:hover::before, [data-tooltip]:focus-visible::before { opacity: 1; }
+/* flip above */
+[data-tooltip][data-tip-pos="top"]::after {
+  top: auto; bottom: calc(100% + 8px); transform: translateX(-50%) translateY(-4px);
+}
+[data-tooltip][data-tip-pos="top"]:hover::after,
+[data-tooltip][data-tip-pos="top"]:focus-visible::after { transform: translateX(-50%) translateY(0); }
+[data-tooltip][data-tip-pos="top"]::before {
+  top: auto; bottom: calc(100% + 3px);
+  border-bottom-color: transparent; border-top-color: var(--pl-tooltip-bg);
+}
 
 /* Sticky footer: on short pages (legal / prep / login) keep the footer pinned to
    the viewport bottom so the paper background never shows as dead space below it.
@@ -736,6 +780,11 @@ body.modal-open { overflow: hidden; }
 [dir="rtl"] .hero__inner { text-align: right; }
 .hero--scene .hero__title { font-size: var(--text-display); letter-spacing: -0.03em; line-height: 1.04; max-width: 16ch;
   color: #ffffff; text-shadow: 0 1px 24px rgb(0 0 0 / 0.45); }
+/* English hero runs longer than Hebrew — dial the display size down a touch (LTR only). */
+[dir="ltr"] .hero--scene .hero__title { font-size: clamp(2.5rem, 5.2vw, 3.9rem); max-width: 18ch; }
+/* Forced break so English reads "…with an" / "AI team you created yourself." */
+.hero__br { display: none; }
+[dir="ltr"] .hero__br { display: inline; }
 .hero--scene .hero__title .mark { color: #c4b5fd; }
 .hero--scene .hero__sub { margin-top: 1.3rem; font-size: var(--text-body-lg); color: rgb(255 255 255 / 0.92);
   max-width: 46ch; font-weight: 500; text-shadow: 0 1px 16px rgb(0 0 0 / 0.45); }
@@ -836,8 +885,11 @@ body.modal-open { overflow: hidden; }
 
 /* attribution header: big prominent photo + name/role */
 .quote-card__head { display: flex; align-items: center; gap: 1.1rem; }
+/* wrapper holds the (overflow-clipped) avatar + the corner LinkedIn badge,
+   which must sit OUTSIDE the avatar's clip so it isn't cut off. */
+.quote-card__avatarwrap { position: relative; width: 88px; height: 88px; flex: none; }
 .quote-card__avatar {
-  width: 88px; height: 88px; border-radius: 999px; background: var(--pl-illo-bg); flex: none;
+  width: 88px; height: 88px; border-radius: 999px; background: var(--pl-illo-bg);
   display: grid; place-items: center; overflow: hidden;
   box-shadow: 0 0 0 3px var(--pl-surface), 0 0 0 5px var(--pl-accent);
 }
@@ -846,15 +898,20 @@ body.modal-open { overflow: hidden; }
 .quote-card__who { display: flex; flex-direction: column; gap: 0.25rem; }
 .quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); line-height: 1.2; }
 .quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--pl-accent); }
-/* Name row: name + discreet "verify on LinkedIn" affordance side by side */
 .quote-card__name { display: inline-flex; align-items: center; gap: 0.4rem; }
+.quote-card__role { display: inline-flex; align-items: center; gap: 0.4rem; }
+/* LinkedIn = corner badge on the avatar. Solid brand-blue disc, no border ring,
+   sits on the lower-inline-end arc so it reads as part of the photo. */
 .quote-card__li {
-  display: inline-flex; align-items: center; line-height: 0;
-  color: var(--pl-fg-muted); cursor: pointer;
-  transition: color 0.2s var(--ease-pl);
+  position: absolute; bottom: 2px; inset-inline-end: 2px;
+  width: 26px; height: 26px; border-radius: 999px;
+  display: grid; place-items: center; line-height: 0; cursor: pointer;
+  background: var(--pl-surface); color: var(--pl-fg-muted);
+  box-shadow: var(--shadow-pl-sm);
+  transition: transform 0.15s var(--ease-pl), color 0.2s var(--ease-pl);
 }
 .quote-card__li svg { width: 15px; height: 15px; }
-.quote-card__li:hover, .quote-card__li:focus-visible { color: var(--pl-accent); }
+.quote-card__li:hover, .quote-card__li:focus-visible { transform: scale(1.08); color: var(--pl-fg); }
 
 /* the quote: softer + lighter than the attribution (medium weight, gray ink),
    opened by a large decorative quote mark. Separated by a hairline. */
@@ -1083,3 +1140,4 @@ body.modal-open { overflow: hidden; }
   .reveal { opacity: 1; transform: none; transition: none; }
   html { scroll-behavior: auto; }
 }
+
