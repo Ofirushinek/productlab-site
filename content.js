@@ -183,14 +183,9 @@ When you are done, tell me the project document is saved, where it is, and confi
 
   /* ---- ENGLISH content model ------------------------------------------- */
   const EN = {
-    /* 1 — The promise (hero). */
+    /* 1 — Plain functional page title (no hero: no kicker, no marketing body, no CTA). */
     hero: {
-      kicker: "Your workshop vault",
-      titleBefore: "You design it. Your AI team builds it ",
-      titleMark: "with you.",
-      titleAfter: "",
-      body:
-        "The AI noise is overwhelming. Today we cut through it: you'll set up your own team of AI agents, tuned to how you work, and use them hands-on to build something real - so you leave confident and equipped, not hyped and lost.",
+      title: "Your workshop workspace",
     },
 
     /* 2 — By the end of today (three parts). */
@@ -403,14 +398,9 @@ When you are done, tell me the project document is saved, where it is, and confi
 
   /* ---- HEBREW content model (Copywriter, approved parity, dash-clean) --- */
   const HE = {
-    /* 1 — ההבטחה (hero). */
+    /* 1 — כותרת עמוד פשוטה ופונקציונלית (ללא hero: בלי קיקר, בלי גוף שיווקי, בלי CTA). */
     hero: {
-      kicker: "המרחב שלכם לסדנה",
-      titleBefore: "אתם מעצבים. צוות ה-AI שלכם בונה את זה ",
-      titleMark: "יחד אתכם.",
-      titleAfter: "",
-      body:
-        "הרעש סביב ה-AI מציף. היום עושים בו סדר: תקימו צוות סוכני AI משלכם, מכוון לדרך שבה אתם עובדים, ותעבדו איתו בידיים כדי לבנות משהו אמיתי. ככה תצאו בטוחים ומצוידים, לא מהופנטים ואבודים.",
+      title: "המרחב שלכם לסדנה",
     },
 
     /* 2 — עד סוף היום (שלושה חלקים). */

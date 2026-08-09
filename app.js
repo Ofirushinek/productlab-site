@@ -924,12 +924,10 @@ function renderPrep(lang) {
   ${navHeader(t, lang, { account: true })}
 
   <main id="top" class="page vault" dir="${lang === "he" ? "rtl" : "ltr"}">
-    <!-- 1 — The promise (hero) -->
+    <!-- 1 — Plain functional page title (hero removed; functional content leads) -->
     <section class="section"><div class="wrap narrow">
       <div class="reveal">
-        <span class="eyebrow">${C.hero.kicker}</span>
-        <h1 class="section-title prep__title">${C.hero.titleBefore}<span class="mark">${C.hero.titleMark}</span>${C.hero.titleAfter}</h1>
-        <p class="section-lead">${C.hero.body}</p>
+        <h1 class="prep__pagetitle">${C.hero.title}</h1>
       </div>
     </div></section>
 

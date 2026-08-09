@@ -1,0 +1,29 @@
+{
+  "name": "productlab-site",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6007",
+    "build-storybook": "storybook build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ofirushinek/productlab-site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ofirushinek/productlab-site/issues"
+  },
+  "homepage": "https://github.com/Ofirushinek/productlab-site#readme",
+  "private": true,
+  "devDependencies": {
+    "@storybook/html-vite": "^10.5.7",
+    "chromatic": "^18.1.0",
+    "storybook": "^10.5.7",
+    "vite": "^8.2.1"
+  }
+}

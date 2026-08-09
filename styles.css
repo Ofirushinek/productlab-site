@@ -949,7 +949,8 @@ body.modal-open { overflow: hidden; }
 
 /* ---- Sub-pages (prep / legal) -------------------------------------------- */
 .page { min-height: 60vh; }
-.prep__title { max-width: 26ch; }
+/* Plain functional page title for the gated #/prep workspace (not a hero). */
+.prep__pagetitle { font-size: var(--text-h2); max-width: 26ch; }
 .prep__h { font-size: var(--text-h2); margin-bottom: 1rem; }
 
 /* Session facts — label/value rows split by hairlines, one bounded panel */
