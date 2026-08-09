@@ -1040,6 +1040,70 @@ body.modal-open { overflow: hidden; }
   font-size: var(--text-body-lg); font-weight: 700; color: var(--pl-fg); line-height: 1.5;
 }
 
+/* The shared-brain section (M3): intro body + containment diagram */
+.brain { display: grid; gap: clamp(1.75rem, 4vw, 2.75rem); }
+.brain__body {
+  max-width: 46rem; margin-inline: auto; text-align: center;
+  color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body); line-height: 1.6;
+}
+.brain__figure { display: flex; justify-content: center; }
+.brainmap {
+  width: 100%; max-width: 60rem;
+  background: var(--pl-surface); border: 1px solid var(--pl-border-strong);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-pl-md);
+  padding: clamp(1.4rem, 3vw, 2rem);
+}
+/* Header = the coordination layer that sits above every agent */
+.brainmap__hd {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 0.75rem; padding-bottom: clamp(1.25rem, 3vw, 1.75rem);
+  border-bottom: 1px solid var(--pl-border);
+}
+.brainmap__coord {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  border: 1px solid var(--pl-border-strong); border-radius: 999px;
+  padding: 0.5rem 1rem; background: var(--pl-bg-alt);
+  font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg);
+}
+.brainmap__coord svg { width: 1.05rem; height: 1.05rem; flex: none; }
+.brainmap__coord--primary {
+  background: color-mix(in srgb, var(--pl-accent) 12%, var(--pl-surface));
+  border-color: var(--pl-accent);
+}
+.brainmap__coord--primary svg { color: var(--pl-accent); }
+/* The agents, contained inside the shared layer */
+.brainmap__agents {
+  display: grid; grid-template-columns: 1fr; gap: clamp(1rem, 2.5vw, 1.4rem);
+  margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
+}
+@media (min-width: 720px) { .brainmap__agents { grid-template-columns: repeat(3, 1fr); } }
+.brainmap__agent {
+  position: relative; background: var(--pl-illo-bg);
+  border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
+  padding: 1.1rem 1rem 1.15rem; text-align: center;
+}
+/* Tick + dot linking each agent up to the shared layer above */
+.brainmap__agent::before {
+  content: ""; position: absolute; top: calc(-1 * clamp(1.5rem, 3.5vw, 2.25rem));
+  left: 50%; transform: translateX(-50%);
+  width: 2px; height: clamp(1.5rem, 3.5vw, 2.25rem); background: var(--pl-border-strong);
+}
+.brainmap__agent::after {
+  content: ""; position: absolute; top: calc(-1 * clamp(1.5rem, 3.5vw, 2.25rem) - 3px);
+  left: 50%; transform: translateX(-50%);
+  width: 7px; height: 7px; border-radius: 999px; background: var(--pl-accent);
+}
+.brainmap__agent-name {
+  display: block; font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg);
+  margin-bottom: 0.8rem;
+}
+.brainmap__attrs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.brainmap__attr {
+  border: 1px solid var(--pl-border); border-radius: var(--radius-md);
+  background: var(--pl-surface); padding: 0.5rem 0.4rem;
+  font-size: var(--text-caption); font-weight: 600; color: var(--pl-fg-body);
+}
+
 /* Tool-selection cards (reuse .card / .card--feature) */
 .tool__lede { color: var(--pl-fg-secondary); font-weight: 500; margin-bottom: 1.1rem; }
 .tool__benefits { list-style: none; margin: 0 0 1.25rem; padding: 0; display: grid; gap: 0.7rem; }

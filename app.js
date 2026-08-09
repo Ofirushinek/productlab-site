@@ -868,6 +868,35 @@ function focusFunnel(tiers, pointLabel, lang) {
     </svg>`;
 }
 
+/* The shared-brain map: a containment hierarchy. The outer panel IS the shared
+   coordination layer (Shared brain + Learning log in its header); inside sit the
+   agents, each with its four files (role, character, skills, memory). A small
+   tick above each agent card links it up to the shared layer, signaling that
+   every agent reads and writes there. Pure HTML/CSS on DS tokens, so RTL is free
+   (logical layout) and it matches the site look with no new tokens. */
+function sharedBrainDiagram(n) {
+  const agentCard = () => `
+    <div class="brainmap__agent">
+      <span class="brainmap__agent-name">${n.agent}</span>
+      <div class="brainmap__attrs">
+        <span class="brainmap__attr">${n.role}</span>
+        <span class="brainmap__attr">${n.character}</span>
+        <span class="brainmap__attr">${n.skills}</span>
+        <span class="brainmap__attr">${n.memory}</span>
+      </div>
+    </div>`;
+  return `
+    <div class="brainmap" role="group" aria-label="How the team connects: one shared brain and a learning log above every agent, and each agent has its own role, character, skills and memory">
+      <div class="brainmap__hd">
+        <span class="brainmap__coord brainmap__coord--primary">${I.repeat}<span>${n.sharedBrain}</span></span>
+        <span class="brainmap__coord">${n.learningLog}</span>
+      </div>
+      <div class="brainmap__agents">
+        ${agentCard()}${agentCard()}${agentCard()}
+      </div>
+    </div>`;
+}
+
 function renderPrep(lang) {
   const t = I18N[lang];
   let authed = false;
@@ -979,8 +1008,21 @@ function renderPrep(lang) {
       <p class="tech__closing reveal">${C.tools.closing}</p>
     </div></section>
 
+    <!-- 4b - The shared brain (how the files connect) -->
+    <section class="section"><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${C.sharedBrain.kicker}</span>
+        <h2 class="section-title">${C.sharedBrain.title}</h2>
+        <p class="section-lead">${C.sharedBrain.subtitle}</p>
+      </div>
+      <div class="brain" style="margin-top:2rem">
+        <p class="brain__body reveal">${C.sharedBrain.body}</p>
+        <div class="brain__figure reveal">${sharedBrainDiagram(C.sharedBrain.nodes)}</div>
+      </div>
+    </div></section>
+
     <!-- 5 — The plan (numbered steps with copyable prompt cards) -->
-    <section class="section"><div class="wrap narrow">
+    <section class="section section--alt"><div class="wrap narrow">
       <div class="reveal">
         <span class="eyebrow">${C.plan.kicker}</span>
         <h2 class="section-title">${C.plan.title}</h2>
@@ -993,7 +1035,7 @@ function renderPrep(lang) {
     </div></section>
 
     <!-- Help + WhatsApp (site copy - bilingual, inherits the main dir) -->
-    <section class="section section--alt"><div class="wrap narrow">
+    <section class="section"><div class="wrap narrow">
       <div class="reveal">
         <h2 class="prep__h">${t.prep_help_title}</h2>
         <p class="section-lead" style="margin-top:.5rem">${t.prep_help_body}</p>
