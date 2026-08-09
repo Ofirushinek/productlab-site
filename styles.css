@@ -846,6 +846,15 @@ body.modal-open { overflow: hidden; }
 .quote-card__who { display: flex; flex-direction: column; gap: 0.25rem; }
 .quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); line-height: 1.2; }
 .quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--pl-accent); }
+/* Name row: name + discreet "verify on LinkedIn" affordance side by side */
+.quote-card__name { display: inline-flex; align-items: center; gap: 0.4rem; }
+.quote-card__li {
+  display: inline-flex; align-items: center; line-height: 0;
+  color: var(--pl-fg-muted); cursor: pointer;
+  transition: color 0.2s var(--ease-pl);
+}
+.quote-card__li svg { width: 15px; height: 15px; }
+.quote-card__li:hover, .quote-card__li:focus-visible { color: var(--pl-accent); }
 
 /* the quote: softer + lighter than the attribution (medium weight, gray ink),
    opened by a large decorative quote mark. Separated by a hairline. */
