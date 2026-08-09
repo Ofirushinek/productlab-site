@@ -195,7 +195,7 @@ const I18N = {
 
     final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
     final_title: "בואו נבנה ביחד",
-    final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות משלכם שבונה אותו איתכם ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
+    final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות משלכם שבונה איתכם את הפרויקט הראשון שלכם, ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "אזור התלמידים",
@@ -281,7 +281,7 @@ const I18N = {
     who_for_title: "If you want to build on your own, but not alone.",
     who_intro: "It doesn't matter if you're in product and design, a founder, a product builder, or a professional who wants to work differently. If you want to make AI a real partner in the way you work, you're in the right place.",
     who_tiles: [
-      { t: "Product and design people", b: "Whether you're a product designer, a design lead, a product manager, or the person who owns the product in your company, the workshop shows you how to work with an AI team that extends what you can do, speeds up the work, and frees you to focus on what no tool can: thinking, deciding, and leading." },
+      { t: "Product and design people", b: "Whether you're a product designer, a design lead, or a product manager, the workshop shows you how to work with an AI team that extends what you can do and frees you to focus on what no tool can: thinking, deciding, and leading." },
       { t: "Builders and founders", b: "You have an idea, a product, or a business you want to build or grow. In the workshop you'll build an AI team that thinks with you, plans, challenges ideas, and helps turn them into a real product." },
       { t: "Expanding your horizons", b: "If you feel the way we work is changing, and you want to understand how to really work with AI, not just ask it questions but build a whole way of working, this workshop is for you." },
     ],
@@ -333,7 +333,7 @@ const I18N = {
     lead_label: "Leads the workshop",
     crew_label: "My work partners",
     crew_title: "These are the partners I build every product with.",
-    crew_intro: "Each of my partners owns a different area. Together they help me think, make decisions, design, and build products.\n\nDuring the workshop you'll build your own version of this team, tuned to exactly how you work.\n\nBy the end, these won't just be my partners. They'll be yours too.",
+    crew_intro: "Each of my partners owns a different area. Together they help me think, make decisions, design, and build products. During the workshop you'll build your own version of this team, tuned to exactly how you work.\n\nBy the end, these won't just be my partners. They'll be yours too.",
     crew_close: "When you leave here, you'll have a team like this too. And you won't build alone anymore.",
     ofir_name: "Ofir Rushinek",
     ofir_role: "The operator",
@@ -342,7 +342,7 @@ const I18N = {
       { img: "agent-cpo", role: "The Strategist - the product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
       { img: "agent-pd", role: "The Designer - the product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
     ],
-    ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with an AI team I built for myself - partners in thinking, planning, design, and building.\n\nTogether we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
+    ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with an AI team I built for myself - partners in thinking, planning, design, and building. Together we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
     ofir_why: "Now I want to help you build a team like that for yourself too.",
 
     quotes_eyebrow: "Testimonials",
@@ -367,7 +367,7 @@ const I18N = {
 
     final_chip: "Invite-only. Small groups.",
     final_title: "Let's build together",
-    final_sub: "One afternoon, a small group, and a team of your own that builds it with you, and stays yours long after. The first step is a call with me.",
+    final_sub: "One afternoon, a small group, and a team of your own that builds your first project with you, and stays yours long after. The first step is a call with me.",
 
     // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
     login_eyebrow: "Student area",
