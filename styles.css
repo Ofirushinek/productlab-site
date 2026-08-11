@@ -606,6 +606,54 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .login__note[hidden] { display: none; }
 .login__note svg { width: 18px; height: 18px; flex: none; }
 
+/* Continue-with-Google button: neutral surface so the multicolor logo reads
+   (Google brand guidance). Token-based, no hardcoded values. */
+.login__google {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  background: var(--pl-surface); color: var(--pl-fg);
+  border: 1px solid var(--pl-border-strong); box-shadow: var(--shadow-pl-sm);
+}
+.login__google:hover { background: var(--pl-bg-alt); border-color: var(--pl-fg); }
+.login__google svg { flex: none; }
+/* Non-error hint under the button (webview "open in Safari" nudge). */
+.login__note--hint {
+  background: color-mix(in srgb, var(--pl-fg) 5%, transparent);
+  color: var(--pl-fg-secondary); font-weight: 500;
+}
+
+/* ---- Admin roster (Registered students) - admin-only, DS tokens only ------ */
+.roster__loading, .roster__empty {
+  color: var(--pl-fg-secondary); font-size: var(--text-sm); font-weight: 500;
+  padding: 1.25rem; border: 1px dashed var(--pl-border-strong);
+  border-radius: var(--radius-lg); background: var(--pl-surface); text-align: start;
+}
+.roster__scroll {
+  overflow-x: auto; border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
+  background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
+}
+.roster__table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.roster__table th, .roster__table td {
+  padding: 0.85rem 1rem; text-align: start; vertical-align: middle;
+  border-bottom: 1px solid var(--pl-border); white-space: nowrap;
+}
+.roster__table th {
+  font-weight: 600; color: var(--pl-fg-secondary);
+  text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem;
+}
+.roster__table tbody tr:last-child td { border-bottom: none; }
+.roster__table td[data-label="Email"], .roster__table td[data-label="אימייל"] {
+  color: var(--pl-fg-body); font-variant-numeric: tabular-nums;
+}
+.roster__badge {
+  display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+  font-weight: 600; font-size: 0.72rem;
+  background: color-mix(in srgb, var(--pl-fg) 8%, transparent); color: var(--pl-fg-secondary);
+}
+.roster__badge--student {
+  background: color-mix(in srgb, var(--pl-accent) 14%, transparent); color: var(--pl-accent);
+}
+.roster__actions { text-align: end; }
+
 /* ---- WHY NOW — centered in LTR, right-aligned (start) in RTL -------------- */
 .why { text-align: center; }
 .why .why__title { max-width: 22ch; margin-inline: auto; }

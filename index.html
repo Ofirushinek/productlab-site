@@ -37,14 +37,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260811a" />
+  <link rel="stylesheet" href="styles.css?v=20260811b" />
 </head>
 <body>
   <div id="app"></div>
   <noscript><div class="wrap section">Please enable JavaScript to view this page.</div></noscript>
+  <!-- Supabase client (UMD global: window.supabase). MUST load before app.js so
+       the client + Google sign-in are available when the app boots. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Gated workshop content (window.WORKSHOP_CONTENT) — MUST load before app.js.
        Bump ?v= when content.js changes so browsers fetch the new version. -->
   <script src="content.js?v=20260809g"></script>
-  <script src="app.js?v=20260809g"></script>
+  <script src="app.js?v=20260811b"></script>
 </body>
 </html>

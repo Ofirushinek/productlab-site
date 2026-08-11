@@ -14,31 +14,40 @@ const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2
 // to auto-open the sign-in modal on the next render.
 let pendingStudentOpen = false;
 
-/* ---- Cohort gate (client-side, no backend) ------------------------------- *
-   The student prep page is gated by a single shared cohort password. There is
-   NO per-user auth today: the entered password is SHA-256 hashed in the browser
-   and compared to the digest below. To change the cohort password, hash the new
-   one (`printf '%s' 'newpassword' | shasum -a 256`) and paste the hex here.
-   The email field in the sign-in modal is intentionally hidden (not deleted) so
-   per-user email auth can be re-enabled later without a rebuild.                */
-// COHORT_PW_SHA256 — swap to change the cohort password. (temp password: "productlab")
-const COHORT_PW_SHA256 = "a995d8e42770381fd158706d638eb5061ab56173beba0358f2de9c92113d4168";
+/* ---- Real auth: Supabase (Google sign-in) + Row-Level Security ----------- *
+   The old client-side SHA-256 cohort gate is retired. Sign-in is now real
+   Google OAuth via Supabase; the database (RLS) is the actual gate, not the UI.
+   The anon key is a PUBLIC identifier and is safe to ship in this static file:
+   what a browser can read/write is decided by RLS, not by hiding this string.
+   NEVER put the service_role key or the DB password here.                     */
+const SUPABASE_URL = "https://qyeacmmfrbqimjpbgcal.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZWFjbW1mcmJxaW1qcGJnY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDczNjQsImV4cCI6MjEwMjAyMzM2NH0.WNLCixQe1XRnzddtjDtcWks4BnSVbIYZHStBiDBX8ho";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* SHA-256 → lowercase hex, via the Web Crypto API. */
-async function sha256hex(str) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
+/* AUTH is the single source of truth for "who am I" this render.
+   AUTH.tier is one of: null (signed out) | 'visitor' | 'student' | 'admin'.
+   - admin   = profiles.role === 'admin'  (Ofir) → sees everything + the roster
+   - student = profiles.status === 'student'      → sees the full content vault
+   - visitor = any other signed-in person         → sees prep-only (visitor tier) */
+let AUTH = { user: null, profile: null, tier: null };
 
-/* The ONE isolated auth check. Today: hash the password, compare to the cohort
-   digest. Swap the body later (e.g. per-user email + backend) without touching
-   callers. Resolves { ok, token } — token is stored on success, checked as the
-   prep-page guard flag (the check itself never guards the page). */
-async function authenticate(creds) {
-  const hex = await sha256hex((creds && creds.password) || "");
-  const ok = hex === COHORT_PW_SHA256;
-  const token = ok ? (crypto.randomUUID ? crypto.randomUUID() : hex) : null;
-  return { ok, token };
+/* Resolve the live session + the caller's profile row into AUTH. Called before
+   the first paint and again whenever the auth state changes (sign-in/out). */
+async function loadAuth() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { AUTH = { user: null, profile: null, tier: null }; return AUTH; }
+    const user = session.user;
+    const { data: profile } = await sb
+      .from("profiles").select("*").eq("id", user.id).single();
+    const tier = profile && profile.role === "admin" ? "admin"
+               : profile && profile.status === "student" ? "student" : "visitor";
+    AUTH = { user, profile, tier };
+  } catch (e) {
+    // On any failure, fall back to signed-out rather than leaking a wrong tier.
+    AUTH = { user: null, profile: null, tier: null };
+  }
+  return AUTH;
 }
 
 /* ---- Icons (inline, currentColor) --------------------------------------- */
@@ -64,6 +73,8 @@ const I = {
   login: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>',
   info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>',
+  // Google "G" - brand colors are intentional (not tokenized: this is a third-party logo).
+  google: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.52 12.27c0-.82-.07-1.6-.2-2.36H12v4.47h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.74Z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.08 7.95-2.91l-3.88-3.01c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.28v3.11A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.27 14.27a7.2 7.2 0 0 1 0-4.54v-3.1H1.28a12 12 0 0 0 0 10.75l3.99-3.11Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44A11.98 11.98 0 0 0 12 0 12 12 0 0 0 1.28 6.63l3.99 3.1C6.22 6.86 8.87 4.75 12 4.75Z"/></svg>',
   menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
   linkedin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>',
@@ -198,16 +209,30 @@ const I18N = {
     final_title: "בואו נבנה ביחד",
     final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות משלכם שבונה איתכם את הפרויקט הראשון שלכם, ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
 
-    // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
+    // Student area - real Google sign-in (Supabase). PLACEHOLDER HE copy 2026-08-11,
+    // Copywriter to refine. The old access-code strings were retired with the gate.
     login_eyebrow: "אזור התלמידים",
-    login_title: "כניסה עם הקוד שלך",
-    login_sub: "האזור הזה נועד למשתתפי הסדנה. הזינו את קוד הגישה שקיבלתם.",
-    login_pass_label: "קוד גישה",
-    login_pass_ph: "קוד הגישה שקיבלתם",
-    login_submit: "כניסה",
-    login_soon: "הקוד לא נכון. בדקו שוב את ההודעה עם הקוד. אם זה עדיין לא עובד, כתבו לנו.",
+    login_title: "כניסה לאזור התלמידים",
+    login_sub: "האזור הזה נועד למשתתפי הסדנה. התחברו עם חשבון Google כדי להיכנס.",
+    login_google: "המשך עם Google",
+    login_webview_note: "אם ההתחברות עם Google לא נפתחת, פתחו את הדף ב-Safari או ב-Chrome (תפריט ⋯ ואז \"פתח בדפדפן\").",
 
-    // ---- Student prep page (gated by pl_auth). Teaching copy lives in
+    // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-11, Copywriter to refine.
+    roster_kicker: "ניהול",
+    roster_title: "תלמידים רשומים",
+    roster_sub: "כל מי שהתחבר עם Google. סמנו מישהו כתלמיד כדי לפתוח לו את כל התוכן.",
+    roster_col_name: "שם",
+    roster_col_email: "אימייל",
+    roster_col_joined: "תאריך הצטרפות",
+    roster_col_status: "סטטוס",
+    roster_status_student: "תלמיד",
+    roster_status_visitor: "מבקר",
+    roster_make_student: "הפוך לתלמיד",
+    roster_make_visitor: "הפוך למבקר",
+    roster_empty: "עדיין אין הרשמות. ברגע שמישהו יתחבר עם Google, הוא יופיע כאן.",
+    roster_loading: "טוען...",
+
+    // ---- Student prep page (gated by AUTH.tier). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
     // defensive no-content fallback plus the bilingual Help/WhatsApp block.
     prep_page_title: "אזור התלמידים",
@@ -370,16 +395,30 @@ const I18N = {
     final_title: "Let's build together",
     final_sub: "One afternoon, a small group, and a team of your own that builds your first project with you, and stays yours long after. The first step is a call with me.",
 
-    // Student area — placeholder sign-in (non-functional; copy Copywriter 2026-08-04)
+    // Student area - real Google sign-in (Supabase). PLACEHOLDER EN copy 2026-08-11,
+    // Copywriter to refine. The old access-code strings were retired with the gate.
     login_eyebrow: "Student area",
-    login_title: "Enter with your code",
-    login_sub: "This area is for workshop participants. Enter the access code you received.",
-    login_pass_label: "Access code",
-    login_pass_ph: "Your access code",
-    login_submit: "Enter",
-    login_soon: "That code isn't right. Check the message with your code. If you're still stuck, write to us.",
+    login_title: "Enter the student area",
+    login_sub: "This area is for workshop participants. Sign in with your Google account to enter.",
+    login_google: "Continue with Google",
+    login_webview_note: "If Google sign-in won't open, open this page in Safari or Chrome (⋯ menu, then \"Open in browser\").",
 
-    // ---- Student prep page (gated by pl_auth). Teaching copy lives in
+    // Admin roster - visible only to admin. PLACEHOLDER EN copy 2026-08-11, Copywriter to refine.
+    roster_kicker: "Admin",
+    roster_title: "Registered students",
+    roster_sub: "Everyone who signed in with Google. Mark someone a student to unlock the full content for them.",
+    roster_col_name: "Name",
+    roster_col_email: "Email",
+    roster_col_joined: "Joined",
+    roster_col_status: "Status",
+    roster_status_student: "Student",
+    roster_status_visitor: "Visitor",
+    roster_make_student: "Make student",
+    roster_make_visitor: "Make visitor",
+    roster_empty: "No sign-ups yet. As soon as someone signs in with Google, they'll appear here.",
+    roster_loading: "Loading...",
+
+    // ---- Student prep page (gated by AUTH.tier). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
     // defensive no-content fallback plus the bilingual Help/WhatsApp block.
     prep_page_title: "Student area",
@@ -467,8 +506,7 @@ const navHeader = (t, lang, opts = {}) => {
 
   // Public / signed-out header (unchanged). Signed-in participants who land on
   // the main page still get a text Sign out action here in place of the gate.
-  let authed = false;
-  try { authed = !!sessionStorage.getItem("pl_auth"); } catch (e) {}
+  const authed = !!AUTH.tier;
   const studentBtn = authed
     ? `<button class="btn btn--ghost btn--sm nav__student" type="button" data-signout aria-label="${t.nav_signout}"><span class="btn__label">${t.nav_signout}</span></button>`
     : `<button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}"><span class="btn__label">${t.nav_student}</span></button>`;
@@ -479,7 +517,7 @@ const navHeader = (t, lang, opts = {}) => {
     <a class="nav__brand nav__brand--text" href="#/">Product Lab</a>
     <div class="nav__menu" id="navMenu">
       ${langToggle}
-      <!-- Entrance gate when signed out; Sign out when pl_auth is set. Text-only, no icon. -->
+      <!-- Entrance gate when signed out; Sign out when signed in (AUTH.tier). Text-only, no icon. -->
       ${studentBtn}
     </div>
     <a class="btn btn--wa-solid btn--sm nav__book" href="${WA_URL}" target="_blank" rel="noopener" aria-label="${t.cta_wa}">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
@@ -487,9 +525,9 @@ const navHeader = (t, lang, opts = {}) => {
   </div></header>`;
 };
 
-// Student sign-in MODAL. The email field is intentionally HIDDEN (not deleted)
-// so per-user email auth can be re-enabled later without a rebuild. Submit runs
-// authenticate(): on success it stores the pl_auth guard flag and routes to #/prep.
+// Student sign-in MODAL. Real Google OAuth via Supabase (the access-code field
+// was retired with the SHA-256 gate). The button click hands off to
+// sb.auth.signInWithOAuth and the page re-renders on return (see wireStudent).
 const studentModal = (t) => `
   <div class="modal" data-student-modal hidden>
     <div class="modal__overlay" data-student-close></div>
@@ -499,14 +537,12 @@ const studentModal = (t) => `
       <span class="eyebrow">${t.login_eyebrow}</span>
       <h2 class="login__title">${t.login_title}</h2>
       <p class="login__sub">${t.login_sub}</p>
-      <form class="login__form" data-student-form novalidate>
-        <div class="field">
-          <label class="field__label" for="access-code">${t.login_pass_label}</label>
-          <input class="input input--masked" id="access-code" name="access-code" type="text" inputmode="text" placeholder="${t.login_pass_ph}" autocomplete="one-time-code" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" />
-        </div>
-        <button class="btn btn--primary login__submit" type="submit">${t.login_submit}</button>
-        <p class="login__note" data-student-note hidden>${I.info}<span>${t.login_soon}</span></p>
-      </form>
+      <div class="login__form">
+        <button class="btn btn--primary login__submit login__google" type="button" data-google-signin>
+          ${I.google}<span>${t.login_google}</span>
+        </button>
+        <p class="login__note login__note--hint">${I.info}<span>${t.login_webview_note}</span></p>
+      </div>
     </div>
   </div>`;
 
@@ -755,9 +791,9 @@ function render(lang) {
   afterRender();
 }
 
-/* ---- Student PREP page — gated by the pl_auth sessionStorage flag --------- */
-/* The single guard: no pl_auth token → bounce home and pop the sign-in modal.
-   authenticate() sets pl_auth on success; this page only reads it.
+/* ---- Student PREP page - gated by the live session tier (AUTH.tier) ------- */
+/* The single guard: no tier (signed out) → bounce home and pop the sign-in
+   modal. loadAuth() resolves the tier from the Supabase session + profile row.
    CONTENT: rendered from window.WORKSHOP_CONTENT (content.js). This is the
    POST-workshop content vault. Teaching copy is BILINGUAL: renderPrep reads
    WORKSHOP_CONTENT[lang] (fallback en) and sets the vault <main> direction to
@@ -897,11 +933,20 @@ function sharedBrainDiagram(n) {
     </div>`;
 }
 
+/* Tier visibility: admin + student see every section; a visitor sees only
+   sections tagged visitor (the default when a section has no `tier` field).
+   Today every content section is visitor-tier, so nothing is hidden yet, add
+   `tier: "student"` to a section object in content.js to lock it for visitors. */
+function canSee(sec) {
+  if (AUTH.tier === "admin" || AUTH.tier === "student") return true;
+  return ((sec && sec.tier) || "visitor") === "visitor";
+}
+
 function renderPrep(lang) {
   const t = I18N[lang];
-  let authed = false;
-  try { authed = !!sessionStorage.getItem("pl_auth"); } catch (e) {}
-  if (!authed) { pendingStudentOpen = true; location.hash = "#/"; return; }
+  // The real guard is Supabase RLS; this only decides what to paint. Any
+  // non-null tier means signed in. Signed-out → bounce home + pop sign-in.
+  if (!AUTH.tier) { pendingStudentOpen = true; location.hash = "#/"; return; }
 
   const W = window.WORKSHOP_CONTENT;
   // Defensive: if content.js failed to load, keep the page usable.
@@ -932,7 +977,7 @@ function renderPrep(lang) {
     </div></section>
 
     <!-- 2 — By the end of today (three parts) -->
-    <section class="section section--alt"><div class="wrap">
+    ${canSee(C.end) ? `<section class="section section--alt"><div class="wrap">
       <div class="reveal">
         <span class="eyebrow">${C.end.kicker}</span>
         <h2 class="section-title">${C.end.title}</h2>
@@ -961,10 +1006,10 @@ function renderPrep(lang) {
           <p>${C.end.home.body}</p>
         </div>
       </div>
-    </div></section>
+    </div></section>` : ""}
 
     <!-- 3 — Technical overview (mental model + funnel) -->
-    <section class="section"><div class="wrap">
+    ${canSee(C.technical) ? `<section class="section"><div class="wrap">
       <div class="reveal">
         <span class="eyebrow">${C.technical.kicker}</span>
         <h2 class="section-title">${C.technical.title}</h2>
@@ -978,10 +1023,10 @@ function renderPrep(lang) {
         <div class="tech__figure reveal">${focusFunnel(C.technical.funnelTiers, C.technical.funnelPoint, lang)}</div>
       </div>
       <p class="tech__closing reveal">${C.technical.closing}</p>
-    </div></section>
+    </div></section>` : ""}
 
     <!-- 4 — Choosing your stack (two tools) -->
-    <section class="section section--alt"><div class="wrap">
+    ${canSee(C.tools) ? `<section class="section section--alt"><div class="wrap">
       <div class="reveal">
         <span class="eyebrow">${C.tools.kicker}</span>
         <h2 class="section-title">${C.tools.title}</h2>
@@ -1004,10 +1049,10 @@ function renderPrep(lang) {
           </div>`).join("")}
       </div>
       <p class="tech__closing reveal">${C.tools.closing}</p>
-    </div></section>
+    </div></section>` : ""}
 
     <!-- 4b - The shared brain (how the files connect) -->
-    <section class="section"><div class="wrap">
+    ${canSee(C.sharedBrain) ? `<section class="section"><div class="wrap">
       <div class="reveal">
         <span class="eyebrow">${C.sharedBrain.kicker}</span>
         <h2 class="section-title">${C.sharedBrain.title}</h2>
@@ -1017,10 +1062,10 @@ function renderPrep(lang) {
         <p class="brain__body reveal">${C.sharedBrain.body}</p>
         <div class="brain__figure reveal">${sharedBrainDiagram(C.sharedBrain.nodes)}</div>
       </div>
-    </div></section>
+    </div></section>` : ""}
 
     <!-- 5 — The plan (numbered steps with copyable prompt cards) -->
-    <section class="section section--alt"><div class="wrap narrow">
+    ${canSee(C.plan) ? `<section class="section section--alt"><div class="wrap narrow">
       <div class="reveal">
         <span class="eyebrow">${C.plan.kicker}</span>
         <h2 class="section-title">${C.plan.title}</h2>
@@ -1030,7 +1075,22 @@ function renderPrep(lang) {
         ${C.plan.steps.map((s, i) => planStep(s, i === 0)).join("")}
       </div>
       <p class="tech__closing reveal">${C.plan.closing}</p>
-    </div></section>
+    </div></section>` : ""}
+
+    <!-- Admin only - Registered students roster. Rendered as a section (not a
+         route). The list + the visitor/student toggle are filled async after
+         render by renderStudentsTable(); RLS is what actually gates the data. -->
+    ${AUTH.tier === "admin" ? `
+    <section class="section section--alt" data-roster-section><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${t.roster_kicker}</span>
+        <h2 class="section-title">${t.roster_title}</h2>
+        <p class="section-lead">${t.roster_sub}</p>
+      </div>
+      <div class="roster" data-roster style="margin-top:2rem">
+        <p class="roster__loading">${t.roster_loading}</p>
+      </div>
+    </div></section>` : ""}
 
     <!-- Help + WhatsApp (site copy - bilingual, inherits the main dir) -->
     <section class="section"><div class="wrap narrow">
@@ -1048,6 +1108,70 @@ function renderPrep(lang) {
   ${siteFooter(t)}`;
 
   afterRender();
+  // Admin only: fetch + draw the roster into its container. RLS returns only the
+  // caller's own row for non-admins, so this is safe even if the div is forced open.
+  if (AUTH.tier === "admin") renderStudentsTable(lang);
+}
+
+/* ---- Admin roster: list every profile + flip visitor<->student ----------- */
+/* Only the admin tier ever renders this. The SELECT returns all rows for an
+   admin (RLS "read own or admin reads all") and just the caller's own row for
+   anyone else, so an empty/one-row table is the safe non-admin outcome. */
+async function renderStudentsTable(lang) {
+  const host = document.querySelector("[data-roster]");
+  if (!host) return;
+  const t = I18N[lang];
+  const { data: rows, error } = await sb
+    .from("profiles")
+    .select("id, email, full_name, status, created_at")
+    .order("created_at", { ascending: false });
+  if (error) { host.innerHTML = `<p class="roster__empty">${t.roster_empty}</p>`; return; }
+  if (!rows || rows.length === 0) {
+    host.innerHTML = `<p class="roster__empty">${t.roster_empty}</p>`;
+    return;
+  }
+  const fmtDate = (s) => {
+    try { return new Date(s).toLocaleDateString(lang === "he" ? "he-IL" : "en-GB",
+      { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return s || ""; }
+  };
+  const body = rows.map((r) => {
+    const isStudent = r.status === "student";
+    const statusLabel = isStudent ? t.roster_status_student : t.roster_status_visitor;
+    const btnLabel = isStudent ? t.roster_make_visitor : t.roster_make_student;
+    return `
+      <tr>
+        <td data-label="${t.roster_col_name}">${escapeHtml(r.full_name || "-")}</td>
+        <td data-label="${t.roster_col_email}">${escapeHtml(r.email || "")}</td>
+        <td data-label="${t.roster_col_joined}">${fmtDate(r.created_at)}</td>
+        <td data-label="${t.roster_col_status}"><span class="roster__badge${isStudent ? " roster__badge--student" : ""}">${statusLabel}</span></td>
+        <td class="roster__actions">
+          <button type="button" class="btn btn--ghost btn--sm" data-flip="${r.id}" data-current="${r.status}">${btnLabel}</button>
+        </td>
+      </tr>`;
+  }).join("");
+  host.innerHTML = `
+    <div class="roster__scroll">
+      <table class="roster__table">
+        <thead><tr>
+          <th>${t.roster_col_name}</th>
+          <th>${t.roster_col_email}</th>
+          <th>${t.roster_col_joined}</th>
+          <th>${t.roster_col_status}</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>`;
+  host.querySelectorAll("[data-flip]").forEach((b) =>
+    b.addEventListener("click", () => flipStatus(b.getAttribute("data-flip"), b.getAttribute("data-current"), lang)));
+}
+
+/* Flip one person's status. Only the admin's token satisfies the "admin updates
+   any" policy, so this write silently no-ops for anyone else. Re-fetch to reflect. */
+async function flipStatus(id, current, lang) {
+  const next = current === "student" ? "visitor" : "student";
+  const { error } = await sb.from("profiles").update({ status: next }).eq("id", id);
+  if (!error) renderStudentsTable(lang);
 }
 
 /* ---- Legal pages (Privacy / Terms) — shared template --------------------- */
@@ -1159,17 +1283,18 @@ function wireAccountMenu() {
 }
 
 /* ---- Sign out ------------------------------------------------------------ */
-/* When pl_auth is set, the nav student button becomes a sign-out action.
-   Clicking clears pl_auth and returns to the main page. If already on home
-   (no hashchange to trigger), we re-render manually so the nav flips back to
-   the entrance label; otherwise navigating to #/ re-renders via hashchange. */
+/* Clears the Supabase session and returns to the main page. onAuthStateChange
+   fires on sign-out and re-routes; we also navigate home so a signed-out user
+   never sits on the gated prep page. */
 function wireSignout() {
   document.querySelectorAll("[data-signout]").forEach((b) =>
-    b.addEventListener("click", () => {
-      try { sessionStorage.removeItem("pl_auth"); } catch (e) {}
-      const lang = document.documentElement.lang || "he";
-      if (location.hash === "#/" || location.hash === "") route(lang);
-      else location.hash = "#/";
+    b.addEventListener("click", async () => {
+      await sb.auth.signOut();
+      if (location.hash === "#/" || location.hash === "") {
+        route(document.documentElement.lang || "he");
+      } else {
+        location.hash = "#/";
+      }
     }));
 }
 
@@ -1201,10 +1326,10 @@ function route(lang) {
   else render(lang);
 }
 
-/* ---- Student sign-in (cohort gate) --------------------------------------- */
-/* Submit runs the isolated authenticate() check. On success we store the
-   pl_auth token (the prep-page guard flag) and route to #/prep. On failure we
-   reveal the note. If a gated redirect asked for it, auto-open on render. */
+/* ---- Student sign-in (real Google OAuth via Supabase) -------------------- */
+/* The modal's one button hands off to sb.auth.signInWithOAuth. The page
+   re-renders on return via onAuthStateChange (see Boot). If a gated redirect
+   asked for it, auto-open the modal on render. */
 function wireStudent() {
   const modal = document.querySelector("[data-student-modal]");
   if (!modal) return;
@@ -1214,20 +1339,14 @@ function wireStudent() {
   modal.querySelectorAll("[data-student-close]").forEach((b) => b.addEventListener("click", close));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
 
-  const form = modal.querySelector("[data-student-form]");
-  const note = form && form.querySelector("[data-student-note]");
-  const pass = form && form.querySelector('[name="access-code"]');
-  if (form) form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (note) note.hidden = true;
-    const { ok, token } = await authenticate({ password: pass ? pass.value : "" });
-    if (ok) {
-      try { sessionStorage.setItem("pl_auth", token); } catch (er) {}
-      close();
-      location.hash = "#/prep";
-    } else if (note) {
-      note.hidden = false;
-    }
+  // Real sign-in: hand off to Google via Supabase. Full-page redirect back to
+  // productlab.studio; on return supabase-js reads the session and onAuthStateChange
+  // re-routes (see Boot). No popup, so it plays nicely with the existing modal.
+  modal.querySelector("[data-google-signin]")?.addEventListener("click", () => {
+    sb.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: location.origin + location.pathname },
+    });
   });
 
   if (pendingStudentOpen) { pendingStudentOpen = false; open(); }
@@ -1274,8 +1393,29 @@ window.addEventListener("hashchange", () => {
   route(document.documentElement.lang || "he");
   window.scrollTo(0, 0);
 });
-(function () {
+(async function () {
   let lang = "he";
   try { lang = localStorage.getItem("pl_lang") || "he"; } catch (e) {}
-  setLang(lang);
+  // Detect a fresh Google OAuth return (supabase-js will parse + clean these
+  // params). Captured synchronously before loadAuth so we can land the user
+  // straight in the vault instead of on the home page.
+  const oauthReturn = /access_token|[?&#]code=|error_description/.test(location.hash + location.search);
+
+  await loadAuth();
+
+  // React to later auth changes (sign-in, sign-out, token refresh, other tabs).
+  // Keep the callback non-async (loadAuth().then) per supabase-js guidance.
+  sb.auth.onAuthStateChange(() => {
+    loadAuth().then(() => route(document.documentElement.lang || "he"));
+  });
+
+  if (oauthReturn && AUTH.tier) {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
+    try { localStorage.setItem("pl_lang", lang); } catch (e) {}
+    location.hash = "#/prep"; // triggers hashchange → renderPrep
+    route(lang);
+  } else {
+    setLang(lang);
+  }
 })();
