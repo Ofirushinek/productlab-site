@@ -795,10 +795,12 @@ body.modal-open { overflow: hidden; }
 /* DESKTOP: taller, and the scrim shifts to the reading side; title sits on your side,
    puppet faces stay clear. EN mirrors the image so faces swing to the far side. */
 @media (min-width: 860px) {
-  /* Fixed crop FRAME (aspect-ratio), so object-fit:cover shows the same slice of the
-     photo at every window width -> no "sudden zoom" when the viewport widens/goes
-     fullscreen. Bounded so it never gets too short or too tall. */
-  .hero--scene { aspect-ratio: 20 / 9; min-height: 660px; max-height: 900px; }
+  /* Full-bleed at every width. Height is bounded and tracks the viewport width so
+     object-fit:cover shows a stable slice in the mid-range; width stays 100% so the
+     hero never shrinks / leaves a paper margin when the viewport widens or the page
+     is zoomed out. (aspect-ratio + max-height used to shrink the WIDTH past ~2000px,
+     which read as the image being "cut off on the sides".) */
+  .hero--scene { width: 100%; height: clamp(660px, 45vw, 900px); min-height: 660px; max-height: 900px; }
   /* two-layer scrim: darkens the BOTTOM (for the small text) + the reading side (for the title) */
   [dir="rtl"] .hero--scene::after { background:
     linear-gradient(to top, rgb(12 8 5 / 0.82) 0%, rgb(12 8 5 / 0.40) 26%, rgb(12 8 5 / 0) 50%),
