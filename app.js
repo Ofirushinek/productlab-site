@@ -231,6 +231,9 @@ const I18N = {
     roster_make_visitor: "הפוך למבקר",
     roster_empty: "עדיין אין הרשמות. ברגע שמישהו יתחבר עם Google, הוא יופיע כאן.",
     roster_loading: "טוען...",
+    // Student-area tab bar. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
+    tab_content: "תוכן הסדנה",
+    tab_students: "תלמידים",
 
     // ---- Student prep page (gated by AUTH.tier). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
@@ -417,6 +420,9 @@ const I18N = {
     roster_make_visitor: "Make visitor",
     roster_empty: "No sign-ups yet. As soon as someone signs in with Google, they'll appear here.",
     roster_loading: "Loading...",
+    // Student-area tab bar. PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
+    tab_content: "Course content",
+    tab_students: "Students",
 
     // ---- Student prep page (gated by AUTH.tier). Teaching copy lives in
     // content.js (WORKSHOP_CONTENT). These keys are the two used by the
@@ -966,17 +972,11 @@ function renderPrep(lang) {
   // Bilingual content model: pick the toggled language, fall back to English.
   const C = W[lang] || W.en;
 
-  document.getElementById("app").innerHTML = `
-  ${navHeader(t, lang, { account: true })}
+  const isAdmin = AUTH.tier === "admin";
 
-  <main id="top" class="page vault" dir="${lang === "he" ? "rtl" : "ltr"}">
-    <!-- 1 — Plain functional page title (hero removed; functional content leads) -->
-    <section class="section"><div class="wrap narrow">
-      <div class="reveal">
-        <h1 class="prep__pagetitle">${C.hero.title}</h1>
-      </div>
-    </div></section>
-
+  // Course-content panel — everything the student sees (title excluded; the
+  // title stays above the tab bar, visible on every tab).
+  const contentPanel = `
     <!-- 2 — By the end of today (three parts) -->
     ${canSee(C.end) ? `<section class="section section--alt"><div class="wrap">
       <div class="reveal">
@@ -1078,21 +1078,6 @@ function renderPrep(lang) {
       <p class="tech__closing reveal">${C.plan.closing}</p>
     </div></section>` : ""}
 
-    <!-- Admin only - Registered students roster. Rendered as a section (not a
-         route). The list + the visitor/student toggle are filled async after
-         render by renderStudentsTable(); RLS is what actually gates the data. -->
-    ${AUTH.tier === "admin" ? `
-    <section class="section section--alt" data-roster-section><div class="wrap">
-      <div class="reveal">
-        <span class="eyebrow">${t.roster_kicker}</span>
-        <h2 class="section-title">${t.admin_roster_title}</h2>
-        <p class="section-lead">${t.roster_sub}</p>
-      </div>
-      <div class="roster" data-roster style="margin-top:2rem">
-        <p class="roster__loading">${t.roster_loading}</p>
-      </div>
-    </div></section>` : ""}
-
     <!-- Help + WhatsApp (site copy - bilingual, inherits the main dir) -->
     <section class="section"><div class="wrap narrow">
       <div class="reveal">
@@ -1102,16 +1087,85 @@ function renderPrep(lang) {
           <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
         </div>
       </div>
+    </div></section>`;
+
+  // Students panel — admin only. The list + visitor/student toggle are filled
+  // async after render by renderStudentsTable(); RLS is what actually gates the data.
+  const studentsPanel = `
+    <section class="section" data-roster-section><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${t.roster_kicker}</span>
+        <h2 class="section-title">${t.admin_roster_title}</h2>
+        <p class="section-lead">${t.roster_sub}</p>
+      </div>
+      <div class="roster" data-roster style="margin-top:2rem">
+        <p class="roster__loading">${t.roster_loading}</p>
+      </div>
+    </div></section>`;
+
+  // Data-driven tab set so more panels can be added later. Students is admin-only;
+  // with a single tab we skip the bar entirely (students/visitors see content only).
+  const tabs = [
+    { id: "content", label: t.tab_content, panel: contentPanel },
+    ...(isAdmin ? [{ id: "students", label: t.tab_students, panel: studentsPanel }] : []),
+  ];
+  // Tab bar aligns to the reading-start edge automatically (flex-start honors dir:
+  // right in Hebrew RTL, left in English LTR) — no explicit side needed.
+  const tabBar = tabs.length > 1 ? `
+    <div class="wrap"><div class="tabs" role="tablist" data-tabs>
+      ${tabs.map((tb, i) => `<button type="button" class="tabs__btn" role="tab"
+        data-tab="${tb.id}" aria-selected="${i === 0 ? "true" : "false"}">${tb.label}</button>`).join("")}
+    </div></div>` : "";
+  const panelsHtml = tabs.length > 1
+    ? tabs.map((tb, i) => `<div class="tabpanel" data-tab-panel="${tb.id}"${i === 0 ? "" : " hidden"}>${tb.panel}</div>`).join("")
+    : contentPanel;
+
+  document.getElementById("app").innerHTML = `
+  ${navHeader(t, lang, { account: true })}
+
+  <main id="top" class="page vault" dir="${lang === "he" ? "rtl" : "ltr"}">
+    <!-- 1 — Plain functional page title; stays above the tab bar on every tab -->
+    <section class="section"><div class="wrap narrow">
+      <div class="reveal">
+        <h1 class="prep__pagetitle">${C.hero.title}</h1>
+      </div>
     </div></section>
+
+    ${tabBar}
+    ${panelsHtml}
   </main>
 
   ${studentModal(t)}
   ${siteFooter(t)}`;
 
   afterRender();
+  initPrepTabs();
   // Admin only: fetch + draw the roster into its container. RLS returns only the
   // caller's own row for non-admins, so this is safe even if the div is forced open.
-  if (AUTH.tier === "admin") renderStudentsTable(lang);
+  if (isAdmin) renderStudentsTable(lang);
+}
+
+/* Student-area tab bar: switch which panel is visible. No-op when there's only
+   one tab (no bar rendered). Panels stay in the DOM (hidden), so the async
+   roster fetch into [data-roster] still lands even on the inactive tab. */
+function initPrepTabs() {
+  const bar = document.querySelector("[data-tabs]");
+  if (!bar) return;
+  const btns = [...bar.querySelectorAll("[data-tab]")];
+  const panels = [...document.querySelectorAll("[data-tab-panel]")];
+  btns.forEach((b) => b.addEventListener("click", () => {
+    const id = b.getAttribute("data-tab");
+    btns.forEach((x) => x.setAttribute("aria-selected", x === b ? "true" : "false"));
+    panels.forEach((p) => {
+      const show = p.getAttribute("data-tab-panel") === id;
+      p.hidden = !show;
+      // A hidden panel's .reveal elements are never seen by the scroll observer,
+      // so force them visible when the panel is switched in (else they stay at
+      // opacity:0). The initial panel is handled by the observer as usual.
+      if (show) p.querySelectorAll(".reveal").forEach((r) => r.classList.add("in"));
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }));
 }
 
 /* ---- Admin roster: list every profile + flip visitor<->student ----------- */

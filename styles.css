@@ -621,6 +621,21 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   color: var(--pl-fg-secondary); font-weight: 500;
 }
 
+/* ---- Student-area tab bar (Course content / Students / …) — DS tokens only.
+   Aligns to the reading-start edge via flex-start (honors dir: right in RTL,
+   left in LTR). Active tab uses the accent underline. -------------------------- */
+.tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--pl-border); }
+.tabs__btn {
+  appearance: none; border: 0; background: transparent; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: var(--text-body);
+  color: var(--pl-fg-secondary); padding: 0.75rem 1.1rem;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color 0.2s var(--ease-pl), border-color 0.2s var(--ease-pl);
+}
+.tabs__btn:hover { color: var(--pl-fg); }
+.tabs__btn[aria-selected="true"] { color: var(--pl-accent); border-bottom-color: var(--pl-accent); }
+.tabpanel[hidden] { display: none; }
+
 /* ---- Admin roster (Registered students) - admin-only, DS tokens only ------ */
 .roster__loading, .roster__empty {
   color: var(--pl-fg-secondary); font-size: var(--text-sm); font-weight: 500;
