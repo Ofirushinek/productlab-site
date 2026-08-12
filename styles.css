@@ -1208,6 +1208,11 @@ body.modal-open { overflow: hidden; }
 .pstep[open] .pstep__chev .chevron { transform: rotate(180deg); }
 .pstep__body { padding: 0 1.75rem 1.75rem; }
 .pstep__lead { color: var(--pl-fg-body); font-weight: 500; }
+/* Inline setup link inside a step body. bidi-isolated (with dir="ltr" in markup)
+   so LTR URLs and the Windows Settings breadcrumb keep correct order in RTL Hebrew. */
+.plink { color: var(--pl-accent); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; unicode-bidi: isolate; }
+.plink:hover { color: var(--pl-accent-hover); }
+.ltr-iso { unicode-bidi: isolate; }
 
 /* Optional aside inside a step */
 .pnote {

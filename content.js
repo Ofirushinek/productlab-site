@@ -183,6 +183,51 @@ When you are done, tell me the project document is saved, where it is, and confi
 
   /* ---- ENGLISH content model ------------------------------------------- */
   const EN = {
+    /* 0 — Before the workshop (Stage 0 pre-work). Curriculum-verified (Dean,
+       2026-08-12): desktop-app only, no terminal. Developer Mode = a Windows OS
+       setting. Git = Windows only + restart the app. Obsidian = install + make an
+       empty vault. Price $20/mo. Rendered as collapsible-open planSteps. */
+    stage0: {
+      kicker: "Stage 0",
+      title: "Before the workshop",
+      subtitle:
+        'Please set all of this up before our session (~15-20 min). When you\'re done, reply "READY." If anything gets stuck, message me before the session - we\'ll fix it together, not on the day.',
+      steps: [
+        {
+          n: "1",
+          title: "Get Claude Pro",
+          body: '$20/month at <a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>. Required; the workshop runs on it.',
+        },
+        {
+          n: "2",
+          title: "Install the Claude Desktop app",
+          body: 'Download from <a class="plink" dir="ltr" href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> and run the installer. No terminal, no code.',
+        },
+        {
+          n: "3",
+          title: "Windows only - turn on Developer Mode",
+          body: '<span class="ltr-iso" dir="ltr">Settings → System → For developers → toggle Developer Mode on.</span> Windows needs this to let the app install.',
+          note: "If it's greyed out or blocked, your work laptop's IT policy is stopping it. In that case, use a personal laptop for the workshop.",
+        },
+        {
+          n: "4",
+          title: "Windows only - install Git",
+          body: 'Install from <a class="plink" dir="ltr" href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a>. After installing, close and reopen the Claude app. (Mac users skip this.)',
+        },
+        {
+          n: "5",
+          title: "Install Obsidian",
+          body: 'Install from <a class="plink" dir="ltr" href="https://obsidian.md/download" target="_blank" rel="noopener">obsidian.md/download</a>. Open it and create one new empty vault (any name). We\'ll use it live.',
+        },
+        {
+          n: "6",
+          title: "Come with a fresh start",
+          body: "Don't do heavy Claude work in the 5 hours before we begin.",
+        },
+      ],
+      closing: 'Done? Reply "READY."',
+    },
+
     /* 1 — Plain functional page title (no hero: no kicker, no marketing body, no CTA). */
     hero: {
       title: "Your workshop workspace",
@@ -398,6 +443,48 @@ When you are done, tell me the project document is saved, where it is, and confi
 
   /* ---- HEBREW content model (Copywriter, approved parity, dash-clean) --- */
   const HE = {
+    /* 0 — לפני הסדנה (עבודת הכנה, שלב 0). מקביל ל-EN, זהה בעובדות (Dean 2026-08-12). */
+    stage0: {
+      kicker: "שלב 0",
+      title: "לפני הסדנה",
+      subtitle:
+        'תסדרו את כל זה לפני המפגש (בערך 15-20 דקות). כשסיימתם, השיבו "READY". אם משהו נתקע, כתבו לי לפני המפגש, נפתור את זה ביחד ולא ביום עצמו.',
+      steps: [
+        {
+          n: "1",
+          title: "משיגים Claude Pro",
+          body: '$20 לחודש ב-<a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>. חובה, כל הסדנה רצה עליו.',
+        },
+        {
+          n: "2",
+          title: "מתקינים את אפליקציית Claude Desktop",
+          body: 'מורידים מ-<a class="plink" dir="ltr" href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> ומריצים את קובץ ההתקנה. בלי טרמינל, בלי קוד.',
+        },
+        {
+          n: "3",
+          title: "רק ב-Windows - מפעילים Developer Mode",
+          body: '<span class="ltr-iso" dir="ltr">Settings → System → For developers</span> → מפעילים את Developer Mode. Windows צריך את זה כדי לאפשר את התקנת האפליקציה.',
+          note: "אם האפשרות מופיעה באפור או חסומה, מדיניות ה-IT של הלפטופ מהעבודה חוסמת אותה. במקרה כזה, השתמשו בלפטופ אישי לסדנה.",
+        },
+        {
+          n: "4",
+          title: "רק ב-Windows - מתקינים Git",
+          body: 'מתקינים מ-<a class="plink" dir="ltr" href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a>. אחרי ההתקנה, סגרו ופתחו מחדש את אפליקציית Claude. (משתמשי Mac מדלגים על זה.)',
+        },
+        {
+          n: "5",
+          title: "מתקינים Obsidian",
+          body: 'מתקינים מ-<a class="plink" dir="ltr" href="https://obsidian.md/download" target="_blank" rel="noopener">obsidian.md/download</a>. פתחו אותו וצרו vault חדש וריק (כל שם שתרצו). נשתמש בו בזמן אמת.',
+        },
+        {
+          n: "6",
+          title: "מגיעים רעננים",
+          body: "אל תעמיסו עבודה כבדה ב-Claude ב-5 השעות שלפני שמתחילים.",
+        },
+      ],
+      closing: 'סיימתם? השיבו "READY".',
+    },
+
     /* 1 — כותרת עמוד פשוטה ופונקציונלית (ללא hero: בלי קיקר, בלי גוף שיווקי, בלי CTA). */
     hero: {
       title: "המרחב שלכם לסדנה",
