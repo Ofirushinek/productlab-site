@@ -24,9 +24,15 @@ const SUPABASE_URL = "https://qyeacmmfrbqimjpbgcal.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZWFjbW1mcmJxaW1qcGJnY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDczNjQsImV4cCI6MjEwMjAyMzM2NH0.WNLCixQe1XRnzddtjDtcWks4BnSVbIYZHStBiDBX8ho";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+/* Admin is gated by EMAIL — the same forge-proof gate RLS uses (it reads the
+   signed JWT email), so the UI and the data gate always agree. This is NOT a
+   security boundary (that's RLS); it only decides what the UI paints. The
+   profile.role column ('superadmin') is future-proofing, not the gate. */
+const ADMIN_EMAILS = ["ofr.rsnk@gmail.com"];
+
 /* AUTH is the single source of truth for "who am I" this render.
    AUTH.tier is one of: null (signed out) | 'visitor' | 'student' | 'admin'.
-   - admin   = profiles.role === 'admin'  (Ofir) → sees everything + the roster
+   - admin   = signed-in email in ADMIN_EMAILS (Ofir) → sees everything + roster
    - student = profiles.status === 'student'      → sees the full content vault
    - visitor = any other signed-in person         → sees prep-only (visitor tier) */
 let AUTH = { user: null, profile: null, tier: null };
@@ -40,7 +46,11 @@ async function loadAuth() {
     const user = session.user;
     const { data: profile } = await sb
       .from("profiles").select("*").eq("id", user.id).single();
-    const tier = profile && profile.role === "admin" ? "admin"
+    const isAdmin = user.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+    // Accept the legacy/future role values too, but email is the primary gate so
+    // admin never depends on the role column being set (that was the lockout bug).
+    const isAdminRole = profile && (profile.role === "superadmin" || profile.role === "admin");
+    const tier = (isAdmin || isAdminRole) ? "admin"
                : profile && profile.status === "student" ? "student" : "visitor";
     AUTH = { user, profile, tier };
   } catch (e) {
@@ -177,9 +187,9 @@ const I18N = {
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "agent-cto", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
-      { img: "agent-cpo", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
       { img: "agent-pd", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
+      { img: "agent-cpo", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
+      { img: "agent-cto", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
     ],
     ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה. יחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
     ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
@@ -370,9 +380,9 @@ const I18N = {
     ofir_name: "Ofir Rushinek",
     ofir_role: "The operator",
     agents: [
-      { img: "agent-cto", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
-      { img: "agent-cpo", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
       { img: "agent-pd", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
+      { img: "agent-cpo", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
+      { img: "agent-cto", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
     ],
     ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with an AI team I built for myself - partners in thinking, planning, design, and building. Together we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
     ofir_why: "Now I want to help you build a team like that for yourself too.",
@@ -516,13 +526,12 @@ const navHeader = (t, lang, opts = {}) => {
   </div></header>`;
   }
 
-  // Public / home header. Only real participants (admin/student) get "Sign out"
-  // here; a signed-in-but-no-access visitor is NOT treated as "in" — they keep
-  // seeing "Student entrance" (the account menu on the gated page lets them sign
-  // out). Prevents the confusing "Sign out" on the main page for a visitor.
-  const authed = AUTH.tier === "admin" || AUTH.tier === "student";
-  const studentBtn = authed
-    ? `<button class="btn btn--ghost btn--sm nav__student" type="button" data-signout aria-label="${t.nav_signout}"><span class="btn__label">${t.nav_signout}</span></button>`
+  // Public / home header NEVER shows "Sign out" — signing out lives only inside
+  // the student zone (the account-menu avatar on #/prep). The button here is
+  // always "Student entrance": a signed-in user gets a link into the zone, a
+  // signed-out user opens the sign-in modal.
+  const studentBtn = AUTH.tier
+    ? `<a class="btn btn--ghost btn--sm nav__student" href="#/prep" aria-label="${t.nav_student}"><span class="btn__label">${t.nav_student}</span></a>`
     : `<button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}"><span class="btn__label">${t.nav_student}</span></button>`;
   return `
   <header class="nav"><div class="wrap nav__in">
