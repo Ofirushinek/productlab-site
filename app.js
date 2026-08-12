@@ -343,7 +343,7 @@ const I18N = {
     who_tiles: [
       { t: "Product and design people", b: "Whether you're a product designer, a design lead, or a product manager, the workshop shows you how to work with an AI team that extends what you can do and frees you to focus on what no tool can: thinking, deciding, and leading." },
       { t: "Builders and founders", b: "You have an idea, a product, or a business you want to build or grow. In the workshop you'll build an AI team that thinks with you, plans, challenges ideas, and helps turn them into a real product." },
-      { t: "Expanding your horizons", b: "If you feel the way we work is changing, and you want to understand how to really work with AI, not just ask it questions but build a whole way of working, this workshop is for you." },
+      { t: "Horizon seekers", b: "If you feel the way we work is changing, and you want to understand how to really work with AI, not just ask it questions but build a whole way of working, this workshop is for you." },
     ],
     who_not: "Less of a fit for anyone after a magic button. If you'd rather roll up your sleeves and build it yourself, there's a chair at the table.",
 
