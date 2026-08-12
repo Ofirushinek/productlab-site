@@ -837,19 +837,37 @@ function escapeHtml(s) {
 /* One collapsible plan step: number + title header over the body (checklist
    and/or copyable prompt cards). All steps collapsed by default. Native <details>. */
 function planStep(step, open) {
+  /* A fixed left-to-right breadcrumb of chips (e.g. the Windows Settings path).
+     Forced dir="ltr" so the step order can never reorder inside RTL Hebrew. */
+  const breadcrumb = (steps) => `
+    <div class="pcrumb" dir="ltr">
+      ${steps.map((s, i) => `${i ? '<span class="pcrumb__arrow" aria-hidden="true">→</span>' : ""}<span class="pcrumb__chip${i === steps.length - 1 ? " pcrumb__chip--target" : ""}">${s}</span>`).join("")}
+    </div>`;
+  /* One checklist row. Supports an optional grouped `sub` list (e.g. the merged
+     Windows-only item) and an optional `steps` breadcrumb inside a sub-row. */
+  const checklistItem = (c) => `
+    <li class="pchecklist__item">
+      <span class="pchecklist__dot" aria-hidden="true"></span>
+      <div class="pchecklist__body">
+        <div class="pchecklist__top">
+          <span class="pchecklist__name">${c.name}</span>
+          ${c.tag ? `<span class="pchecklist__tag">${c.tag}</span>` : ""}
+        </div>
+        ${c.note ? `<p class="pchecklist__note">${c.note}</p>` : ""}
+        ${c.sub ? `
+        <ul class="psub">
+          ${c.sub.map((s) => `
+          <li class="psub__item">
+            <span class="psub__name">${s.name}</span>
+            ${s.steps ? breadcrumb(s.steps) : ""}
+            ${s.note ? `<p class="psub__note">${s.note}</p>` : ""}
+          </li>`).join("")}
+        </ul>` : ""}
+      </div>
+    </li>`;
   const checklist = step.checklist ? `
     <ul class="pchecklist">
-      ${step.checklist.map((c) => `
-        <li class="pchecklist__item">
-          <span class="pchecklist__dot" aria-hidden="true"></span>
-          <div class="pchecklist__body">
-            <div class="pchecklist__top">
-              <span class="pchecklist__name">${c.name}</span>
-              ${c.tag ? `<span class="pchecklist__tag">${c.tag}</span>` : ""}
-            </div>
-            <p class="pchecklist__note">${c.note}</p>
-          </div>
-        </li>`).join("")}
+      ${step.checklist.map(checklistItem).join("")}
     </ul>` : "";
   const note = step.note ? `
     <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p>${step.note}</p></div>` : "";

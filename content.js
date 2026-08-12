@@ -312,12 +312,18 @@ When you are done, tell me the project document is saved, where it is, and confi
              + restart the app. Obsidian = install + make an empty vault. $20/mo. */
           n: "00",
           title: "Before the workshop",
-          body: 'Please set all of this up before our session (~15-20 min). When you\'re done, reply "READY." If anything gets stuck, message me before the session - we\'ll fix it together, not on the day.',
+          body: "Please set all of this up before our session (~15-20 min). If anything gets stuck, message me before the session - we'll fix it together, not on the day.",
           checklist: [
-            { name: "Claude Pro", tag: "$20 / mo", note: 'Required; the workshop runs on it. Get it at <a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>.' },
+            { name: "Create a Claude Pro account", tag: "$20 / mo", note: 'Required; the workshop runs on it. Get it at <a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>.' },
             { name: "Claude Desktop app", note: 'Download from <a class="plink" dir="ltr" href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> and run the installer. No terminal, no code.' },
-            { name: "Developer Mode (Windows only)", note: '<span class="ltr-iso" dir="ltr">Settings → System → For developers → toggle Developer Mode on.</span> Windows needs this to let the app install. If it\'s greyed out or blocked, that\'s your work laptop\'s IT policy - use a personal laptop for the workshop.' },
-            { name: "Git (Windows only)", note: 'Install from <a class="plink" dir="ltr" href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a>. After installing, close and reopen the Claude app. (Mac users skip this.)' },
+            {
+              name: "Windows only: two extra steps", tag: "Windows",
+              note: "Do these before you install the Claude app - on Windows the desktop app won't install until Developer Mode is on. Mac users skip this whole step.",
+              sub: [
+                { name: "Developer Mode", steps: ["Settings", "System", "For developers", "Developer Mode"], note: "Turn it on first. If it's greyed out or blocked, that's your work laptop's IT policy - use a personal laptop for the workshop." },
+                { name: "Git", note: 'Install from <a class="plink" dir="ltr" href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a>. After installing, close and reopen the Claude app.' },
+              ],
+            },
             { name: "Obsidian", tag: "Free", note: 'Install from <a class="plink" dir="ltr" href="https://obsidian.md/download" target="_blank" rel="noopener">obsidian.md/download</a>. Open it and create one new empty vault. We\'ll use it live.' },
             { name: "Fresh start", note: "Don't do heavy Claude work in the 5 hours before we begin." },
           ],
@@ -542,12 +548,18 @@ When you are done, tell me the project document is saved, where it is, and confi
              מקביל ל-EN, זהה בעובדות (Dean 2026-08-12): אפליקציית דסקטופ בלבד. */
           n: "00",
           title: "לפני הסדנה",
-          body: 'תסדרו את כל זה לפני המפגש (בערך 15-20 דקות). כשסיימתם, השיבו "READY". אם משהו נתקע, כתבו לי לפני המפגש, נפתור את זה ביחד ולא ביום עצמו.',
+          body: 'תסדרו את כל זה לפני המפגש (בערך 15-20 דקות). אם משהו נתקע, כתבו לי לפני המפגש, נפתור את זה ביחד ולא ביום עצמו.',
           checklist: [
-            { name: "Claude Pro", tag: "20$ לחודש", note: 'חובה, כל הסדנה רצה עליו. משיגים ב-<a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>.' },
+            { name: "פותחים חשבון Claude Pro", tag: "20$ לחודש", note: 'חובה, כל הסדנה רצה עליו. משיגים ב-<a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>.' },
             { name: "אפליקציית Claude Desktop", note: 'מורידים מ-<a class="plink" dir="ltr" href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> ומריצים את קובץ ההתקנה. בלי טרמינל, בלי קוד.' },
-            { name: "Developer Mode (רק ב-Windows)", note: '<span class="ltr-iso" dir="ltr">Settings → System → For developers</span> → מפעילים את Developer Mode. Windows צריך את זה כדי לאפשר את התקנת האפליקציה. אם האפשרות מופיעה באפור או חסומה, זו מדיניות ה-IT של הלפטופ מהעבודה - השתמשו בלפטופ אישי לסדנה.' },
-            { name: "Git (רק ב-Windows)", note: 'מתקינים מ-<a class="plink" dir="ltr" href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a>. אחרי ההתקנה, סגרו ופתחו מחדש את אפליקציית Claude. (משתמשי Mac מדלגים על זה.)' },
+            {
+              name: "רק ב-Windows - שני צעדים נוספים", tag: "Windows",
+              note: "עשו את זה לפני שאתם מתקינים את אפליקציית Claude - ב-Windows אפליקציית הדסקטופ לא תותקן עד שמפעילים את Developer Mode. משתמשי Mac מדלגים על כל השלב הזה.",
+              sub: [
+                { name: "Developer Mode", steps: ["Settings", "System", "For developers", "Developer Mode"], note: "הפעילו את זה קודם. אם האפשרות מופיעה באפור או חסומה, זו מדיניות ה-IT של הלפטופ מהעבודה - השתמשו בלפטופ אישי לסדנה." },
+                { name: "Git", note: 'מתקינים מ-<a class="plink" dir="ltr" href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a>. אחרי ההתקנה, סגרו ופתחו מחדש את אפליקציית Claude.' },
+              ],
+            },
             { name: "Obsidian", tag: "חינם", note: 'מתקינים מ-<a class="plink" dir="ltr" href="https://obsidian.md/download" target="_blank" rel="noopener">obsidian.md/download</a>. פתחו אותו וצרו vault חדש וריק. נשתמש בו בזמן אמת.' },
             { name: "מגיעים רעננים", note: "אל תעמיסו עבודה כבדה ב-Claude ב-5 השעות שלפני שמתחילים." },
           ],

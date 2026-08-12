@@ -621,6 +621,25 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   color: var(--pl-fg-secondary); font-weight: 500;
 }
 
+/* ---- "No access yet" notice — shown to a signed-in non-student (visitor).
+   Purple-tinted callout (accent recipe, brand-consistent) with a WhatsApp CTA. */
+.noacct {
+  max-width: 34rem; margin: clamp(1rem, 6vw, 3rem) auto; text-align: center;
+  padding: clamp(1.75rem, 5vw, 2.5rem);
+  background: color-mix(in srgb, var(--pl-accent) 6%, var(--pl-surface));
+  border: 1px solid color-mix(in srgb, var(--pl-accent) 26%, transparent);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-pl-sm);
+}
+.noacct__ico {
+  width: 48px; height: 48px; margin: 0 auto 1rem; border-radius: var(--radius-lg);
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--pl-accent) 12%, transparent); color: var(--pl-accent);
+}
+.noacct__ico svg { width: 26px; height: 26px; }
+.noacct__title { font-size: var(--text-h2); font-weight: 700; color: var(--pl-fg); margin-bottom: 0.6rem; }
+.noacct__body { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body-lg); line-height: 1.6; }
+.noacct .cta-row { justify-content: center; }
+
 /* ---- Student-area tab bar (Course content / Students / …) — DS tokens only.
    Aligns to the reading-start edge via flex-start (honors dir: right in RTL,
    left in LTR). Active tab uses the accent underline. -------------------------- */
@@ -1236,6 +1255,27 @@ body.modal-open { overflow: hidden; }
   font-size: var(--text-caption); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--pl-accent);
 }
 .pchecklist__note { font-size: var(--text-sm); color: var(--pl-fg-body); font-weight: 500; line-height: 1.5; }
+
+/* Nested sub-steps inside a grouped checklist row (e.g. the Windows-only item) */
+.psub { list-style: none; margin: 0.85rem 0 0; padding: 0; display: grid; gap: 0.75rem;
+  border-inline-start: 2px solid color-mix(in srgb, var(--pl-accent) 22%, transparent); padding-inline-start: 0.9rem; }
+.psub__item { display: grid; gap: 0.4rem; }
+.psub__name { font-weight: 700; color: var(--pl-fg); font-size: var(--text-sm); }
+.psub__note { font-size: var(--text-sm); color: var(--pl-fg-body); font-weight: 500; line-height: 1.5; }
+
+/* Fixed left-to-right breadcrumb of chips (Windows Settings path). dir="ltr" in
+   markup keeps the order stable regardless of surrounding Hebrew RTL. */
+.pcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0.15rem 0; }
+.pcrumb__chip {
+  padding: 0.2rem 0.55rem; border-radius: var(--radius-sm);
+  border: 1px solid var(--pl-border); background: var(--pl-surface);
+  font-size: var(--text-caption); font-weight: 700; color: var(--pl-fg-body); white-space: nowrap;
+}
+.pcrumb__chip--target {
+  border-color: color-mix(in srgb, var(--pl-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--pl-accent) 12%, transparent); color: var(--pl-accent);
+}
+.pcrumb__arrow { color: var(--pl-accent); font-weight: 700; }
 
 /* Copyable prompt cards */
 .prompts { display: grid; gap: 1rem; margin-top: 1.25rem; }
