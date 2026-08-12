@@ -38,41 +38,49 @@ const IS_LOCAL = location.hostname === "localhost" || location.hostname === "127
 const LOCAL_TIER_KEY = "pl_local_tier";
 
 /* AUTH is the single source of truth for "who am I" this render.
-   AUTH.tier is one of: null (signed out) | 'visitor' | 'student' | 'admin'.
-   - admin   = signed-in email in ADMIN_EMAILS (Ofir) → sees everything + roster
-   - student = profiles.status === 'student'      → sees the full content vault
-   - visitor = any other signed-in person         → sees prep-only (visitor tier) */
-let AUTH = { user: null, profile: null, tier: null };
+   Access is INVITE-ONLY. After sign-in the DB function my_access() returns the
+   tier; the client never computes it. AUTH.tier is one of:
+   - 'admin'   = signed-in email is the admin (Ofir) → full content + users mgmt
+   - 'student' = email is on the allowlist AND confirmed → full content vault
+   - null      = signed out OR bounced (denied). When bounced, AUTH.denied=true
+                 so the home page can show the "not registered" notice.
+   The real wall is Supabase RLS (is_approved()); this only decides what to paint. */
+let AUTH = { user: null, tier: null, denied: false };
+// Sticky one-shot: a denied sign-in sets this true so the "not registered"
+// notice survives the sign-out-triggered re-render (which resets AUTH.denied).
+// wireNotices() shows it once, then clears it.
+let deniedNotice = false;
 
-/* Resolve the live session + the caller's profile row into AUTH. Called before
-   the first paint and again whenever the auth state changes (sign-in/out). */
+/* Resolve the live session into AUTH via the my_access() RPC. Called before the
+   first paint and again on every auth-state change (sign-in/out). A 'denied'
+   result signs the user out and flags AUTH.denied for the notice. */
 async function loadAuth() {
-  // Local dev: fake, Google-free auth. Tier comes from ?tier=admin|student|visitor
+  // Local dev: fake, Google-free auth. Tier comes from ?tier=admin|student|denied
   // or, after you "sign in" via the modal, from localStorage. NO tier = signed
   // OUT, so the sign-in modal itself is reachable to review. Inert in production.
   if (IS_LOCAL) {
-    const tier = new URLSearchParams(location.search).get("tier") || localStorage.getItem(LOCAL_TIER_KEY);
-    AUTH = tier
-      ? { user: { id: "local", email: ADMIN_EMAILS[0] }, profile: { role: "superadmin", status: tier === "student" ? "student" : "visitor" }, tier }
-      : { user: null, profile: null, tier: null };
+    const raw = new URLSearchParams(location.search).get("tier") || localStorage.getItem(LOCAL_TIER_KEY);
+    if (raw === "denied") { AUTH = { user: null, tier: null, denied: true }; return AUTH; }
+    AUTH = raw
+      ? { user: { id: "local", email: ADMIN_EMAILS[0] }, tier: raw, denied: false }
+      : { user: null, tier: null, denied: false };
     return AUTH;
   }
   try {
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) { AUTH = { user: null, profile: null, tier: null }; return AUTH; }
-    const user = session.user;
-    const { data: profile } = await sb
-      .from("profiles").select("*").eq("id", user.id).single();
-    const isAdmin = user.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
-    // Accept the legacy/future role values too, but email is the primary gate so
-    // admin never depends on the role column being set (that was the lockout bug).
-    const isAdminRole = profile && (profile.role === "superadmin" || profile.role === "admin");
-    const tier = (isAdmin || isAdminRole) ? "admin"
-               : profile && profile.status === "student" ? "student" : "visitor";
-    AUTH = { user, profile, tier };
+    if (!session) { AUTH = { user: null, tier: null, denied: false }; return AUTH; }
+    // One question to the database: "what may I see?" → admin | student | denied.
+    const { data: tier, error } = await sb.rpc("my_access");
+    if (error || tier === "denied") {
+      deniedNotice = true;                  // sticky: outlives the sign-out re-render
+      await sb.auth.signOut();              // global scope: clears + revokes the session
+      AUTH = { user: null, tier: null, denied: true };
+      return AUTH;                          // caller shows the "not registered" notice
+    }
+    AUTH = { user: session.user, tier, denied: false }; // 'student' | 'admin'
   } catch (e) {
     // On any failure, fall back to signed-out rather than leaking a wrong tier.
-    AUTH = { user: null, profile: null, tier: null };
+    AUTH = { user: null, tier: null, denied: false };
   }
   return AUTH;
 }
@@ -243,24 +251,35 @@ const I18N = {
     login_title: "כניסה לאזור התלמידים",
     login_sub: "האזור הזה נועד למשתתפי הסדנה. התחברו עם חשבון Google כדי להיכנס.",
     login_google: "המשך עם Google",
-    // Shown to a signed-in Google user who isn't a registered student (visitor
-    // tier). PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
-    noacct_title: "עדיין אין לכם גישה",
-    noacct_body: "האזור הזה נפתח למשתתפי הסדנה שנרשמו. נכנסתם עם Google אבל החשבון עדיין לא מחובר לסדנה. אם נרשמתם וזה לא עובד, או שיש כל בעיה אחרת, דברו איתי ואפתח לכם גישה.",
+    login_register: "הרשמה",
+    modal_close: "סגירה",
+    // Denied sign-in notice (invite-only). PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
+    denied_title: "עדיין אין לכם גישה",
+    denied_body: "האזור הזה פתוח למשתתפי הסדנה שאושרו. נכנסתם עם Google אבל החשבון עדיין לא רשום. אם נרשמתם וזה לא עובד, דברו איתי ואפתח לכם גישה.",
+    // "Register" placeholder popup (registration isn't open yet). PLACEHOLDER HE copy 2026-08-12.
+    register_title: "ההרשמה עדיין לא פתוחה",
+    register_body: "ההצטרפות לסדנה היא בהזמנה בלבד כרגע. רוצים מקום? דברו איתי ונסדר לכם.",
 
-    // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-11, Copywriter to refine.
+    // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
     roster_kicker: "ניהול",
-    admin_roster_title: "תלמידים רשומים",
-    roster_sub: "כל מי שהתחבר עם Google. סמנו מישהו כתלמיד כדי לפתוח לו את כל התוכן.",
+    admin_roster_title: "התלמידים שלי",
+    roster_sub: "רשימת ההזמנות שלכם. הוסיפו אימייל, אשרו אותו כדי לפתוח גישה, וראו מי כבר נכנס.",
+    roster_add_placeholder: "אימייל של תלמיד",
+    roster_add_cta: "הוספת תלמיד",
+    roster_add_hint: "הוספה לא מאשרת אוטומטית. אחרי ההוספה, לחצו \"אישור\" כדי לפתוח גישה.",
     roster_col_name: "שם",
     roster_col_email: "אימייל",
-    roster_col_joined: "תאריך הצטרפות",
     roster_col_status: "סטטוס",
-    roster_status_student: "תלמיד",
-    roster_status_visitor: "מבקר",
-    roster_make_student: "הפוך לתלמיד",
-    roster_make_visitor: "הפוך למבקר",
-    roster_empty: "עדיין אין הרשמות. ברגע שמישהו יתחבר עם Google, הוא יופיע כאן.",
+    roster_col_signedin: "נכנס?",
+    roster_pill_confirmed: "מאושר",
+    roster_pill_pending: "ממתין",
+    roster_pill_uninvited: "לא מוזמן",
+    roster_signedin_no: "עדיין לא",
+    roster_confirm: "אישור",
+    roster_unconfirm: "ביטול אישור",
+    roster_remove: "הסרה",
+    roster_add_to_list: "הוספה לרשימה",
+    roster_empty: "עדיין אין תלמידים. הוסיפו אימייל למעלה כדי להתחיל.",
     roster_loading: "טוען...",
     // Student-area tab bar. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
     tab_content: "תוכן הסדנה",
@@ -435,24 +454,35 @@ const I18N = {
     login_title: "Enter the student area",
     login_sub: "This area is for workshop participants. Sign in with your Google account to enter.",
     login_google: "Continue with Google",
-    // Shown to a signed-in Google user who isn't a registered student (visitor
-    // tier). PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
-    noacct_title: "You don't have access yet",
-    noacct_body: "This area is for registered workshop participants. You're signed in with Google, but your account isn't connected to the workshop yet. If you registered and it isn't working, or anything else is off, talk to me and I'll open it up for you.",
+    login_register: "Register",
+    modal_close: "Close",
+    // Denied sign-in notice (invite-only). PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
+    denied_title: "You don't have access yet",
+    denied_body: "This area is for approved workshop participants. You're signed in with Google, but your account isn't registered yet. If you registered and it isn't working, talk to me and I'll open it up for you.",
+    // "Register" placeholder popup (registration isn't open yet). PLACEHOLDER EN copy 2026-08-12.
+    register_title: "Registration isn't open yet",
+    register_body: "Joining the workshop is invite-only for now. Want a seat? Talk to me and we'll sort it out.",
 
-    // Admin roster - visible only to admin. PLACEHOLDER EN copy 2026-08-11, Copywriter to refine.
+    // Admin roster - visible only to admin. PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
     roster_kicker: "Admin",
-    admin_roster_title: "Registered students",
-    roster_sub: "Everyone who signed in with Google. Mark someone a student to unlock the full content for them.",
+    admin_roster_title: "My students",
+    roster_sub: "Your invite list. Add an email, confirm it to grant access, and see who has signed in.",
+    roster_add_placeholder: "Student email",
+    roster_add_cta: "Add user",
+    roster_add_hint: "Adding does not approve. After adding, hit \"Confirm\" to grant access.",
     roster_col_name: "Name",
     roster_col_email: "Email",
-    roster_col_joined: "Joined",
     roster_col_status: "Status",
-    roster_status_student: "Student",
-    roster_status_visitor: "Visitor",
-    roster_make_student: "Make student",
-    roster_make_visitor: "Make visitor",
-    roster_empty: "No sign-ups yet. As soon as someone signs in with Google, they'll appear here.",
+    roster_col_signedin: "Signed in?",
+    roster_pill_confirmed: "Confirmed",
+    roster_pill_pending: "Pending",
+    roster_pill_uninvited: "Not invited",
+    roster_signedin_no: "Not yet",
+    roster_confirm: "Confirm",
+    roster_unconfirm: "Unconfirm",
+    roster_remove: "Remove",
+    roster_add_to_list: "Add to list",
+    roster_empty: "No students yet. Add an email above to get started.",
     roster_loading: "Loading...",
     // Student-area tab bar. PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
     tab_content: "Course content",
@@ -583,11 +613,28 @@ const navHeader = (t, lang, opts = {}) => {
 // Student sign-in MODAL. Real Google OAuth via Supabase (the access-code field
 // was retired with the SHA-256 gate). The button click hands off to
 // sb.auth.signInWithOAuth and the page re-renders on return (see wireStudent).
+// A reusable NOTICE popup (denied sign-in + "registration not open"). Reuses the
+// documented .noacct callout as the modal panel and .modal for the overlay — no
+// new component. `key` selects it (data-notice); WhatsApp CTA reuses WA_URL.
+const noticeModal = (key, title, body, t) => `
+  <div class="modal" data-notice="${key}" hidden>
+    <div class="modal__overlay" data-notice-close></div>
+    <div class="noacct" role="dialog" aria-modal="true" aria-label="${title}" style="position:relative; z-index:1; margin:0">
+      <button class="modal__close" type="button" data-notice-close aria-label="${t.modal_close}" data-tooltip="${t.modal_close}">${I.x}</button>
+      <div class="noacct__ico">${I.info}</div>
+      <h2 class="noacct__title">${title}</h2>
+      <p class="noacct__body">${body}</p>
+      <div class="cta-row" style="margin-top:1.5rem">
+        <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+      </div>
+    </div>
+  </div>`;
+
 const studentModal = (t) => `
   <div class="modal" data-student-modal hidden>
     <div class="modal__overlay" data-student-close></div>
     <div class="modal__card" role="dialog" aria-modal="true" aria-label="${t.login_title}">
-      <button class="modal__close" type="button" data-student-close aria-label="Close" data-tooltip="Close">${I.x}</button>
+      <button class="modal__close" type="button" data-student-close aria-label="${t.modal_close}" data-tooltip="${t.modal_close}">${I.x}</button>
       <div class="login__ico">${I.login}</div>
       <span class="eyebrow">${t.login_eyebrow}</span>
       <h2 class="login__title">${t.login_title}</h2>
@@ -596,9 +643,13 @@ const studentModal = (t) => `
         <button class="btn btn--primary login__submit login__google" type="button" data-google-signin>
           ${I.google}<span>${t.login_google}</span>
         </button>
+        <!-- Invite-only: Register is a placeholder (registration isn't open yet). -->
+        <button class="btn btn--ghost login__submit" type="button" data-register-open>${t.login_register}</button>
       </div>
     </div>
-  </div>`;
+  </div>
+  ${noticeModal("denied", t.denied_title, t.denied_body, t)}
+  ${noticeModal("register", t.register_title, t.register_body, t)}`;
 
 // FOOTER — now carries the Privacy + Terms routes alongside contact.
 const siteFooter = (t) => `
@@ -1006,13 +1057,13 @@ function sharedBrainDiagram(n) {
     </div>`;
 }
 
-/* Tier visibility: admin + student see every section; a visitor sees only
-   sections tagged visitor (the default when a section has no `tier` field).
-   Today every content section is visitor-tier, so nothing is hidden yet, add
-   `tier: "student"` to a section object in content.js to lock it for visitors. */
+/* Tier visibility: invite-only. Any signed-in tier (student or admin) sees every
+   section; there is no visitor tier. `sec` is kept for signature stability (call
+   sites pass a section) but no longer gates — the RLS-backed sign-in is the gate. */
 function canSee(sec) {
-  if (AUTH.tier === "admin" || AUTH.tier === "student") return true;
-  return ((sec && sec.tier) || "visitor") === "visitor";
+  // Invite-only: any signed-in tier (student or admin) sees every section.
+  // Denied users never reach here — they're signed out and bounced home.
+  return AUTH.tier === "admin" || AUTH.tier === "student";
 }
 
 function renderPrep(lang) {
@@ -1021,28 +1072,9 @@ function renderPrep(lang) {
   // non-null tier means signed in. Signed-out → bounce home + pop sign-in.
   if (!AUTH.tier) { pendingStudentOpen = true; location.hash = "#/"; return; }
 
-  // Signed in with Google but NOT a registered student (visitor tier): the
-  // workshop area is invite-only, so instead of content show a "no access yet"
-  // notice with a direct WhatsApp line. Admin + student fall through to content.
-  if (AUTH.tier === "visitor") {
-    document.getElementById("app").innerHTML = `
-    ${navHeader(t, lang, { account: true })}
-    <main id="top" class="page" dir="${lang === "he" ? "rtl" : "ltr"}">
-      <section class="section"><div class="wrap narrow">
-        <div class="noacct reveal">
-          <div class="noacct__ico">${I.info}</div>
-          <h1 class="noacct__title">${t.noacct_title}</h1>
-          <p class="noacct__body">${t.noacct_body}</p>
-          <div class="cta-row" style="margin-top:1.5rem">
-            <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
-          </div>
-        </div>
-      </div></section>
-    </main>
-    ${studentModal(t)}${siteFooter(t)}`;
-    afterRender();
-    return;
-  }
+  // Invite-only: there is no "visitor" tier anymore. A signed-in user is either
+  // 'student' or 'admin' (both fall through to content). Anyone denied was signed
+  // out in loadAuth() and never reaches this route.
 
   const W = window.WORKSHOP_CONTENT;
   // Defensive: if content.js failed to load, keep the page usable.
@@ -1178,8 +1210,10 @@ function renderPrep(lang) {
       </div>
     </div></section>`;
 
-  // Students panel — admin only. The list + visitor/student toggle are filled
-  // async after render by renderStudentsTable(); RLS is what actually gates the data.
+  // Students panel — admin only. This is Ofir's invite list / CRM: add an email
+  // (step 1), confirm it to grant access (step 2), remove, and see who's actually
+  // signed in. The table is filled async by renderRoster() from admin_roster();
+  // RLS is the real gate (non-admins get zero rows even if they force this open).
   const studentsPanel = `
     <section class="section" data-roster-section><div class="wrap">
       <div class="reveal">
@@ -1187,7 +1221,13 @@ function renderPrep(lang) {
         <h2 class="section-title">${t.admin_roster_title}</h2>
         <p class="section-lead">${t.roster_sub}</p>
       </div>
-      <div class="roster" data-roster style="margin-top:2rem">
+      <form class="roster__add" data-roster-add style="margin-top:1.75rem">
+        <input class="roster__input" type="email" name="email" required
+          placeholder="${t.roster_add_placeholder}" aria-label="${t.roster_add_placeholder}" autocomplete="off" />
+        <button class="btn btn--primary roster__addbtn" type="submit">${I.check}<span>${t.roster_add_cta}</span></button>
+      </form>
+      <p class="roster__hint">${t.roster_add_hint}</p>
+      <div class="roster" data-roster style="margin-top:1.5rem">
         <p class="roster__loading">${t.roster_loading}</p>
       </div>
     </div></section>`;
@@ -1229,9 +1269,9 @@ function renderPrep(lang) {
 
   afterRender();
   initPrepTabs();
-  // Admin only: fetch + draw the roster into its container. RLS returns only the
-  // caller's own row for non-admins, so this is safe even if the div is forced open.
-  if (isAdmin) renderStudentsTable(lang);
+  // Admin only: bind the "Add user" form once, then fetch + draw the roster. RLS
+  // returns zero rows to non-admins, so this is safe even if the div is forced open.
+  if (isAdmin) { wireRosterAdd(lang); renderRoster(lang); }
 }
 
 /* Student-area tab bar: switch which panel is visible. No-op when there's only
@@ -1257,65 +1297,110 @@ function initPrepTabs() {
   }));
 }
 
-/* ---- Admin roster: list every profile + flip visitor<->student ----------- */
-/* Only the admin tier ever renders this. The SELECT returns all rows for an
-   admin (RLS "read own or admin reads all") and just the caller's own row for
-   anyone else, so an empty/one-row table is the safe non-admin outcome. */
-async function renderStudentsTable(lang) {
+/* ---- Admin roster: the invite list / student CRM ------------------------- */
+/* Admin-only. One call to admin_roster() merges the allowlist (who's invited +
+   confirmed) with profiles (who actually signed in). Each row is one of:
+   confirmed student · added-but-pending · a gate-crasher (signed in, not invited).
+   Every write below succeeds only for the admin (RLS); after each one we re-fetch. */
+function rosterDate(s, lang) {
+  if (!s) return "";
+  try { return new Date(s).toLocaleDateString(lang === "he" ? "he-IL" : "en-GB",
+    { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return s || ""; }
+}
+
+// Bind the "Add user" form once per render (outside the re-fetched table body so
+// listeners never stack). Adds a row with confirmed=false — added is not approved.
+function wireRosterAdd(lang) {
+  const form = document.querySelector("[data-roster-add]");
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = "1";
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const input = form.querySelector("input[name=email]");
+    const email = (input.value || "").trim().toLowerCase();
+    if (!email) return;
+    await addUser(email, lang);
+    input.value = "";
+    input.focus();
+  });
+}
+
+async function addUser(email, lang) {
+  // added_by is optional metadata; the RLS gate is the admin's own token.
+  const { error } = await sb.from("allowlist")
+    .insert({ email, added_by: (AUTH.user && AUTH.user.email) || null });
+  // Ignore duplicate-email errors (already on the list); always re-draw.
+  renderRoster(lang);
+  return error;
+}
+
+async function confirmUser(email, next, lang) {
+  await sb.from("allowlist").update({ confirmed: next }).eq("email", email);
+  renderRoster(lang);
+}
+
+async function removeUser(email, lang) {
+  await sb.from("allowlist").delete().eq("email", email);
+  renderRoster(lang);
+}
+
+async function renderRoster(lang) {
   const host = document.querySelector("[data-roster]");
   if (!host) return;
   const t = I18N[lang];
-  const { data: rows, error } = await sb
-    .from("profiles")
-    .select("id, email, full_name, status, created_at")
-    .order("created_at", { ascending: false });
+  const { data: rows, error } = await sb.rpc("admin_roster");
   if (error) { host.innerHTML = `<p class="roster__empty">${t.roster_empty}</p>`; return; }
   if (!rows || rows.length === 0) {
     host.innerHTML = `<p class="roster__empty">${t.roster_empty}</p>`;
     return;
   }
-  const fmtDate = (s) => {
-    try { return new Date(s).toLocaleDateString(lang === "he" ? "he-IL" : "en-GB",
-      { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return s || ""; }
-  };
   const body = rows.map((r) => {
-    const isStudent = r.status === "student";
-    const statusLabel = isStudent ? t.roster_status_student : t.roster_status_visitor;
-    const btnLabel = isStudent ? t.roster_make_visitor : t.roster_make_student;
+    // Status pill: confirmed student · pending invite · uninvited gate-crasher.
+    let pill;
+    if (!r.on_list) pill = `<span class="roster__badge roster__badge--warn">${t.roster_pill_uninvited}</span>`;
+    else if (r.confirmed) pill = `<span class="roster__badge roster__badge--ok">${t.roster_pill_confirmed}</span>`;
+    else pill = `<span class="roster__badge">${t.roster_pill_pending}</span>`;
+
+    const signedIn = r.signed_in
+      ? `<span class="roster__yes">${I.check} ${rosterDate(r.first_signed_in_at, lang)}</span>`
+      : `<span class="roster__no">${t.roster_signedin_no}</span>`;
+
+    // Actions: gate-crasher → Add to list; invited → confirm/unconfirm + remove.
+    const actions = !r.on_list
+      ? `<button type="button" class="btn btn--ghost btn--sm" data-add="${escapeHtml(r.email)}">${t.roster_add_to_list}</button>`
+      : `<button type="button" class="btn ${r.confirmed ? "btn--ghost" : "btn--primary"} btn--sm" data-confirm="${escapeHtml(r.email)}" data-next="${r.confirmed ? "0" : "1"}">${r.confirmed ? t.roster_unconfirm : t.roster_confirm}</button>
+         <button type="button" class="btn btn--ghost btn--sm roster__remove" data-remove="${escapeHtml(r.email)}" aria-label="${t.roster_remove}" data-tooltip="${t.roster_remove}">${I.x}</button>`;
+
     return `
       <tr>
-        <td data-label="${t.roster_col_name}">${escapeHtml(r.full_name || "-")}</td>
         <td data-label="${t.roster_col_email}">${escapeHtml(r.email || "")}</td>
-        <td data-label="${t.roster_col_joined}">${fmtDate(r.created_at)}</td>
-        <td data-label="${t.roster_col_status}"><span class="roster__badge${isStudent ? " roster__badge--student" : ""}">${statusLabel}</span></td>
-        <td class="roster__actions">
-          <button type="button" class="btn btn--ghost btn--sm" data-flip="${r.id}" data-current="${r.status}">${btnLabel}</button>
-        </td>
+        <td data-label="${t.roster_col_name}">${escapeHtml(r.full_name || "-")}</td>
+        <td data-label="${t.roster_col_status}">${pill}</td>
+        <td data-label="${t.roster_col_signedin}">${signedIn}</td>
+        <td class="roster__actions">${actions}</td>
       </tr>`;
   }).join("");
+
   host.innerHTML = `
     <div class="roster__scroll">
       <table class="roster__table">
         <thead><tr>
-          <th>${t.roster_col_name}</th>
           <th>${t.roster_col_email}</th>
-          <th>${t.roster_col_joined}</th>
+          <th>${t.roster_col_name}</th>
           <th>${t.roster_col_status}</th>
+          <th>${t.roster_col_signedin}</th>
           <th></th>
         </tr></thead>
         <tbody>${body}</tbody>
       </table>
     </div>`;
-  host.querySelectorAll("[data-flip]").forEach((b) =>
-    b.addEventListener("click", () => flipStatus(b.getAttribute("data-flip"), b.getAttribute("data-current"), lang)));
-}
 
-/* Flip one person's status. Only the admin's token satisfies the "admin updates
-   any" policy, so this write silently no-ops for anyone else. Re-fetch to reflect. */
-async function flipStatus(id, current, lang) {
-  const next = current === "student" ? "visitor" : "student";
-  const { error } = await sb.from("profiles").update({ status: next }).eq("id", id);
-  if (!error) renderStudentsTable(lang);
+  host.querySelectorAll("[data-confirm]").forEach((b) =>
+    b.addEventListener("click", () => confirmUser(b.getAttribute("data-confirm"), b.getAttribute("data-next") === "1", lang)));
+  host.querySelectorAll("[data-remove]").forEach((b) =>
+    b.addEventListener("click", () => removeUser(b.getAttribute("data-remove"), lang)));
+  host.querySelectorAll("[data-add]").forEach((b) =>
+    b.addEventListener("click", () => addUser(b.getAttribute("data-add"), lang)));
 }
 
 /* ---- Legal pages (Privacy / Terms) — shared template --------------------- */
@@ -1435,7 +1520,7 @@ function wireSignout() {
     b.addEventListener("click", async () => {
       if (IS_LOCAL) {
         try { localStorage.removeItem(LOCAL_TIER_KEY); } catch (e) {}
-        AUTH = { user: null, profile: null, tier: null };
+        AUTH = { user: null, tier: null, denied: false };
       } else {
         await sb.auth.signOut();
       }
@@ -1453,6 +1538,7 @@ function afterRender() {
   wireReveal();
   wireHeroImage();
   wireStudent();
+  wireNotices();
   wireNav();
   wireAccountMenu();
   wireSignout();
@@ -1509,6 +1595,43 @@ function wireStudent() {
   });
 
   if (pendingStudentOpen) { pendingStudentOpen = false; open(); }
+}
+
+/* ---- Auth notice popups (denied sign-in + registration-not-open) --------- */
+/* Two reusable notices share one open/close mechanism (data-notice). "Register"
+   in the sign-in modal opens the placeholder note; a denied Google sign-in
+   auto-opens the "not registered" note. deniedNotice stays TRUE (so async
+   re-renders after sign-out keep re-opening it, not flashing it away) and is
+   cleared only when the user actually closes the note. */
+function wireNotices() {
+  const notices = [...document.querySelectorAll("[data-notice]")];
+  if (!notices.length) return;
+  const openNotice = (key) => {
+    const n = document.querySelector(`[data-notice="${key}"]`);
+    if (!n) return;
+    n.hidden = false;
+    document.body.classList.add("modal-open");
+  };
+  const closeAll = () => {
+    deniedNotice = false;               // user dismissed it → don't reopen on re-render
+    notices.forEach((n) => (n.hidden = true));
+    document.body.classList.remove("modal-open");
+  };
+  notices.forEach((n) =>
+    n.querySelectorAll("[data-notice-close]").forEach((b) => b.addEventListener("click", closeAll)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && notices.some((n) => !n.hidden)) closeAll();
+  });
+  // "Register" in the sign-in modal → close it, show the placeholder note.
+  document.querySelectorAll("[data-register-open]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const sm = document.querySelector("[data-student-modal]");
+      if (sm) sm.hidden = true;
+      openNotice("register");
+    }));
+  // Auto-open the "not registered" note after a denied sign-in; kept open across
+  // the sign-out-triggered re-render until the user closes it.
+  if (deniedNotice) openNotice("denied");
 }
 
 /* ---- Language ------------------------------------------------------------ */

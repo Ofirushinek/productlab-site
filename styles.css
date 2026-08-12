@@ -716,7 +716,46 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .roster__badge--student {
   background: color-mix(in srgb, var(--pl-accent) 14%, transparent); color: var(--pl-accent);
 }
-.roster__actions { text-align: end; }
+.roster__actions { text-align: end; display: flex; gap: 0.5rem; justify-content: flex-end; }
+.roster__remove { color: var(--pl-fg-secondary); padding-inline: 0; }
+.roster__remove svg { width: 16px; height: 16px; }
+
+/* Add-user form (admin CRM). DS tokens only; dir-aware via logical properties. */
+.roster__add { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+.roster__input {
+  flex: 1 1 16rem; min-width: 12rem; height: 2.75rem;
+  padding: 0 0.9rem; border: 1px solid var(--pl-border-strong);
+  border-radius: var(--radius-md); background: var(--pl-surface);
+  color: var(--pl-fg); font-family: inherit; font-size: var(--text-body);
+  box-shadow: var(--shadow-pl-sm);
+  transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+}
+.roster__input::placeholder { color: var(--pl-fg-muted); }
+.roster__input:focus {
+  outline: none; border-color: var(--pl-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 18%, transparent);
+}
+.roster__addbtn { flex: none; gap: 0.5rem; }
+.roster__addbtn svg { width: 18px; height: 18px; }
+.roster__hint {
+  margin-top: 0.6rem; color: var(--pl-fg-secondary);
+  font-size: var(--text-sm); font-weight: 500;
+}
+
+/* Status pills: confirmed (accent) · pending (neutral, base .roster__badge) ·
+   uninvited gate-crasher (orange warn). Signed-in indicators. */
+.roster__badge--ok {
+  background: color-mix(in srgb, var(--pl-accent) 14%, transparent); color: var(--pl-accent);
+}
+.roster__badge--warn {
+  background: color-mix(in srgb, var(--pl-crew-orange) 16%, transparent); color: var(--pl-crew-orange);
+}
+.roster__yes {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  color: var(--pl-fg-body); font-weight: 600; font-size: var(--text-sm);
+}
+.roster__yes svg { width: 15px; height: 15px; color: var(--pl-accent); }
+.roster__no { color: var(--pl-fg-muted); font-size: var(--text-sm); font-weight: 500; }
 
 /* ---- WHY NOW — centered in LTR, right-aligned (start) in RTL -------------- */
 .why { text-align: center; }
@@ -939,6 +978,15 @@ body.modal-open { overflow: hidden; }
   [dir="rtl"] .hero__inner {
     margin-inline-start: max(0px, calc((100vw - var(--maxw)) / 2));
     margin-inline-end: auto;
+  }
+  /* LTR mirror: pin the English title block to the LEFT content column (same
+     start edge as the nav wordmark + the sections below) and left-align its
+     text, so the subhead + points align to the title exactly like Hebrew does.
+     Without this the 42rem block floated centered, so nothing shared an edge. */
+  [dir="ltr"] .hero__inner {
+    margin-inline-start: max(0px, calc((100vw - var(--maxw)) / 2));
+    margin-inline-end: auto;
+    text-align: left;
   }
 }
 
