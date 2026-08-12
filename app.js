@@ -1461,7 +1461,8 @@ function afterRender() {
 
 /* ---- Router — hash routes: #/prep, #/privacy, #/terms, else home ---------- */
 function currentRoute() {
-  const h = (location.hash || "").replace(/^#\/?/, "");
+  // Strip any query suffix (e.g. #/prep?lang=en) before matching the route.
+  const h = (location.hash || "").replace(/^#\/?/, "").split("?")[0];
   if (h === "prep") return "prep";
   if (h === "privacy") return "privacy";
   if (h === "terms") return "terms";
@@ -1511,6 +1512,22 @@ function wireStudent() {
 }
 
 /* ---- Language ------------------------------------------------------------ */
+// A shareable ?lang=en / ?lang=he param forces the site to load in that
+// language on first paint (overrides the saved pl_lang), so a link like
+// productlab.studio/?lang=en opens in English. Works with the hash router too,
+// reading either the query string or a query embedded in the hash route.
+function urlLang() {
+  try {
+    const q = new URLSearchParams(location.search).get("lang");
+    if (q === "en" || q === "he") return q;
+    const i = location.hash.indexOf("?");
+    if (i !== -1) {
+      const hq = new URLSearchParams(location.hash.slice(i + 1)).get("lang");
+      if (hq === "en" || hq === "he") return hq;
+    }
+  } catch (e) {}
+  return null;
+}
 function setLang(lang) {
   const html = document.documentElement;
   html.lang = lang;
@@ -1571,6 +1588,10 @@ window.addEventListener("hashchange", () => {
 (async function () {
   let lang = "he";
   try { lang = localStorage.getItem("pl_lang") || "he"; } catch (e) {}
+  // A ?lang= param in the shareable URL wins over the saved preference, forcing
+  // the requested language on first paint (default stays Hebrew when absent).
+  const forcedLang = urlLang();
+  if (forcedLang) lang = forcedLang;
   // Detect a fresh Google OAuth return (supabase-js will parse + clean these
   // params). Captured synchronously before loadAuth so we can land the user
   // straight in the vault instead of on the home page.
