@@ -215,7 +215,10 @@ const I18N = {
     login_title: "כניסה לאזור התלמידים",
     login_sub: "האזור הזה נועד למשתתפי הסדנה. התחברו עם חשבון Google כדי להיכנס.",
     login_google: "המשך עם Google",
-    login_webview_note: "אם ההתחברות עם Google לא נפתחת, פתחו את הדף ב-Safari או ב-Chrome (תפריט ⋯ ואז \"פתח בדפדפן\").",
+    // Shown to a signed-in Google user who isn't a registered student (visitor
+    // tier). PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
+    noacct_title: "עדיין אין לכם גישה",
+    noacct_body: "האזור הזה נפתח למשתתפי הסדנה שנרשמו. נכנסתם עם Google אבל החשבון עדיין לא מחובר לסדנה. אם נרשמתם וזה לא עובד, או שיש כל בעיה אחרת, דברו איתי ואפתח לכם גישה.",
 
     // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-11, Copywriter to refine.
     roster_kicker: "ניהול",
@@ -404,7 +407,10 @@ const I18N = {
     login_title: "Enter the student area",
     login_sub: "This area is for workshop participants. Sign in with your Google account to enter.",
     login_google: "Continue with Google",
-    login_webview_note: "If Google sign-in won't open, open this page in Safari or Chrome (⋯ menu, then \"Open in browser\").",
+    // Shown to a signed-in Google user who isn't a registered student (visitor
+    // tier). PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
+    noacct_title: "You don't have access yet",
+    noacct_body: "This area is for registered workshop participants. You're signed in with Google, but your account isn't connected to the workshop yet. If you registered and it isn't working, or anything else is off, talk to me and I'll open it up for you.",
 
     // Admin roster - visible only to admin. PLACEHOLDER EN copy 2026-08-11, Copywriter to refine.
     roster_kicker: "Admin",
@@ -510,9 +516,11 @@ const navHeader = (t, lang, opts = {}) => {
   </div></header>`;
   }
 
-  // Public / signed-out header (unchanged). Signed-in participants who land on
-  // the main page still get a text Sign out action here in place of the gate.
-  const authed = !!AUTH.tier;
+  // Public / home header. Only real participants (admin/student) get "Sign out"
+  // here; a signed-in-but-no-access visitor is NOT treated as "in" — they keep
+  // seeing "Student entrance" (the account menu on the gated page lets them sign
+  // out). Prevents the confusing "Sign out" on the main page for a visitor.
+  const authed = AUTH.tier === "admin" || AUTH.tier === "student";
   const studentBtn = authed
     ? `<button class="btn btn--ghost btn--sm nav__student" type="button" data-signout aria-label="${t.nav_signout}"><span class="btn__label">${t.nav_signout}</span></button>`
     : `<button class="btn btn--ghost btn--sm nav__student" type="button" data-student-open aria-label="${t.nav_student}"><span class="btn__label">${t.nav_student}</span></button>`;
@@ -547,7 +555,6 @@ const studentModal = (t) => `
         <button class="btn btn--primary login__submit login__google" type="button" data-google-signin>
           ${I.google}<span>${t.login_google}</span>
         </button>
-        <p class="login__note login__note--hint">${I.info}<span>${t.login_webview_note}</span></p>
       </div>
     </div>
   </div>`;
@@ -972,6 +979,29 @@ function renderPrep(lang) {
   // The real guard is Supabase RLS; this only decides what to paint. Any
   // non-null tier means signed in. Signed-out → bounce home + pop sign-in.
   if (!AUTH.tier) { pendingStudentOpen = true; location.hash = "#/"; return; }
+
+  // Signed in with Google but NOT a registered student (visitor tier): the
+  // workshop area is invite-only, so instead of content show a "no access yet"
+  // notice with a direct WhatsApp line. Admin + student fall through to content.
+  if (AUTH.tier === "visitor") {
+    document.getElementById("app").innerHTML = `
+    ${navHeader(t, lang, { account: true })}
+    <main id="top" class="page" dir="${lang === "he" ? "rtl" : "ltr"}">
+      <section class="section"><div class="wrap narrow">
+        <div class="noacct reveal">
+          <div class="noacct__ico">${I.info}</div>
+          <h1 class="noacct__title">${t.noacct_title}</h1>
+          <p class="noacct__body">${t.noacct_body}</p>
+          <div class="cta-row" style="margin-top:1.5rem">
+            <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+          </div>
+        </div>
+      </div></section>
+    </main>
+    ${studentModal(t)}${siteFooter(t)}`;
+    afterRender();
+    return;
+  }
 
   const W = window.WORKSHOP_CONTENT;
   // Defensive: if content.js failed to load, keep the page usable.
