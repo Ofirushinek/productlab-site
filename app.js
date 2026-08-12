@@ -219,7 +219,7 @@ const I18N = {
 
     // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-11, Copywriter to refine.
     roster_kicker: "ניהול",
-    roster_title: "תלמידים רשומים",
+    admin_roster_title: "תלמידים רשומים",
     roster_sub: "כל מי שהתחבר עם Google. סמנו מישהו כתלמיד כדי לפתוח לו את כל התוכן.",
     roster_col_name: "שם",
     roster_col_email: "אימייל",
@@ -405,7 +405,7 @@ const I18N = {
 
     // Admin roster - visible only to admin. PLACEHOLDER EN copy 2026-08-11, Copywriter to refine.
     roster_kicker: "Admin",
-    roster_title: "Registered students",
+    admin_roster_title: "Registered students",
     roster_sub: "Everyone who signed in with Google. Mark someone a student to unlock the full content for them.",
     roster_col_name: "Name",
     roster_col_email: "Email",
@@ -1084,7 +1084,7 @@ function renderPrep(lang) {
     <section class="section section--alt" data-roster-section><div class="wrap">
       <div class="reveal">
         <span class="eyebrow">${t.roster_kicker}</span>
-        <h2 class="section-title">${t.roster_title}</h2>
+        <h2 class="section-title">${t.admin_roster_title}</h2>
         <p class="section-lead">${t.roster_sub}</p>
       </div>
       <div class="roster" data-roster style="margin-top:2rem">
