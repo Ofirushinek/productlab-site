@@ -177,9 +177,9 @@ const I18N = {
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "agent-cto", role: "הארכיטקט - המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
-      { img: "agent-cpo", role: "האסטרטג - מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
-      { img: "agent-pd", role: "המעצב - מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
+      { img: "agent-cto", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
+      { img: "agent-cpo", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
+      { img: "agent-pd", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
     ],
     ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה. יחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
     ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
@@ -364,9 +364,9 @@ const I18N = {
     ofir_name: "Ofir Rushinek",
     ofir_role: "The operator",
     agents: [
-      { img: "agent-cto", role: "The Architect - the lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
-      { img: "agent-cpo", role: "The Strategist - the product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
-      { img: "agent-pd", role: "The Designer - the product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
+      { img: "agent-cto", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
+      { img: "agent-cpo", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
+      { img: "agent-pd", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
     ],
     ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with an AI team I built for myself - partners in thinking, planning, design, and building. Together we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
     ofir_why: "Now I want to help you build a team like that for yourself too.",
@@ -666,6 +666,7 @@ function render(lang) {
             <div class="agentcard">
               <div class="agentcard__illo"><img src="assets/${a.img}.png?v=3" alt="" /></div>
               <div class="agentcard__body">
+                <span class="agentcard__tag">${a.tag}</span>
                 <div class="agentcard__role">${a.role}</div>
                 <p>${a.b}</p>
               </div>
@@ -828,7 +829,7 @@ function escapeHtml(s) {
 }
 
 /* One collapsible plan step: number + title header over the body (checklist
-   and/or copyable prompt cards). Step 01 open by default. Native <details>. */
+   and/or copyable prompt cards). All steps collapsed by default. Native <details>. */
 function planStep(step, open) {
   const checklist = step.checklist ? `
     <ul class="pchecklist">
@@ -1072,7 +1073,7 @@ function renderPrep(lang) {
         <p class="section-lead">${C.plan.subtitle}</p>
       </div>
       <div class="plan" style="margin-top:2rem">
-        ${C.plan.steps.map((s, i) => planStep(s, i === 0)).join("")}
+        ${C.plan.steps.map((s) => planStep(s, false)).join("")}
       </div>
       <p class="tech__closing reveal">${C.plan.closing}</p>
     </div></section>` : ""}
