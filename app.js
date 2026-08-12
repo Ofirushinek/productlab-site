@@ -977,20 +977,6 @@ function renderPrep(lang) {
   // Course-content panel — everything the student sees (title excluded; the
   // title stays above the tab bar, visible on every tab).
   const contentPanel = `
-    <!-- 0 — Before the workshop (Stage 0 pre-work). Leads the page: it's what a
-         signed-in student must do before the session. Steps default-open. -->
-    ${C.stage0 && canSee(C.stage0) ? `<section class="section"><div class="wrap narrow">
-      <div class="reveal">
-        <span class="eyebrow">${C.stage0.kicker}</span>
-        <h2 class="section-title">${C.stage0.title}</h2>
-        <p class="section-lead">${C.stage0.subtitle}</p>
-      </div>
-      <div class="plan" style="margin-top:2rem">
-        ${C.stage0.steps.map((s) => planStep(s, true)).join("")}
-      </div>
-      <p class="tech__closing reveal">${C.stage0.closing}</p>
-    </div></section>` : ""}
-
     <!-- 2 — By the end of today (three parts) -->
     ${canSee(C.end) ? `<section class="section section--alt"><div class="wrap">
       <div class="reveal">
