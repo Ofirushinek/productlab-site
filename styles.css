@@ -176,9 +176,11 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 
 /* ---- Buttons ------------------------------------------------------------- */
+/* SYSTEM RULE: a button is NEVER narrower than its height (min-width = height).
+   Icon-only buttons therefore render at least square, never a thin sliver. */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem;
-  height: 3rem; padding-inline: 1.5rem;
+  height: 3rem; min-width: 3rem; padding-inline: 1.5rem;
   border-radius: var(--radius-md);
   font-family: inherit; font-size: var(--text-body); font-weight: 600;
   border: 1px solid transparent;
@@ -199,7 +201,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .btn--wa:hover { background: var(--pl-elevated); border-color: var(--pl-fg); }
 .btn--wa svg { color: #25D366; }
 
-.btn--sm { height: 2.5rem; padding-inline: 1.1rem; font-size: var(--text-sm); }
+.btn--sm { height: 2.5rem; min-width: 2.5rem; padding-inline: 1.1rem; font-size: var(--text-sm); }
 
 /* ghost / secondary (Student entrance) — quieter than the WhatsApp CTA */
 .btn--ghost { background: transparent; color: var(--pl-fg); border-color: var(--pl-border-strong); }
@@ -251,6 +253,34 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .langtoggle:hover { background: var(--pl-bg-alt); color: var(--pl-fg); }
 /* full language name on desktop, 2-letter code on mobile */
 .langtoggle .lang-short { display: none; }
+
+/* language SWITCHER — DESKTOP: hide the quiet text toggle; show a secondary
+   globe button (same look as Student entrance) that opens a language dropdown. */
+.nav__menu > .langtoggle { display: none; }
+.langswitch { position: relative; display: inline-flex; }
+/* square icon button (width = the btn--sm height), never a thin sliver */
+.langswitch__btn { gap: 0; width: 2.5rem; padding-inline: 0; }
+.langswitch__btn svg { width: 18px; height: 18px; }
+.langswitch.is-open .langswitch__btn { background: var(--pl-bg-alt); border-color: var(--pl-border-strong); }
+/* RULE: don't show the button's tooltip while its dropdown is already open —
+   the options are right there, the hint is redundant. */
+.langswitch.is-open .langswitch__btn::after,
+.langswitch.is-open .langswitch__btn::before { content: none; }
+.langswitch__menu {
+  position: absolute; top: calc(100% + 8px); inset-inline-end: 0; min-width: 160px;
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-pl-md);
+  padding: 0.35rem; z-index: 60;
+}
+.langswitch__menu[hidden] { display: none; }
+.langswitch__item {
+  display: block; width: 100%; text-align: start; cursor: pointer;
+  padding: 0.6rem 0.75rem; border: 0; background: transparent; border-radius: var(--radius-sm);
+  color: var(--pl-fg); font-family: inherit; font-weight: 600; font-size: var(--text-body); line-height: 1;
+  transition: background-color 0.15s var(--ease-pl);
+}
+.langswitch__item:hover { background: var(--pl-bg-alt); }
+.langswitch__item[aria-current="true"] { color: var(--pl-accent); }
 .nav__book { }
 /* WhatsApp nav icon is intentionally NOT sized here — it inherits the persistent
    20px from .btn--wa-solid svg. (Student entrance is text-only, no icon.) */
@@ -762,6 +792,9 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
     display: none; z-index: 40;
   }
   .nav__menu.is-open { display: flex; }
+  /* MOBILE tray: hide the desktop globe dropdown, show the text toggle instead */
+  .langswitch { display: none; }
+  .nav__menu > .langtoggle { display: inline-grid; }
   .nav__menu .langtoggle, .nav__menu .nav__student { width: 100%; height: 2.75rem; justify-content: center; }
   .nav__menu .langtoggle {
     border: 1px solid var(--pl-border-strong); border-radius: var(--radius-md);

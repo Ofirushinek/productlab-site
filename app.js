@@ -30,6 +30,13 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
    profile.role column ('superadmin') is future-proofing, not the gate. */
 const ADMIN_EMAILS = ["ofr.rsnk@gmail.com"];
 
+/* Local dev flag. Google OAuth can't return to localhost (its redirect is locked
+   to productlab.studio), so on localhost we use a fake, Google-free sign-in for
+   testing. This is INERT in production (hostname is never localhost there), where
+   real Google OAuth + Supabase RLS are the only gate — so it's safe to ship. */
+const IS_LOCAL = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+const LOCAL_TIER_KEY = "pl_local_tier";
+
 /* AUTH is the single source of truth for "who am I" this render.
    AUTH.tier is one of: null (signed out) | 'visitor' | 'student' | 'admin'.
    - admin   = signed-in email in ADMIN_EMAILS (Ofir) → sees everything + roster
@@ -40,6 +47,16 @@ let AUTH = { user: null, profile: null, tier: null };
 /* Resolve the live session + the caller's profile row into AUTH. Called before
    the first paint and again whenever the auth state changes (sign-in/out). */
 async function loadAuth() {
+  // Local dev: fake, Google-free auth. Tier comes from ?tier=admin|student|visitor
+  // or, after you "sign in" via the modal, from localStorage. NO tier = signed
+  // OUT, so the sign-in modal itself is reachable to review. Inert in production.
+  if (IS_LOCAL) {
+    const tier = new URLSearchParams(location.search).get("tier") || localStorage.getItem(LOCAL_TIER_KEY);
+    AUTH = tier
+      ? { user: { id: "local", email: ADMIN_EMAILS[0] }, profile: { role: "superadmin", status: tier === "student" ? "student" : "visitor" }, tier }
+      : { user: null, profile: null, tier: null };
+    return AUTH;
+  }
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { AUTH = { user: null, profile: null, tier: null }; return AUTH; }
@@ -86,6 +103,7 @@ const I = {
   // Google "G" - brand colors are intentional (not tokenized: this is a third-party logo).
   google: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.52 12.27c0-.82-.07-1.6-.2-2.36H12v4.47h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.74Z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.08 7.95-2.91l-3.88-3.01c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.28v3.11A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.27 14.27a7.2 7.2 0 0 1 0-4.54v-3.1H1.28a12 12 0 0 0 0 10.75l3.99-3.11Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44A11.98 11.98 0 0 0 12 0 12 12 0 0 0 1.28 6.63l3.99 3.1C6.22 6.86 8.87 4.75 12 4.75Z"/></svg>',
   menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9Z"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
   linkedin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>',
 };
@@ -503,7 +521,21 @@ const ctaBand = (t, title, sub) => `
 // holds ONLY the language toggle. Everywhere else (main page, legal pages) the
 // header is untouched (WhatsApp + full tray as today).
 const navHeader = (t, lang, opts = {}) => {
+  // Two language controls live in .nav__menu; CSS shows the right one per width.
+  // DESKTOP: a secondary globe button (looks like Student entrance) that opens a
+  // dropdown to pick English / עברית. MOBILE tray: the quiet text toggle that
+  // flips language on each tap.
+  const langLabel = lang === "he" ? "בחירת שפה" : "Choose language";
+  const langSwitch = `
+    <div class="langswitch" data-langswitch>
+      <button class="btn btn--ghost btn--sm langswitch__btn" type="button" data-langswitch-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${langLabel}" data-tooltip="${langLabel}">${I.globe}</button>
+      <div class="langswitch__menu" role="menu" aria-label="${langLabel}" data-langswitch-menu hidden>
+        <button class="langswitch__item" type="button" role="menuitem" data-set-lang="en"${lang === "en" ? ' aria-current="true"' : ""}>English</button>
+        <button class="langswitch__item" type="button" role="menuitem" data-set-lang="he"${lang === "he" ? ' aria-current="true"' : ""}>עברית</button>
+      </div>
+    </div>`;
   const langToggle = `<button class="langtoggle" data-toggle-lang aria-label="Switch language"><span class="lang-full">${lang === "he" ? "English" : "עברית"}</span><span class="lang-short">${lang === "he" ? "EN" : "עב"}</span></button>`;
+  const langControls = `${langSwitch}${langToggle}`;
 
   if (opts.account) {
     // Student-area header: avatar (icon-only) opens a menu; on mobile the label
@@ -514,7 +546,7 @@ const navHeader = (t, lang, opts = {}) => {
          The hamburger tray below holds the language toggle only. -->
     <a class="nav__brand nav__brand--text" href="#/">Product Lab</a>
     <div class="nav__menu" id="navMenu">
-      ${langToggle}
+      ${langControls}
     </div>
     <div class="nav__account" data-account>
       <button class="nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}" data-tooltip="${t.nav_account}">${I.user}</button>
@@ -539,7 +571,7 @@ const navHeader = (t, lang, opts = {}) => {
          The hamburger opens .nav__menu as a tray below (language + student). -->
     <a class="nav__brand nav__brand--text" href="#/">Product Lab</a>
     <div class="nav__menu" id="navMenu">
-      ${langToggle}
+      ${langControls}
       <!-- Entrance gate when signed out; Sign out when signed in (AUTH.tier). Text-only, no icon. -->
       ${studentBtn}
     </div>
@@ -1401,7 +1433,12 @@ function wireAccountMenu() {
 function wireSignout() {
   document.querySelectorAll("[data-signout]").forEach((b) =>
     b.addEventListener("click", async () => {
-      await sb.auth.signOut();
+      if (IS_LOCAL) {
+        try { localStorage.removeItem(LOCAL_TIER_KEY); } catch (e) {}
+        AUTH = { user: null, profile: null, tier: null };
+      } else {
+        await sb.auth.signOut();
+      }
       if (location.hash === "#/" || location.hash === "") {
         route(document.documentElement.lang || "he");
       } else {
@@ -1451,10 +1488,19 @@ function wireStudent() {
   modal.querySelectorAll("[data-student-close]").forEach((b) => b.addEventListener("click", close));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
 
-  // Real sign-in: hand off to Google via Supabase. Full-page redirect back to
-  // productlab.studio; on return supabase-js reads the session and onAuthStateChange
-  // re-routes (see Boot). No popup, so it plays nicely with the existing modal.
+  // Sign-in. PRODUCTION: hand off to Google via Supabase (full-page redirect back
+  // to productlab.studio; onAuthStateChange re-routes on return). LOCAL: Google
+  // can't return to localhost, so fake a sign-in (no Google) and go to the zone.
   modal.querySelector("[data-google-signin]")?.addEventListener("click", () => {
+    if (IS_LOCAL) {
+      try { localStorage.setItem(LOCAL_TIER_KEY, "admin"); } catch (e) {}
+      close();
+      loadAuth().then(() => {
+        if (location.hash === "#/prep") route(document.documentElement.lang || "he");
+        else location.hash = "#/prep";
+      });
+      return;
+    }
     sb.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: location.origin + location.pathname },
@@ -1473,10 +1519,27 @@ function setLang(lang) {
   route(lang);
 }
 function wireLang() {
-  const lt = document.querySelector("[data-toggle-lang]");
-  if (lt) lt.addEventListener("click", () =>
-    setLang(document.documentElement.lang === "he" ? "en" : "he")
-  );
+  // Mobile tray: quiet text toggle that flips language on each tap.
+  document.querySelectorAll("[data-toggle-lang]").forEach((lt) =>
+    lt.addEventListener("click", () =>
+      setLang(document.documentElement.lang === "he" ? "en" : "he")));
+
+  // Desktop: globe button opens a dropdown to pick a specific language.
+  const wrap = document.querySelector("[data-langswitch]");
+  if (wrap) {
+    const btn = wrap.querySelector("[data-langswitch-toggle]");
+    const menu = wrap.querySelector("[data-langswitch-menu]");
+    const setOpen = (o) => {
+      menu.hidden = !o;
+      wrap.classList.toggle("is-open", o);
+      btn.setAttribute("aria-expanded", o ? "true" : "false");
+    };
+    btn.addEventListener("click", (e) => { e.stopPropagation(); setOpen(menu.hidden); });
+    wrap.querySelectorAll("[data-set-lang]").forEach((item) =>
+      item.addEventListener("click", () => { setOpen(false); setLang(item.getAttribute("data-set-lang")); }));
+    document.addEventListener("click", (e) => { if (!wrap.contains(e.target)) setOpen(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+  }
 }
 
 /* ---- Hero image fade-in -------------------------------------------------- */
