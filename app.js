@@ -168,7 +168,7 @@ const I18N = {
     proof_glimps_link: "לצפייה ב-Glimps",
 
     ofir_eyebrow: "מי תכירו בסדנה",
-    roster_title: "תכירו את הצוות שאיתו אני עובד בכל יום.",
+    roster_title: "אני, והצוות שאיתו אני בונה כל יום.",
     lead_label: "מוביל הסדנה",
     crew_label: "השותפים שלי לעבודה",
     crew_title: "אלה השותפים שאיתם אני בונה כל מוצר.",
@@ -355,7 +355,7 @@ const I18N = {
     proof_glimps_link: "See Glimps",
 
     ofir_eyebrow: "Who you'll meet in the workshop",
-    roster_title: "Meet the team I work with every day.",
+    roster_title: "Me, and the team I build with every day.",
     lead_label: "Leads the workshop",
     crew_label: "My work partners",
     crew_title: "These are the partners I build every product with.",
