@@ -579,7 +579,7 @@ const navHeader = (t, lang, opts = {}) => {
       ${langControls}
     </div>
     <div class="nav__account" data-account>
-      <button class="nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}" data-tooltip="${t.nav_account}">${I.user}</button>
+      <button class="btn btn--ghost btn--sm nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}" data-tooltip="${t.nav_account}">${I.user}</button>
       <div class="nav__accmenu" role="menu" aria-label="${t.nav_account}" data-account-menu hidden>
         <button class="nav__accmenu-item" type="button" role="menuitem" data-signout>${t.nav_signout}</button>
       </div>

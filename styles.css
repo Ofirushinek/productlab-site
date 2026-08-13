@@ -123,6 +123,11 @@ p { margin: 0; }
   opacity: 1; transform: translateX(-50%) translateY(0);
 }
 [data-tooltip]:hover::before, [data-tooltip]:focus-visible::before { opacity: 1; }
+/* GLOBAL RULE: never show a control's tooltip while its own popup/menu is open.
+   Every toggle keeps aria-expanded in sync, so this covers avatar/globe/hamburger
+   and any future toggle at the system level — never re-scope it per component. */
+[data-tooltip][aria-expanded="true"]::after,
+[data-tooltip][aria-expanded="true"]::before { content: none; }
 /* flip above */
 [data-tooltip][data-tip-pos="top"]::after {
   top: auto; bottom: calc(100% + 8px); transform: translateX(-50%) translateY(-4px);
@@ -290,14 +295,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    Sign out label lives inside the dropdown. Aligns to the inline-end edge in
    both LTR and RTL on desktop. */
 .nav__account { position: relative; flex: none; }
-.nav__avatar {
-  display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem;
-  border: 1px solid var(--pl-border); border-radius: 999px; background: transparent;
-  color: var(--pl-fg); cursor: pointer;
-  transition: background-color 0.2s var(--ease-pl), border-color 0.2s var(--ease-pl);
-}
-.nav__avatar svg { width: 20px; height: 20px; }
-.nav__avatar:hover,
+/* Avatar reuses the .btn.btn--ghost.btn--sm base so it stays IDENTICAL to the
+   globe (square, radius-md, border-strong, 18px icon) and can't drift again. */
 .nav__account.is-open .nav__avatar { background: var(--pl-bg-alt); border-color: var(--pl-border-strong); }
 .nav__accmenu {
   position: absolute; top: calc(100% + 8px); inset-inline-end: 0; min-width: 168px;
