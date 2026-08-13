@@ -990,14 +990,14 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .pcursor__tag {
   position: absolute; top: 15px; left: 13px;
   display: inline-flex; align-items: center; justify-content: center;
-  width: 25px; height: 25px; border-radius: 8px;
+  width: 31px; height: 31px; border-radius: 9px;
   background: #fff; border: 1.5px solid var(--pc);
-  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 /* logos fill the chip (CSS wins over the inline SVG width/height) */
-.pcursor__tag svg { display: block; width: 19px; height: 19px; }
+.pcursor__tag svg { display: block; width: 24px; height: 24px; }
 /* Figma's mark is portrait (38x57) — size by height so it keeps its aspect */
-.pcursor__tag svg[viewBox="0 0 38 57"] { width: auto; height: 19px; }
+.pcursor__tag svg[viewBox="0 0 38 57"] { width: auto; height: 24px; }
 @media (prefers-reduced-motion: reduce) {
   .pcursor { opacity: 0.85; }   /* JS scatters them statically, no motion */
 }
