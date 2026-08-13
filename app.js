@@ -140,8 +140,12 @@ const I18N = {
     },
 
     why_eyebrow: "למה עכשיו",
-    why_title: "הדרך שבה בונים מוצר משתנה. אתם יכולים להוביל אותה.",
-    why_body: "לפני שנה, לבנות עם צוות של סוכני AI היה הדגמה של חוקרים. היום זו כבר הדרך שבה יותר ויותר אנשי מוצר עובדים באמת, וכמעט אף אחד עדיין לא הפך את זה למשהו שאפשר ללמוד בתוך אחר צהריים אחד. זה בדיוק אחר הצהריים הזה. תיכנסו עכשיו, כל עוד זה עדיין יתרון.",
+    why_heading: "אדם אחד, יותר מעבודה אחת.",
+    why_tiles: [
+      { t: "הכול עליך", b: "מוצר, עיצוב והוצאה לאוויר, הכול עובר דרכך. צוות סוכנים הוא הדרך שבה אדם אחד מכסה עבודה של כמה אנשים, בלי להעביר שום דבר הלאה." },
+      { t: "מיומנות, לא טריק", b: "עובדים ישירות מול Claude, עם היתרונות והמגבלות על השולחן. יוצאים עם שיטה עובדת לתזמור צוות סוכנים על עבודת מוצר ועיצוב אמיתית, לא עוד פרומפטים גנריים." },
+      { t: "יתרון ההתחלה", b: "עולם הסטארטאפים נע לכיוון של אנשים וסוכנים שבונים זה לצד זה. כדאי להתרגל לעבוד ככה עכשיו, כל עוד זה עדיין יתרון ולא ברירת המחדל של כולם." },
+    ],
 
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
@@ -367,8 +371,12 @@ const I18N = {
     },
 
     why_eyebrow: "Why now",
-    why_title: "The way product gets built is changing. You can lead it.",
-    why_body: "A year ago, building with a team of AI agents was a research demo. Today it is how a growing number of product people actually work, and almost nobody has turned it into something you can learn in an afternoon. This is that afternoon. Get in while it is still an edge.",
+    why_heading: "One person, more than one job.",
+    why_tiles: [
+      { t: "You own all of it", b: "Product, design, and shipping all run through you. An agent team is how one person covers the work of several, without handing any of it off." },
+      { t: "A skill, not a trick", b: "You work with Claude directly, its strengths and limits named straight. You leave with a working method for orchestrating an agent team on real product and design work, not generic AI prompting." },
+      { t: "Get the head start", b: "Startups are shifting to people and agents building side by side. Get fluent while it's still an edge, before it becomes the baseline everyone has." },
+    ],
 
     walk_eyebrow: "What you take home",
     walk_title: "What you leave with",
@@ -828,12 +836,18 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 2 WHY NOW -->
-  <section class="section section--alt"><div class="wrap narrow why">
+  <!-- 2 WHY NOW — three rounded tiles (bold numeral on top) -->
+  <section class="section section--alt"><div class="wrap why">
     <div class="reveal">
       <span class="eyebrow">${t.why_eyebrow}</span>
-      <h2 class="section-title why__title">${t.why_title}</h2>
-      <p class="section-lead why__body">${t.why_body}</p>
+      <h2 class="section-title why__title">${t.why_heading}</h2>
+    </div>
+    <div class="grid grid--3" style="margin-top:2rem">
+      ${t.why_tiles.map((x, i) => `
+        <div class="card whytile reveal">
+          <div class="whytile__num">${["01", "02", "03"][i]}</div>
+          <h3>${x.t}</h3><p>${x.b}</p>
+        </div>`).join("")}
     </div>
   </div></section>
 

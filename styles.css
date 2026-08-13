@@ -904,16 +904,24 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   }
 }
 
-/* ---- WHY NOW — centered in LTR, right-aligned (start) in RTL -------------- */
+/* ---- WHY NOW — centered header + three rounded numbered tiles ------------- */
 .why { text-align: center; }
-.why .why__title { max-width: 22ch; margin-inline: auto; }
-.why .why__body {
-  font-size: var(--text-h3); color: var(--pl-fg-body);
-  max-width: 62ch; margin-inline: auto; line-height: 1.55;
-}
+.why .why__title { max-width: 24ch; margin-inline: auto; }
 [dir="rtl"] .why { text-align: right; }
-[dir="rtl"] .why .why__title,
-[dir="rtl"] .why .why__body { margin-inline: 0; }
+[dir="rtl"] .why .why__title { margin-inline: 0; }
+
+/* tiles reuse .card; crisp border, text leads from the start edge */
+.why .card { text-align: start; border-color: var(--pl-border-strong); }
+[dir="rtl"] .why .card { text-align: right; }
+.whytile__num {
+  display: inline-grid; place-items: center;
+  width: 44px; height: 44px; border-radius: var(--radius-md);
+  margin-bottom: 1rem; direction: ltr;
+  background: color-mix(in srgb, var(--pl-accent) 12%, transparent);
+  color: var(--pl-accent);
+  font-size: 1.25rem; font-weight: 700; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
 
 /* ---- RTL ----------------------------------------------------------------- */
 [dir="rtl"] body,
