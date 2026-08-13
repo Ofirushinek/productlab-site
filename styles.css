@@ -854,6 +854,56 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .roster__savemsg--ok { color: var(--pl-stage-confirmed); }
 .roster__savemsg--err { color: var(--pl-stage-dropped); }
 
+/* ---- Mobile: stack the CRM table into one card PER user ------------------
+   A 9-column table can't fit a phone, so instead of side-scrolling we turn each
+   row into a card and each cell into a "LABEL -> value" line (every td already
+   carries data-label = the column header). One outline per card, NO per-field
+   dividers, so it reads clean, not like a pile of lines. Desktop keeps the table. */
+@media (max-width: 760px) {
+  .roster__scroll {
+    overflow-x: visible; border: none; background: transparent;
+    box-shadow: none; border-radius: 0;
+  }
+  .roster__table { display: block; width: 100%; font-size: var(--text-body); }
+  .roster__table thead { display: none; }
+  .roster__table tbody { display: block; width: 100%; }
+
+  .roster__table tr.roster__row {
+    display: block;
+    border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
+    background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
+    padding: 0.4rem 1rem; margin-bottom: 0.85rem;
+  }
+  .roster__table tr.roster__row > td {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; border: none; padding: 0.62rem 0;
+    white-space: normal; text-align: end; max-width: none;
+  }
+  .roster__table tr.roster__row > td::before {
+    content: attr(data-label); flex: none; text-align: start;
+    font-weight: 600; font-size: 0.72rem; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--pl-fg-secondary);
+  }
+  /* expand chevron sits alone at the card's top corner, unlabeled */
+  .roster__table tr.roster__row > td.roster__expandcell {
+    justify-content: flex-end; padding-bottom: 0.15rem; width: auto;
+  }
+  .roster__table tr.roster__row > td.roster__expandcell::before { content: none; }
+  /* actions: label at start, buttons grouped at the end */
+  .roster__table tr.roster__row > td.roster__actions { justify-content: flex-start; }
+  .roster__table tr.roster__row > td.roster__actions::before { margin-inline-end: auto; }
+  /* stacked cells show their text in full */
+  .roster__cellclamp { -webkit-line-clamp: unset; display: block; }
+
+  /* Inline editor: a distinct panel tucked under its card (only when open;
+     respect the [hidden] attribute that gates the closed rows) */
+  .roster__table tr.roster__detailrow:not([hidden]) { display: block; }
+  .roster__table tr.roster__detailrow > td {
+    display: block; border-radius: var(--radius-md);
+    margin: -0.5rem 0 0.85rem; padding: 1rem;
+  }
+}
+
 /* ---- WHY NOW — centered in LTR, right-aligned (start) in RTL -------------- */
 .why { text-align: center; }
 .why .why__title { max-width: 22ch; margin-inline: auto; }
