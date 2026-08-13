@@ -275,6 +275,7 @@ const I18N = {
     roster_col_stage: "שלב",
     roster_col_source: "מקור",
     roster_col_next: "צעד הבא",
+    roster_col_actions: "פעולות",
     roster_col_notes: "הערות",
     roster_col_phone: "טלפון",
     roster_pill_confirmed: "מאושר",
@@ -500,6 +501,7 @@ const I18N = {
     roster_col_stage: "Stage",
     roster_col_source: "Source",
     roster_col_next: "Next action",
+    roster_col_actions: "Actions",
     roster_col_notes: "Notes",
     roster_col_phone: "Phone",
     roster_pill_confirmed: "Confirmed",
@@ -1515,7 +1517,7 @@ async function renderRoster(lang) {
         <td data-label="${t.roster_col_stage}">${stageSelect(i, stage)}</td>
         <td data-label="${t.roster_col_source}" class="roster__cellclamp">${escapeHtml(source) || "-"}</td>
         <td data-label="${t.roster_col_next}" class="roster__cellclamp">${escapeHtml(next) || "-"}</td>
-        <td class="roster__actions">${actions}</td>
+        <td class="roster__actions" data-label="${t.roster_col_actions}">${actions}</td>
       </tr>
       <tr class="roster__detailrow" data-detail="${i}" hidden>
         <td colspan="9">
@@ -1557,7 +1559,7 @@ async function renderRoster(lang) {
           <th>${t.roster_col_stage}</th>
           <th>${t.roster_col_source}</th>
           <th>${t.roster_col_next}</th>
-          <th></th>
+          <th>${t.roster_col_actions}</th>
         </tr></thead>
         <tbody>${body}</tbody>
       </table>

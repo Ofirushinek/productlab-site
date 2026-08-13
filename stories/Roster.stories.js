@@ -26,7 +26,7 @@ const T = {
   en: {
     name_ph: "Student name", add_placeholder: "Email (optional)", add_cta: "Add user",
     hint: "A lead can be added with a name only; email is optional. Adding does not grant access. After adding, hit \"Confirm\" to grant access.",
-    col: { email: "Email", name: "Name", status: "Status", signedin: "Signed in?", stage: "Stage", source: "Source", next: "Next action", notes: "Notes", phone: "Phone" },
+    col: { email: "Email", name: "Name", status: "Status", signedin: "Signed in?", stage: "Stage", source: "Source", next: "Next action", actions: "Actions", notes: "Notes", phone: "Phone" },
     pill: { confirmed: "Confirmed", pending: "Pending", uninvited: "Not invited" },
     stages: { invited: "Invited", interested: "Interested", call_booked: "Call booked", confirmed: "Confirmed", attended: "Attended", dropped: "Dropped" },
     no: "Not yet", confirm: "Confirm", unconfirm: "Unconfirm", addToList: "Add to list",
@@ -35,7 +35,7 @@ const T = {
   he: {
     name_ph: "שם התלמיד", add_placeholder: "אימייל (לא חובה)", add_cta: "הוספת תלמיד",
     hint: "אפשר להוסיף ליד עם שם בלבד; אימייל לא חובה. הוספה לא מאשרת גישה. אחרי ההוספה, לחצו \"אישור\" כדי לפתוח גישה.",
-    col: { email: "אימייל", name: "שם", status: "סטטוס", signedin: "נכנס?", stage: "שלב", source: "מקור", next: "צעד הבא", notes: "הערות", phone: "טלפון" },
+    col: { email: "אימייל", name: "שם", status: "סטטוס", signedin: "נכנס?", stage: "שלב", source: "מקור", next: "צעד הבא", actions: "פעולות", notes: "הערות", phone: "טלפון" },
     pill: { confirmed: "מאושר", pending: "ממתין", uninvited: "לא מוזמן" },
     stages: { invited: "הוזמן", interested: "מתעניין", call_booked: "נקבעה שיחה", confirmed: "אושר", attended: "השתתף", dropped: "לא רלוונטי" },
     no: "עדיין לא", confirm: "אישור", unconfirm: "ביטול אישור", addToList: "הוספה לרשימה",
@@ -92,7 +92,7 @@ const row = (t, r) =>
      <td data-label="${t.col.stage}">${stageSel(t, r.stage)}</td>
      <td data-label="${t.col.source}" class="roster__cellclamp">${r.source || "-"}</td>
      <td data-label="${t.col.next}" class="roster__cellclamp">${r.next || "-"}</td>
-     <td class="roster__actions">${actions(t, r)}</td>
+     <td class="roster__actions" data-label="${t.col.actions}">${actions(t, r)}</td>
    </tr>
    ${detail(t, r)}`;
 
@@ -124,7 +124,7 @@ const panel = (lang) => {
           <th aria-hidden="true"></th>
           <th>${t.col.name}</th><th>${t.col.email}</th><th>${t.col.status}</th>
           <th>${t.col.signedin}</th><th>${t.col.stage}</th><th>${t.col.source}</th>
-          <th>${t.col.next}</th><th></th>
+          <th>${t.col.next}</th><th>${t.col.actions}</th>
         </tr></thead>
         <tbody>${rows.map((r) => row(t, r)).join("")}</tbody>
       </table>
