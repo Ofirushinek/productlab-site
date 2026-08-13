@@ -11,6 +11,12 @@ const config: StorybookConfig = {
   framework: { name: "@storybook/html-vite", options: {} },
   // serve the site's assets at /assets so src="assets/..." resolves like production
   staticDirs: [{ from: "../assets", to: "/assets" }],
+  // Published to productlab.studio/storybook/ (deploy-from-branch, subpath) — set
+  // the Vite base so bundled asset URLs resolve under /storybook/ in production.
+  async viteFinal(config) {
+    config.base = "/storybook/";
+    return config;
+  },
 };
 
 export default config;
