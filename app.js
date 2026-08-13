@@ -260,9 +260,18 @@ const I18N = {
     // Denied sign-in notice (invite-only). PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
     denied_title: "עדיין אין לכם גישה",
     denied_body: "האזור הזה פתוח למשתתפי הסדנה שאושרו. נכנסתם עם Google אבל החשבון עדיין לא רשום. אם נרשמתם וזה לא עובד, דברו איתי ואפתח לכם גישה.",
-    // "Register" placeholder popup (registration isn't open yet). PLACEHOLDER HE copy 2026-08-12.
-    register_title: "ההרשמה עדיין לא פתוחה",
-    register_body: "ההצטרפות לסדנה היא בהזמנה בלבד כרגע. רוצים מקום? דברו איתי ונסדר לכם.",
+    // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
+    reg_title: "להצטרף לסדנה קרובה",
+    reg_sub: "עדיין בלי תאריך קבוע. תשאירו פרטים ואחזור אליכם באופן אישי, לספר על המפגש הקרוב ולראות אם הוא מתאים לכם.",
+    reg_first_label: "שם פרטי",
+    reg_last_label: "שם משפחה",
+    reg_email_label: "אימייל",
+    reg_email_ph: "you@email.com",
+    reg_note_label: "משהו שתרצו לשתף (לא חובה)",
+    reg_note_ph: "שורה עליכם, על מה שאתם בונים, או על מה שאתם מקווים לקבל מזה.",
+    reg_submit: "אני רוצה להצטרף",
+    reg_success: "קיבלתי, תודה. אתם ברשימה לאחת הסדנאות הקרובות. אחזור אליכם באופן אישי, אחד על אחד, לספר עוד ולראות אם זה מתאים. נדבר בקרוב.",
+    reg_error: "משהו לא נשלח. נסו שוב, או פשוט כתבו לי ישירות.",
 
     // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
     roster_kicker: "ניהול",
@@ -490,9 +499,18 @@ const I18N = {
     // Denied sign-in notice (invite-only). PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
     denied_title: "You don't have access yet",
     denied_body: "This area is for approved workshop participants. You're signed in with Google, but your account isn't registered yet. If you registered and it isn't working, talk to me and I'll open it up for you.",
-    // "Register" placeholder popup (registration isn't open yet). PLACEHOLDER EN copy 2026-08-12.
-    register_title: "Registration isn't open yet",
-    register_body: "Joining the workshop is invite-only for now. Want a seat? Talk to me and we'll sort it out.",
+    // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
+    reg_title: "Join an upcoming session",
+    reg_sub: "No fixed date yet. Leave your details and I'll reach out personally to tell you about the next one and see if it's the right fit for you.",
+    reg_first_label: "First name",
+    reg_last_label: "Last name",
+    reg_email_label: "Email",
+    reg_email_ph: "you@email.com",
+    reg_note_label: "Anything you'd like to share (optional)",
+    reg_note_ph: "A line about you, what you're building, or what you're hoping to get out of it.",
+    reg_submit: "Count me in",
+    reg_success: "Got it, thanks. You're on the list for an upcoming session. I'll reach out to you personally, one to one, to tell you more and see if it's the right fit. Talk soon.",
+    reg_error: "That didn't go through. Give it another try, or just message me directly.",
 
     // Admin roster - visible only to admin. PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
     roster_kicker: "Admin",
@@ -697,13 +715,64 @@ const studentModal = (t) => `
         <button class="btn btn--primary login__submit login__google" type="button" data-google-signin>
           ${I.google}<span>${t.login_google}</span>
         </button>
-        <!-- Invite-only: Register is a placeholder (registration isn't open yet). -->
+        <!-- Opens the register-your-interest form (writes a lead via register_lead). -->
         <button class="btn btn--ghost login__submit" type="button" data-register-open>${t.login_register}</button>
       </div>
     </div>
   </div>
   ${noticeModal("denied", t.denied_title, t.denied_body, t)}
-  ${noticeModal("register", t.register_title, t.register_body, t)}`;
+  ${registerModal(t)}`;
+
+// Register-your-interest FORM modal. Reuses .modal/.modal__card (the sign-in
+// modal's shell) and the .field/.input form-control component — no new modal
+// primitive. One card, two swapped views: the form and a success panel. Submit
+// calls sb.rpc('register_lead', ...) (see wireRegister); the note is optional,
+// the email is LTR-isolated. Framing = interest in an UPCOMING session with a
+// personal 1:1 follow-up (no date, no seat language).
+const registerModal = (t) => `
+  <div class="modal" data-register-modal hidden>
+    <div class="modal__overlay" data-register-close></div>
+    <div class="modal__card modal__card--form" role="dialog" aria-modal="true" aria-label="${t.reg_title}">
+      <button class="modal__close" type="button" data-register-close aria-label="${t.modal_close}" data-tooltip="${t.modal_close}">${I.x}</button>
+
+      <div data-register-view="form">
+        <div class="login__ico">${I.spark}</div>
+        <h2 class="login__title">${t.reg_title}</h2>
+        <p class="login__sub">${t.reg_sub}</p>
+        <form class="reg__form" data-register-form novalidate>
+          <div class="field">
+            <label class="field__label" for="reg-first">${t.reg_first_label}</label>
+            <input class="input" id="reg-first" name="first" type="text" autocomplete="given-name" required />
+          </div>
+          <div class="field">
+            <label class="field__label" for="reg-last">${t.reg_last_label}</label>
+            <input class="input" id="reg-last" name="last" type="text" autocomplete="family-name" required />
+          </div>
+          <div class="field">
+            <label class="field__label" for="reg-email">${t.reg_email_label}</label>
+            <input class="input ltr-iso" id="reg-email" name="email" type="email" inputmode="email" dir="ltr" autocomplete="email" placeholder="${t.reg_email_ph}" required />
+          </div>
+          <div class="field">
+            <label class="field__label" for="reg-note">${t.reg_note_label}</label>
+            <textarea class="reg__note" id="reg-note" name="note" rows="3" placeholder="${escapeAttr(t.reg_note_ph)}"></textarea>
+          </div>
+          <p class="reg__error" data-register-error hidden>${I.info}<span>${t.reg_error}</span></p>
+          <button class="btn btn--primary login__submit reg__submit" type="submit" data-register-submit>
+            <span class="reg__submit-spinner" aria-hidden="true"></span>
+            <span class="reg__submit-label">${t.reg_submit}</span>
+          </button>
+        </form>
+      </div>
+
+      <div data-register-view="success" hidden>
+        <div class="noacct__ico reg__success-ico">${I.check}</div>
+        <p class="reg__success-body">${t.reg_success}</p>
+        <div class="cta-row" style="margin-top:1.5rem; justify-content:center">
+          <button class="btn btn--ghost" type="button" data-register-close>${t.modal_close}</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
 
 // FOOTER — now carries the Privacy + Terms routes alongside contact.
 const siteFooter = (t) => `
@@ -1756,6 +1825,7 @@ function afterRender() {
   wireHeroImage();
   wireStudent();
   wireNotices();
+  wireRegister();
   wireNav();
   wireAccountMenu();
   wireSignout();
@@ -1839,16 +1909,89 @@ function wireNotices() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && notices.some((n) => !n.hidden)) closeAll();
   });
-  // "Register" in the sign-in modal → close it, show the placeholder note.
+  // Auto-open the "not registered" note after a denied sign-in; kept open across
+  // the sign-out-triggered re-render until the user closes it.
+  if (deniedNotice) openNotice("denied");
+}
+
+/* ---- Register-your-interest form ----------------------------------------- */
+/* Opens from the "Register" button inside the sign-in modal. Validates first +
+   last + a valid-looking email client-side (note optional), then writes a lead
+   via sb.rpc('register_lead', ...) — which fires an instant email to Ofir
+   server-side. Guards against double-submit (button disabled + spinner while in
+   flight). On success swaps the card to the success view; on error shows the
+   inline try-again note. LOCAL fakes the write (Google/OAuth can't return to
+   localhost either) so QA never emails Ofir — production does the real RPC. */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function wireRegister() {
+  const modal = document.querySelector("[data-register-modal]");
+  if (!modal) return;
+  const form = modal.querySelector("[data-register-form]");
+  const errorEl = modal.querySelector("[data-register-error]");
+  const submitBtn = modal.querySelector("[data-register-submit]");
+  const formView = modal.querySelector('[data-register-view="form"]');
+  const successView = modal.querySelector('[data-register-view="success"]');
+  let submitting = false;
+
+  const open = () => { modal.hidden = false; document.body.classList.add("modal-open"); };
+  const close = () => { modal.hidden = true; document.body.classList.remove("modal-open"); };
+
+  // "Register" in the sign-in modal → close it, open the form.
   document.querySelectorAll("[data-register-open]").forEach((b) =>
     b.addEventListener("click", () => {
       const sm = document.querySelector("[data-student-modal]");
       if (sm) sm.hidden = true;
-      openNotice("register");
+      open();
     }));
-  // Auto-open the "not registered" note after a denied sign-in; kept open across
-  // the sign-out-triggered re-render until the user closes it.
-  if (deniedNotice) openNotice("denied");
+  modal.querySelectorAll("[data-register-close]").forEach((b) => b.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
+
+  const setLoading = (on) => {
+    submitting = on;
+    submitBtn.disabled = on;
+    submitBtn.classList.toggle("is-loading", on);
+  };
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (submitting) return;                         // hard guard against double-submit
+    if (errorEl) errorEl.hidden = true;
+
+    const first = form.first.value.trim();
+    const last = form.last.value.trim();
+    const email = form.email.value.trim();
+    const note = form.note.value.trim();
+
+    // Client-side: require first + last + a valid-looking email (note optional).
+    if (!first || !last || !EMAIL_RE.test(email)) {
+      const missing = !first ? form.first : !last ? form.last : form.email;
+      missing.focus();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (IS_LOCAL) {
+        // QA path: don't hit the live RPC (it emails Ofir). Fake the round-trip.
+        await new Promise((r) => setTimeout(r, 600));
+      } else {
+        const { error } = await sb.rpc("register_lead", {
+          first_name: first,
+          last_name: last,
+          email,
+          note: note || null,
+        });
+        if (error) throw error;
+      }
+      formView.hidden = true;
+      successView.hidden = false;
+    } catch (err) {
+      console.warn("register_lead failed:", err && err.message);
+      if (errorEl) errorEl.hidden = false;
+    } finally {
+      setLoading(false);
+    }
+  });
 }
 
 /* ---- Language ------------------------------------------------------------ */

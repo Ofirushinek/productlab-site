@@ -686,6 +686,54 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .noacct__body { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body-lg); line-height: 1.6; }
 .noacct .cta-row { justify-content: center; }
 
+/* ---- Register-your-interest FORM (inside the shared .modal__card) ----------
+   Reuses .field/.input + the login card's centered header. The wider card fits
+   four fields comfortably; fields are reading-start aligned (RTL-correct via the
+   .field's text-align: start). Submit shows a spinner while the lead is written. */
+.modal__card--form { max-width: 30rem; }
+.reg__form { display: grid; gap: 1rem; margin-top: 1.6rem; text-align: start; }
+.reg__note {
+  width: 100%; min-height: 4.75rem; resize: vertical;
+  padding: 0.7rem 0.95rem; border: 1px solid var(--pl-border-strong);
+  border-radius: var(--radius-md); background: var(--pl-surface);
+  color: var(--pl-fg); font-family: inherit; font-size: var(--text-body); font-weight: 500; line-height: 1.5;
+  -webkit-appearance: none; appearance: none;
+  transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+}
+.reg__note::placeholder { color: var(--pl-fg-muted); font-weight: 500; opacity: 1; }
+.reg__note:hover { border-color: var(--pl-fg-secondary); }
+.reg__note:focus {
+  outline: none; border-color: var(--pl-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent);
+}
+/* Inline error / try-again note — danger-tinted, matches the .field rhythm. */
+.reg__error {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin: 0; padding: 0.7rem 0.9rem; border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--pl-stage-dropped) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pl-stage-dropped) 30%, transparent);
+  color: var(--pl-stage-dropped); font-weight: 600; font-size: var(--text-sm); line-height: 1.4; text-align: start;
+}
+.reg__error[hidden] { display: none; }
+.reg__error svg { width: 18px; height: 18px; flex: none; }
+/* Submit: spinner replaces the label while in flight; button stays disabled. */
+.reg__submit { margin-top: 0.25rem; }
+.reg__submit:disabled { cursor: default; opacity: 0.85; }
+.reg__submit-spinner {
+  display: none; width: 18px; height: 18px; flex: none; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--pl-bg) 40%, transparent);
+  border-top-color: var(--pl-bg); animation: regspin 0.7s linear infinite;
+}
+.reg__submit.is-loading .reg__submit-spinner { display: inline-block; }
+.reg__submit.is-loading .reg__submit-label { display: none; }
+@keyframes regspin { to { transform: rotate(360deg); } }
+/* Success view — green check, centered, mirrors the notice layout. */
+.reg__success-ico {
+  background: color-mix(in srgb, var(--pl-stage-confirmed) 14%, transparent);
+  color: var(--pl-stage-confirmed);
+}
+.reg__success-body { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body-lg); line-height: 1.6; }
+
 /* ---- Student-area tab bar (Course content / Students / …) — DS tokens only.
    Aligns to the reading-start edge via flex-start (honors dir: right in RTL,
    left in LTR). Active tab uses the accent underline. -------------------------- */
