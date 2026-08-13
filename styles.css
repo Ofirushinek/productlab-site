@@ -980,24 +980,25 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   pointer-events: none; z-index: 3; direction: ltr;
 }
 .pcursor {
-  position: absolute; top: 0; left: 0; width: 22px; height: 22px;
+  position: absolute; top: 0; left: 0; width: 26px; height: 26px;
   will-change: transform;
 }
 .pcursor__arrow {
-  display: block; fill: var(--pc); stroke: #fff; stroke-width: 1.3;
+  display: block; width: 26px; height: 26px;
+  fill: var(--pc); stroke: #fff; stroke-width: 1.3;
   stroke-linejoin: round; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.22));
 }
 .pcursor__tag {
-  position: absolute; top: 15px; left: 13px;
+  position: absolute; top: 17px; left: 15px;
   display: inline-flex; align-items: center; justify-content: center;
-  width: 31px; height: 31px; border-radius: 9px;
+  width: 37px; height: 37px; border-radius: 11px;
   background: #fff; border: 1.5px solid var(--pc);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.18);
 }
 /* logos fill the chip (CSS wins over the inline SVG width/height) */
-.pcursor__tag svg { display: block; width: 24px; height: 24px; }
+.pcursor__tag svg { display: block; width: 29px; height: 29px; }
 /* Figma's mark is portrait (38x57) — size by height so it keeps its aspect */
-.pcursor__tag svg[viewBox="0 0 38 57"] { width: auto; height: 24px; }
+.pcursor__tag svg[viewBox="0 0 38 57"] { width: auto; height: 29px; }
 @media (prefers-reduced-motion: reduce) {
   .pcursor { opacity: 0.85; }   /* JS scatters them statically, no motion */
 }

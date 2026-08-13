@@ -802,24 +802,24 @@ const CURSOR_TOOLS = [
       <path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/>
     </svg>` },
   { id: "claude", color: "#CC785C", logo:
-    `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="#CC785C">
-      <path d="M12 2.2c.55 2.9 1.2 4.2 3.05 4.2 0 0-2.1 1.15-2.1 1.15L18 4.35l-3.4 4.6 5.55-2.1-5 3.3 5.85.05-5.85.9 4.9 3.2-5.4-2.35 3 5.05-3.85-4.05.55 5.85-1.9-5.55-1.9 5.55.55-5.85-3.85 4.05 3-5.05-5.4 2.35 4.9-3.2-5.85-.9 5.85-.05-5-3.3 5.55 2.1L4 4.35l5.05 3.2L5.65 2.95 9.7 6.4C11.55 6.4 11.45 5.1 12 2.2z"/>
+    `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#CC785C" stroke-width="1.7" stroke-linecap="round">
+      <path d="M12 2.5V21.5M2.5 12H21.5M20.2 7.25 3.8 16.75M16.75 3.8 7.25 20.2M7.25 3.8 16.75 20.2M3.8 7.25 20.2 16.75"/>
     </svg>` },
   { id: "gdocs", color: "#4285F4", logo:
-    `<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
-      <path fill="#4285F4" d="M6.5 2h7L18 6.5V20a2 2 0 0 1-2 2H6.5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
-      <path fill="#A1C2FA" d="M13.5 2 18 6.5h-4.5z"/>
-      <rect x="7.3" y="11" width="9.4" height="1.3" rx=".65" fill="#fff"/>
-      <rect x="7.3" y="14" width="9.4" height="1.3" rx=".65" fill="#fff"/>
-      <rect x="7.3" y="17" width="6.4" height="1.3" rx=".65" fill="#fff"/>
+    `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M7 2h6.5L19 6.5V20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+      <path fill="#A1C2FA" d="M13.5 2 19 6.5h-5.5z"/>
+      <rect x="8" y="11" width="8" height="1.4" rx=".7" fill="#fff"/>
+      <rect x="8" y="14" width="8" height="1.4" rx=".7" fill="#fff"/>
+      <rect x="8" y="17" width="5.5" height="1.4" rx=".7" fill="#fff"/>
     </svg>` },
   { id: "lovable", color: "#FF4D67", logo:
     `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
       <path fill="#FF4D67" d="M12 21s-6.9-4.3-9.3-8.4C1 9.4 2.6 6 6 6c2 0 3.2 1.2 4 2.3C10.8 7.2 12 6 14 6c3.4 0 5 3.4 3.3 6.6C18.9 16.7 12 21 12 21z"/>
     </svg>` },
   { id: "gemini", color: "#6C7BF0", logo:
-    `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-      <path fill="#6C7BF0" d="M12 2c.5 4.6 3.4 7.5 8 8-4.6.5-7.5 3.4-8 8-.5-4.6-3.4-7.5-8-8 4.6-.5 7.5-3.4 8-8z"/>
+    `<svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#6C7BF0" d="M12 2c.4 5.2 4.8 9.6 10 10-5.2.4-9.6 4.8-10 10-.4-5.2-4.8-9.6-10-10 5.2-.4 9.6-4.8 10-10z"/>
     </svg>` },
 ];
 
