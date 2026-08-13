@@ -953,7 +953,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 
 /* ---- WHY NOW — centered header + three rounded numbered tiles ------------- */
-.why { text-align: center; }
+.why { text-align: center; position: relative; }
 .why .why__title { max-width: 24ch; margin-inline: auto; }
 [dir="rtl"] .why { text-align: right; }
 [dir="rtl"] .why .why__title { margin-inline: 0; }
@@ -969,6 +969,34 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   color: var(--pl-accent);
   font-size: 1.25rem; font-weight: 700; line-height: 1;
   font-variant-numeric: tabular-nums;
+}
+
+/* ---- "Working canvas" cursors (WHY NOW) ---------------------------------- */
+/* Colorful tool-tagged collaborator cursors drift over the section. The field
+   sits above the tiles but is click-through (pointer-events:none); cursors are
+   moved via transform only. Cleaned up + paused per prefers-reduced-motion in JS. */
+.cursorfield {
+  position: absolute; inset: 0; overflow: hidden;
+  pointer-events: none; z-index: 3; direction: ltr;
+}
+.pcursor {
+  position: absolute; top: 0; left: 0; width: 22px; height: 22px;
+  will-change: transform;
+}
+.pcursor__arrow {
+  display: block; fill: var(--pc); stroke: #fff; stroke-width: 1.3;
+  stroke-linejoin: round; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.22));
+}
+.pcursor__tag {
+  position: absolute; top: 15px; left: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 7px;
+  background: #fff; border: 1.5px solid var(--pc);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.16);
+}
+.pcursor__tag svg { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .pcursor { opacity: 0.85; }   /* JS scatters them statically, no motion */
 }
 
 /* ---- RTL ----------------------------------------------------------------- */
