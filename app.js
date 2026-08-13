@@ -264,13 +264,19 @@ const I18N = {
     roster_kicker: "ניהול",
     admin_roster_title: "התלמידים שלי",
     roster_sub: "רשימת ההזמנות שלכם. הוסיפו אימייל, אשרו אותו כדי לפתוח גישה, וראו מי כבר נכנס.",
-    roster_add_placeholder: "אימייל של תלמיד",
+    roster_add_name_placeholder: "שם התלמיד",
+    roster_add_placeholder: "אימייל (לא חובה)",
     roster_add_cta: "הוספת תלמיד",
-    roster_add_hint: "הוספה לא מאשרת אוטומטית. אחרי ההוספה, לחצו \"אישור\" כדי לפתוח גישה.",
+    roster_add_hint: "אפשר להוסיף ליד עם שם בלבד; אימייל לא חובה. הוספה לא מאשרת גישה. אחרי ההוספה, לחצו \"אישור\" כדי לפתוח גישה.",
     roster_col_name: "שם",
     roster_col_email: "אימייל",
     roster_col_status: "סטטוס",
     roster_col_signedin: "נכנס?",
+    roster_col_stage: "שלב",
+    roster_col_source: "מקור",
+    roster_col_next: "צעד הבא",
+    roster_col_notes: "הערות",
+    roster_col_phone: "טלפון",
     roster_pill_confirmed: "מאושר",
     roster_pill_pending: "ממתין",
     roster_pill_uninvited: "לא מוזמן",
@@ -279,8 +285,24 @@ const I18N = {
     roster_unconfirm: "ביטול אישור",
     roster_remove: "הסרה",
     roster_add_to_list: "הוספה לרשימה",
-    roster_empty: "עדיין אין תלמידים. הוסיפו אימייל למעלה כדי להתחיל.",
+    roster_empty: "עדיין אין תלמידים. הוסיפו שם למעלה כדי להתחיל.",
     roster_loading: "טוען...",
+    roster_details: "פרטים",
+    roster_save: "שמירה",
+    roster_saved: "נשמר",
+    roster_save_err: "השמירה נכשלה",
+    roster_source_ph: "מאיפה הגיע/ה (LinkedIn, WhatsApp, הפניה...)",
+    roster_next_ph: "הצעד הבא (התקשרות מחר 12:00...)",
+    roster_notes_ph: "מה נאמר בשיחה, הקשר, פרטים...",
+    roster_phone_ph: "טלפון",
+    stages: {
+      invited: "הוזמן",
+      interested: "מתעניין",
+      call_booked: "נקבעה שיחה",
+      confirmed: "אושר",
+      attended: "השתתף",
+      dropped: "לא רלוונטי",
+    },
     // Student-area tab bar. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
     tab_content: "תוכן הסדנה",
     tab_students: "תלמידים",
@@ -467,13 +489,19 @@ const I18N = {
     roster_kicker: "Admin",
     admin_roster_title: "My students",
     roster_sub: "Your invite list. Add an email, confirm it to grant access, and see who has signed in.",
-    roster_add_placeholder: "Student email",
+    roster_add_name_placeholder: "Student name",
+    roster_add_placeholder: "Email (optional)",
     roster_add_cta: "Add user",
-    roster_add_hint: "Adding does not approve. After adding, hit \"Confirm\" to grant access.",
+    roster_add_hint: "A lead can be added with a name only; email is optional. Adding does not grant access. After adding, hit \"Confirm\" to grant access.",
     roster_col_name: "Name",
     roster_col_email: "Email",
     roster_col_status: "Status",
     roster_col_signedin: "Signed in?",
+    roster_col_stage: "Stage",
+    roster_col_source: "Source",
+    roster_col_next: "Next action",
+    roster_col_notes: "Notes",
+    roster_col_phone: "Phone",
     roster_pill_confirmed: "Confirmed",
     roster_pill_pending: "Pending",
     roster_pill_uninvited: "Not invited",
@@ -482,8 +510,24 @@ const I18N = {
     roster_unconfirm: "Unconfirm",
     roster_remove: "Remove",
     roster_add_to_list: "Add to list",
-    roster_empty: "No students yet. Add an email above to get started.",
+    roster_empty: "No students yet. Add a name above to get started.",
     roster_loading: "Loading...",
+    roster_details: "Details",
+    roster_save: "Save",
+    roster_saved: "Saved",
+    roster_save_err: "Save failed",
+    roster_source_ph: "Where they came from (LinkedIn, WhatsApp, Referral...)",
+    roster_next_ph: "The next step (Call tomorrow 12:00...)",
+    roster_notes_ph: "What was discussed, context, details...",
+    roster_phone_ph: "Phone",
+    stages: {
+      invited: "Invited",
+      interested: "Interested",
+      call_booked: "Call booked",
+      confirmed: "Confirmed",
+      attended: "Attended",
+      dropped: "Dropped",
+    },
     // Student-area tab bar. PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.
     tab_content: "Course content",
     tab_students: "Students",
@@ -1222,7 +1266,9 @@ function renderPrep(lang) {
         <p class="section-lead">${t.roster_sub}</p>
       </div>
       <form class="roster__add" data-roster-add style="margin-top:1.75rem">
-        <input class="roster__input" type="email" name="email" required
+        <input class="roster__input" type="text" name="sname" required
+          placeholder="${t.roster_add_name_placeholder}" aria-label="${t.roster_add_name_placeholder}" autocomplete="off" />
+        <input class="roster__input" type="email" name="email"
           placeholder="${t.roster_add_placeholder}" aria-label="${t.roster_add_placeholder}" autocomplete="off" />
         <button class="btn btn--primary roster__addbtn" type="submit">${I.check}<span>${t.roster_add_cta}</span></button>
       </form>
@@ -1308,30 +1354,87 @@ function rosterDate(s, lang) {
     { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return s || ""; }
 }
 
+// The 6 CRM funnel stages (order = funnel order). Labels live in I18N[lang].stages.
+const CRM_STAGES = ["invited", "interested", "call_booked", "confirmed", "attended", "dropped"];
+
+// Attribute-safe escape (escapeHtml does not touch quotes; input values need it).
+function escapeAttr(s) { return escapeHtml(s).replace(/"/g, "&quot;"); }
+
 // Bind the "Add user" form once per render (outside the re-fetched table body so
-// listeners never stack). Adds a row with confirmed=false — added is not approved.
+// listeners never stack). A lead can be added with a NAME ONLY (email is optional)
+// (the migrated allowlist is id-keyed with nullable email). Adds confirmed=false.
 function wireRosterAdd(lang) {
   const form = document.querySelector("[data-roster-add]");
   if (!form || form.dataset.bound) return;
   form.dataset.bound = "1";
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const input = form.querySelector("input[name=email]");
-    const email = (input.value || "").trim().toLowerCase();
-    if (!email) return;
-    await addUser(email, lang);
-    input.value = "";
-    input.focus();
+    const nameInput = form.querySelector("input[name=sname]");
+    const emailInput = form.querySelector("input[name=email]");
+    const name = (nameInput.value || "").trim();
+    const email = (emailInput.value || "").trim().toLowerCase();
+    if (!name && !email) return;
+    await addUser({ name, email }, lang);
+    nameInput.value = "";
+    emailInput.value = "";
+    nameInput.focus();
   });
 }
 
-async function addUser(email, lang) {
-  // added_by is optional metadata; the RLS gate is the admin's own token.
-  const { error } = await sb.from("allowlist")
-    .insert({ email, added_by: (AUTH.user && AUTH.user.email) || null });
-  // Ignore duplicate-email errors (already on the list); always re-draw.
+// Accepts either { name, email } (new add form) or a bare email string (the
+// gate-crasher "Add to list" button). Only sends columns that have a value so a
+// name-only lead inserts cleanly; a missing `name` column can fail the ADD but
+// never the READ/RENDER.
+async function addUser(lead, lang) {
+  if (typeof lead === "string") lead = { email: lead };
+  const payload = { added_by: (AUTH.user && AUTH.user.email) || null };
+  if (lead.email) payload.email = lead.email;
+  if (lead.name) payload.name = lead.name;
+  const { error } = await sb.from("allowlist").insert(payload);
+  if (error) console.warn("addUser failed (add only; render unaffected):", error.message);
+  // Ignore duplicate errors (already on the list); always re-draw.
   renderRoster(lang);
   return error;
+}
+
+// Save edited CRM fields for one row. Guarded so a missing RPC/column can never
+// break the table: prefer admin_set_student(); on any failure fall back to a direct
+// allowlist update keyed by id (name-only leads) or email. Never throws.
+async function saveStudent(key, patch, statusEl, t) {
+  const setStatus = (txt, ok) => {
+    if (!statusEl) return;
+    statusEl.textContent = txt;
+    statusEl.classList.toggle("roster__savemsg--err", ok === false);
+    statusEl.classList.toggle("roster__savemsg--ok", ok === true);
+  };
+  try {
+    let ok = false;
+    // (a) Preferred: the admin_set_student RPC (email-keyed; coalesce keeps old on null).
+    if (key.email) {
+      const { error } = await sb.rpc("admin_set_student", {
+        p_email: key.email,
+        p_source: patch.source ?? null,
+        p_stage: patch.stage ?? null,
+        p_notes: patch.notes ?? null,
+        p_phone: patch.phone ?? null,
+        p_next_action: patch.next_action ?? null,
+        p_evidence_url: null,
+      });
+      ok = !error;
+    }
+    // (b) Fallback: direct update. Keyed by id when present (works for name-only
+    // leads that the email-keyed RPC cannot reach), else by email.
+    if (!ok) {
+      let q = sb.from("allowlist").update(patch);
+      q = key.id ? q.eq("id", key.id) : q.eq("email", key.email);
+      const { error } = await q;
+      if (error) throw error;
+    }
+    setStatus(t ? t.roster_saved : "Saved", true);
+  } catch (e) {
+    console.warn("saveStudent failed:", e && e.message);
+    setStatus(t ? t.roster_save_err : "Save failed", false);
+  }
 }
 
 async function confirmUser(email, next, lang) {
@@ -1339,8 +1442,13 @@ async function confirmUser(email, next, lang) {
   renderRoster(lang);
 }
 
-async function removeUser(email, lang) {
-  await sb.from("allowlist").delete().eq("email", email);
+async function removeUser(key, lang) {
+  // key may be a bare email (legacy) or { id, email }. Prefer id so name-only
+  // leads (nullable email) can still be removed.
+  if (typeof key === "string") key = { email: key };
+  let q = sb.from("allowlist").delete();
+  q = key.id ? q.eq("id", key.id) : q.eq("email", key.email);
+  await q;
   renderRoster(lang);
 }
 
@@ -1354,8 +1462,17 @@ async function renderRoster(lang) {
     host.innerHTML = `<p class="roster__empty">${t.roster_empty}</p>`;
     return;
   }
-  const body = rows.map((r) => {
-    // Status pill: confirmed student · pending invite · uninvited gate-crasher.
+  // Per-row edit keys (id preferred so name-only leads with nullable email still
+  // save/remove). Guarded: any of these CRM fields may be absent if the migration
+  // has not run yet; every read defaults, so the table always renders.
+  const keys = rows.map((r) => ({ id: r.id ?? null, email: r.email || null }));
+
+  const stageSelect = (i, cur) => `<select class="roster__stage roster__stage--${escapeHtml(cur)}" data-stage-select data-field="stage" data-i="${i}" aria-label="${t.roster_col_stage}">
+        ${CRM_STAGES.map((s) => `<option value="${s}"${s === cur ? " selected" : ""}>${escapeHtml(t.stages[s] || s)}</option>`).join("")}
+      </select>`;
+
+  const body = rows.map((r, i) => {
+    // Access pill (can they sign in) is SEPARATE from the CRM stage (funnel).
     let pill;
     if (!r.on_list) pill = `<span class="roster__badge roster__badge--warn">${t.roster_pill_uninvited}</span>`;
     else if (r.confirmed) pill = `<span class="roster__badge roster__badge--ok">${t.roster_pill_confirmed}</span>`;
@@ -1365,40 +1482,124 @@ async function renderRoster(lang) {
       ? `<span class="roster__yes">${I.check} ${rosterDate(r.first_signed_in_at, lang)}</span>`
       : `<span class="roster__no">${t.roster_signedin_no}</span>`;
 
-    // Actions: gate-crasher → Add to list; invited → confirm/unconfirm + remove.
-    const actions = !r.on_list
-      ? `<button type="button" class="btn btn--ghost btn--sm" data-add="${escapeHtml(r.email)}">${t.roster_add_to_list}</button>`
-      : `<button type="button" class="btn ${r.confirmed ? "btn--ghost" : "btn--primary"} btn--sm" data-confirm="${escapeHtml(r.email)}" data-next="${r.confirmed ? "0" : "1"}">${r.confirmed ? t.roster_unconfirm : t.roster_confirm}</button>
-         <button type="button" class="btn btn--ghost btn--sm roster__remove" data-remove="${escapeHtml(r.email)}" aria-label="${t.roster_remove}" data-tooltip="${t.roster_remove}">${I.x}</button>`;
+    // CRM fields, all guarded (undefined -> default) so a missing column is safe.
+    const stage = CRM_STAGES.includes(r.stage) ? r.stage : "invited";
+    const source = r.source || "";
+    const next = r.next_action || "";
+    const notes = r.notes || "";
+    const phone = r.phone || "";
+    const name = r.name || r.full_name || "";
 
+    // Actions: gate-crasher -> Add to list; on-list -> confirm (email only) + remove.
+    let actions;
+    if (!r.on_list) {
+      actions = `<button type="button" class="btn btn--ghost btn--sm" data-add="${escapeAttr(r.email || "")}">${t.roster_add_to_list}</button>`;
+    } else {
+      const confirmBtn = r.email
+        ? `<button type="button" class="btn ${r.confirmed ? "btn--ghost" : "btn--primary"} btn--sm" data-confirm="${escapeAttr(r.email)}" data-next="${r.confirmed ? "0" : "1"}">${r.confirmed ? t.roster_unconfirm : t.roster_confirm}</button>`
+        : "";
+      actions = `${confirmBtn}
+         <button type="button" class="btn btn--ghost btn--sm roster__remove" data-remove-i="${i}" aria-label="${t.roster_remove}" data-tooltip="${t.roster_remove}">${I.x}</button>`;
+    }
+
+    // Main row (scannable) + a hidden detail row (edit source/next/phone/notes).
     return `
-      <tr>
-        <td data-label="${t.roster_col_email}">${escapeHtml(r.email || "")}</td>
-        <td data-label="${t.roster_col_name}">${escapeHtml(r.full_name || "-")}</td>
+      <tr class="roster__row">
+        <td class="roster__expandcell">
+          <button type="button" class="roster__expand" data-expand="${i}" aria-expanded="false" aria-label="${t.roster_details}" data-tooltip="${t.roster_details}">${I.chev}</button>
+        </td>
+        <td data-label="${t.roster_col_name}">${escapeHtml(name) || "-"}</td>
+        <td data-label="${t.roster_col_email}" class="roster__emailcell">${escapeHtml(r.email || "") || "-"}</td>
         <td data-label="${t.roster_col_status}">${pill}</td>
         <td data-label="${t.roster_col_signedin}">${signedIn}</td>
+        <td data-label="${t.roster_col_stage}">${stageSelect(i, stage)}</td>
+        <td data-label="${t.roster_col_source}" class="roster__cellclamp">${escapeHtml(source) || "-"}</td>
+        <td data-label="${t.roster_col_next}" class="roster__cellclamp">${escapeHtml(next) || "-"}</td>
         <td class="roster__actions">${actions}</td>
+      </tr>
+      <tr class="roster__detailrow" data-detail="${i}" hidden>
+        <td colspan="9">
+          <div class="roster__detail">
+            <label class="roster__field">
+              <span class="roster__fieldlbl">${t.roster_col_source}</span>
+              <input class="roster__input roster__input--sm" type="text" data-field="source" data-i="${i}" value="${escapeAttr(source)}" placeholder="${escapeAttr(t.roster_source_ph)}" autocomplete="off" />
+            </label>
+            <label class="roster__field">
+              <span class="roster__fieldlbl">${t.roster_col_next}</span>
+              <input class="roster__input roster__input--sm" type="text" data-field="next_action" data-i="${i}" value="${escapeAttr(next)}" placeholder="${escapeAttr(t.roster_next_ph)}" autocomplete="off" />
+            </label>
+            <label class="roster__field">
+              <span class="roster__fieldlbl">${t.roster_col_phone}</span>
+              <input class="roster__input roster__input--sm" type="tel" data-field="phone" data-i="${i}" value="${escapeAttr(phone)}" placeholder="${escapeAttr(t.roster_phone_ph)}" autocomplete="off" />
+            </label>
+            <label class="roster__field roster__field--wide">
+              <span class="roster__fieldlbl">${t.roster_col_notes}</span>
+              <textarea class="roster__notes" data-field="notes" data-i="${i}" placeholder="${escapeAttr(t.roster_notes_ph)}" rows="3">${escapeHtml(notes)}</textarea>
+            </label>
+            <div class="roster__detailbar">
+              <button type="button" class="btn btn--primary btn--sm" data-save="${i}">${t.roster_save}</button>
+              <span class="roster__savemsg" data-savemsg="${i}" role="status" aria-live="polite"></span>
+            </div>
+          </div>
+        </td>
       </tr>`;
   }).join("");
 
   host.innerHTML = `
     <div class="roster__scroll">
-      <table class="roster__table">
+      <table class="roster__table roster__table--crm">
         <thead><tr>
-          <th>${t.roster_col_email}</th>
+          <th aria-hidden="true"></th>
           <th>${t.roster_col_name}</th>
+          <th>${t.roster_col_email}</th>
           <th>${t.roster_col_status}</th>
           <th>${t.roster_col_signedin}</th>
+          <th>${t.roster_col_stage}</th>
+          <th>${t.roster_col_source}</th>
+          <th>${t.roster_col_next}</th>
           <th></th>
         </tr></thead>
         <tbody>${body}</tbody>
       </table>
     </div>`;
 
+  // Expand/collapse the detail row.
+  host.querySelectorAll("[data-expand]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const i = b.getAttribute("data-expand");
+      const dr = host.querySelector(`[data-detail="${i}"]`);
+      if (!dr) return;
+      const opening = dr.hasAttribute("hidden");
+      if (opening) dr.removeAttribute("hidden"); else dr.setAttribute("hidden", "");
+      b.setAttribute("aria-expanded", opening ? "true" : "false");
+      b.classList.toggle("is-open", opening);
+    }));
+
+  // Stage change: recolor + save immediately (stage is the must-have field).
+  host.querySelectorAll("[data-stage-select]").forEach((sel) =>
+    sel.addEventListener("change", () => {
+      const i = sel.getAttribute("data-i");
+      sel.className = "roster__stage roster__stage--" + sel.value;
+      const statusEl = host.querySelector(`[data-savemsg="${i}"]`);
+      saveStudent(keys[i], { stage: sel.value }, statusEl, t);
+    }));
+
+  // Save the edited detail fields (source / next_action / phone / notes + stage).
+  host.querySelectorAll("[data-save]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const i = b.getAttribute("data-save");
+      const patch = {};
+      host.querySelectorAll(`[data-field][data-i="${i}"]`).forEach((el) => {
+        patch[el.getAttribute("data-field")] = el.value;
+      });
+      const statusEl = host.querySelector(`[data-savemsg="${i}"]`);
+      saveStudent(keys[i], patch, statusEl, t);
+    }));
+
   host.querySelectorAll("[data-confirm]").forEach((b) =>
     b.addEventListener("click", () => confirmUser(b.getAttribute("data-confirm"), b.getAttribute("data-next") === "1", lang)));
-  host.querySelectorAll("[data-remove]").forEach((b) =>
-    b.addEventListener("click", () => removeUser(b.getAttribute("data-remove"), lang)));
+  host.querySelectorAll("[data-remove-i]").forEach((b) =>
+    b.addEventListener("click", () => removeUser(keys[b.getAttribute("data-remove-i")], lang)));
   host.querySelectorAll("[data-add]").forEach((b) =>
     b.addEventListener("click", () => addUser(b.getAttribute("data-add"), lang)));
 }

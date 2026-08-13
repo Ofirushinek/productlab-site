@@ -37,6 +37,17 @@
   --pl-crew-purple: #8b6fc0;
   --pl-crew-yellow: #d99b33;
 
+  /* CRM funnel-stage colors (admin students table). Semantic status tokens, not
+     brand colors: purple/teal/gray reuse the existing palette; blue/green/red are
+     new status hues a 6-stage funnel needs. Defined once here, referenced only by
+     .roster__stage--* (never inline). */
+  --pl-stage-invited: var(--pl-fg-muted);   /* gray: sent, no reply */
+  --pl-stage-interested: #2563eb;            /* blue: replied with pull */
+  --pl-stage-call_booked: var(--pl-accent);  /* purple: intro call set */
+  --pl-stage-confirmed: #15803d;             /* green: seat locked */
+  --pl-stage-attended: var(--pl-crew-teal);  /* teal: showed up */
+  --pl-stage-dropped: #b4443a;               /* muted red: went cold */
+
   --shadow-pl-sm: 0 1px 2px 0 rgb(10 10 10 / 0.06);
   --shadow-pl-md: 0 8px 24px -10px rgb(10 10 10 / 0.12);
   --shadow-pl-lg: 0 24px 60px -20px rgb(10 10 10 / 0.18);
@@ -755,6 +766,87 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 .roster__yes svg { width: 15px; height: 15px; color: var(--pl-accent); }
 .roster__no { color: var(--pl-fg-muted); font-size: var(--text-sm); font-weight: 500; }
+
+/* ---- CRM mini-card extensions to the roster table ------------------------ */
+/* Expand chevron (opens the per-row edit detail). */
+.roster__expandcell { width: 1%; padding-inline-end: 0.35rem; }
+.roster__expand {
+  display: grid; place-items: center; width: 1.9rem; height: 1.9rem;
+  padding: 0; border: 1px solid var(--pl-border); border-radius: var(--radius-md);
+  background: var(--pl-surface); color: var(--pl-fg-secondary); cursor: pointer;
+  transition: color 0.2s var(--ease-pl), border-color 0.2s var(--ease-pl), background 0.2s var(--ease-pl);
+}
+.roster__expand:hover { color: var(--pl-fg); border-color: var(--pl-border-strong); }
+.roster__expand svg { width: 16px; height: 16px; transition: transform 0.2s var(--ease-pl); }
+.roster__expand.is-open svg { transform: rotate(180deg); }
+.roster__expand.is-open { color: var(--pl-accent); border-color: var(--pl-accent); }
+
+/* Source / next-action cells clamp long text so the row stays scannable. */
+.roster__cellclamp {
+  max-width: 15rem; white-space: normal;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  color: var(--pl-fg-body);
+}
+.roster__emailcell { color: var(--pl-fg-body); font-variant-numeric: tabular-nums; }
+
+/* Stage pill = a native select styled as a colored pill; color driven by token. */
+.roster__stage {
+  appearance: none; -webkit-appearance: none;
+  font-family: inherit; font-weight: 600; font-size: 0.72rem; line-height: 1.5;
+  border-radius: 999px; cursor: pointer;
+  padding-block: 0.22rem; padding-inline-start: 0.7rem; padding-inline-end: 1.5rem;
+  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+  background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6b73' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  transition: box-shadow 0.2s var(--ease-pl);
+}
+[dir="rtl"] .roster__stage { background-position: left 0.5rem center; }
+.roster__stage:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
+}
+.roster__stage--invited     { color: var(--pl-stage-invited);     background-color: color-mix(in srgb, var(--pl-stage-invited) 12%, var(--pl-surface)); }
+.roster__stage--interested  { color: var(--pl-stage-interested);  background-color: color-mix(in srgb, var(--pl-stage-interested) 12%, var(--pl-surface)); }
+.roster__stage--call_booked { color: var(--pl-stage-call_booked); background-color: color-mix(in srgb, var(--pl-stage-call_booked) 12%, var(--pl-surface)); }
+.roster__stage--confirmed   { color: var(--pl-stage-confirmed);   background-color: color-mix(in srgb, var(--pl-stage-confirmed) 12%, var(--pl-surface)); }
+.roster__stage--attended    { color: var(--pl-stage-attended);    background-color: color-mix(in srgb, var(--pl-stage-attended) 12%, var(--pl-surface)); }
+.roster__stage--dropped     { color: var(--pl-stage-dropped);     background-color: color-mix(in srgb, var(--pl-stage-dropped) 12%, var(--pl-surface)); }
+/* Native option list uses system colors; keep options readable regardless of pill tint. */
+.roster__stage option { color: var(--pl-fg); background: var(--pl-surface); }
+
+/* Detail (expand) row: the inline editor for one lead. */
+.roster__detailrow > td { background: var(--pl-bg-alt); padding: 1.1rem 1rem; white-space: normal; }
+.roster__detail {
+  display: grid; gap: 0.9rem 1.1rem;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  align-items: start;
+}
+.roster__field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.roster__field--wide { grid-column: 1 / -1; }
+.roster__fieldlbl {
+  font-weight: 600; font-size: 0.72rem; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--pl-fg-secondary);
+}
+.roster__input--sm { height: 2.4rem; flex: none; min-width: 0; width: 100%; font-size: var(--text-sm); }
+.roster__notes {
+  width: 100%; min-height: 4.5rem; resize: vertical;
+  padding: 0.6rem 0.9rem; border: 1px solid var(--pl-border-strong);
+  border-radius: var(--radius-md); background: var(--pl-surface);
+  color: var(--pl-fg); font-family: inherit; font-size: var(--text-sm); line-height: 1.5;
+  box-shadow: var(--shadow-pl-sm);
+  transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+}
+.roster__notes:focus {
+  outline: none; border-color: var(--pl-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 18%, transparent);
+}
+.roster__detailbar {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: 0.75rem;
+}
+.roster__savemsg { font-size: var(--text-sm); font-weight: 600; }
+.roster__savemsg--ok { color: var(--pl-stage-confirmed); }
+.roster__savemsg--err { color: var(--pl-stage-dropped); }
 
 /* ---- WHY NOW — centered in LTR, right-aligned (start) in RTL -------------- */
 .why { text-align: center; }
