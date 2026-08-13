@@ -261,16 +261,16 @@ const I18N = {
     denied_title: "עדיין אין לכם גישה",
     denied_body: "האזור הזה פתוח למשתתפי הסדנה שאושרו. נכנסתם עם Google אבל החשבון עדיין לא רשום. אם נרשמתם וזה לא עובד, דברו איתי ואפתח לכם גישה.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
-    reg_title: "להצטרף לסדנה קרובה",
-    reg_sub: "עדיין בלי תאריך קבוע. תשאירו פרטים ואחזור אליכם באופן אישי, לספר על המפגש הקרוב ולראות אם הוא מתאים לכם.",
+    reg_title: "לשמור מקום במפגש הקרוב",
+    reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים כדי לשמור מקום במפגש הקרוב, ואחזור אליכם באופן אישי עם כל מה שצריך לדעת.",
     reg_first_label: "שם פרטי",
     reg_last_label: "שם משפחה",
     reg_email_label: "אימייל",
     reg_email_ph: "you@email.com",
     reg_note_label: "משהו שתרצו לשתף (לא חובה)",
     reg_note_ph: "שורה עליכם, על מה שאתם בונים, או על מה שאתם מקווים לקבל מזה.",
-    reg_submit: "אני רוצה להצטרף",
-    reg_success: "קיבלתי, תודה. אתם ברשימה לאחת הסדנאות הקרובות. אחזור אליכם באופן אישי, אחד על אחד, לספר עוד ולראות אם זה מתאים. נדבר בקרוב.",
+    reg_submit: "לשמור מקום",
+    reg_success: "אתם בפנים. אחזור אליכם באופן אישי עם כל הפרטים על המפגש הקרוב. נדבר בקרוב.",
     reg_error: "משהו לא נשלח. נסו שוב, או פשוט כתבו לי ישירות.",
 
     // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
@@ -500,16 +500,16 @@ const I18N = {
     denied_title: "You don't have access yet",
     denied_body: "This area is for approved workshop participants. You're signed in with Google, but your account isn't registered yet. If you registered and it isn't working, talk to me and I'll open it up for you.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
-    reg_title: "Join an upcoming session",
-    reg_sub: "No fixed date yet. Leave your details and I'll reach out personally to tell you about the next one and see if it's the right fit for you.",
+    reg_title: "Save your spot in the next session",
+    reg_sub: "Spots are limited and go in small groups. Leave your details to hold your place in the next session, and I'll reach out personally with everything you need to know.",
     reg_first_label: "First name",
     reg_last_label: "Last name",
     reg_email_label: "Email",
     reg_email_ph: "you@email.com",
     reg_note_label: "Anything you'd like to share (optional)",
     reg_note_ph: "A line about you, what you're building, or what you're hoping to get out of it.",
-    reg_submit: "Count me in",
-    reg_success: "Got it, thanks. You're on the list for an upcoming session. I'll reach out to you personally, one to one, to tell you more and see if it's the right fit. Talk soon.",
+    reg_submit: "Save my spot",
+    reg_success: "You're in. I'll reach out personally with the details for the next session. Talk soon.",
     reg_error: "That didn't go through. Give it another try, or just message me directly.",
 
     // Admin roster - visible only to admin. PLACEHOLDER EN copy 2026-08-12, Copywriter to refine.

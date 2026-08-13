@@ -1108,10 +1108,15 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 /* ===== Student sign-in MODAL (opens from the header button) ===== */
 body.modal-open { overflow: hidden; }
-.modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 1.25rem; }
+/* Overflow-safe modal: the minmax() spacer rows center the card when it fits and
+   collapse when the form is taller than the phone, so .modal scrolls the WHOLE
+   card (submit included) with nothing clipped off the top. */
+.modal { position: fixed; inset: 0; z-index: 100; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  display: grid; grid-template-rows: minmax(1.25rem, 1fr) auto minmax(1.25rem, 1fr);
+  justify-items: center; padding-inline: 1.25rem; }
 .modal[hidden] { display: none; }
-.modal__overlay { position: absolute; inset: 0; background: rgb(10 8 6 / 0.55); backdrop-filter: blur(2px); }
-.modal__card { position: relative; z-index: 1; width: 100%; max-width: 27rem; text-align: center;
+.modal__overlay { position: fixed; inset: 0; background: rgb(10 8 6 / 0.55); backdrop-filter: blur(2px); }
+.modal__card { grid-row: 2; position: relative; z-index: 1; width: 100%; max-width: 27rem; text-align: center;
   background: var(--pl-surface); border: 1px solid var(--pl-border); border-radius: var(--radius-xl);
   box-shadow: var(--shadow-pl-lg); padding: clamp(1.75rem, 5vw, 2.5rem);
   animation: modalIn 0.22s var(--ease-pl); }
