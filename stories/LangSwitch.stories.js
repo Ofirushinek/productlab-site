@@ -12,7 +12,7 @@ const globe = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 
 const switcher = ({ open, current }) =>
   `<div class="langswitch${open ? " is-open" : ""}" style="margin:2rem">
-     <button class="btn btn--ghost btn--sm langswitch__btn" type="button" aria-haspopup="menu" aria-expanded="${open}" aria-label="Choose language">${globe}</button>
+     <button class="btn btn--ghost btn--sm btn--icon langswitch__btn" type="button" aria-haspopup="menu" aria-expanded="${open}" aria-label="Choose language">${globe}</button>
      <div class="langswitch__menu" role="menu" aria-label="Choose language"${open ? "" : " hidden"}>
        <button class="langswitch__item" type="button" role="menuitem"${current === "en" ? ' aria-current="true"' : ""}>English</button>
        <button class="langswitch__item" type="button" role="menuitem"${current === "he" ? ' aria-current="true"' : ""}>עברית</button>

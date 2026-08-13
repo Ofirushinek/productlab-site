@@ -604,7 +604,7 @@ const navHeader = (t, lang, opts = {}) => {
   const langLabel = lang === "he" ? "בחירת שפה" : "Choose language";
   const langSwitch = `
     <div class="langswitch" data-langswitch>
-      <button class="btn btn--ghost btn--sm langswitch__btn" type="button" data-langswitch-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${langLabel}" data-tooltip="${langLabel}">${I.globe}</button>
+      <button class="btn btn--ghost btn--sm btn--icon langswitch__btn" type="button" data-langswitch-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${langLabel}" data-tooltip="${langLabel}">${I.globe}</button>
       <div class="langswitch__menu" role="menu" aria-label="${langLabel}" data-langswitch-menu hidden>
         <button class="langswitch__item" type="button" role="menuitem" data-set-lang="en"${lang === "en" ? ' aria-current="true"' : ""}>English</button>
         <button class="langswitch__item" type="button" role="menuitem" data-set-lang="he"${lang === "he" ? ' aria-current="true"' : ""}>עברית</button>
@@ -625,7 +625,7 @@ const navHeader = (t, lang, opts = {}) => {
       ${langControls}
     </div>
     <div class="nav__account" data-account>
-      <button class="btn btn--ghost btn--sm nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}" data-tooltip="${t.nav_account}">${I.user}</button>
+      <button class="btn btn--ghost btn--sm btn--icon nav__avatar" type="button" data-account-toggle aria-haspopup="menu" aria-expanded="false" aria-label="${t.nav_account}" data-tooltip="${t.nav_account}">${I.user}</button>
       <div class="nav__accmenu" role="menu" aria-label="${t.nav_account}" data-account-menu hidden>
         <button class="nav__accmenu-item" type="button" role="menuitem" data-signout>${t.nav_signout}</button>
       </div>

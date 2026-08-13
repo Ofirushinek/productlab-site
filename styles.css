@@ -219,6 +219,12 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 .btn--sm { height: 2.5rem; min-width: 2.5rem; padding-inline: 1.1rem; font-size: var(--text-sm); }
 
+/* Icon-only button: drop the side padding so min-width (== height) makes it a
+   perfect SQUARE. An icon-only control is never wider than it is tall. Use this
+   on ANY icon-only button (globe, avatar, ...) — one shared mechanism, no
+   per-control width hacks. */
+.btn--icon { padding-inline: 0; gap: 0; }
+
 /* ghost / secondary (Student entrance) — quieter than the WhatsApp CTA */
 .btn--ghost { background: transparent; color: var(--pl-fg); border-color: var(--pl-border-strong); }
 .btn--ghost:hover { background: var(--pl-bg-alt); border-color: var(--pl-fg); }
@@ -275,7 +281,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .nav__menu > .langtoggle { display: none; }
 .langswitch { position: relative; display: inline-flex; }
 /* square icon button (width = the btn--sm height), never a thin sliver */
-.langswitch__btn { gap: 0; width: 2.5rem; padding-inline: 0; }
+/* square + no side padding now come from the shared .btn--icon modifier */
 .langswitch__btn svg { width: 18px; height: 18px; }
 .langswitch.is-open .langswitch__btn { background: var(--pl-bg-alt); border-color: var(--pl-border-strong); }
 /* RULE: don't show the button's tooltip while its dropdown is already open —
