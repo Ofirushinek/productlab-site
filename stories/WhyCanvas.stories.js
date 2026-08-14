@@ -22,10 +22,10 @@ const LOGOS = {
       <rect x="8" y="11" width="8" height="1.4" rx=".7" fill="#fff"/>
       <rect x="8" y="14" width="8" height="1.4" rx=".7" fill="#fff"/>
       <rect x="8" y="17" width="5.5" height="1.4" rx=".7" fill="#fff"/></svg>`,
-  chatgpt: `<svg viewBox="0 0 24 24" fill="#10A37F" aria-hidden="true"><path d="M22.28 9.82a5.98 5.98 0 0 0-.52-4.91 6.05 6.05 0 0 0-6.5-2.9A6.06 6.06 0 0 0 4.98 4.18a5.98 5.98 0 0 0-3.99 2.9 6.05 6.05 0 0 0 .74 7.1 5.98 5.98 0 0 0 .51 4.91 6.05 6.05 0 0 0 6.5 2.9A5.98 5.98 0 0 0 13.26 22a6.06 6.06 0 0 0 5.77-4.21 5.99 5.99 0 0 0 4-2.9 6.06 6.06 0 0 0-.75-7.07zm-9.02 12.6a4.48 4.48 0 0 1-2.88-1.03l.14-.08 4.78-2.76a.78.78 0 0 0 .39-.68v-6.74l2.02 1.17.02.06v5.58a4.5 4.5 0 0 1-4.49 4.21zM3.6 18.3a4.47 4.47 0 0 1-.54-3.02l.14.09 4.78 2.76a.77.77 0 0 0 .78 0l5.84-3.37v2.33l-.03.06L9.74 20.5A4.5 4.5 0 0 1 3.6 18.3zM2.34 7.9a4.48 4.48 0 0 1 2.34-1.97v5.68a.77.77 0 0 0 .39.68l5.82 3.35-2.02 1.17-.07-.01-4.83-2.79A4.5 4.5 0 0 1 2.34 7.9zm16.6 3.86-5.83-3.4L15.12 7.2l.07-.01 4.83 2.78a4.5 4.5 0 0 1-.68 8.12v-5.68a.78.78 0 0 0-.4-.66zm2.01-3.02-.14-.09-4.77-2.77a.78.78 0 0 0-.79 0L9.42 9.24V6.9l.03-.06 4.83-2.78a4.5 4.5 0 0 1 6.68 4.66zM8.32 12.86l-2.02-1.16-.02-.06V6.07a4.5 4.5 0 0 1 7.38-3.45l-.14.08-4.78 2.76a.78.78 0 0 0-.39.68zm1.1-2.36 2.6-1.5 2.6 1.5v3l-2.6 1.5-2.6-1.5z"/></svg>`,
-  gemini: `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#6C7BF0" d="M12 2c.4 5.2 4.8 9.6 10 10-5.2.4-9.6 4.8-10 10-.4-5.2-4.8-9.6-10-10 5.2-.4 9.6-4.8 10-10z"/></svg>`,
+  lovable: `<svg viewBox="0 0 24 24" fill="#FF4D67" aria-hidden="true"><path d="M12 21.35 3.55 12.9a5.4 5.4 0 1 1 7.64-7.64l.81.8.81-.8a5.4 5.4 0 1 1 7.64 7.64z"/></svg>`,
+  gemini: `<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="pcGemini" x1="2" y1="4" x2="22" y2="20" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4285F4"/><stop offset=".55" stop-color="#7C6DF3"/><stop offset="1" stop-color="#A64CE0"/></linearGradient></defs><path fill="url(#pcGemini)" d="M12 2c.4 5.2 4.8 9.6 10 10-5.2.4-9.6 4.8-10 10-.4-5.2-4.8-9.6-10-10 5.2-.4 9.6-4.8 10-10z"/></svg>`,
 };
-const COLORS = { figma: "#F24E1E", claude: "#CC785C", gdocs: "#4285F4", chatgpt: "#10A37F", gemini: "#6C7BF0" };
+const COLORS = { figma: "#F24E1E", claude: "#CC785C", gdocs: "#4285F4", lovable: "#FF4D67", gemini: "#4F86F7" };
 const ARROW = `<svg class="pcursor__arrow" viewBox="0 0 24 24" width="22" height="22"><path d="M5 2.5 5 20.5 9.7 16 12.7 22.5 15.5 21.2 12.5 14.8 19 14.8Z"/></svg>`;
 
 const cursor = (id) =>
