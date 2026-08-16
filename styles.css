@@ -1083,6 +1083,16 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .hero--scene .hero__points li::before,
   .hero--scene .hero__points li:not(:first-child)::before { content: "•"; color: #c4b5fd; font-weight: 700; margin-inline-end: 0; }
 
+  /* HERO proportion — variant A (Ofir-picked): big/bold headline leads, with an
+     enlarged, more-present description. Phone-only override; desktop (>=860px)
+     keeps its own display sizing untouched. */
+  .hero--scene .hero__title { font-size: 2.35rem; line-height: 1.05; font-weight: 800; letter-spacing: -0.02em; max-width: 15ch; }
+  /* description sits at bullet weight (700) so it reads solid, not lighter than the points below it */
+  .hero--scene .hero__sub { font-size: 1.28rem; line-height: 1.4; margin-top: 1.15rem; max-width: 26ch; font-weight: 700; }
+  .hero--scene .hero__points { margin: 1.6rem 0 0; }
+  /* reposition headline wraps naturally on phone — drop the old EN forced break */
+  [dir="ltr"] .hero--scene .hero__br { display: none; }
+
   /* agenda cards -> stacked (badge on top, then title, then description) */
   .phase { grid-template-columns: 1fr; gap: 0.75rem; }
   .phase__time { justify-self: start; }
@@ -1185,7 +1195,7 @@ body.modal-open { overflow: hidden; }
 /* Forced break so English reads "…with an" / "AI team you created yourself." */
 .hero__br { display: none; }
 [dir="ltr"] .hero__br { display: inline; }
-.hero--scene .hero__title .mark { color: #c4b5fd; }
+.hero--scene .hero__title .mark { color: #c4b5fd; white-space: nowrap; }
 .hero--scene .hero__sub { margin-top: 1.3rem; font-size: var(--text-body-lg); color: rgb(255 255 255 / 0.92);
   max-width: 46ch; font-weight: 500; text-shadow: 0 1px 16px rgb(0 0 0 / 0.45); }
 .hero__points { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.9rem; list-style: none; margin: 1.75rem 0 0; padding: 0; }
