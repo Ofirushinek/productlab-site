@@ -1090,8 +1090,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   /* description sits at bullet weight (700) so it reads solid, not lighter than the points below it */
   .hero--scene .hero__sub { font-size: 1.28rem; line-height: 1.4; margin-top: 1.15rem; max-width: 26ch; font-weight: 700; }
   .hero--scene .hero__points { margin: 1.6rem 0 0; }
-  /* reposition headline wraps naturally on phone — drop the old EN forced break */
-  [dir="ltr"] .hero--scene .hero__br { display: none; }
+  /* headline wraps naturally on phone (the EN forced break is off globally) */
 
   /* agenda cards -> stacked (badge on top, then title, then description) */
   .phase { grid-template-columns: 1fr; gap: 0.75rem; }
@@ -1192,9 +1191,11 @@ body.modal-open { overflow: hidden; }
   color: #ffffff; text-shadow: 0 1px 24px rgb(0 0 0 / 0.45); }
 /* English hero runs longer than Hebrew — dial the display size down a touch (LTR only). */
 [dir="ltr"] .hero--scene .hero__title { font-size: clamp(2.5rem, 5.2vw, 3.9rem); max-width: 18ch; }
-/* Forced break so English reads "…with an" / "AI team you created yourself." */
+/* Headline break hook. The EN forced break is OFF: with the current headline the
+   natural wrap already lands "AI agents." on its own line at every desktop width
+   (the .mark is white-space:nowrap), and forcing it only created a dangling
+   "with" line in the 860-899px band. Kept as a hook for future copy. */
 .hero__br { display: none; }
-[dir="ltr"] .hero__br { display: inline; }
 .hero--scene .hero__title .mark { color: #c4b5fd; white-space: nowrap; }
 .hero--scene .hero__sub { margin-top: 1.3rem; font-size: var(--text-body-lg); color: rgb(255 255 255 / 0.92);
   max-width: 46ch; font-weight: 500; text-shadow: 0 1px 16px rgb(0 0 0 / 0.45); }
@@ -1238,6 +1239,18 @@ body.modal-open { overflow: hidden; }
     margin-inline-end: auto;
     text-align: left;
   }
+}
+
+/* SHORT PHONES (iPhone SE-class, ~375x553 visible in Safari). The hero is the only
+   thing above the fold on a phone, and the session strip has to keep peeking under
+   it. When the viewport is short, a taller headline + description overflows the
+   hero's 82vh box and pushes the strip off-screen, so tighten the hero's VERTICAL
+   RHYTHM only here. Type sizes and measure are untouched; taller phones (>=640px)
+   keep the approved spacing. */
+@media (max-width: 620px) and (max-height: 620px) {
+  .hero__inner { padding-block: 1.25rem; }
+  .hero--scene .hero__sub { margin-top: 0.9rem; }
+  .hero--scene .hero__points { margin: 1.15rem 0 0; }
 }
 
 /* ---- NEXT-SESSION strip — a FLAT full-width band like the site's other sections,
