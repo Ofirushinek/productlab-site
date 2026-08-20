@@ -1049,7 +1049,11 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 [dir="rtl"] .hero__title, [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4 {
   font-family: "Heebo", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
-[dir="rtl"] .hero__title, [dir="rtl"] .hero__sub,
+/* The hero is CENTERED in both directions by design (one-view hero, 2026-08-20).
+   .hero__title/.hero__sub were removed from this right-align group after they
+   silently beat the hero's own text-align:center in Hebrew (specificity 0,1,1
+   vs 0,1,0) - the same bug solved once before on the demo page. Section titles
+   keep the RTL right-align. */
 [dir="rtl"] .section-title, [dir="rtl"] .section-lead { text-align: right; }
 [dir="rtl"] .deliv__item, [dir="rtl"] .phase, [dir="rtl"] .incl__item,
 [dir="rtl"] .aphase__head, [dir="rtl"] .aphase__item,
