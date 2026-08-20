@@ -10,16 +10,16 @@ export default {
 
 const EN = {
   a: "Build your first project with an ",
-  mark: "AI team",
+  mark: "team of AI agents",
   b: " you created yourself.",
-  sub: "In one hands-on workshop you'll create your own AI team, learn to run it, and start working on your project during the workshop itself.",
+  sub: "In one hands-on workshop you'll create your own team of AI agents, learn to run it, and start working on your project during the workshop itself.",
   points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
 };
 const HE = {
   a: "לבנות את הפרויקט הראשון שלך עם ",
-  mark: "צוות AI",
+  mark: "צוות סוכני AI",
   b: " שיצרת בעצמך.",
-  sub: "בסדנה מעשית אחת תיצרו צוות AI אישי, תלמדו לנהל אותו, ותתחילו לעבוד על הפרויקט שלכם כבר במהלך הסדנה.",
+  sub: "בסדנה מעשית אחת תיצרו צוות סוכני AI אישי, תלמדו לנהל אותו, ותתחילו לעבוד על הפרויקט שלכם כבר במהלך הסדנה.",
   points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח-על של בנייה"],
 };
 

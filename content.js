@@ -333,7 +333,7 @@ When you are done, tell me the project document is saved, where it is, and confi
           title: "Set up your workspace",
           body: "Get your tools in place and open your shared brain, so the whole session is building, not setup. Only one of them costs anything.",
           checklist: [
-            { name: "Claude", tag: "$20 / mo", note: "Your workspace, where your whole AI team lives and works. You need the Pro plan, the one paid tool today." },
+            { name: "Claude", tag: "$20 / mo", note: "Your workspace, where your whole team of AI agents lives and works. You need the Pro plan, the one paid tool today." },
             { name: "Obsidian", tag: "Free", note: "Your shared brain, installed on your own computer. It is where every agent reads and writes what the team knows." },
           ],
         },
@@ -569,7 +569,7 @@ When you are done, tell me the project document is saved, where it is, and confi
           title: "מקימים את סביבת העבודה",
           body: "מסדרים את הכלים ופותחים את המוח המשותף, כדי שכל המפגש יהיה בנייה ולא התקנות. רק אחד מהם עולה כסף.",
           checklist: [
-            { name: "Claude", tag: "20$ לחודש", note: "סביבת העבודה שלכם, המקום שבו כל צוות ה-AI חי ועובד. צריך את תוכנית ה-Pro, הכלי היחיד בתשלום היום." },
+            { name: "Claude", tag: "20$ לחודש", note: "סביבת העבודה שלכם, המקום שבו כל צוות סוכני ה-AI חי ועובד. צריך את תוכנית ה-Pro, הכלי היחיד בתשלום היום." },
             { name: "Obsidian", tag: "חינם", note: "המוח המשותף שלכם, מותקן על המחשב שלכם. זה המקום שבו כל סוכן קורא וכותב את מה שהצוות יודע." },
           ],
         },
