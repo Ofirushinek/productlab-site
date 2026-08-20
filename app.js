@@ -173,7 +173,7 @@ const I18N = {
     who_not: "מתאים פחות למי שמחפש כפתור קסם. אם בא לך להפשיל שרוולים ולבנות בעצמך, יש לך מקום סביב השולחן.",
 
     agenda_eyebrow: "שלושה שלבים",
-    agenda_title: "שלוש שעות. בסוף הסדנה תצאו עם צוות AI שעובד איתכם.",
+    agenda_title: "שלוש שעות. בסוף הסדנה תצאו עם צוות סוכני AI שעובד איתכם.",
     agenda_intro: "בשלושה שלבים נבנה יחד את מערכת העבודה החדשה שלכם, מהיכרות עם השיטה, דרך הקמת צוות AI אישי ועד לבניית הפרויקט הראשון שלכם.",
     agenda_phases: [
       { time: "שלב ראשון", t: "מתחילים", b: "מבינים את שיטת העבודה, מכירים את הכלים שנשתמש בהם ומניחים את היסודות לצוות שנבנה בהמשך." },
@@ -417,7 +417,7 @@ const I18N = {
     who_not: "Less of a fit for anyone after a magic button. If you'd rather roll up your sleeves and build it yourself, there's a chair at the table.",
 
     agenda_eyebrow: "Three stages",
-    agenda_title: "Three hours. By the end you'll walk out with an AI team that works with you.",
+    agenda_title: "Three hours. By the end you'll walk out with a team of AI agents that works with you.",
     agenda_intro: "In three stages we'll build your new way of working together, from learning the method, through setting up your own AI team, to building your first project.",
     agenda_phases: [
       { time: "Stage one", t: "Getting started", b: "You'll understand the method, get to know the tools we'll use, and lay the foundations for the team you'll build next." },
