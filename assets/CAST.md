@@ -35,10 +35,15 @@ matches the current copy order; reorder the copy and the pictures silently misma
 
 1. `.tilecard__illo` sets `background: #e9e0cd`, tuned to the OLD cream studio ground. The new
    images are the hero's apricot-cream room. Re-pick that value against the new art.
-2. These are square (1024). The tile band is short and wide (`13.5rem`, `object-fit: cover`),
-   so each one gets centre-cropped to a strip. All six were composed with headroom for that,
-   but check the horizon tile in particular — its first take was framed too wide and had to be
-   reshot closer for exactly this reason.
+2. **The tile band is 13.5rem tall against a ~350px card, so `object-fit: cover` crops every
+   image to roughly 1.5:1 from the centre — a square 1024 source loses its top and bottom 19%.**
+   The crew portraits and two of the audience tiles survive it because those figures are SEATED
+   and spread horizontally. The horizon tile did not: it was the one shot with a STANDING
+   figure, and the live card cut her head off. It is now generated natively at **1536x1024**
+   (`scripts/gen_people_wide.py`), seated like the other two, and the joke moved with the
+   format — she no longer stands on books; the mustard-yellow character beside her is copying
+   her with a rolled cardboard tube. **Compose to the destination ratio, and simulate the crop
+   before shipping: resize to cover 700x432, centre-crop, then judge it.**
 
 ## Provenance
 
