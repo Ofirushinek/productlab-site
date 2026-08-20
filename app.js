@@ -844,21 +844,75 @@ function wireWhyCursors() {
 
   const rnd = (a, b) => a + Math.random() * (b - a);
   const MG = 8;                                   // inset so tags never clip
+  /* The cursor's own box is 26x26, but .pcursor__tag hangs out of it: it sits at
+     left:15px/top:17px and is 37x37, so the real painted extent from the cursor's
+     origin is 15+37=52 wide and 17+37=54 tall. Bounding on the 26px arrow alone
+     let the logo chip cross the field edge and get clipped by overflow:hidden at
+     every viewport. Bound on the PAINTED extent, not the icon. */
+  const TAG_W = 52, TAG_H = 54;
   const box = () => ({ w: field.clientWidth, h: field.clientHeight });
   const place = (el, x, y) => { el.style.transform = `translate(${x}px, ${y}px)`; };
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const px = (b) => rnd(MG, Math.max(MG + 1, b.w - 30));
-  const py = (b) => rnd(MG, Math.max(MG + 1, b.h - 34));
+  const rawX = (b) => rnd(MG, Math.max(MG + 1, b.w - TAG_W - MG));
+  const rawY = (b) => rnd(MG, Math.max(MG + 1, b.h - TAG_H - MG));
 
-  const S = els.map((el) => {
-    const b = box(), x = px(b), y = py(b);
-    return { el, ax: x, ay: y, bx: x, by: y, t: 1, dur: 1, curve: 0, mode: "pause", until: 0, seed: Math.random() * 1000 };
+  /* KEEP-OUT: the cursors are decoration and must never sit on the tile copy.
+     The tiles' rect, in field coordinates, is a no-go zone; a candidate point is
+     only accepted if the cursor's painted extent clears it. Measured live so it
+     stays correct at every width and in both directions. On narrow viewports the
+     tiles fill the field and no point clears them, so the field is hidden in CSS
+     below the tile-stacking breakpoint and this never runs there. */
+  const KEEP_PAD = 10;
+  const keepOut = () => {
+    const host = field.parentElement;
+    if (!host) return [];
+    const f = field.getBoundingClientRect();
+    const pad = (r) => ({ x1: r.left - f.left - KEEP_PAD, y1: r.top - f.top - KEEP_PAD,
+                          x2: r.right - f.left + KEEP_PAD, y2: r.bottom - f.top + KEEP_PAD });
+    /* The tiles are protected as one block. The heading and eyebrow are NOT:
+       they are block elements whose box spans the full column while their ink
+       only covers a few line-boxes at one end, so blocking the box would fence
+       the cursors out of the entire band and leave them nowhere to go. Protect
+       the actual LINE BOXES of the text instead, via a Range over its contents. */
+    const out = [...host.querySelectorAll(".grid--3")].map((el) => pad(el.getBoundingClientRect()));
+    host.querySelectorAll(".section-title, .eyebrow").forEach((el) => {
+      const rng = document.createRange();
+      rng.selectNodeContents(el);
+      [...rng.getClientRects()].forEach((r) => { if (r.width > 1) out.push(pad(r)); });
+    });
+    return out;
+  };
+  const clears = (ks, x, y) => ks.every((k) =>
+    x + TAG_W < k.x1 || x > k.x2 || y + TAG_H < k.y1 || y > k.y2);
+  /* Returns a clear point, or null when this section genuinely has no room for
+     another cursor. Never returns a point on top of copy: a decorative cursor
+     that cannot be placed cleanly is dropped instead (see PLACED below). */
+  const pick = (b) => {
+    const k = keepOut();
+    for (let i = 0; i < 60; i++) {
+      const x = rawX(b), y = rawY(b);
+      if (clears(k, x, y)) return { x, y };
+    }
+    return null;
+  };
+
+
+  /* Cursors that find no clear home are hidden rather than parked on the copy.
+     How many fit depends on the viewport, so this self-limits instead of relying
+     on a magic breakpoint: wide screens show the whole set, tighter ones fewer. */
+  const S = [];
+  els.forEach((el) => {
+    const b = box(), pt = pick(b);
+    if (!pt) { el.style.display = "none"; return; }
+    el.style.display = "";
+    S.push({ el, ax: pt.x, ay: pt.y, bx: pt.x, by: pt.y, t: 1, dur: 1, curve: 0, mode: "pause", until: 0, seed: Math.random() * 1000 });
   });
+  if (!S.length) return;
   S.forEach((s) => place(s.el, s.ax, s.ay));
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const b = box();                              // static, evenly scattered
-    S.forEach((s, i) => place(s.el, px(b), (b.h / S.length) * (i + 0.5)));
+    S.forEach((s) => { const q = pick(b); if (q) place(s.el, q.x, q.y); });
     return;
   }
 
@@ -868,8 +922,32 @@ function wireWhyCursors() {
   const segment = (s, now) => {
     const b = box();
     s.ax = s.bx; s.ay = s.by;
-    s.bx = px(b); s.by = py(b);
-    s.dur = rnd(1600, 3400); s.curve = rnd(-0.3, 0.3); s.t = 0; s.mode = "move"; s.start = now;
+    /* A destination that clears the text is not enough: the DRIFT between two
+       clear points can still cut across it. The path is a curved lerp plus a
+       small hand-held wobble, so sample that EXACT curve (not a straight line)
+       and keep a WOBBLE allowance, then only accept a destination whose whole
+       route stays clear. */
+    const ks = keepOut();
+    const WOBBLE = 2;
+    const routeClear = (bx, by, curve) => {
+      const dx = bx - s.ax, dy = by - s.ay, len = Math.hypot(dx, dy) || 1;
+      for (let tt = 0.05; tt < 1; tt += 0.05) {
+        const e = ease(tt), arc = Math.sin(Math.PI * tt) * curve * len;
+        const x = s.ax + dx * e + (-dy / len) * arc - WOBBLE;
+        const y = s.ay + dy * e + (dx / len) * arc - WOBBLE;
+        if (!ks.every((k) => x + TAG_W + WOBBLE * 2 < k.x1 || x > k.x2 ||
+                             y + TAG_H + WOBBLE * 2 < k.y1 || y > k.y2)) return false;
+      }
+      return true;
+    };
+    let nxt = pick(b), curve = rnd(-0.3, 0.3);
+    for (let tries = 0; tries < 16 && (!nxt || !routeClear(nxt.x, nxt.y, curve)); tries++) {
+      nxt = pick(b); curve = rnd(-0.3, 0.3);
+    }
+    /* Last resort: hold position rather than cross the copy. */
+    if (!nxt || !routeClear(nxt.x, nxt.y, curve)) { nxt = { x: s.ax, y: s.ay }; curve = 0; }
+    s.bx = nxt.x; s.by = nxt.y;
+    s.dur = rnd(1600, 3400); s.curve = curve; s.t = 0; s.mode = "move"; s.start = now;
   };
 
   let last = 0;

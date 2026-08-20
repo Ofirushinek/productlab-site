@@ -23,6 +23,7 @@
   "devDependencies": {
     "@storybook/html-vite": "^10.5.7",
     "chromatic": "^18.1.0",
+    "playwright-core": "^1.62.1",
     "storybook": "^10.5.7",
     "vite": "^8.2.1"
   }

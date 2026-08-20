@@ -1002,6 +1002,13 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 @media (prefers-reduced-motion: reduce) {
   .pcursor { opacity: 0.85; }   /* JS scatters them statically, no motion */
 }
+/* Below the tile-stacking breakpoint the three tiles fill the whole field, so
+   there is nowhere for a cursor to drift that is not on top of the copy. The
+   cursors are decoration (aria-hidden), so they are dropped rather than allowed
+   to sit over text. Matches the .grid--3 breakpoint above -- keep them in sync. */
+@media (max-width: 759.98px) {
+  .cursorfield { display: none; }
+}
 
 /* ---- RTL ----------------------------------------------------------------- */
 [dir="rtl"] body,
