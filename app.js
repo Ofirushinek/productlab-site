@@ -1087,7 +1087,7 @@ function render(lang) {
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=1" alt="" /></div>
+              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=2" alt="" /></div>
               <div class="agentcard__body">
                 <span class="agentcard__tag">${a.tag}</span>
                 <div class="agentcard__role">${a.role}</div>
@@ -1141,7 +1141,7 @@ function render(lang) {
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
         <div class="tilecard reveal">
-          <div class="tilecard__illo"><img src="assets/${["who-designer", "who-builder", "who-horizon"][i]}.webp?v=1" alt="" /></div>
+          <div class="tilecard__illo"><img src="assets/${["who-designer", "who-builder", "who-horizon"][i]}.webp?v=2" alt="" /></div>
           <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
         </div>`).join("")}
     </div>
