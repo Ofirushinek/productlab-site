@@ -72,10 +72,42 @@
 
   --ease-pl: cubic-bezier(0.16, 1, 0.3, 1);
 
+  /* CONTROL SIZE LADDER — every interactive control is one of these four heights
+     and nothing in between. 8px steps, so controls always line up with each other
+     and with the spacing scale below. An icon-only control is a SQUARE at its own
+     rung (min-width == height), per the standing button rule.
+       xs 32  quiet inline toggles
+       sm 40  header / secondary buttons
+       md 48  primary buttons, form fields
+       lg 56  hero-scale CTA
+     Adding a fifth rung is a design-system decision, not a local override. */
+  --ctl-xs: 32px;
+  --ctl-sm: 40px;
+  --ctl-md: 48px;
+  --ctl-lg: 56px;
+
+  /* SPACING SCALE — 8px grid with a single 4px half-step for tight optical gaps.
+     Use these for gap/padding/margin instead of ad-hoc rem values. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* icon sizes, paired to the control ladder */
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+
   /* layout */
   --pad-x: clamp(1.25rem, 5vw, 3rem);
   --maxw: 1120px;
   --maxw-narrow: 760px;
+  /* header bar: two rungs of the ladder plus its breathing room (40 + 12 + 12) */
+  --nav-h: 64px;
+  --nav-h-mobile: 56px;
 }
 
 /* ---- Reset / base -------------------------------------------------------- */
@@ -195,8 +227,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* SYSTEM RULE: a button is NEVER narrower than its height (min-width = height).
    Icon-only buttons therefore render at least square, never a thin sliver. */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem;
-  height: 3rem; min-width: 3rem; padding-inline: 1.5rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  height: var(--ctl-md); min-width: var(--ctl-md); padding-inline: var(--space-5);
   border-radius: var(--radius-md);
   font-family: inherit; font-size: var(--text-body); font-weight: 600;
   border: 1px solid transparent;
@@ -205,7 +237,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
               border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl), opacity 0.2s var(--ease-pl);
 }
 .btn:active { transform: scale(0.975); }
-.btn svg { width: 18px; height: 18px; }
+.btn svg { width: var(--icon-md); height: var(--icon-md); }
 
 .btn--primary { background: var(--pl-fg); color: var(--pl-bg); box-shadow: var(--shadow-pl-md); }
 .btn--primary:hover { opacity: 0.9; }
@@ -217,7 +249,9 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .btn--wa:hover { background: var(--pl-elevated); border-color: var(--pl-fg); }
 .btn--wa svg { color: #25D366; }
 
-.btn--sm { height: 2.5rem; min-width: 2.5rem; padding-inline: 1.1rem; font-size: var(--text-sm); }
+.btn--sm { height: var(--ctl-sm); min-width: var(--ctl-sm); padding-inline: var(--space-4); font-size: var(--text-sm); }
+.btn--sm svg { width: var(--icon-sm); height: var(--icon-sm); }
+.btn--lg { height: var(--ctl-lg); min-width: var(--ctl-lg); padding-inline: var(--space-6); font-size: var(--text-body-lg); }
 
 /* Icon-only button: drop the side padding so min-width (== height) makes it a
    perfect SQUARE. An icon-only control is never wider than it is tall. Use this
@@ -230,7 +264,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .btn--ghost:hover { background: var(--pl-bg-alt); border-color: var(--pl-fg); }
 .btn--ghost svg { color: var(--pl-fg-secondary); }
 
-.cta-row { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+.cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 /* invite chip */
 .chip {
@@ -249,26 +283,26 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--pl-border);
 }
-.nav__in { display: flex; align-items: center; gap: 0.75rem; height: 68px; }
-.nav__brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; margin-inline-end: auto; }
-.nav__brand img { height: 30px; width: auto; }
-.nav__brand span { font-weight: 700; color: var(--pl-fg); font-size: 1.05rem; letter-spacing: -0.02em; }
-.nav__menu { display: flex; align-items: center; gap: 0.75rem; }
+.nav__in { display: flex; align-items: center; gap: var(--space-3); height: var(--nav-h); }
+.nav__brand { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; margin-inline-end: auto; }
+.nav__brand img { height: var(--space-6); width: auto; }
+.nav__brand span { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body); letter-spacing: -0.02em; }
+.nav__menu { display: flex; align-items: center; gap: var(--space-3); }
 /* hamburger — hidden on desktop, shown on mobile */
 .nav__burger {
-  display: none; width: 2.5rem; height: 2.5rem; flex: none;
+  display: none; width: var(--ctl-sm); height: var(--ctl-sm); flex: none;
   border: 0; background: transparent; border-radius: var(--radius-md);
   place-items: center; color: var(--pl-fg);
   transition: background-color 0.2s var(--ease-pl);
 }
 .nav__burger:hover { background: var(--pl-bg-alt); }
-.nav__burger svg { width: 26px; height: 26px; }
+.nav__burger svg { width: var(--icon-lg); height: var(--icon-lg); }
 
 /* language toggle — quiet single text button (shows current language: ע / E) */
 .langtoggle {
   border: 0; background: transparent; color: var(--pl-fg-secondary);
   font-family: inherit; font-weight: 700; font-size: var(--text-body); line-height: 1;
-  min-width: 2rem; height: 2rem; padding-inline: 0.5rem; border-radius: var(--radius-md);
+  min-width: var(--ctl-xs); height: var(--ctl-xs); padding-inline: var(--space-2); border-radius: var(--radius-md);
   display: inline-grid; place-items: center;
   transition: background-color 0.2s var(--ease-pl), color 0.2s var(--ease-pl);
 }
@@ -282,7 +316,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .langswitch { position: relative; display: inline-flex; }
 /* square icon button (width = the btn--sm height), never a thin sliver */
 /* square + no side padding now come from the shared .btn--icon modifier */
-.langswitch__btn svg { width: 18px; height: 18px; }
+.langswitch__btn svg { width: var(--icon-md); height: var(--icon-md); }
 .langswitch.is-open .langswitch__btn { background: var(--pl-bg-alt); border-color: var(--pl-border-strong); }
 /* RULE: don't show the button's tooltip while its dropdown is already open —
    the options are right there, the hint is redundant. */
@@ -377,8 +411,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 .card:hover { border-color: var(--pl-border-strong); box-shadow: var(--shadow-pl-md); }
 .card__ico {
-  width: 44px; height: 44px; border-radius: var(--radius-md);
-  display: grid; place-items: center; margin-bottom: 1rem;
+  width: var(--ctl-sm); height: var(--ctl-sm); border-radius: var(--radius-md);
+  display: grid; place-items: center; margin-bottom: var(--space-4);
   background: color-mix(in srgb, var(--pl-accent) 12%, transparent);
   color: var(--pl-accent);
 }
@@ -395,7 +429,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   border-radius: var(--radius-lg); padding: 1.4rem 1.5rem; box-shadow: var(--shadow-pl-sm);
 }
 .deliv__num {
-  flex: none; width: 38px; height: 38px; border-radius: var(--radius-md);
+  flex: none; width: var(--ctl-sm); height: var(--ctl-sm); border-radius: var(--radius-md);
   display: grid; place-items: center; font-weight: 700; color: var(--pl-accent-fg);
   background: var(--pl-accent);
 }
@@ -787,7 +821,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* Add-user form (admin CRM). DS tokens only; dir-aware via logical properties. */
 .roster__add { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
 .roster__input {
-  flex: 1 1 16rem; min-width: 12rem; height: 2.75rem;
+  flex: 1 1 16rem; min-width: 12rem; height: var(--ctl-md);
   padding: 0 0.9rem; border: 1px solid var(--pl-border-strong);
   border-radius: var(--radius-md); background: var(--pl-surface);
   color: var(--pl-fg); font-family: inherit; font-size: var(--text-body);
@@ -825,7 +859,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* Expand chevron (opens the per-row edit detail). */
 .roster__expandcell { width: 1%; padding-inline-end: 0.35rem; }
 .roster__expand {
-  display: grid; place-items: center; width: 1.9rem; height: 1.9rem;
+  display: grid; place-items: center; width: 1.9rem; height: var(--ctl-xs);
   padding: 0; border: 1px solid var(--pl-border); border-radius: var(--radius-md);
   background: var(--pl-surface); color: var(--pl-fg-secondary); cursor: pointer;
   transition: color 0.2s var(--ease-pl), border-color 0.2s var(--ease-pl), background 0.2s var(--ease-pl);
@@ -882,7 +916,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   font-weight: 600; font-size: 0.72rem; letter-spacing: 0.04em;
   text-transform: uppercase; color: var(--pl-fg-secondary);
 }
-.roster__input--sm { height: 2.4rem; flex: none; min-width: 0; width: 100%; font-size: var(--text-sm); }
+.roster__input--sm { height: var(--ctl-sm); flex: none; min-width: 0; width: 100%; font-size: var(--text-sm); }
 .roster__notes {
   width: 100%; min-height: 4.5rem; resize: vertical;
   padding: 0.6rem 0.9rem; border: 1px solid var(--pl-border-strong);
@@ -963,8 +997,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 [dir="rtl"] .why .card { text-align: right; }
 .whytile__num {
   display: inline-grid; place-items: center;
-  width: 44px; height: 44px; border-radius: var(--radius-md);
-  margin-bottom: 1rem; direction: ltr;
+  width: var(--ctl-sm); height: var(--ctl-sm); border-radius: var(--radius-md);
+  margin-bottom: var(--space-4); direction: ltr;
   background: color-mix(in srgb, var(--pl-accent) 12%, transparent);
   color: var(--pl-accent);
   font-size: 1.25rem; font-weight: 700; line-height: 1;
@@ -1035,7 +1069,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 /* ---- Ofir revisions (2026-08-03) ---------------------------------------- */
 /* text wordmark replaces logo image (nav + footer) */
-.nav__brand--text { font-weight: 700; color: var(--pl-accent); font-size: 1.75rem; letter-spacing: -0.03em; text-decoration: none; }
+.nav__brand--text { font-weight: 700; color: var(--pl-accent); font-size: 1.5rem; letter-spacing: -0.03em; text-decoration: none; }
 .footer__wordmark { font-weight: 700; color: var(--pl-accent); font-size: 1.35rem; letter-spacing: -0.03em; }
 
 /* icon on every accordion row in the unified Details section */
@@ -1049,9 +1083,9 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 @media (max-width: 620px) {
   /* 3-zone header: WhatsApp (left) · wordmark (center) · hamburger (right).
      PHYSICAL left/right (not logical) so it's identical in HE and EN. */
-  .nav__in { position: relative; display: block; height: 60px; }
+  .nav__in { position: relative; display: block; height: var(--nav-h-mobile); }
   .nav__brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0; }
-  .nav__brand--text { font-size: 1.5rem; }
+  /* wordmark is one size on every surface -- no mobile override */
   .nav__book { position: absolute; left: var(--pad-x); top: 50%; transform: translateY(-50%);
     width: 2.5rem; padding-inline: 0; gap: 0; }
   .nav__book .btn__label { display: none; }
@@ -1076,7 +1110,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   /* MOBILE tray: hide the desktop globe dropdown, show the text toggle instead */
   .langswitch { display: none; }
   .nav__menu > .langtoggle { display: inline-grid; }
-  .nav__menu .langtoggle, .nav__menu .nav__student { width: 100%; height: 2.75rem; justify-content: center; }
+  .nav__menu .langtoggle, .nav__menu .nav__student { width: 100%; height: var(--ctl-md); justify-content: center; }
   .nav__menu .langtoggle {
     border: 1px solid var(--pl-border-strong); border-radius: var(--radius-md);
     background: var(--pl-surface); color: var(--pl-fg); font-size: var(--text-body);
