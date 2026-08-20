@@ -129,6 +129,12 @@ const I18N = {
     hero_title_b: ".",
     hero_sub: "ב-3 שעות תקימו עם Claude צוות סוכני AI משלכם, ותתחילו לבנות איתו את המוצר הראשון שלכם. בזמן אמת.",
     hero_points: ["זיכרון משותף", "בלי קוד", "צוות שנשאר איתכם"],
+    /* new one-view hero (2026-08-20): headline split into its two sentences,
+       sub split into line units the design controls, register CTA */
+    hero_t1: "מרעיון למציאות.",
+    hero_t2a: "עולם חדש של עבודה עם ",
+    hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI משלכם,", "ותתחילו לבנות איתו את המוצר הראשון שלכם.", "בזמן אמת."],
+    hero_cta: "הרשמה למחזור הבא",
     session: {
       badge: "המפגש הבא",
       when_label: "מתי?",
@@ -217,9 +223,9 @@ const I18N = {
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "agent-pd", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
-      { img: "agent-cpo", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
-      { img: "agent-cto", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
+      { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
+      { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
+      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
     ],
     ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה. יחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
     ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
@@ -369,6 +375,10 @@ const I18N = {
     hero_title_b: ".",
     hero_sub: "In 3 hours, create your own AI agent team with Claude, and start building your first product with it. Live.",
     hero_points: ["Shared memory", "No code", "A team that stays with you"],
+    hero_t1: "From idea to reality.",
+    hero_t2a: "A new world of working with ",
+    hero_sub_lines: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
+    hero_cta: "Register for the next cohort",
     session: {
       badge: "Next session",
       when_label: "When?",
@@ -457,9 +467,9 @@ const I18N = {
     ofir_name: "Ofir Rushinek",
     ofir_role: "The operator",
     agents: [
-      { img: "agent-pd", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
-      { img: "agent-cpo", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
-      { img: "agent-cto", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
+      { img: "crew-designer", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
+      { img: "crew-strategist", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
+      { img: "crew-architect", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
     ],
     ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with an AI team I built for myself - partners in thinking, planning, design, and building. Together we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
     ofir_why: "Now I want to help you build a team like that for yourself too.",
@@ -986,22 +996,17 @@ function render(lang) {
   <!-- 1 HERO — full-bleed COZY CAFE SCENE as the background (the visual IS the bg).
        Title sits over it, no separate graphic. Background photo is a PLACEHOLDER
        (warm gradient) until the generated cafe image lands (OpenAI billing gate). -->
-  <section class="hero hero--scene">
-    <div class="wrap hero__inner reveal">
-      <h1 class="hero__title">${t.hero_title_a}<br class="hero__br"><span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</h1>
-      <p class="hero__sub">${t.hero_sub}</p>
-      <ul class="hero__points">
-        ${t.hero_points.map((p) => `<li>${p}</li>`).join("")}
-      </ul>
+  <section class="hero hero--oneview">
+    <div class="hero__content">
+      <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
+      <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
+      <div class="hero__cta"><button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button></div>
     </div>
-    <div class="hero__media">
-      <picture>
-        <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-mobile-2.webp?v=1" />
-        <source type="image/webp" srcset="assets/hero-even-2.webp?v=1" />
-        <source type="image/jpeg" media="(max-width: 760px)" srcset="assets/hero-mobile-2.jpg?v=1" />
-        <img class="hero__img" src="assets/hero-even-2.jpg?v=1" alt="" width="1536" height="1024" fetchpriority="high" decoding="async" onload="this.classList.add('is-loaded')" />
-      </picture>
-    </div>
+    <picture class="hero__bg">
+      <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=1" />
+      <source type="image/webp" srcset="assets/hero-room.webp?v=1" />
+      <img class="hero__img is-loaded" src="assets/hero-room.webp?v=1" alt="" width="2560" height="1440" fetchpriority="high" decoding="async" />
+    </picture>
   </section>
 
   <!-- 1b NEXT SESSION — a FLAT full-width STRIP (like the site's other section bands),
@@ -1044,7 +1049,7 @@ function render(lang) {
     </div>
     <div class="proof" style="margin-top:2rem">
       <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/thispage.png" alt="" /></div>
+        <div class="proof__shot"><img src="assets/thispage-2.jpg?v=1" alt="" /></div>
         <div class="proof__body">
           <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
         </div>
@@ -1082,7 +1087,7 @@ function render(lang) {
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.png?v=3" alt="" /></div>
+              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=1" alt="" /></div>
               <div class="agentcard__body">
                 <span class="agentcard__tag">${a.tag}</span>
                 <div class="agentcard__role">${a.role}</div>
@@ -1136,7 +1141,7 @@ function render(lang) {
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
         <div class="tilecard reveal">
-          <div class="tilecard__illo"><img src="assets/${["tile-designer", "tile-builder", "tile-nextai"][i]}.png?v=3" alt="" /></div>
+          <div class="tilecard__illo"><img src="assets/${["who-designer", "who-builder", "who-horizon"][i]}.webp?v=1" alt="" /></div>
           <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
         </div>`).join("")}
     </div>

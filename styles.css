@@ -538,7 +538,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
   transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl); }
 .tilecard:hover { border-color: var(--pl-border-strong); box-shadow: var(--shadow-pl-md); }
-.tilecard__illo { height: 13.5rem; overflow: hidden; background: #e9e0cd; }
+.tilecard__illo { height: 13.5rem; overflow: hidden; background: #eac49a; }
 .tilecard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .tilecard__body { padding: 1.6rem; flex: 1; }
 .tilecard__body h3 { font-size: var(--text-h3); margin-bottom: 0.5rem; }
@@ -1117,20 +1117,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   }
   .nav__menu .nav__student .btn__label { display: inline; }
 
-  /* hero 3-point line -> a clean stacked BULLET LIST on mobile */
-  /* .hero--scene prefix beats the base `.hero__points{align-items:center}` (specificity) */
-  .hero--scene .hero__points { flex-direction: column; align-items: flex-start; gap: 0.5rem; width: 100%; }
-  .hero--scene .hero__points li { display: flex; align-items: baseline; gap: 0.55rem; }
-  .hero--scene .hero__points li::before,
-  .hero--scene .hero__points li:not(:first-child)::before { content: "•"; color: #c4b5fd; font-weight: 700; margin-inline-end: 0; }
-
-  /* HERO proportion — variant A (Ofir-picked): big/bold headline leads, with an
-     enlarged, more-present description. Phone-only override; desktop (>=860px)
-     keeps its own display sizing untouched. */
-  .hero--scene .hero__title { font-size: 2.35rem; line-height: 1.05; font-weight: 800; letter-spacing: -0.02em; max-width: 15ch; }
-  /* description sits at bullet weight (700) so it reads solid, not lighter than the points below it */
-  .hero--scene .hero__sub { font-size: 1.28rem; line-height: 1.4; margin-top: 1.15rem; max-width: 26ch; font-weight: 700; }
-  .hero--scene .hero__points { margin: 1.6rem 0 0; }
+  /* (old hero--scene mobile rules removed with the scene hero, 2026-08-20) */
   /* headline wraps naturally on phone (the EN forced break is off globally) */
 
   /* agenda cards -> stacked (badge on top, then title, then description) */
@@ -1146,7 +1133,6 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 
 /* on phones use the PORTRAIT hero image as-is (no mirror) so it reads clearly */
-@media (max-width: 760px) { [dir="ltr"] .hero__media img { transform: none; } }
 
 /* ===== THE TEAM — one bounded panel: leader on top, AI crew grouped below ===== */
 .team { margin-top: 2rem; border: 1px solid var(--pl-border); border-radius: var(--radius-2xl);
@@ -1173,7 +1159,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 @media (min-width: 720px) { .team__agents { grid-template-columns: repeat(3, 1fr); } }
 .agentcard { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm); }
-.agentcard__illo { height: 10rem; overflow: hidden; background: #e9e0cd; }
+.agentcard__illo { height: 13rem; overflow: hidden; background: #eac49a; }
 .agentcard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 /* mobile: cards go full-width, so the fixed 10rem strip crops the character to
    just the face. Give the illo more height to reveal the hands/props it's holding. */
@@ -1209,90 +1195,94 @@ body.modal-open { overflow: hidden; }
 .modal__close:hover { background: var(--pl-bg-alt); color: var(--pl-fg); }
 .modal__close svg { width: 18px; height: 18px; }
 
-/* ===== HERO SCENE — title ALWAYS overlays the image (mobile + desktop) ===== */
-.hero--scene { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 82vh; }
-/* LQIP blur-up: a ~28px blurred data-URI shows INSTANTLY behind the hero image
-   so the fold is never an empty gray box; the sharp img fades in over it. */
-.hero__media { position: absolute; inset: 0; z-index: 0; background-color: #1a120b;
-  background-image: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAATABwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCnHIOlQ3LfMKghkz3pZpOK5pKzsbxd43Lgl/cYrMeN2YkU9pCsdQi6wK1SIZFCxz1qZifWiipluEdhshOyqh60UVURSP/Z");
-  background-size: cover; background-position: center; }
-.hero__media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
-.hero__img { opacity: 0; transition: opacity 0.6s ease; }
-.hero__img.is-loaded { opacity: 1; }
-[dir="ltr"] .hero__media img { transform: scaleX(-1); }
-@media (prefers-reduced-motion: reduce) {
-  .hero__img { transition: none; }
-}
-/* scrim — mobile default: vertical wash, darkest at the top behind the title */
-.hero--scene::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(180deg, rgb(16 11 7 / 0.76) 0%, rgb(16 11 7 / 0.50) 42%, rgb(16 11 7 / 0.34) 100%); }
-.hero__inner { position: relative; z-index: 2; padding-block: clamp(2rem, 7vw, 3rem); }
-[dir="rtl"] .hero__inner { text-align: right; }
-.hero--scene .hero__title { font-size: var(--text-display); letter-spacing: -0.03em; line-height: 1.04; max-width: 16ch;
-  color: #ffffff; text-shadow: 0 1px 24px rgb(0 0 0 / 0.45); }
-/* English hero runs longer than Hebrew — dial the display size down a touch (LTR only). */
-[dir="ltr"] .hero--scene .hero__title { font-size: clamp(2.5rem, 5.2vw, 3.9rem); max-width: 18ch; }
-/* Headline break hook. The EN forced break is OFF: with the current headline the
-   natural wrap already lands "AI agents." on its own line at every desktop width
-   (the .mark is white-space:nowrap), and forcing it only created a dangling
-   "with" line in the 860-899px band. Kept as a hook for future copy. */
-.hero__br { display: none; }
-.hero--scene .hero__title .mark { color: #c4b5fd; white-space: nowrap; }
-.hero--scene .hero__sub { margin-top: 1.3rem; font-size: var(--text-body-lg); color: rgb(255 255 255 / 0.92);
-  max-width: 46ch; font-weight: 500; text-shadow: 0 1px 16px rgb(0 0 0 / 0.45); }
-.hero__points { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.9rem; list-style: none; margin: 1.75rem 0 0; padding: 0; }
-.hero__points li { font-weight: 700; color: #ffffff; font-size: var(--text-body); text-shadow: 0 1px 14px rgb(0 0 0 / 0.5); }
-.hero__points li:not(:first-child)::before { content: "•"; color: #c4b5fd; margin-inline-end: 0.9rem; font-weight: 700; }
+/* ============================================================================
+   HERO — text lives ON the image at every width, and can never reach the
+   characters, because both are fractions of the same box.
 
-/* DESKTOP: taller, and the scrim shifts to the reading side; title sits on your side,
-   puppet faces stay clear. EN mirrors the image so faces swing to the far side. */
-@media (min-width: 860px) {
-  /* Full-bleed at every width. Height is bounded and tracks the viewport width so
-     object-fit:cover shows a stable slice in the mid-range; width stays 100% so the
-     hero never shrinks / leaves a paper margin when the viewport widens or the page
-     is zoomed out. (aspect-ratio + max-height used to shrink the WIDTH past ~2000px,
-     which read as the image being "cut off on the sides".) */
-  .hero--scene { width: 100%; height: clamp(660px, 45vw, 900px); min-height: 660px; max-height: 900px; }
-  /* two-layer scrim: darkens the BOTTOM (for the small text) + the reading side (for the title) */
-  [dir="rtl"] .hero--scene::after { background:
-    linear-gradient(to top, rgb(12 8 5 / 0.82) 0%, rgb(12 8 5 / 0.40) 26%, rgb(12 8 5 / 0) 50%),
-    linear-gradient(to left, rgb(14 10 6 / 0.70) 0%, rgb(14 10 6 / 0.32) 46%, rgb(14 10 6 / 0) 70%); }
-  [dir="ltr"] .hero--scene::after { background:
-    linear-gradient(to top, rgb(12 8 5 / 0.82) 0%, rgb(12 8 5 / 0.40) 26%, rgb(12 8 5 / 0) 50%),
-    linear-gradient(to right, rgb(14 10 6 / 0.70) 0%, rgb(14 10 6 / 0.32) 46%, rgb(14 10 6 / 0) 70%); }
-  .hero__inner { display: flex; flex-direction: column; justify-content: center; min-height: 660px; max-width: 42rem; padding-block: 2rem; }
-  /* RTL: pin the title block to the reading side (right), aligned to the page's
-     content column. The .hero__inner carries `.wrap` (margin-inline:auto), which
-     otherwise CENTERS the block; combined with the aspect-ratio/min-height box
-     inflation on mid-width desktops this drifted the HE headline left ("LTR-looking").
-     100vw escapes the inflated flex box so the block's start edge lands on the
-     same column edge as the rest of the page. EN keeps .wrap's auto margins. */
-  [dir="rtl"] .hero__inner {
-    margin-inline-start: max(0px, calc((100vw - var(--maxw)) / 2));
-    margin-inline-end: auto;
-  }
-  /* LTR mirror: pin the English title block to the LEFT content column (same
-     start edge as the nav wordmark + the sections below) and left-align its
-     text, so the subhead + points align to the title exactly like Hebrew does.
-     Without this the 42rem block floated centered, so nothing shared an edge. */
-  [dir="ltr"] .hero__inner {
-    margin-inline-start: max(0px, calc((100vw - var(--maxw)) / 2));
-    margin-inline-end: auto;
-    text-align: left;
-  }
+   Two photographs, swapped by viewport width alone:
+     <= 760px  portrait asset (1600x2233) - characters begin at 45% of height
+     >  760px  16:9 asset     (2560x1440) - characters begin at 40% of height
+   (Those percentages are measured from the pixels, per-row variance down the
+   centre column. Re-measure if an image is replaced.)
+
+   The hero takes the ACTIVE image's own aspect ratio, so the photo is never
+   cropped and never letterboxed - the image IS the background, edge to edge.
+   The hero is a size container and every piece of text, the gaps between them
+   and the button are all sized in cqh (fractions of the hero's height). Text
+   and image therefore scale on ONE curve: shrink the screen and the type
+   shrinks with the room, exactly like lowering a poster. The text block is
+   budgeted to ~80% of the safe band, so the button's bottom edge always keeps
+   clearance above the characters. No floors that could outgrow the band; the
+   probe (hero-probe.js, 24 viewports) asserts the button stays inside the band
+   and no text drops below 12px.
+   ============================================================================ */
+
+.hero--oneview{
+  position:relative; overflow:hidden; background:transparent;
+  padding-top:0 !important; display:block;
+  height:auto; aspect-ratio:1600/2233;          /* portrait asset's own ratio */
+  container-type:size;
+}
+@media (min-width:761px){
+  .hero--oneview{ aspect-ratio:2560/1440; }     /* 16:9 asset's own ratio */
 }
 
-/* SHORT PHONES (iPhone SE-class, ~375x553 visible in Safari). The hero is the only
-   thing above the fold on a phone, and the session strip has to keep peeking under
-   it. When the viewport is short, a taller headline + description overflows the
-   hero's 82vh box and pushes the strip off-screen, so tighten the hero's VERTICAL
-   RHYTHM only here. Type sizes and measure are untouched; taller phones (>=640px)
-   keep the approved spacing. */
-@media (max-width: 620px) and (max-height: 620px) {
-  .hero__inner { padding-block: 1.25rem; }
-  .hero--scene .hero__sub { margin-top: 0.9rem; }
-  .hero--scene .hero__points { margin: 1.15rem 0 0; }
+/* the image is the background: absolute, full box, its own ratio, no crop */
+.hero__bg{ position:absolute; inset:0; margin:0; z-index:0; line-height:0; font-size:0; }
+.hero__bg img{ width:100%; height:100%; max-height:none; display:block; object-fit:cover; object-position:center; }
+
+/* the safe band: 45% of the portrait scene, 40% of the wide one */
+.hero__content{
+  position:absolute; top:0; left:0; right:0; height:45%; z-index:2;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding:3.2cqh 1.1rem 0; text-align:center;
 }
+@media (min-width:761px){
+  /* Ofir 2026-08-20: sit the text block 64px lower on desktop (8px grid).
+     The centre column the text occupies is clear down to ~45.7% of the scene
+     (measured), so the drop fits inside the clearance at laptop widths and up.
+     On the small-desktop range (761-1179) the hero is short enough that 64px
+     is ~13% of it and would land the button on the characters, so the drop
+     steps down the grid there: 16px. */
+  .hero__content{ height:40%; padding-top:calc(4.2cqh + 16px); }
+}
+@media (min-width:1180px){
+  .hero__content{ padding-top:calc(4.2cqh + 64px); }
+}
+
+.hero__title{ margin:0; max-width:100%; overflow-wrap:break-word; letter-spacing:-0.02em; text-align:center; }
+.hero__title .mark{ color:var(--pl-accent); }
+
+/* All type in cqh = one curve with the image. Ceilings only, no big floors. */
+.ht1{ display:block; font-weight:800; color:var(--pl-fg); line-height:1.12;
+      font-size:clamp(1.5rem, 7.2cqh, 5rem); }
+.ht2{ display:block; font-weight:800; color:var(--pl-fg); line-height:1.15;
+      font-size:clamp(1rem, 4.6cqh, 3rem); margin-top:0.3cqh; }
+
+/* balance the wrap: never a line of one orphaned word ("משלכם,") */
+.hero__sub{ margin:1.4cqh 0 0; color:var(--pl-fg-body); font-weight:500; text-align:center;
+  max-width:min(60ch, 92%); text-wrap:balance; }
+.sd{ display:block; line-height:1.5; font-size:clamp(0.75rem, 2.6cqh, 1.375rem); text-wrap:balance; }
+/* one sentence on the wide scene, stacked thoughts on the tall one */
+@media (min-width:761px){
+  .sd{ font-size:clamp(0.75rem, 2.2cqh, 1.375rem); }
+  .sd:nth-child(2){ display:inline; }
+  .sd:nth-child(3){ display:inline; margin-inline-start:0.32em; }
+}
+
+.hero__cta{ margin-top:1.8cqh; display:flex; justify-content:center; }
+.hero__cta .btn{
+  height:clamp(2rem, 6cqh, 3.5rem); min-width:0;
+  padding-inline:clamp(0.9rem, 3.4cqh, 2rem);
+  font-size:clamp(0.75rem, 2.6cqh, 1.125rem);
+}
+@media (min-width:761px){
+  .hero__cta .btn{ height:clamp(2rem, 5.4cqh, 3.5rem); font-size:clamp(0.75rem, 2.2cqh, 1.125rem); }
+}
+.btn--accent{ background:var(--pl-accent); color:#fff; border-color:transparent; box-shadow:var(--shadow-pl-md); }
+.btn--accent:hover{ background:var(--pl-accent-hover); }
+.btn--accent svg{ color:#fff; width:1em; height:1em; }
+
 
 /* ---- NEXT-SESSION strip — a FLAT full-width band like the site's other sections,
    flush below the hero (a hint peeks above the fold). NOT a floating/rounded card.
