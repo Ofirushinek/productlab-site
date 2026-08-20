@@ -1039,8 +1039,9 @@ function render(lang) {
   </div></section>
 
   <!-- 2 WHY NOW — three rounded tiles (bold numeral on top) -->
-  <section class="section section--alt"><div class="wrap why">
+  <section class="section section--alt why-section">
     ${whyCursorsMarkup()}
+    <div class="wrap why">
     <div class="reveal">
       <span class="eyebrow">${t.why_eyebrow}</span>
       <h2 class="section-title why__title">${t.why_heading}</h2>

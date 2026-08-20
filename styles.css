@@ -987,7 +987,12 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 
 /* ---- WHY NOW — centered header + three rounded numbered tiles ------------- */
-.why { text-align: center; position: relative; }
+/* The cursor field is a direct child of the SECTION (not .wrap), so it spans
+   the full section incl. padding-block - cursors disappear at the section's
+   bottom, never mid-card (Ofir 2026-08-20). The section is the positioning
+   context; .why no longer needs to be. */
+.why-section { position: relative; }
+.why { text-align: center; }
 .why .why__title { max-width: 24ch; margin-inline: auto; }
 [dir="rtl"] .why { text-align: right; }
 [dir="rtl"] .why .why__title { margin-inline: 0; }
