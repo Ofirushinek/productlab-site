@@ -105,6 +105,10 @@
   --pad-x: clamp(1.25rem, 5vw, 3rem);
   --maxw: 1120px;
   --maxw-narrow: 760px;
+  /* third rung of the container ladder: a feature block that carries a large
+     photograph beside a text column needs more width than a reading section.
+     Used only by .grad-wrap today (>=1180px). */
+  --maxw-wide: 1360px;
   /* header bar: two rungs of the ladder plus its breathing room (40 + 12 + 12) */
   --nav-h: 64px;
   --nav-h-mobile: 56px;
@@ -1406,6 +1410,76 @@ body.modal-open { overflow: hidden; }
   color: var(--pl-accent); opacity: 0.35;
 }
 @media (max-width: 700px) { .quote-grid { grid-template-columns: 1fr; } }
+
+/* ---- A DAY IN THE LIFE OF A GRADUATE ------------------------------------
+   Placement: directly below the last testimonial, on the SAME alt band —
+   padding-top:0 so the two sections read as one continuous stripe.
+
+   THE PHOTOGRAPH IS NEVER CROPPED. It is a 3:2 frame (1536x1024) and it ships
+   at 3:2 at every width, mobile and desktop. The earlier centred 4:5 desktop
+   crop is gone: it cut the man out of frame and halved two puppets.
+
+   WHY THE SPLIT STARTS AT 1180 AND NOT 980. A 3:2 photo in a half column is
+   short; a three-paragraph text column is tall. Measured at 980px the frame
+   renders ~345px against a ~677px text column — a 2:1 mismatch that no column
+   ratio fixes (the minimum mismatch across every ratio at that width is still
+   ~300px, because widening the text shortens it but shortens the photo too).
+   Two levers close it instead:
+     (a) the split only starts at 1180px — below that the block STACKS and ends
+         on the image, which is the composition that was approved for mobile;
+     (b) at >=1180 the container widens to --maxw-wide (1360) so the image
+         column can actually carry the 3:2 — frame ~559px against a ~666px text
+         column at 1440 (16%), vs ~230px short (35%) inside the 1120 container.
+   align-items:center, so what is left reads as a photograph with air around it. */
+.grad-section { padding-top: 0; }
+.grad-wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad-x); }
+.grad { display: grid; gap: clamp(2rem, 5vw, 3rem); align-items: center; }
+.grad__text { max-width: 62ch; }
+.grad__title { max-width: 18ch; }
+.grad__paras { margin-top: 1.25rem; display: grid; gap: 0.9rem; }   /* tight paragraph rhythm, not spaced standalone lines */
+.grad__paras p { font-size: var(--text-body-lg); line-height: 1.65; color: var(--pl-fg-body); font-weight: 500; }
+
+/* the polaroid — a real object on the page: white stock, deep bottom strip, a
+   pin through the top edge, and a small tilt so it reads as pinned up, not
+   placed. One-off decorative treatment, scoped to this section. */
+.grad__media { display: flex; justify-content: center; }
+.grad__frame {
+  position: relative; margin: 0;
+  width: 100%; max-width: 640px;
+  background: var(--pl-surface);
+  /* the stock scales WITH the print, so the deep bottom strip stays the same
+     share of the photo at 320px as it is at 1440px (measured 9.4% of frame
+     width at both ends) instead of swallowing a phone-sized polaroid. */
+  padding: clamp(9px, 2.2%, 16px) clamp(9px, 2.2%, 16px) clamp(30px, 8.5%, 60px);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pl-lg);
+  transform: rotate(-1.4deg);
+}
+.grad__frame img {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 3 / 2; object-fit: cover;      /* source IS 3:2 — nothing is cropped */
+  border-radius: 0; background: var(--pl-illo-bg);   /* a print has square corners; the stock around it carries the 4px */
+}
+.grad__pin {
+  position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+  width: 20px; height: 20px; border-radius: 999px;
+  background:
+    radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0) 48%),
+    var(--pl-accent);
+  box-shadow: 0 3px 7px -1px rgb(10 10 10 / 0.40), 0 10px 12px -6px rgb(10 10 10 / 0.30);
+}
+
+/* SPLIT — text column, then the photograph. In RTL the grid flips on its own
+   (logical columns), so the text sits right and the polaroid left. */
+@media (min-width: 1180px) {
+  .grad-wrap { max-width: var(--maxw-wide); }
+  .grad { grid-template-columns: minmax(0, 27rem) minmax(0, 1fr); gap: 4rem; }
+  .grad__text { max-width: none; }
+  .grad__media { justify-content: center; }
+  .grad__frame { max-width: 860px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .grad__frame { transform: none; } }
 
 /* centered hero placeholder visual (swiss-army-knife until the real graphic lands) */
 .hero__art--center { max-width: 320px; margin-inline: auto; margin-top: 2.75rem; }

@@ -237,6 +237,16 @@ const I18N = {
       { q: "אופיר לימד אותי לבנות ולנהל צוות של סוכני בינה מלאכותית (AI Agents) אוטונומיים, ללא צורך בכתיבת קוד. בעבודה משותפת הוא עזר לי לבנות בסיס עבודה מוצק לרעיון שליווה אותי הרבה זמן ולא הצלחתי להוציא לפועל, ומשם כבר יצאתי לדרך. ממליצה בחום למי שרוצה ללמוד איך באמת להשתמש ב-AI כדי לבנות דברים, לא רק לדבר עליהם.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona", li: "https://www.linkedin.com/in/ronabenziongalezer/" },
     ],
 
+    // "יום בחייו של בוגר Product Lab" — copy v5 (Copywriter, 2026-08-21).
+    // 3 flowing paragraphs, rendered with tight paragraph spacing (NOT standalone lines).
+    grad_kicker: "כמה חודשים אחרי הסדנה",
+    grad_title: "יום בחייו של בוגר Product Lab.",
+    grad_paras: [
+      "בוקר. עולה לו רעיון, ויש לו לאן ללכת איתו. הוא כותב לצוות שניים-שלושה משפטים וממשיך ביום שלו.",
+      "האסטרטג כבר מבין את ההקשר ומצרף את מי שצריך. המעצב נותן לו צורה בשפת העיצוב של המוצר. הקופירייטר מנסח אותו בקול שהמוצר כבר מדבר בו, והארכיטקט מסמן דרך לבנות אותו ממה שהמערכת באמת יודעת לעשות.",
+      "כשהוא חוזר לשולחן מחכים לו כיוון ומשהו אמיתי להגיב עליו. עד הערב יש כבר גרסה ראשונה. והשאלה שהוא קם איתה בבוקר השתנתה. כבר לא איך לבנות. מה לבנות.",
+    ],
+
     incl_eyebrow: "הפרטים",
     incl_title: "כל מה שצריך לדעת",
     // ONE unified accordion. `open:true` = logistics facts shown by default.
@@ -479,6 +489,15 @@ const I18N = {
     quotes: [
       { q: "I came away with a top-tier professional team (agents), created my own work right after the session, and got input I couldn't get before. Highly recommend.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella", li: "https://www.linkedin.com/in/ella-cohen-736698a8/" },
       { q: "Ofir taught me to build and manage a team of autonomous AI agents, with no code required. Working together, he helped me build a solid foundation for an idea I'd carried for a long time and hadn't managed to execute, and from there I was off and running. Highly recommend to anyone who wants to learn how to really use AI to build things, not just talk about them.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona", li: "https://www.linkedin.com/in/ronabenziongalezer/" },
+    ],
+
+    // "A day in the life of a Product Lab graduate" — copy v5 (Copywriter, 2026-08-21).
+    grad_kicker: "A few months after the workshop",
+    grad_title: "A day in the life of a Product Lab graduate.",
+    grad_paras: [
+      "Morning. An idea shows up, and he has somewhere to take it. He writes his team two or three sentences and gets on with his day.",
+      "The strategist already has the context and pulls in whoever's needed. The designer gives it shape in the product's own design language. The copywriter phrases it in the voice the product already speaks, and the architect maps a way to build it from what the existing system can actually do.",
+      "By the time he's back at his desk there's a direction and something real to react to. By evening there's a first version. And the question he wakes up with has changed. Not how to build anymore. What to build.",
     ],
 
     incl_eyebrow: "The details",
@@ -1132,6 +1151,28 @@ function render(lang) {
           </figcaption>
           <blockquote>${qt.q}</blockquote>
         </figure>`).join("")}
+    </div>
+  </div></section>
+
+  <!-- 8b A DAY IN THE LIFE OF A GRADUATE — sits directly BELOW the last testimonial.
+       Same --pl-bg-alt band as the section above it and NO top padding, so the two
+       read as one continuous band rather than two stacked stripes.
+       The photograph is the FULL 3:2 frame at every width — never cropped. -->
+  <section class="section section--alt grad-section"><div class="grad-wrap">
+    <div class="grad">
+      <div class="grad__text reveal">
+        <span class="eyebrow">${t.grad_kicker}</span>
+        <h2 class="section-title grad__title">${t.grad_title}</h2>
+        <div class="grad__paras">
+          ${t.grad_paras.map((g) => `<p>${g}</p>`).join("")}
+        </div>
+      </div>
+      <div class="grad__media reveal">
+        <figure class="grad__frame">
+          <span class="grad__pin" aria-hidden="true"></span>
+          <img src="assets/grad-day.webp" alt="" loading="lazy" decoding="async" width="1536" height="1024" />
+        </figure>
+      </div>
     </div>
   </div></section>
 
