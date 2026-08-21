@@ -7,7 +7,7 @@ const preview: Preview = {
     backgrounds: { disable: true }, // tokens set the canvas
     options: {
       storySort: {
-        order: ["Brand", "Foundations", "UI", "Components", "Sections"],
+        order: ["Overview", "Foundations", "Brand", "UI", "Components", "Sections"],
       },
     },
   },
