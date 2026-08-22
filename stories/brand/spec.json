@@ -1,0 +1,133 @@
+{
+  "_": "Product Lab logo system - measured off assets/logo/reference/SOURCE-OF-TRUTH-logo-v2-chatgpt.webp (1448x1086), Ofir's approved logo v2. THE LOGO IS THE ICON: the four heads, nothing else. Do not re-derive these values by eye.",
+  "ground": "#FBEAD9",
+  "ink": "#402D1F",
+  "characters": {
+    "yellow": {
+      "order": 1,
+      "cell": "top-left",
+      "body": "#E79B27",
+      "feature": "three soft leaf-shaped tufts standing up on the crown",
+      "read": "friendly, calm, open. The plainest face - it is the one that carries the palette, not a prop.",
+      "site_cast_link": "the mustard-yellow crew member (deliberately no assigned role)"
+    },
+    "orange": {
+      "order": 2,
+      "cell": "top-right",
+      "body": "#D15C05",
+      "skin": "#E8994C",
+      "beanie": "#164F6E",
+      "feature": "full round curly beard framing the whole face, plus a ribbed knit beanie",
+      "read": "grounded, steady, trustworthy. The most complex silhouette in the set.",
+      "site_cast_link": "the ginger Strategist / product manager"
+    },
+    "purple": {
+      "order": 3,
+      "cell": "bottom-left",
+      "body": "#78618A",
+      "curls": "#765E87",
+      "feature": "a crown of round bobble curls",
+      "read": "intelligent, a little creative, a little wry. Not feminine, not childish.",
+      "site_cast_link": "the purple Designer"
+    },
+    "teal": {
+      "order": 4,
+      "cell": "bottom-right",
+      "body": "#4D8F8F",
+      "feature": "round wire glasses with a warm brown rim, short spiky tufts on the crown",
+      "read": "clever, warm, slightly quirky",
+      "site_cast_link": "the teal Architect / CTO"
+    }
+  },
+  "shared_face_language": {
+    "_": "Every head obeys all of these. This is what makes four characters read as one cast.",
+    "silhouette": "a soft rounded dome - wide, flat-bottomed, shoulders of the shape rounded. NOT an egg, NOT a circle.",
+    "crop": "head only. No neck, no shoulders, no body, no clothing. The beanie is part of the head.",
+    "facing": "dead front, symmetrical, looking straight at the viewer. Never at each other.",
+    "eyes": "two large white ovals with big round black pupils, same size and same spacing on all four, sitting on a shared eye line",
+    "nose": "one soft rounded blob in the centre, same body colour, slightly proud of the face, overlapping the top of the smile",
+    "mouth": "a single thin curved smile line. Same curve on all four.",
+    "brows": "two short soft strokes in a warmer, slightly deeper tone than the body",
+    "texture": "a fine felt / embroidered stitch pattern inside the flat colour, low contrast - present but never noisy",
+    "lighting": "one soft key from upper-left, gentle ambient fill, soft edge shading, a faint contact shadow under the head. No rim light, no gloss, no reflection, no scene."
+  },
+  "icon": {
+    "layout": "2x2 grid. NOT a row. NOT a container - the four heads float on the ground with no plate, no frame, no outer edge.",
+    "reading_order": [
+      "yellow",
+      "orange",
+      "purple",
+      "teal"
+    ],
+    "measured_block": {
+      "w": 305,
+      "h": 400,
+      "note": "at reference scale; taller than wide because the top row's tufts and beanie add height"
+    },
+    "status": "THIS IS THE LOGO and it still stands alone wherever the name is not needed. As of 2026-08-22 there are also two approved LOCKUPS pairing it with the name - see 'wordmark'."
+  },
+  "tiers": {
+    "_": "Each tier is AUTHORED at its own detail budget. They are siblings, not exports of each other. Downsampling tier 1 to 24px gives a smudge with the right silhouette.",
+    "expressive": {
+      "sizes": "256px and up",
+      "detail": "full felt stitch texture, soft shading, contact shadow",
+      "use": "hero, brand sheet, social, deck title, merch"
+    },
+    "working": {
+      "sizes": "48-128px",
+      "detail": "form and shading only, texture removed - at this size stitch becomes noise",
+      "use": "site header, deck corner, PDF, email signature"
+    },
+    "signal": {
+      "sizes": "32px and below",
+      "detail": "solid single-colour silhouette, eyes knocked out, one identifying feature only",
+      "use": "favicon, app icon, tiny UI"
+    }
+  },
+  "known_weakness": {
+    "monochrome": "The monochrome heads in the reference is the weakest part of it. The faces turn into dark blobs with hairline knockouts, the beard and curls read as noise, and the treatment is inconsistent - some features are line, some are solid mass. A one-colour mark cannot be a desaturated version of the colour art; it has to be REDRAWN as a deliberate reduction: solid silhouette, eyes knocked out, one feature per character, nothing else. Flagged to Ofir 2026-08-21."
+  },
+  "wordmark": {
+    "in_scope": true,
+    "ruling": "APPROVED 2026-08-22, and this REVERSES the 2026-08-21 'text is not relevant' note. Ofir picked the Fredoka two-line lockup on sight: 'I love this as the official logo. The fact that the text is one above the other, it suits the logo.' He also overruled my recommendation of a restrained geometric face - his call is that the roundness should ECHO the characters rather than counterweight them, so the whole identity speaks one language. Reference image of the approved lockup: reference/APPROVED-lockup-2026-08-22.jpg",
+    "face": "Fredoka (Google Fonts), fonts/Fredoka.ttf",
+    "colour": "#402D1F on light, #F7EFE2 on dark. The heads never change.",
+    "lockups": {
+      "primary": {
+        "structure": "mark left, name right on TWO LINES (Product / Lab), vertically CENTRED on the mark",
+        "why_two_lines": "the two lines of type answer the two rows of heads - that is the idea in it",
+        "alignment_note": "Ofir caught the first build cap-aligning the type to the TOP of the mark. The type block is shorter than the mark, so aligning tops floats the name high and leaves a hole beneath it. It is CENTRED.",
+        "name_cap_height": "0.28 of mark height (band 0.26-0.30)",
+        "gap": "0.14 of mark height",
+        "leading": 0.92,
+        "file": "out/lockups/primary-master.png"
+      },
+      "compact": {
+        "structure": "mark ABOVE, name underneath on TWO lines - 'Product' then 'Lab', centred",
+        "when": "Ofir 2026-08-22: 'a version when it's rising - the text should be rising when there is not enough space.' Use wherever the horizontal lockup will not fit: a narrow column, a mobile header, a square slot.",
+        "sizing_rule": "'PRODUCT' alone is measured to the mark's width, and 'Lab' is set at that SAME type size underneath. The long word does the measuring. The first build set the whole name on one line sized to the mark's width and Ofir rejected it - fitting two words across a narrow mark makes the type tiny. Letting the longer word set the scale locks the block to the mark instead of shrinking to fit it.",
+        "alignment": "'Lab' is CENTRED under 'Product'. The mark is symmetrical, so the whole lockup keeps one vertical axis; flush-left introduces an edge the mark does not have. A flush-left variant exists in lockups.py as 'vertical-left' if a surface ever needs it.",
+        "leading": 0.92,
+        "gap": "0.10 of mark height",
+        "minimum": "120px wide - verified, the type is still legible there and tight at 96",
+        "file": "out/lockups/compact-master.png"
+      }
+    },
+    "minimum": "Primary lockup: 64px mark height. Compact lockup: 120px wide. Below that the mark goes alone; below 32px, one character."
+  },
+  "icons": {
+    "_": "The tier is chosen by the size the icon is SEEN at, not by the word 'icon'. A browser tab is 16-32px and needs the single character; an iOS home-screen tile is ~180px, four times the 48px floor, and should carry the whole mark. Built 2026-08-22 after Ofir showed his home screen and I noticed I had made every platform icon from the one head.",
+    "full_mark": {
+      "files": "apple-touch-icon.png (180), android-chrome-192/512.png, app-icon-1024.png, mark-tile-256/512.png",
+      "build": "the four-head mark centred on brand cream #FBEAD9, 11% padding, square. Opaque ground is required - iOS composites a transparent icon onto black.",
+      "use": "iOS/Android home screen, app tile, PWA manifest, store listing, anywhere the icon renders above 48px"
+    },
+    "single_character": {
+      "files": "favicon.ico (16/32/48), favicon-16/32/48/64/96/128.png",
+      "build": "the orange character, squared with even margin, per-size unsharp below 64px - a plain Lanczos downsample of a soft felt head goes mushy where the beanie meets the face",
+      "use": "browser tab and anything at or below 48px",
+      "honest_limit": "at 16px this is a beanie and a colour, not a readable face. The authored signal-tier redraw is still open."
+    },
+    "ios_caching_warning": "An iOS home-screen shortcut caches its icon AT THE MOMENT IT WAS PINNED. Shipping a new apple-touch-icon does NOT update an already-pinned shortcut - the user has to delete it and re-add it from Safari. Tell them this or they will think the deploy failed."
+  }
+}
