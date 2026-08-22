@@ -6,6 +6,11 @@
  *     nothing else, so if the file 404s, is blocked, or throws, the visitor
  *     simply gets the site. Nothing in index.html is hidden waiting on it.
  *   - prefers-reduced-motion skips it ENTIRELY. No intro — not a slower one.
+ *   - It also ARMS THE HERO'S FIRST-LOAD ZOOM, by putting `pl-zoom` on <html>
+ *     the moment the curtain begins to lift. That class is the only trigger
+ *     for the zoom, so the zoom inherits every rule above for free: once a
+ *     session, root route only, never under reduced motion, and not at all if
+ *     this file fails. See the .hero__bg block in styles.css.
  *   - Total 3030ms. "snap" is the approved handover.
  *   - The heads are pre-normalised; every transform comes from the generated
  *     keyframes in assets/intro-keyframes.css. Nothing is scaled here.
@@ -19,6 +24,7 @@
 
   var KEY = 'pl-intro-seen-v1';
   var DUR = 3030;               // must match --intro-dur in assets/intro-keyframes.css
+  var LIFT = 2630;              // 86.799% of DUR — where @keyframes iveil starts fading
   var HEADS = ['yellow', 'orange', 'purple', 'teal'];   // beat order, per the approved cut
 
   try {
@@ -36,6 +42,11 @@
     try { seen = !!window.sessionStorage.getItem(KEY); } catch (e) {}
     if (seen) return;
     try { window.sessionStorage.setItem(KEY, '1'); } catch (e) {}
+
+    // Park the hero photo on its old framing NOW, while nothing is on screen
+    // yet. The curtain is about to cover everything, so the visitor never sees
+    // this state - they only ever see it move off it. styles.css, .hero__bg.
+    try { document.documentElement.classList.add('pl-zoom-park'); } catch (e) {}
 
     var veil = document.createElement('div');
     veil.id = 'pl-intro';
@@ -73,8 +84,23 @@
 
     document.body.appendChild(veil);
 
+    // Arm the hero zoom. Idempotent, because two paths reach it: the timer at
+    // LIFT, and an early dismissal — someone who taps at 800ms must get the
+    // zoom under the curtain they just snapped away, not a jump at 2630ms.
+    // If app.js has not painted the hero yet (it renders after `await
+    // loadAuth()`), the class is simply already on <html> when the element
+    // arrives, and the animation starts then. It cannot be missed.
+    var armed = false;
+    function arm() {
+      if (armed) return;
+      armed = true;
+      try { document.documentElement.classList.add('pl-zoom'); } catch (e) {}
+    }
+    window.setTimeout(arm, LIFT);
+
     var gone = false;
     function end() {
+      arm();
       if (gone) return;
       gone = true;
       veil.classList.add('pl-done');

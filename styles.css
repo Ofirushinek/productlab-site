@@ -1243,9 +1243,44 @@ body.modal-open { overflow: hidden; }
   .hero--oneview{ aspect-ratio:2560/1440; }     /* 16:9 asset's own ratio */
 }
 
-/* the image is the background: absolute, full box, its own ratio, no crop */
-.hero__bg{ position:absolute; inset:0; margin:0; z-index:0; line-height:0; font-size:0; }
+/* the image is the background: absolute, full box, its own ratio, no crop.
+   FIRST-LOAD ZOOM (2026-08-22, Ofir approved: 2%, 1200ms, ease-out, fired as
+   the brand curtain lifts). Two rules make it behave:
+
+   1. THE 2% LIVES IN THE BOX, NOT IN A PERMANENT TRANSFORM. The box is drawn
+      2% oversize (inset:-1% resolves against width for the sides and height
+      for top/bottom, so the ratio is untouched and object-fit:cover is still
+      an exact fit). At rest there is NO transform at all - the photo
+      rasterises at full resolution and nothing stays composited once the move
+      is over. A permanent scale(1.02) would have left it slightly soft for the
+      whole visit for the sake of 1.2 seconds.
+   2. THE ANIMATION STARTS FROM THE RECIPROCAL. 1/1.02 = 0.980392, which is
+      EXACTLY the framing that shipped before this - so the move begins on the
+      old frame and settles onto the new one.
+
+   Only .hero__bg moves. .hero__content (title, sub, button) is a sibling
+   outside it and does not shift by a single pixel - measured, 0.0000px drift
+   across 146 frames. The hero already has overflow:hidden, so the 2% is clipped.
+
+   The `pl-zoom` class is put on <html> by assets/intro.js and by nothing else,
+   at the moment the curtain starts lifting (or the moment a visitor dismisses
+   it early). No class = no animation = the resting frame, which is what a
+   repeat visit, a deep link, a reduced-motion visitor and a failed intro.js
+   all correctly get. */
+.hero__bg{ position:absolute; inset:-1%; margin:0; z-index:0; line-height:0; font-size:0; }
 .hero__bg img{ width:100%; height:100%; max-height:none; display:block; object-fit:cover; object-position:center; }
+
+@keyframes hero-zoom{ from{ transform:scale(0.980392) } to{ transform:scale(1) } }
+/* Parked from the instant the curtain goes up, so the photo is ALREADY on the
+   old framing before anything is visible. Without this it sat at the resting
+   frame and snapped back at the lift — measured behind a 98%-opaque curtain,
+   so invisible in practice, but a 2% leak is not a thing to leave in on
+   purpose. The animation below fills `both`, so it owns the transform during
+   the move and holds scale(1) after it, outranking this park for good. */
+html.pl-zoom-park .hero__bg{ transform: scale(0.980392); }
+html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+/* backstop only - intro.js never adds the class under reduced motion anyway */
+@media (prefers-reduced-motion: reduce){ html.pl-zoom .hero__bg{ animation: none; } }
 
 /* the safe band: 45% of the portrait scene, 40% of the wide one */
 .hero__content{
