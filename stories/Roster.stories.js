@@ -99,15 +99,15 @@ const row = (t, r) =>
 const panel = (lang) => {
   const t = T[lang];
   const rows = [
-    { name: "Yael Holzinger", email: "yaelholz@gmail.com", state: "pending", signedIn: false,
+    { name: "Dana Levi", email: "dana.levi@example.com", state: "pending", signedIn: false,
       stage: "call_booked", source: "LinkedIn DM", next: "Intro call tomorrow 12:00",
       notes: "Interested; wants to understand where it fits her. Booked a call.", open: true },
-    { name: "Ron Yosef", email: "yosefron@gmail.com", state: "confirmed", signedIn: true,
+    { name: "Omer Bar", email: "omer.bar@example.com", state: "confirmed", signedIn: true,
       stage: "interested", source: "LinkedIn DM", next: "Awaiting reply to schedule a call",
-      phone: "0545878255", notes: "Reviewed the syllabus, looks great for beginners." },
-    { name: "Adi Lev Trulia", email: "", state: "pending", signedIn: false,
+      phone: "0500000000", notes: "Reviewed the syllabus, looks great for beginners." },
+    { name: "Noa Shani", email: "", state: "pending", signedIn: false,
       stage: "call_booked", source: "WhatsApp", next: "Intro call tomorrow ~14:00",
-      notes: "Cyber-content person, boutique studio. Name-only lead (no email yet)." },
+      notes: "Content person, boutique studio. Name-only lead (no email yet)." },
     { name: "Curious Person", email: "crasher@example.com", state: "uninvited", signedIn: true,
       stage: "dropped", source: "", next: "" },
   ];
