@@ -800,7 +800,20 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    nowhere to go but down. Below 1024 the table becomes cards (see the media
    query at the end of this block) and the question does not arise. */
 .roster__scroll {
-  overflow-x: hidden; border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
+  /* CLIP, NOT HIDDEN, AND THE OTHER AXIS SAID OUT LOUD. `overflow-x: hidden`
+     with `overflow-y` left at its initial `visible` makes the browser compute
+     that `visible` to `auto` (CSS Overflow: when one axis is not visible and the
+     other is, the visible one becomes auto) - which turned this box into its own
+     vertical SCROLL REGION. Ofir got a second scrollbar down the side of his CRM
+     and had to scroll inside a box to read it. `clip` carries no such rule, so
+     the horizontal guarantee holds and the table renders at its full natural
+     height. The PAGE is the only thing that scrolls; a long page is the right
+     answer until there are enough rows to justify pagination.
+     `display: flow-root` replaces the one thing the old scroll container was
+     silently doing for free: establishing a block formatting context, so the
+     last row's bottom margin cannot collapse out through the container's border. */
+  display: flow-root; overflow-x: clip; overflow-y: visible;
+  border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
   background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
 }
 .roster__table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
@@ -1069,7 +1082,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    the whole tablet range; the table only renders where it has real room. */
 @media (max-width: 1023px) {
   .roster__scroll {
-    overflow-x: visible; border: none; background: transparent;
+    overflow-x: visible; overflow-y: visible; border: none; background: transparent;
     box-shadow: none; border-radius: 0;
   }
   .roster__table { display: block; width: 100%; font-size: var(--text-body); }
