@@ -793,19 +793,44 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   padding: 1.25rem; border: 1px dashed var(--pl-border-strong);
   border-radius: var(--radius-lg); background: var(--pl-surface); text-align: start;
 }
+/* NOTHING IN THIS PANEL EVER SCROLLS SIDEWAYS (Ofir 2026-08-23: "look at the
+   fact that it's in horizontal scroll. This is ridiculous"). Two rules make that
+   a guarantee instead of a hope: the table is FIXED layout with a declared
+   colgroup, so no cell can widen it, and every cell wraps, so long text has
+   nowhere to go but down. Below 1024 the table becomes cards (see the media
+   query at the end of this block) and the question does not arise. */
 .roster__scroll {
-  overflow-x: auto; border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
+  overflow-x: hidden; border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
   background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
 }
 .roster__table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.roster__table--fixed { table-layout: fixed; }
 .roster__table th, .roster__table td {
-  padding: 0.85rem 1rem; text-align: start; vertical-align: middle;
-  border-bottom: 1px solid var(--pl-border); white-space: nowrap;
+  padding: var(--space-3); text-align: start; vertical-align: top;
+  border-bottom: 1px solid var(--pl-border);
+  white-space: normal; overflow-wrap: anywhere;
 }
 .roster__table th {
+  vertical-align: middle; white-space: nowrap;
   font-weight: 600; color: var(--pl-fg-secondary);
   text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem;
 }
+/* Column budget. Person and Access each carry two lines instead of taking two
+   columns apiece, which is what leaves `צעד הבא` the remaining width - it is the
+   one field that has to be readable without opening the row. */
+.roster__table--fixed .rc-chev    { width: 52px; }
+.roster__table--fixed .rc-person  { width: 20%; }
+.roster__table--fixed .rc-access  { width: 12%; }
+.roster__table--fixed .rc-stage   { width: 12%; }
+.roster__table--fixed .rc-source  { width: 12%; }
+/* 200px is measured, not guessed: the widest pair is "Unconfirm" + the remove
+   square (136 + 8 + 40 = 184) plus the cell's own 2x12px padding. */
+.roster__table--fixed .rc-actions { width: 200px; }
+/* .rc-next takes the remainder on purpose - no width declared. */
+
+/* The CRM is a data table, not a reading column: third rung of the container
+   ladder once there is room for it. */
+@media (min-width: 1180px) { .roster-wrap { max-width: var(--maxw-wide); } }
 .roster__table tbody tr:last-child td { border-bottom: none; }
 .roster__table td[data-label="Email"], .roster__table td[data-label="אימייל"] {
   color: var(--pl-fg-body); font-variant-numeric: tabular-nums;
@@ -818,12 +843,17 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .roster__badge--student {
   background: color-mix(in srgb, var(--pl-accent) 14%, transparent); color: var(--pl-accent);
 }
-.roster__actions { text-align: end; display: flex; gap: 0.5rem; justify-content: flex-end; }
+/* The cell stays a real table cell (display:flex on a <td> takes it out of the
+   table's box model); the buttons live in a wrapper inside it. */
+.roster__actions { text-align: end; }
+.roster__actionwrap { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: flex-end; }
 .roster__remove { color: var(--pl-fg-secondary); padding-inline: 0; }
 .roster__remove svg { width: 16px; height: 16px; }
 
 /* Add-user form (admin CRM). DS tokens only; dir-aware via logical properties. */
-.roster__add { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+/* Capped so the two short inputs do not stretch across the wide container the
+   table now uses - a name field is not a 600px field. */
+.roster__add { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; max-width: 52rem; }
 .roster__input {
   flex: 1 1 16rem; min-width: 12rem; height: var(--ctl-md);
   padding: 0 0.9rem; border: 1px solid var(--pl-border-strong);
@@ -852,16 +882,21 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .roster__badge--warn {
   background: color-mix(in srgb, var(--pl-crew-orange) 16%, transparent); color: var(--pl-crew-orange);
 }
+.roster__access { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
 .roster__yes {
-  display: inline-flex; align-items: center; gap: 0.35rem;
-  color: var(--pl-fg-body); font-weight: 600; font-size: var(--text-sm);
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-1);
+  color: var(--pl-fg-body); font-weight: 600; font-size: var(--text-caption);
 }
-.roster__yes svg { width: 15px; height: 15px; color: var(--pl-accent); }
-.roster__no { color: var(--pl-fg-muted); font-size: var(--text-sm); font-weight: 500; }
+.roster__yes svg { width: var(--icon-sm); height: var(--icon-sm); color: var(--pl-accent); flex: none; align-self: center; }
+.roster__whenrel { font-weight: 600; color: var(--pl-fg-body); }
+.roster__whenabs { color: var(--pl-fg-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.roster__no { color: var(--pl-fg-muted); font-size: var(--text-caption); font-weight: 500; }
+/* A value that genuinely has nothing in it recedes instead of shouting "-". */
+.roster__none { color: var(--pl-fg-muted); }
 
 /* ---- CRM mini-card extensions to the roster table ------------------------ */
 /* Expand chevron (opens the per-row edit detail). */
-.roster__expandcell { width: 1%; padding-inline-end: 0.35rem; }
+.roster__expandcell { width: 1%; padding-inline: var(--space-2); }
 .roster__expand {
   display: grid; place-items: center; width: 1.9rem; height: var(--ctl-xs);
   padding: 0; border: 1px solid var(--pl-border); border-radius: var(--radius-md);
@@ -873,7 +908,24 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .roster__expand.is-open svg { transform: rotate(180deg); }
 .roster__expand.is-open { color: var(--pl-accent); border-color: var(--pl-accent); }
 
-/* Source / next-action cells clamp long text so the row stays scannable. */
+/* Person = name over email. One cell, two lines - and the email is muted, so a
+   row with no email reads as a lead rather than as a missing field. */
+.roster__person { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.roster__pname { font-weight: 600; color: var(--pl-fg); }
+.roster__pmail {
+  font-size: var(--text-caption); color: var(--pl-fg-secondary);
+  font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+.roster__free { color: var(--pl-fg-body); }
+
+/* `צעד הבא`, read at a glance: the date and its age on one line, the action
+   itself on the next, in full. It wraps; it is never clipped and never scrolled. */
+.roster__nextcell { color: var(--pl-fg); }
+.roster__next { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); }
+.roster__nexttxt { flex: 1 1 100%; font-weight: 600; color: var(--pl-fg); }
+
+/* LEGACY - the pre-2026-08-23 markup still used by stories/Roster.stories.js
+   (Design System Lead's surface). Inert in the product. */
 .roster__cellclamp {
   max-width: 15rem; white-space: normal;
   overflow: hidden; text-overflow: ellipsis;
@@ -908,44 +960,114 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .roster__stage option { color: var(--pl-fg); background: var(--pl-surface); }
 
 /* Detail (expand) row: the inline editor for one lead. */
-.roster__detailrow > td { background: var(--pl-bg-alt); padding: 1.1rem 1rem; white-space: normal; }
+.roster__detailrow > td { background: var(--pl-bg-alt); padding: var(--space-4); white-space: normal; }
 .roster__detail {
-  display: grid; gap: 0.9rem 1.1rem;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  display: grid; gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
   align-items: start;
 }
-.roster__field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+/* Three fields, three columns - auto-fit was opening five tracks and leaving
+   half the panel empty on a wide screen. */
+@media (min-width: 1024px) { .roster__detail { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.roster__field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .roster__field--wide { grid-column: 1 / -1; }
 .roster__fieldlbl {
   font-weight: 600; font-size: 0.72rem; letter-spacing: 0.04em;
   text-transform: uppercase; color: var(--pl-fg-secondary);
 }
 .roster__input--sm { height: var(--ctl-sm); flex: none; min-width: 0; width: 100%; font-size: var(--text-sm); }
-.roster__notes {
-  width: 100%; min-height: 4.5rem; resize: vertical;
-  padding: 0.6rem 0.9rem; border: 1px solid var(--pl-border-strong);
-  border-radius: var(--radius-md); background: var(--pl-surface);
-  color: var(--pl-fg); font-family: inherit; font-size: var(--text-sm); line-height: 1.5;
+
+/* Every free-text control here is a textarea that GROWS to fit (JS: autoGrow).
+   No single-line box survives in this panel - a one-line input is exactly what
+   made `צעד הבא` scroll sideways. Starts at the 40px rung of the control ladder
+   so it still lines up with the phone input beside it. */
+.roster__ta {
+  width: 100%; min-height: var(--ctl-sm); height: auto;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--pl-border-strong); border-radius: var(--radius-md);
+  background: var(--pl-surface); color: var(--pl-fg);
+  font-family: inherit; font-size: var(--text-sm); line-height: 1.5;
   box-shadow: var(--shadow-pl-sm);
+  resize: none; overflow: hidden;
+  white-space: pre-wrap; overflow-wrap: anywhere;
   transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
-.roster__notes:focus {
+.roster__ta::placeholder { color: var(--pl-fg-muted); }
+.roster__ta:focus {
   outline: none; border-color: var(--pl-accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 18%, transparent);
 }
+
+/* ---- Note log: an ADD box over a READ-ONLY history ------------------------
+   One dated line per fact, newest on top, and every entry gets its OWN wrapper -
+   Ofir 2026-08-23: "I want each item to have its own wrapper visually within
+   this text." Nothing here is editable in place: the convention is append-only
+   (a correction is a new dated line), so the interface simply offers no way to
+   destroy one. Direction on every entry, and on every quote inside an entry, is
+   resolved from that text's own first strong character - never from the site
+   language toggle. */
+.rnotes { gap: var(--space-2); }
+.rnotes__add { display: flex; align-items: flex-start; gap: var(--space-2); }
+.rnotes__new { flex: 1 1 auto; min-width: 0; }
+.rnotes__addbtn { flex: none; }
+.rnotes__addbtn svg { width: var(--icon-sm); height: var(--icon-sm); }
+.rnotes__list { display: grid; gap: var(--space-2); margin-top: var(--space-1); }
+.rnotes__empty { margin: 0; color: var(--pl-fg-muted); font-size: var(--text-sm); font-weight: 500; }
+.rnotes__raw { display: none; }
+
+.rnote {
+  display: grid; gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--pl-border); border-radius: var(--radius-md);
+  background: var(--pl-surface);
+}
+.rnote__head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); }
+.rnote__chip {
+  flex: none; padding: var(--space-1) var(--space-2); border-radius: 999px;
+  background: color-mix(in srgb, var(--pl-fg) 8%, transparent);
+  color: var(--pl-fg-secondary);
+  font-size: var(--text-caption); font-weight: 700; line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+/* Pre-convention prose. Marked, kept, never silently reformatted. */
+.rnote__chip--legacy {
+  background: color-mix(in srgb, var(--pl-crew-orange) 14%, transparent);
+  color: var(--pl-crew-orange);
+  font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.rnote__age { font-size: var(--text-caption); font-weight: 500; color: var(--pl-fg-muted); }
+.rnote__body {
+  margin: 0; font-size: var(--text-sm); line-height: 1.6;
+  color: var(--pl-fg-body); overflow-wrap: anywhere;
+}
+/* Their words, verbatim. */
+.rnote__q { font-style: italic; font-weight: 500; color: var(--pl-fg); }
+/* Our read, not a fact: muted, and labelled so the difference is visible. */
+.rnote--opinion { background: color-mix(in srgb, var(--pl-fg) 3%, var(--pl-surface)); }
+.rnote--opinion .rnote__body { color: var(--pl-fg-secondary); }
+.rnote__tag {
+  font-size: var(--text-caption); font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--pl-fg-muted);
+}
+.rnote--legacy { border-style: dashed; }
+
 .roster__detailbar {
-  grid-column: 1 / -1; display: flex; align-items: center; gap: 0.75rem;
+  grid-column: 1 / -1; display: flex; align-items: center; gap: var(--space-3);
 }
 .roster__savemsg { font-size: var(--text-sm); font-weight: 600; }
 .roster__savemsg--ok { color: var(--pl-stage-confirmed); }
 .roster__savemsg--err { color: var(--pl-stage-dropped); }
 
-/* ---- Mobile: stack the CRM table into one card PER user ------------------
-   A 9-column table can't fit a phone, so instead of side-scrolling we turn each
-   row into a card and each cell into a "LABEL -> value" line (every td already
-   carries data-label = the column header). One outline per card, NO per-field
-   dividers, so it reads clean, not like a pile of lines. Desktop keeps the table. */
-@media (max-width: 760px) {
+/* ---- Below 1024: stack the CRM table into one card PER user --------------
+   A multi-column table can't fit a phone, so instead of side-scrolling we turn
+   each row into a card and each cell into a "LABEL -> value" line (every td
+   already carries data-label = the column header). One outline per card, NO
+   per-field dividers, so it reads clean, not like a pile of lines.
+   THE BREAKPOINT IS 1023, NOT 760 (raised 2026-08-23): between those two widths
+   the table technically fitted but `מקור` and `צעד הבא` were down to ~60px each,
+   which is a table that fits and cannot be read. Cards are the better answer for
+   the whole tablet range; the table only renders where it has real room. */
+@media (max-width: 1023px) {
   .roster__scroll {
     overflow-x: visible; border: none; background: transparent;
     box-shadow: none; border-radius: 0;
@@ -978,7 +1100,15 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   /* actions: label at start, buttons grouped at the end */
   .roster__table tr.roster__row > td.roster__actions { justify-content: flex-start; }
   .roster__table tr.roster__row > td.roster__actions::before { margin-inline-end: auto; }
-  /* stacked cells show their text in full */
+  /* Free text and the person block put the label ABOVE the value and take the
+     full card width - a wrapped paragraph squeezed against its own label reads
+     worse than no label at all. */
+  .roster__table tr.roster__row > td.roster__stack { display: block; text-align: start; }
+  .roster__table tr.roster__row > td.roster__stack::before {
+    display: block; margin-bottom: var(--space-1);
+  }
+  .roster__table tr.roster__row > td.roster__nextcell { padding-bottom: var(--space-2); }
+  /* legacy (Storybook) markup: stacked cells show their text in full */
   .roster__cellclamp { -webkit-line-clamp: unset; display: block; }
 
   /* Inline editor: a distinct panel tucked under its card (only when open;
@@ -986,8 +1116,14 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .roster__table tr.roster__detailrow:not([hidden]) { display: block; }
   .roster__table tr.roster__detailrow > td {
     display: block; border-radius: var(--radius-md);
-    margin: -0.5rem 0 0.85rem; padding: 1rem;
+    margin: -0.5rem 0 0.85rem; padding: var(--space-4);
   }
+}
+
+/* Phone: the add-entry box and its button stop competing for one line. */
+@media (max-width: 560px) {
+  .rnotes__add { flex-direction: column; align-items: stretch; }
+  .rnotes__addbtn { align-self: flex-start; }
 }
 
 /* ---- WHY NOW — centered header + three rounded numbered tiles ------------- */

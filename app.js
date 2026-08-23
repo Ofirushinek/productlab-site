@@ -325,6 +325,12 @@ const I18N = {
     roster_next_ph: "הצעד הבא (התקשרות מחר 12:00...)",
     roster_notes_ph: "מה נאמר בשיחה, הקשר, פרטים...",
     roster_phone_ph: "טלפון",
+    // Notes log (append-only, one dated line per fact). PLACEHOLDER HE copy
+    // 2026-08-23, Copywriter to refine.
+    roster_note_add: "הוספה",
+    roster_note_read: "הערכה",
+    roster_note_legacy: "ללא תאריך",
+    roster_note_empty: "אין עדיין רשומות.",
     stages: {
       invited: "הוזמן",
       interested: "מתעניין",
@@ -577,6 +583,12 @@ const I18N = {
     roster_next_ph: "The next step (Call tomorrow 12:00...)",
     roster_notes_ph: "What was discussed, context, details...",
     roster_phone_ph: "Phone",
+    // Notes log (append-only, one dated line per fact). PLACEHOLDER EN copy
+    // 2026-08-23, Copywriter to refine.
+    roster_note_add: "Add",
+    roster_note_read: "read",
+    roster_note_legacy: "Undated",
+    roster_note_empty: "No entries yet.",
     stages: {
       invited: "Invited",
       interested: "Interested",
@@ -1520,7 +1532,7 @@ function renderPrep(lang) {
   // signed in. The table is filled async by renderRoster() from admin_roster();
   // RLS is the real gate (non-admins get zero rows even if they force this open).
   const studentsPanel = `
-    <section class="section" data-roster-section><div class="wrap">
+    <section class="section" data-roster-section><div class="wrap roster-wrap">
       <div class="reveal">
         <span class="eyebrow">${t.roster_kicker}</span>
         <h2 class="section-title">${t.admin_roster_title}</h2>
@@ -1545,15 +1557,19 @@ function renderPrep(lang) {
     { id: "content", label: t.tab_content, panel: contentPanel },
     ...(isAdmin ? [{ id: "students", label: t.tab_students, panel: studentsPanel }] : []),
   ];
+  // The tab you were on is where you come back to. Any re-render of this page
+  // (language switch, hash route, an auth event) used to drop you back on the
+  // first tab; on a CRM being worked row by row that loses your place.
+  const activeTab = tabs.some((tb) => tb.id === prepTab()) ? prepTab() : tabs[0].id;
   // Tab bar aligns to the reading-start edge automatically (flex-start honors dir:
   // right in Hebrew RTL, left in English LTR) — no explicit side needed.
   const tabBar = tabs.length > 1 ? `
     <div class="wrap"><div class="tabs" role="tablist" data-tabs>
-      ${tabs.map((tb, i) => `<button type="button" class="tabs__btn" role="tab"
-        data-tab="${tb.id}" aria-selected="${i === 0 ? "true" : "false"}">${tb.label}</button>`).join("")}
+      ${tabs.map((tb) => `<button type="button" class="tabs__btn" role="tab"
+        data-tab="${tb.id}" aria-selected="${tb.id === activeTab ? "true" : "false"}">${tb.label}</button>`).join("")}
     </div></div>` : "";
   const panelsHtml = tabs.length > 1
-    ? tabs.map((tb, i) => `<div class="tabpanel" data-tab-panel="${tb.id}"${i === 0 ? "" : " hidden"}>${tb.panel}</div>`).join("")
+    ? tabs.map((tb) => `<div class="tabpanel" data-tab-panel="${tb.id}"${tb.id === activeTab ? "" : " hidden"}>${tb.panel}</div>`).join("")
     : contentPanel;
 
   document.getElementById("app").innerHTML = `
@@ -1581,6 +1597,20 @@ function renderPrep(lang) {
   if (isAdmin) { wireRosterAdd(lang); renderRoster(lang); }
 }
 
+/* Which student-area tab is open. Module state so it survives a re-render, and
+   sessionStorage so it survives a reload / an OAuth round trip, per browser tab. */
+const PREP_TAB_KEY = "pl_prep_tab";
+let PREP_TAB = null;
+function prepTab(next) {
+  if (next !== undefined) {
+    PREP_TAB = next;
+    try { sessionStorage.setItem(PREP_TAB_KEY, next); } catch (e) {}
+    return PREP_TAB;
+  }
+  if (PREP_TAB === null) { try { PREP_TAB = sessionStorage.getItem(PREP_TAB_KEY); } catch (e) {} }
+  return PREP_TAB;
+}
+
 /* Student-area tab bar: switch which panel is visible. No-op when there's only
    one tab (no bar rendered). Panels stay in the DOM (hidden), so the async
    roster fetch into [data-roster] still lands even on the inactive tab. */
@@ -1591,6 +1621,7 @@ function initPrepTabs() {
   const panels = [...document.querySelectorAll("[data-tab-panel]")];
   btns.forEach((b) => b.addEventListener("click", () => {
     const id = b.getAttribute("data-tab");
+    prepTab(id);
     btns.forEach((x) => x.setAttribute("aria-selected", x === b ? "true" : "false"));
     panels.forEach((p) => {
       const show = p.getAttribute("data-tab-panel") === id;
@@ -1609,14 +1640,193 @@ function initPrepTabs() {
    confirmed) with profiles (who actually signed in). Each row is one of:
    confirmed student · added-but-pending · a gate-crasher (signed in, not invited).
    Every write below succeeds only for the admin (RLS); after each one we re-fetch. */
-function rosterDate(s, lang) {
-  if (!s) return "";
-  try { return new Date(s).toLocaleDateString(lang === "he" ? "he-IL" : "en-GB",
-    { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return s || ""; }
+/* ---- CONTENT DECIDES DIRECTION, THE SITE TOGGLE NEVER DOES ---------------
+   Ofir 2026-08-23: "if it's in English, make it left to right, regardless of the
+   language of the website." Every free-text value in this panel is dir-resolved
+   from its OWN first strong character - the same rule the browser uses for
+   dir="auto", computed here because the value also has to drive the direction of
+   the wrapper around it (a note card, a quote span, a table cell). */
+const RTL_CHARS = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+const LTR_CHARS = /[A-Za-z\u00C0-\u024F\u0370-\u058F\u1E00-\u1EFF]/;
+function textDir(v, fallback) {
+  const str = String(v == null ? "" : v);
+  const r = str.search(RTL_CHARS);
+  const l = str.search(LTR_CHARS);
+  if (r === -1 && l === -1) return fallback || "auto";
+  if (r === -1) return "ltr";
+  if (l === -1) return "rtl";
+  return r < l ? "rtl" : "ltr";
+}
+
+/* ---- Time, presented ----------------------------------------------------
+   Nothing in this panel shows a raw timestamp. Every moment renders as HOW LONG
+   AGO (the thing that is actually read) beside the moment itself, in the UI
+   language, as TWO separate elements - a Hebrew word and a Latin numeral in one
+   bidi run reorder unpredictably, two isolated spans never do. */
+function localeOf(lang) { return lang === "he" ? "he-IL" : "en-GB"; }
+
+function relAge(d, lang, dateOnly) {
+  try {
+    const rtf = new Intl.RelativeTimeFormat(localeOf(lang), { numeric: "auto" });
+    const now = new Date();
+    const a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const b = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const days = Math.round((b - a) / 86400000);
+    if (days === 0) {
+      // A DD.MM entry is a DAY, not a moment - "8 hours ago" would be invented.
+      if (dateOnly) return rtf.format(0, "day");
+      const mins = Math.round((d - now) / 60000);
+      if (Math.abs(mins) < 60) return rtf.format(mins, "minute");
+      return rtf.format(Math.round((d - now) / 3600000), "hour");
+    }
+    if (Math.abs(days) < 31) return rtf.format(days, "day");
+    if (Math.abs(days) < 365) return rtf.format(Math.round(days / 30), "month");
+    return rtf.format(Math.round(days / 365), "year");
+  } catch (e) { return ""; }
+}
+
+// A DB timestamp -> { stamp, rel, title }. Null when there is nothing to show.
+function rosterWhen(v, lang) {
+  if (!v) return null;
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return null;
+  const loc = localeOf(lang);
+  let stamp = String(v);
+  try {
+    stamp = d.toLocaleDateString(loc, { day: "numeric", month: "short" })
+      + " · " + d.toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit" });
+  } catch (e) {}
+  let title = stamp;
+  try { title = d.toLocaleString(loc, { dateStyle: "full", timeStyle: "short" }); } catch (e) {}
+  return { stamp, rel: relAge(d, lang), title };
+}
+
+/* ---- Notes: an append-only log, one dated line per fact ------------------
+   Convention (CMO 2026-08-23, shared brain "CRM NOTE CONVENTION"):
+     `DD.MM - one fact` · newest on top · a line is NEVER edited or deleted (a
+     correction is a NEW dated line) · "quoted text" is the candidate's own words
+     · a line starting `הערכה:` / `read:` is our read, not a fact · and the next
+     action never lives here, it lives in `צעד הבא` alone.
+   STORAGE IS UNCHANGED - still the one `notes` text column, no DB work. What
+   changed is the interface: an ADD box plus a READ-ONLY history, so "never
+   destroy a line" is enforced structurally instead of by discipline at 11pm on a
+   phone. Adding PREPENDS one stamped line to the raw string and rewrites not a
+   single existing character, so the history is loss-proof by construction.
+   Entry boundary is the CMO's parse contract. Anything that is not a dated line
+   is LEGACY prose from before the convention - rendered as its own entry and
+   labelled undated, never dropped and never a crash. Every row is legacy today,
+   so that is the common path, not the edge case. */
+const NOTE_LINE = /^\s*(\d{1,2})\.(\d{1,2})\s*-?\s*/;
+const NOTE_OPINION = /^\s*(הערכה|read)\s*:\s*/i;
+
+function noteStampToday() {
+  const d = new Date();
+  return String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0");
+}
+
+// DD.MM carries no year. Assume the current one; if that lands in the future a
+// note about the past must belong to last year.
+function noteDate(dd, mm) {
+  const now = new Date();
+  let d = new Date(now.getFullYear(), Number(mm) - 1, Number(dd));
+  if (isNaN(d.getTime())) return null;
+  if (d - now > 7 * 86400000) d = new Date(now.getFullYear() - 1, Number(mm) - 1, Number(dd));
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function parseNotes(raw) {
+  const out = [];
+  String(raw == null ? "" : raw).split(/\r?\n/).forEach((line) => {
+    if (!line.trim()) return;
+    const m = line.match(NOTE_LINE);
+    if (m) out.push({ dd: m[1], mm: m[2], text: line.slice(m[0].length).trim(), legacy: false });
+    else out.push({ dd: null, mm: null, text: line.trim(), legacy: true });
+  });
+  return out;
+}
+
+// A "..." span is THEIR words: quote-styled, and it resolves its OWN direction
+// from its own first strong character even inside an opposite-direction line.
+function noteBodyHtml(text) {
+  return String(text).split(/("[^"]*"|\u201C[^\u201D]*\u201D)/g).map((p) => {
+    if (!p) return "";
+    const isQuote = /^"[^"]*"$/.test(p) || /^\u201C[^\u201D]*\u201D$/.test(p);
+    return isQuote
+      ? `<span class="rnote__q" dir="${textDir(p)}">${escapeHtml(p)}</span>`
+      : escapeHtml(p);
+  }).join("");
+}
+
+// One entry = one wrapper. That is Ofir's ask ("each item its own wrapper").
+function noteEntryHtml(e, lang, t) {
+  const opinion = NOTE_OPINION.test(e.text);
+  const body = opinion ? e.text.replace(NOTE_OPINION, "") : e.text;
+  let head;
+  if (e.legacy) {
+    head = `<span class="rnote__chip rnote__chip--legacy">${escapeHtml(t.roster_note_legacy)}</span>`;
+  } else {
+    const d = noteDate(e.dd, e.mm);
+    const age = d ? relAge(d, lang, true) : "";
+    head = `<span class="rnote__chip" dir="ltr">${escapeHtml(e.dd)}.${escapeHtml(e.mm)}</span>`
+      + (age ? `<span class="rnote__age" dir="auto">${escapeHtml(age)}</span>` : "");
+  }
+  if (opinion) head += `<span class="rnote__tag">${escapeHtml(t.roster_note_read)}</span>`;
+  const cls = "rnote" + (opinion ? " rnote--opinion" : "") + (e.legacy ? " rnote--legacy" : "");
+  return `<article class="${cls}" dir="${textDir(body, "auto")}">
+        <div class="rnote__head">${head}</div>
+        <p class="rnote__body">${noteBodyHtml(body)}</p>
+      </article>`;
+}
+
+function notesListHtml(raw, lang, t) {
+  const entries = parseNotes(raw);
+  if (!entries.length) return `<p class="rnotes__empty">${escapeHtml(t.roster_note_empty)}</p>`;
+  return entries.map((e) => noteEntryHtml(e, lang, t)).join("");
+}
+
+/* `צעד הבא` is one short line by convention (`DD.MM - verb who`). Read at a
+   glance in the collapsed row: the date becomes a chip with its age, the verb
+   stays plain text, and it WRAPS - this field is the one Ofir called out for
+   scrolling sideways, so it may never be a single-line box again. */
+function nextActionHtml(v, lang) {
+  const str = String(v == null ? "" : v).trim();
+  if (!str) return `<span class="roster__none">—</span>`;
+  const m = str.match(NOTE_LINE);
+  if (!m) return `<span class="roster__next" dir="${textDir(str, "auto")}">${escapeHtml(str)}</span>`;
+  const d = noteDate(m[1], m[2]);
+  const age = d ? relAge(d, lang, true) : "";
+  const rest = str.slice(m[0].length).trim();
+  return `<span class="roster__next" dir="${textDir(rest, "auto")}">`
+    + `<span class="rnote__chip" dir="ltr">${escapeHtml(m[1])}.${escapeHtml(m[2])}</span>`
+    + (age ? `<span class="rnote__age" dir="auto">${escapeHtml(age)}</span>` : "")
+    + `<span class="roster__nexttxt">${escapeHtml(rest)}</span></span>`;
+}
+
+/* A textarea that grows to fit instead of scrolling. Every free-text control in
+   this panel is one of these; nothing here is a single-line input any more. */
+function autoGrow(el) {
+  if (!el) return;
+  el.style.height = "auto";
+  const h = el.scrollHeight;
+  if (h <= 0) return;                       // hidden row: size it when it opens
+  let extra = 0;
+  try {
+    const cs = getComputedStyle(el);        // scrollHeight excludes the border
+    if (cs.boxSizing === "border-box") {
+      extra = (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0);
+    }
+  } catch (e) {}
+  el.style.height = (h + extra) + "px";
 }
 
 // The 6 CRM funnel stages (order = funnel order). Labels live in I18N[lang].stages.
 const CRM_STAGES = ["invited", "interested", "call_booked", "confirmed", "attended", "dropped"];
+
+/* Which rows are expanded, keyed by the PERSON and not by their index - a
+   re-fetch can reorder the list, and losing the row you were reading is exactly
+   the complaint this panel already had. Survives every re-render of the table. */
+const ROSTER_OPEN = new Set();
+function rowKey(r) { return r.email ? "e:" + r.email : "i:" + (r.id == null ? "" : r.id); }
 
 // Attribute-safe escape (escapeHtml does not touch quotes; input values need it).
 function escapeAttr(s) { return escapeHtml(s).replace(/"/g, "&quot;"); }
@@ -1739,8 +1949,11 @@ async function renderRoster(lang) {
     else if (r.confirmed) pill = `<span class="roster__badge roster__badge--ok">${t.roster_pill_confirmed}</span>`;
     else pill = `<span class="roster__badge">${t.roster_pill_pending}</span>`;
 
+    const when = r.signed_in ? rosterWhen(r.first_signed_in_at, lang) : null;
     const signedIn = r.signed_in
-      ? `<span class="roster__yes">${I.check} ${rosterDate(r.first_signed_in_at, lang)}</span>`
+      ? `<span class="roster__yes" title="${escapeAttr(when ? when.title : "")}">${I.check}
+           <span class="roster__whenrel" dir="auto">${escapeHtml(when && when.rel ? when.rel : "")}</span>
+           <span class="roster__whenabs" dir="auto">${escapeHtml(when ? when.stamp : "")}</span></span>`
       : `<span class="roster__no">${t.roster_signedin_no}</span>`;
 
     // CRM fields, all guarded (undefined -> default) so a missing column is safe.
@@ -1763,40 +1976,54 @@ async function renderRoster(lang) {
          <button type="button" class="btn btn--ghost btn--sm roster__remove" data-remove-i="${i}" aria-label="${t.roster_remove}" data-tooltip="${t.roster_remove}">${I.x}</button>`;
     }
 
-    // Main row (scannable) + a hidden detail row (edit source/next/phone/notes).
+    // Name and email are ONE cell (the email is a second line, not a column of
+    // its own) and so are the access pill and the signed-in moment. Two fewer
+    // columns is what buys `מקור` and `צעד הבא` enough width to be read without
+    // clicking - which is the whole complaint.
+    const person = `<span class="roster__person">
+          <span class="roster__pname" dir="${textDir(name, "auto")}">${escapeHtml(name) || `<span class="roster__none">—</span>`}</span>
+          ${r.email ? `<span class="roster__pmail" dir="ltr">${escapeHtml(r.email)}</span>` : ""}
+        </span>`;
+
+    const open = ROSTER_OPEN.has(rowKey(r));
+
+    // Main row (scannable) + a detail row (edit source/next/phone + the note log).
     return `
       <tr class="roster__row">
         <td class="roster__expandcell">
-          <button type="button" class="roster__expand" data-expand="${i}" aria-expanded="false" aria-label="${t.roster_details}" data-tooltip="${t.roster_details}">${I.chev}</button>
+          <button type="button" class="roster__expand${open ? " is-open" : ""}" data-expand="${i}" aria-expanded="${open ? "true" : "false"}" aria-label="${t.roster_details}" data-tooltip="${t.roster_details}">${I.chev}</button>
         </td>
-        <td data-label="${t.roster_col_name}">${escapeHtml(name) || "-"}</td>
-        <td data-label="${t.roster_col_email}" class="roster__emailcell">${escapeHtml(r.email || "") || "-"}</td>
-        <td data-label="${t.roster_col_status}">${pill}</td>
-        <td data-label="${t.roster_col_signedin}">${signedIn}</td>
+        <td data-label="${t.roster_col_name}" class="roster__stack">${person}</td>
+        <td data-label="${t.roster_col_status}"><span class="roster__access">${pill}${signedIn}</span></td>
         <td data-label="${t.roster_col_stage}">${stageSelect(i, stage)}</td>
-        <td data-label="${t.roster_col_source}" class="roster__cellclamp">${escapeHtml(source) || "-"}</td>
-        <td data-label="${t.roster_col_next}" class="roster__cellclamp">${escapeHtml(next) || "-"}</td>
-        <td class="roster__actions" data-label="${t.roster_col_actions}">${actions}</td>
+        <td data-label="${t.roster_col_source}" class="roster__stack roster__free" dir="${textDir(source, "auto")}">${escapeHtml(source) || `<span class="roster__none">—</span>`}</td>
+        <td data-label="${t.roster_col_next}" class="roster__stack roster__nextcell">${nextActionHtml(next, lang)}</td>
+        <td class="roster__actions" data-label="${t.roster_col_actions}"><span class="roster__actionwrap">${actions}</span></td>
       </tr>
-      <tr class="roster__detailrow" data-detail="${i}" hidden>
-        <td colspan="9">
+      <tr class="roster__detailrow" data-detail="${i}"${open ? "" : " hidden"}>
+        <td colspan="7">
           <div class="roster__detail">
             <label class="roster__field">
               <span class="roster__fieldlbl">${t.roster_col_source}</span>
-              <input class="roster__input roster__input--sm" type="text" data-field="source" data-i="${i}" value="${escapeAttr(source)}" placeholder="${escapeAttr(t.roster_source_ph)}" autocomplete="off" />
+              <textarea class="roster__ta" data-field="source" data-i="${i}" data-grow rows="1" dir="auto" placeholder="${escapeAttr(t.roster_source_ph)}">${escapeHtml(source)}</textarea>
             </label>
             <label class="roster__field">
               <span class="roster__fieldlbl">${t.roster_col_next}</span>
-              <input class="roster__input roster__input--sm" type="text" data-field="next_action" data-i="${i}" value="${escapeAttr(next)}" placeholder="${escapeAttr(t.roster_next_ph)}" autocomplete="off" />
+              <textarea class="roster__ta" data-field="next_action" data-i="${i}" data-grow rows="1" dir="auto" placeholder="${escapeAttr(t.roster_next_ph)}">${escapeHtml(next)}</textarea>
             </label>
             <label class="roster__field">
               <span class="roster__fieldlbl">${t.roster_col_phone}</span>
-              <input class="roster__input roster__input--sm" type="tel" data-field="phone" data-i="${i}" value="${escapeAttr(phone)}" placeholder="${escapeAttr(t.roster_phone_ph)}" autocomplete="off" />
+              <input class="roster__input roster__input--sm" type="tel" data-field="phone" data-i="${i}" dir="ltr" value="${escapeAttr(phone)}" placeholder="${escapeAttr(t.roster_phone_ph)}" autocomplete="off" />
             </label>
-            <label class="roster__field roster__field--wide">
+            <div class="roster__field roster__field--wide rnotes">
               <span class="roster__fieldlbl">${t.roster_col_notes}</span>
-              <textarea class="roster__notes" data-field="notes" data-i="${i}" placeholder="${escapeAttr(t.roster_notes_ph)}" rows="3">${escapeHtml(notes)}</textarea>
-            </label>
+              <div class="rnotes__add">
+                <textarea class="roster__ta rnotes__new" data-note-new="${i}" data-grow rows="1" dir="auto" placeholder="${escapeAttr(t.roster_notes_ph)}"></textarea>
+                <button type="button" class="btn btn--ghost btn--sm rnotes__addbtn" data-note-add="${i}">${I.check}<span>${t.roster_note_add}</span></button>
+              </div>
+              <div class="rnotes__list" data-note-list="${i}">${notesListHtml(notes, lang, t)}</div>
+              <textarea class="rnotes__raw" data-field="notes" data-i="${i}" hidden aria-hidden="true" tabindex="-1">${escapeHtml(notes)}</textarea>
+            </div>
             <div class="roster__detailbar">
               <button type="button" class="btn btn--primary btn--sm" data-save="${i}">${t.roster_save}</button>
               <span class="roster__savemsg" data-savemsg="${i}" role="status" aria-live="polite"></span>
@@ -1806,15 +2033,21 @@ async function renderRoster(lang) {
       </tr>`;
   }).join("");
 
+  // The colgroup + table-layout:fixed is what makes "nothing scrolls sideways"
+  // a guarantee rather than a hope: no cell can widen the table, so long text
+  // has nowhere to go but down. `צעד הבא` takes the leftover width on purpose.
   host.innerHTML = `
     <div class="roster__scroll">
-      <table class="roster__table roster__table--crm">
+      <table class="roster__table roster__table--crm roster__table--fixed">
+        <colgroup>
+          <col class="rc-chev" /><col class="rc-person" /><col class="rc-access" />
+          <col class="rc-stage" /><col class="rc-source" /><col class="rc-next" />
+          <col class="rc-actions" />
+        </colgroup>
         <thead><tr>
           <th aria-hidden="true"></th>
           <th>${t.roster_col_name}</th>
-          <th>${t.roster_col_email}</th>
           <th>${t.roster_col_status}</th>
-          <th>${t.roster_col_signedin}</th>
           <th>${t.roster_col_stage}</th>
           <th>${t.roster_col_source}</th>
           <th>${t.roster_col_next}</th>
@@ -1824,7 +2057,8 @@ async function renderRoster(lang) {
       </table>
     </div>`;
 
-  // Expand/collapse the detail row.
+  // Expand/collapse the detail row. A textarea can only measure itself once it
+  // is actually visible, so every grower in the panel is sized on open.
   host.querySelectorAll("[data-expand]").forEach((b) =>
     b.addEventListener("click", () => {
       const i = b.getAttribute("data-expand");
@@ -1834,6 +2068,46 @@ async function renderRoster(lang) {
       if (opening) dr.removeAttribute("hidden"); else dr.setAttribute("hidden", "");
       b.setAttribute("aria-expanded", opening ? "true" : "false");
       b.classList.toggle("is-open", opening);
+      if (opening) ROSTER_OPEN.add(rowKey(rows[i])); else ROSTER_OPEN.delete(rowKey(rows[i]));
+      if (opening) dr.querySelectorAll("textarea[data-grow]").forEach(autoGrow);
+    }));
+
+  // Free-text fields grow instead of scrolling. Rows that are already open when
+  // the table paints get sized now; the rest are sized when they open.
+  host.querySelectorAll("textarea[data-grow]").forEach((ta) => {
+    ta.addEventListener("input", () => autoGrow(ta));
+    autoGrow(ta);
+  });
+
+  /* Add one note entry. The date is stamped here, the line is PREPENDED to the
+     raw value, and nothing already in it is touched - append-only is a property
+     of the code path, not a rule anyone has to remember. It saves immediately:
+     an entry that survives only until the admin remembers to press שמירה does
+     not survive. */
+  const addNote = (i) => {
+    const ta = host.querySelector(`[data-note-new="${i}"]`);
+    const raw = host.querySelector(`.rnotes__raw[data-i="${i}"]`);
+    if (!ta || !raw) return;
+    const typed = (ta.value || "").replace(/\s*\r?\n\s*/g, " ").trim();
+    if (!typed) return;
+    const line = NOTE_LINE.test(typed) ? typed : `${noteStampToday()} - ${typed}`;
+    const prev = raw.value.replace(/^\s+|\s+$/g, "");
+    raw.value = prev ? line + "\n" + prev : line;
+    ta.value = "";
+    autoGrow(ta);
+    const list = host.querySelector(`[data-note-list="${i}"]`);
+    if (list) list.innerHTML = notesListHtml(raw.value, lang, t);
+    const patch = {};
+    host.querySelectorAll(`[data-field][data-i="${i}"]`).forEach((el) => {
+      patch[el.getAttribute("data-field")] = el.value;
+    });
+    saveStudent(keys[i], patch, host.querySelector(`[data-savemsg="${i}"]`), t);
+  };
+  host.querySelectorAll("[data-note-add]").forEach((b) =>
+    b.addEventListener("click", () => addNote(b.getAttribute("data-note-add"))));
+  host.querySelectorAll("[data-note-new]").forEach((ta) =>
+    ta.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); addNote(ta.getAttribute("data-note-new")); }
     }));
 
   // Stage change: recolor + save immediately (stage is the must-have field).
@@ -2018,7 +2292,19 @@ function currentRoute() {
   if (h === "terms") return "terms";
   return "home";
 }
+/* The page repaints only when the ANSWER to "who is signed in" changes.
+   supabase-js re-emits auth events when the window regains focus and when the
+   token refreshes after a few minutes away; repainting on those threw the admin
+   off the students tab, closed every expanded row and discarded anything typed
+   but not saved. This gates the REPAINT only - loadAuth(), the my_access() call,
+   the sign-out-on-denied path and RLS are untouched. */
+let PAINTED_AUTH = null;
+function authFingerprint() {
+  return [AUTH.user ? AUTH.user.id : "", AUTH.tier || "", AUTH.denied ? "1" : "0"].join("|");
+}
+
 function route(lang) {
+  PAINTED_AUTH = authFingerprint();
   const r = currentRoute();
   if (r === "prep") renderPrep(lang);
   else if (r === "privacy") renderLegal(lang, "privacy");
@@ -2262,7 +2548,12 @@ window.addEventListener("hashchange", () => {
   // React to later auth changes (sign-in, sign-out, token refresh, other tabs).
   // Keep the callback non-async (loadAuth().then) per supabase-js guidance.
   sb.auth.onAuthStateChange(() => {
-    loadAuth().then(() => route(document.documentElement.lang || "he"));
+    loadAuth().then(() => {
+      // Same person, same tier -> nothing on screen is stale, so leave the admin
+      // exactly where he was (tab, open rows, scroll, half-typed note).
+      if (PAINTED_AUTH !== null && authFingerprint() === PAINTED_AUTH) return;
+      route(document.documentElement.lang || "he");
+    });
   });
 
   if (oauthReturn && AUTH.tier) {
