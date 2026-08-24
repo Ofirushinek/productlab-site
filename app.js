@@ -2305,6 +2305,22 @@ function authFingerprint() {
 
 function route(lang) {
   PAINTED_AUTH = authFingerprint();
+  /* The three modal systems (student sign-in, notices, register) all lock
+     scroll via body.modal-open, and each only clears it from its OWN close()
+     button. That class lives on <body>, outside the #app subtree every
+     render()/renderPrep() call below replaces wholesale — so a modal left
+     open across a route change (e.g. the denied-notice race in loadAuth()
+     firing during a sign-out redirect: wireSignout's hashchange render can
+     land before the async onAuthStateChange -> loadAuth() re-check finishes,
+     so a stray "denied" classification opens the notice on one render and a
+     later render never runs that notice's own close()) is ORPHANED: the
+     visible modal is gone (fresh DOM, hidden by default) but the scroll lock
+     survives, and only a hard reload clears it. Clearing it unconditionally
+     on every route entry, before anything re-renders, makes that structurally
+     impossible — a route change never inherits scroll lock from the page it
+     left. Any render that legitimately needs the lock re-opens it itself
+     (afterRender() -> wireStudent()'s pendingStudentOpen, etc.), same as always. */
+  document.body.classList.remove("modal-open");
   const r = currentRoute();
   if (r === "prep") renderPrep(lang);
   else if (r === "privacy") renderLegal(lang, "privacy");
