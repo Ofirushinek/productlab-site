@@ -21,7 +21,11 @@
 
   --pl-intro-cream: #FBEAD9;   /* brand ground  — logo spec.json */
   --pl-intro-ink:   #402D1F;   /* wordmark ink  — logo spec.json */
-  --stage: clamp(150px, 26vh, 280px);
+  --stage: clamp(112.5px, 19.5vh, 210px);  /* 75% of the previous 150/26vh/280 —
+     Ofir, 2026-08-24: the loader read too big. Scaled the size itself, not a
+     transform, so the choreography (which is %-translate + unitless-scale,
+     entirely relative to --stage) and the wordmark (font-size: calc(var(--stage)
+     * 0.1583)) stay in the exact proportion they were designed at. */
 
   background: var(--pl-intro-cream);
   color: var(--pl-intro-ink);
@@ -30,7 +34,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.8rem, 2.4vh, 1.6rem);
+  gap: clamp(0.6rem, 1.8vh, 1.2rem);      /* same 75% scale, so the space between the
+     stage and the wordmark shrinks with them instead of reading as leftover air. */
 
   /* <html> is dir="rtl". The wordmark is Latin and was approved LTR. */
   direction: ltr;
