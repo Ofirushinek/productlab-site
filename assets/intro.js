@@ -1,7 +1,8 @@
 /* Product Lab site intro — the curtain.
  *
  * The rules are the spec, not decoration:
- *   - Once per SESSION (sessionStorage). Never on every navigation.
+ *   - Once per SESSION (sessionStorage), plus every explicit RELOAD. Never on
+ *     every navigation.
  *   - It NEVER blocks content. The veil is created by THIS script and by
  *     nothing else, so if the file 404s, is blocked, or throws, the visitor
  *     simply gets the site. Nothing in index.html is hidden waiting on it.
@@ -10,7 +11,8 @@
  *     the moment the curtain begins to lift. That class is the only trigger
  *     for the zoom, so the zoom inherits every rule above for free: once a
  *     session, root route only, never under reduced motion, and not at all if
- *     this file fails. See the .hero__bg block in styles.css.
+ *     this file fails — and it replays on a refresh for the same reason the
+ *     curtain does. See the .hero__bg block in styles.css.
  *   - Total 3030ms. "snap" is the approved handover.
  *   - The heads are pre-normalised; every transform comes from the generated
  *     keyframes in assets/intro-keyframes.css. Nothing is scaled here.
@@ -36,11 +38,26 @@
     var h = window.location.hash || '';
     if (h !== '' && h !== '#' && h !== '#/') return;
 
-    // 3. Once per session. A storage throw (private mode, cookies off) must not
-    //    take the page down, so both sides are guarded independently.
+    // 3. Once per session — EXCEPT on an explicit RELOAD. Ofir, 2026-08-24:
+    //    hitting refresh has to replay the curtain, and with it the hero zoom
+    //    this file arms. A reload is a deliberate "show me this page again";
+    //    suppressing the one moment the visitor asked for is the wrong trade.
+    //    Everything else keeps the once-per-session rule untouched — a deep
+    //    link, a back/forward restore and an in-tab return all still get the
+    //    site with no curtain, and a first arrival is unchanged.
+    //    Guarded: if the Navigation Timing entry is missing or throws we fall
+    //    back to `false`, i.e. exactly the old behaviour.
+    var reloaded = false;
+    try {
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      reloaded = !!nav && nav.type === 'reload';
+    } catch (e) {}
+
+    //    A storage throw (private mode, cookies off) must not take the page
+    //    down, so both sides are guarded independently.
     var seen = false;
     try { seen = !!window.sessionStorage.getItem(KEY); } catch (e) {}
-    if (seen) return;
+    if (seen && !reloaded) return;
     try { window.sessionStorage.setItem(KEY, '1'); } catch (e) {}
 
     // Park the hero photo on its old framing NOW, while nothing is on screen

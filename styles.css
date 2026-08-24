@@ -555,6 +555,16 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .linkline:hover { color: var(--pl-accent); }
 .linkline svg { width: 16px; height: 16px; }
 
+/* DIRECTIONAL ICONS MUST FOLLOW THE READING DIRECTION (Ofir, 2026-08-24).
+   `I.arrow` and `I.login` both point "forward" — in LTR that is right, in RTL
+   it is LEFT. Left un-mirrored, the Hebrew "לצפייה ב-Glimps" arrow pointed away
+   from its own label. MIRRORED, not duplicated: one arrow stays in the icon set
+   so the two directions can never drift apart. Only these two are directional —
+   .chevron is vertical, .pcrumb__arrow sits inside a forced dir="ltr" step
+   crumb, and neither may be swept into this rule. */
+[dir="rtl"] .linkline svg,
+[dir="rtl"] .login__ico svg { transform: scaleX(-1); }
+
 /* meet ofir — distinct photo + text feature (not another card grid) */
 .bio { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; align-items: center; }
 @media (min-width: 760px) { .bio { grid-template-columns: 0.62fr 1.38fr; } }
