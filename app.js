@@ -1224,23 +1224,24 @@ function render(lang) {
    English in both toggle states; the copyable prompt body is forced dir="ltr"
    so the English prompt renders correctly even inside an RTL page. */
 
-/* Copyable prompt card: label + intro + Copy button (copies only the raw text
-   below the divider) + a monospace prompt frame. Restyled to the current DS. */
+/* Copyable prompt card: label + intro in the head, then the monospace prompt
+   frame. The Copy control is an ICON-ONLY, border-less button pinned to the
+   top-right corner of the PROMPT frame itself (not the head) - the frame
+   reserves a matching padding lane so no prompt line ever runs under it. */
 function promptCard(p) {
   const src = (window.WORKSHOP_CONTENT && window.WORKSHOP_CONTENT.prompts) || {};
   const text = src[p.key] || "";
   return `
     <div class="prompt">
       <div class="prompt__head">
-        <div class="prompt__row">
-          <span class="prompt__label">${p.label}</span>
-          <button type="button" class="prompt__copy" data-copy-key="${p.key}" aria-live="polite">
-            <span class="prompt__copy-ico">${I.copy}</span><span class="prompt__copy-label">Copy</span>
-          </button>
-        </div>
+        <span class="prompt__label">${p.label}</span>
         <p class="prompt__intro">${p.intro}</p>
       </div>
-      <pre class="prompt__text" data-prompt="${p.key}" dir="ltr">${escapeHtml(text)}</pre>
+      <div class="prompt__body">
+        <pre class="prompt__text" data-prompt="${p.key}" dir="ltr">${escapeHtml(text)}</pre>
+        <button type="button" class="prompt__copy" data-copy-key="${p.key}"
+                aria-live="polite" aria-label="Copy" data-tooltip="Copy">${I.copy}</button>
+      </div>
     </div>`;
 }
 
@@ -2267,21 +2268,26 @@ function wireNav() {
 
 /* ---- Copyable prompt cards (gated vault) --------------------------------- */
 /* Each Copy button copies the raw prompt text from window.WORKSHOP_CONTENT
-   (the single source of truth), shows a 2s "Copied" confirmation, then resets.
+   (the single source of truth), then flips to a check glyph for 2s and resets.
+   The button is icon-only, so the confirmation is the ICON plus the aria-label
+   and tooltip - both move to "Copied" together, per the icon-only tooltip rule.
    Reads from the data model, not the DOM, so whitespace is preserved exactly. */
 function wirePrompts() {
   const src = (window.WORKSHOP_CONTENT && window.WORKSHOP_CONTENT.prompts) || {};
   document.querySelectorAll("[data-copy-key]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const text = src[btn.getAttribute("data-copy-key")] || "";
-      const label = btn.querySelector(".prompt__copy-label");
       try {
         await navigator.clipboard.writeText(text);
         btn.classList.add("is-copied");
-        if (label) label.textContent = "Copied";
+        btn.innerHTML = I.check;
+        btn.setAttribute("aria-label", "Copied");
+        btn.setAttribute("data-tooltip", "Copied");
         setTimeout(() => {
           btn.classList.remove("is-copied");
-          if (label) label.textContent = "Copy";
+          btn.innerHTML = I.copy;
+          btn.setAttribute("aria-label", "Copy");
+          btn.setAttribute("data-tooltip", "Copy");
         }, 2000);
       } catch (e) {
         /* clipboard blocked (e.g. non-secure context) — no-op */

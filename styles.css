@@ -2028,34 +2028,49 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   background: var(--pl-surface); overflow: hidden;
 }
 .prompt__head { border-bottom: 1px solid var(--pl-border); padding: 1rem 1.15rem; }
-.prompt__row { display: flex; align-items: center; justify-content: space-between; gap: 0.85rem; }
 .prompt__label {
+  display: block;
   font-size: var(--text-caption); font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.12em; color: var(--pl-fg-secondary);
 }
-.prompt__copy {
-  flex: none; display: inline-flex; align-items: center; gap: 0.4rem;
-  padding: 0.35rem 0.7rem; border-radius: var(--radius-sm);
-  border: 1px solid var(--pl-border); background: var(--pl-surface);
-  font-family: inherit; font-size: var(--text-caption); font-weight: 700; color: var(--pl-fg);
-  transition: border-color 0.2s var(--ease-pl), background-color 0.2s var(--ease-pl), color 0.2s var(--ease-pl);
-}
-.prompt__copy:hover { border-color: var(--pl-border-strong); }
-.prompt__copy svg { width: 14px; height: 14px; }
-.prompt__copy.is-copied { background: var(--pl-accent); border-color: var(--pl-accent); color: var(--pl-accent-fg); }
 .prompt__intro { margin-top: 0.55rem; font-size: var(--text-sm); color: var(--pl-fg-secondary); font-weight: 500; line-height: 1.55; }
+
+/* The prompt frame and its own Copy control. The button lives INSIDE the frame
+   (not the head) and is pinned to the top-right corner of the FRAME, not of
+   the scrolling <pre> - so it stays put while a long prompt scrolls under it. .prompt__text reserves a matching padding lane on that side, so text is
+   pushed clear of the button instead of running beneath it. */
+.prompt__body { position: relative; }
 .prompt__text {
   margin: 0; max-height: 18rem; overflow: auto; white-space: pre-wrap; word-break: break-word;
-  padding: 1.15rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  padding: 1.15rem; padding-inline-end: 3rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: var(--text-sm); line-height: 1.6; color: var(--pl-fg-body); background: var(--pl-bg);
 }
+/* Border-less by default; the hover/focus background is the only affordance.
+   Same ghost-control pattern as .langswitch__item, on the frame's --pl-bg
+   surface, so the hover fill is --pl-bg-alt. */
+.prompt__copy {
+  /* PHYSICAL `right`, deliberately, not inset-inline-end: the frame is always
+     LTR content (dir="ltr" on the <pre>), so its reserved padding lane is on
+     the physical right in BOTH languages. A logical inset would resolve off
+     the RTL page direction and land the button on the opposite side from the
+     lane it is supposed to sit in. */
+  position: absolute; top: 0.85rem; right: 0.65rem; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--ctl-xs); height: var(--ctl-xs);
+  padding: 0; border: 0; background: transparent; border-radius: var(--radius-sm);
+  color: var(--pl-fg-secondary); cursor: pointer;
+  transition: background-color 0.15s var(--ease-pl), color 0.15s var(--ease-pl);
+}
+.prompt__copy:hover, .prompt__copy:focus-visible { background: var(--pl-bg-alt); color: var(--pl-fg); }
+.prompt__copy svg { width: var(--icon-sm); height: var(--icon-sm); }
+.prompt__copy.is-copied { background: transparent; color: var(--pl-accent); }
 
 /* Mobile: relax the plan-step header so the big number never crowds the title */
 @media (max-width: 560px) {
   .pstep__head { gap: 0.85rem; padding: 1.25rem 1.25rem; }
   .pstep__num { font-size: var(--text-h2); min-width: 1.75rem; }
   .pstep__body { padding: 0 1.25rem 1.25rem; }
-  .prompt__row { flex-wrap: wrap; }
 }
 
 /* reveal on scroll */
