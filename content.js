@@ -49,10 +49,10 @@ window.WORKSHOP_CONTENT = (function () {
   const TL_OPEN = `/start technical-lead`;
   const TL_BUILD = `Please build the waiting-list page, guided by the product manager's plan and the product designer's direction.`;
 
-  const COPY_RECRUIT = `I want to add a new teammate to this team: a copywriter. Their one job: own every word that appears on any page we build \u2014 headlines, buttons, form copy, all of it. Character: precise, protective of a consistent voice, plain-spoken, pushes back on filler words. No extra skill needed yet.`;
+  const RECRUIT_ASK = `I want to add a new teammate to this team. I have not written their job description yet - ask me what you need to know, all of it in one message, and I will answer in one go. Then build them from my answer, not from your own guess.`;
 
-  const COPY_OPEN = `/start copywriter`;
-  const COPY_RULE = `New house rule: no more long dashes, anywhere, ever - including in the waiting-list page we just built. Please fix that one too.`;
+  const NEW_OPEN = `/start <the teammate you just built>`;
+  const WEIGH_IN = `Look at what we built today - the page, and the decisions behind it in the shared brain. Before you suggest anything, ask each of your teammates what they see from where they sit. Then give me your own judgment: what would you change, and why. Say which teammate changed your mind. Fix what is yours to fix.`;
 
   const WRAP_UP = `/wrap`;
 
@@ -65,9 +65,9 @@ window.WORKSHOP_CONTENT = (function () {
     pdBrief: PD_BRIEF,
     tlOpen: TL_OPEN,
     tlBuild: TL_BUILD,
-    copyRecruit: COPY_RECRUIT,
-    copyOpen: COPY_OPEN,
-    copyRule: COPY_RULE,
+    recruitAsk: RECRUIT_ASK,
+    newOpen: NEW_OPEN,
+    weighIn: WEIGH_IN,
     wrapup: WRAP_UP,
   };
 
@@ -99,10 +99,35 @@ window.WORKSHOP_CONTENT = (function () {
           kicker: "Slide by slide",
           title: "The session deck",
           body: "Every slide from the workshop, in order. Open it when you want the shape of the day back, or the one line you half remember.",
+          /* Slide 1 as a static image, NOT a live embed (Ofir, 2026-08-27): the
+             deck stays private and will be shared by participant email after
+             Sep 3, so an iframe would render a permanent "you need access"
+             panel. The image is exported from the private file, needs no
+             sharing change, and the button below still opens the real deck. */
+          image: "assets/deck-cover.jpg",
           href: "https://docs.google.com/presentation/d/1HnbNtSQ8M8OR_GanBl3O87OhERgupUYj_mI7isHv90w/preview",
           cta: "Open the deck",
         },
       ],
+    },
+
+    /* 1c — How today runs (deck slide 3). The orientation tiles: the shape of
+       the session before any of the detail. Sits directly after the kit so a
+       student gets the shape of the day early. Reuses the crew three-card
+       recipe (.grid--3 + .card), no new component. */
+    howToday: {
+      kicker: "The shape of the day",
+      title: "How today runs",
+      subtitle: "Three parts, in this order.",
+      tiles: [
+        { icon: "brain", title: "Background",
+          body: "Get everyone to a mutual language and a common understanding, so the rest of the session runs efficiently." },
+        { icon: "users", title: "Meet your agents",
+          body: "Create the agents, set up their shared brain, and the techniques that make them understand each other." },
+        { icon: "flow", title: "See it connect",
+          body: "Build the first artifact and watch your new team work together." },
+      ],
+      closing: "This is only the beginning. Take it from here, wherever you want.",
     },
 
     /* 2 — By the end of today (three parts). */
@@ -134,67 +159,40 @@ window.WORKSHOP_CONTENT = (function () {
       },
     },
 
-    /* 3 — Technical overview (the mental model + the funnel). */
+    /* 3 — The agent anatomy (deck slides 7 and 8). REPLACED the old narrowing-
+       focus section 2026-08-27: the page taught "narrow the AI" while the deck
+       teaches the anatomy in that slot, and the closing exercise now asks each
+       student to WRITE an agent's job, character and skills. This section is
+       where those words come from, so it is preparation, not background.
+       Two groups, rendered as two clusters of the existing numbered stage list.
+       Numbering runs 1..6 straight through both groups on purpose: it makes the
+       point that Memory appears twice, once native and once ours. */
     technical: {
-      kicker: "Technical overview",
-      title: "Why a narrower AI is a smarter AI",
-      subtitle:
-        "The whole method in one idea: you don't make an agent smarter by piling on - you make it sharper by narrowing what it does.",
-      stages: [
-        { title: "A vast, general mind", body: "Out of the box, AI knows a little about almost everything. Powerful - but broad, and easily unfocused." },
-        { title: "Give it a role", body: "Scope it to one job and one identity. A narrower mandate makes it noticeably sharper and more accurate at exactly what you need." },
-        { title: "Give it skills and tools", body: "Hand it skills and tools it can actually run. Now it doesn't just think - it acts, and focuses tighter still." },
-        { title: "Give it memory and context", body: "Wire it a communication system so it always knows what you're working on and what's been done to date. We build this on Obsidian - the shared brain that keeps the whole team in context." },
-      ],
-      funnelTiers: [
-        { label: "General mind" },
-        { label: "+ a role" },
-        { label: "+ skills & tools" },
-        { label: "+ memory" },
-      ],
-      funnelPoint: "One sharp agent",
-      closing:
-        "Broad intelligence, narrowed into a sharp, tooled, context-aware teammate. That's the orchestration you'll set up today - and why what you build keeps working tomorrow.",
-    },
-
-    /* 4 — Tool selection (two ways to build, how to choose). */
-    tools: {
-      kicker: "Choosing your stack",
-      title: "Two ways to build, and how to choose",
-      subtitle:
-        "Every path sits somewhere between one all-in-one tool that does it all for you, and an open kit you assemble yourself. Here's the trade, so today's choice makes sense.",
-      options: [
+      kicker: "What an agent is",
+      title: "The agent anatomy",
+      subtitle: "What every agent already has, and the layers we add.",
+      groups: [
         {
-          icon: "box",
-          kicker: "All-in-one builders",
-          title: "Vibe-coding tools",
-          lede: "Lovable, Base and the like - one place that designs, builds and ships for you.",
-          benefits: [
-            "Everything's included - no setup, no plumbing, no leaving the room.",
-            "You move fast and see something real early, with as little complexity as possible.",
-            "The gentlest on-ramp there is - perfect for getting a personal project off the ground.",
+          heading: "Native to the agent",
+          stages: [
+            { title: "Role", body: "its description" },
+            { title: "Memory", body: "a native repository" },
+            { title: "Skills", body: "a playbook it can use" },
+            { title: "Scheduling", body: "automated tasks" },
           ],
-          noteLabel: "Good to know",
-          note: "Best for independent projects. Once a project gets big, or turns complex, or needs to connect to outside tools, they can get frustrating - and most organizations with design teams don't use them yet.",
-          featured: false,
         },
         {
-          icon: "claude",
-          kicker: "The professional kit",
-          title: "Claude Code",
-          lede: "The craftsman's kit - what we set up together today.",
-          benefits: [
-            "The most flexible by far - build almost anything, connect to almost anything.",
-            "The first go-to inside real product-design teams today.",
-            "It's the engineers' main tool too - so your work flows straight into theirs.",
+          heading: "The layers we add",
+          stages: [
+            { title: "Soul", body: "who it is" },
+            { title: "Memory", body: "the custom one we give it" },
           ],
-          noteLabel: "Good to know",
-          note: "A steeper learning curve, and less designer-friendly at first. That's the trade you make for range, potential, and staying power.",
-          featured: true,
         },
       ],
-      closing:
-        "Today we build on Claude - the harder start that keeps paying off, and the one that plugs straight into how real teams work.",
+      closing: [
+        "Take one away, and it is just a model again.",
+        "Not the model. What it knows when you ask.",
+      ],
     },
 
     /* 4b — The shared brain (M3): how the files connect (diagram section). */
@@ -298,22 +296,22 @@ window.WORKSHOP_CONTENT = (function () {
         },
         {
           n: "05",
-          title: "Bonus: recruit a copywriter, in one shot",
-          body: "The pattern is the point: a job keeps repeating, so you add a teammate for it. Your Technical Lead is the one that builds it.",
-          note: "What comes back: no follow-up question. It has everything it needs and builds the teammate straight from this.",
+          title: "Recruit the teammate you actually need",
+          body: "The pattern is the point. A job repeats, so you add a teammate for it, and your Technical Lead is the one that builds it. This time nobody writes them for you.",
+          note: "What comes back: one message with three questions - their one job, their character, and anything else they would need. Answer all three in a single reply, in your own words. Whatever you wrote in the survey is what belongs here.",
           prompts: [
             { key: "tlOpen", label: "1. New conversation, then type", intro: "Back to your Technical Lead. It is the only teammate that builds other teammates." },
-            { key: "copyRecruit", label: "2. Then, in the same conversation", intro: "One prompt: the job, the character, and where it stops." },
+            { key: "recruitAsk", label: "2. Then, in the same conversation", intro: "Notice what this does not say: who they are. That part is yours." },
           ],
         },
         {
           n: "06",
-          title: "Bonus: your copywriter sets a house rule",
-          body: "A rule that outlives the conversation. Watch it cross-check with the designer, then write the rule down as a skill file of its own.",
-          note: "What comes back: the rule applied to the page you just built, and a new skill file holding it. Next time, nobody has to remember to say it.",
+          title: "Your new teammate weighs in on what we built",
+          body: "It goes and asks each of your other teammates what they see from where they sit, and only then forms its own view.",
+          note: "What comes back: you see the calls fire as it consults each teammate, then one answer in its own voice - what it would change, why, and which teammate moved it. One honest caveat: a teammate called as a helper does not stream its own working into your chat. You see the call and the answer, not the conversation.",
           prompts: [
-            { key: "copyOpen", label: "1. New conversation, then type", intro: "Your newest teammate, about a minute old." },
-            { key: "copyRule", label: "2. Then, in the same conversation", intro: "A rule, and a fix, in one line." },
+            { key: "newOpen", label: "1. New conversation, then type", intro: "Their name is whatever you called them. It is different for everyone." },
+            { key: "weighIn", label: "2. Then, in the same conversation", intro: "It consults before it concludes. That is the part worth watching." },
           ],
         },
         {
@@ -364,10 +362,28 @@ window.WORKSHOP_CONTENT = (function () {
           kicker: "שקופית אחרי שקופית",
           title: "מצגת הסדנה",
           body: "כל השקופיות מהמפגש, לפי הסדר. פותחים אותה כשרוצים להיזכר במבנה של היום, או במשפט ההוא שנשאר לכם חצי בראש.",
+          /* See the EN twin: slide 1 as a static image, never a live embed. */
+          image: "assets/deck-cover.jpg",
           href: "https://docs.google.com/presentation/d/1HnbNtSQ8M8OR_GanBl3O87OhERgupUYj_mI7isHv90w/preview",
           cta: "פתיחת המצגת",
         },
       ],
+    },
+
+    /* 1c — איך היום עובד (שקופית 3 במצגת). */
+    howToday: {
+      kicker: "המבנה של היום",
+      title: "איך היום עובד",
+      subtitle: "שלושה חלקים, בסדר הזה.",
+      tiles: [
+        { icon: "brain", title: "רקע",
+          body: "מביאים את כולם לשפה משותפת ולהבנה משותפת, כדי שכל שאר המפגש ירוץ ביעילות." },
+        { icon: "users", title: "מכירים את הסוכנים",
+          body: "יוצרים את הסוכנים, מקימים להם מוח משותף, ולומדים את השיטות שגורמות להם להבין אחד את השני." },
+        { icon: "flow", title: "רואים את זה מתחבר",
+          body: "בונים את התוצר הראשון ורואים את הצוות החדש שלכם עובד יחד." },
+      ],
+      closing: "זו רק ההתחלה. קחו את זה מכאן לאן שתרצו.",
     },
 
     /* 2 — עד סוף היום (שלושה חלקים). */
@@ -399,67 +415,33 @@ window.WORKSHOP_CONTENT = (function () {
       },
     },
 
-    /* 3 — איך זה עובד באמת (המודל המנטלי + המשפך). */
+    /* 3 — האנטומיה של סוכן (שקופיות 7 ו-8 במצגת). החליף את מקטע המיקוד הישן. */
     technical: {
-      kicker: "איך זה עובד באמת",
-      title: "למה AI ממוקד יותר הוא AI חכם יותר",
-      subtitle:
-        "כל השיטה ברעיון אחד: לא הופכים סוכן לחכם יותר בכך שמעמיסים עליו עוד ועוד, אלא מחדדים אותו דווקא מתוך מיקוד במה שהוא עושה.",
-      stages: [
-        { title: "מוח כללי ועצום", body: "מהקופסה, AI יודע קצת על כמעט הכול. עוצמתי, אבל רחב מדי, ומאבד פוקוס בקלות." },
-        { title: "נותנים לו תפקיד", body: "ממקדים אותו בעבודה אחת ובזהות אחת. מנדט צר יותר הופך אותו לחד ומדויק בהרבה, בדיוק במה שאתם צריכים." },
-        { title: "נותנים לו כישורים וכלים", body: "מוסרים לו כישורים וכלים שהוא באמת יכול להפעיל. עכשיו הוא לא רק חושב, הוא פועל, וממקד את עצמו עוד יותר." },
-        { title: "נותנים לו זיכרון והקשר", body: "מחברים לו מערכת תקשורת כך שהוא תמיד יודע על מה אתם עובדים ומה כבר נעשה עד עכשיו. את זה אנחנו בונים על Obsidian, המוח המשותף ששומר את כל הצוות בהקשר." },
-      ],
-      funnelTiers: [
-        { label: "מוח כללי" },
-        { label: "+ תפקיד" },
-        { label: "+ כישורים וכלים" },
-        { label: "+ זיכרון" },
-      ],
-      funnelPoint: "סוכן אחד חד",
-      closing:
-        "אינטליגנציה רחבה, ממוקדת לכדי שותף חד, מצויד בכלים ומודע להקשר. זו התזמור שתקימו היום, וזו הסיבה שמה שאתם בונים ממשיך לעבוד גם מחר.",
-    },
-
-    /* 4 — בוחרים את הכלים (שתי דרכים, איך לבחור). */
-    tools: {
-      kicker: "בוחרים את הכלים",
-      title: "שתי דרכים לבנות, ואיך לבחור ביניהן",
-      subtitle:
-        "כל דרך נמצאת איפשהו בין כלי אחד שעושה הכול בשבילכם, לבין ארגז כלים פתוח שאתם מרכיבים בעצמכם. הנה השיקול, כדי שהבחירה של היום תהיה ברורה.",
-      options: [
+      kicker: "מה זה סוכן",
+      title: "האנטומיה של סוכן",
+      subtitle: "מה שלכל סוכן כבר יש, והשכבות שאנחנו מוסיפים.",
+      groups: [
         {
-          icon: "box",
-          kicker: "כלים הכול-באחד",
-          title: "כלי Vibe-coding",
-          lede: "Lovable, Base ודומיהם: מקום אחד שמעצב, בונה ומשגר בשבילכם.",
-          benefits: [
-            "הכול כלול: בלי התקנות, בלי חיווט, בלי לצאת מהחדר.",
-            "מתקדמים מהר ורואים משהו אמיתי כבר בהתחלה, עם כמה שפחות סיבוכים.",
-            "נקודת הכניסה הכי רכה שיש, מושלמת כדי להניע פרויקט אישי.",
+          heading: "מובנה בסוכן",
+          stages: [
+            { title: "תפקיד", body: "התיאור שלו" },
+            { title: "זיכרון", body: "מאגר מובנה" },
+            { title: "כישורים", body: "ספר הוראות שהוא יכול להשתמש בו" },
+            { title: "תזמון", body: "משימות אוטומטיות" },
           ],
-          noteLabel: "כדאי לדעת",
-          note: "הכי מתאים לפרויקטים עצמאיים. ברגע שפרויקט גדל, נעשה מורכב, או צריך להתחבר לכלים חיצוניים, הם עלולים לתסכל. ורוב הארגונים עם צוותי עיצוב עדיין לא עובדים איתם.",
-          featured: false,
         },
         {
-          icon: "claude",
-          kicker: "ארגז הכלים המקצועי",
-          title: "Claude Code",
-          lede: "ארגז הכלים של האומן, זה שנקים יחד היום.",
-          benefits: [
-            "הכי גמיש בגדול: בונים כמעט הכול, מתחברים כמעט לכל דבר.",
-            "הבחירה הראשונה בצוותי עיצוב מוצר אמיתיים היום.",
-            "זה גם הכלי המרכזי של המהנדסים, כך שהעבודה שלכם זורמת ישר לשלהם.",
+          heading: "השכבות שאנחנו מוסיפים",
+          stages: [
+            { title: "נשמה", body: "מי הוא" },
+            { title: "זיכרון", body: "זה שאנחנו נותנים לו" },
           ],
-          noteLabel: "כדאי לדעת",
-          note: "עקומת למידה תלולה יותר, ופחות ידידותי למעצבים בהתחלה. זה המחיר תמורת טווח, פוטנציאל ועמידות לאורך זמן.",
-          featured: true,
         },
       ],
-      closing:
-        "היום אנחנו בונים על Claude, ההתחלה הקשה יותר שממשיכה להשתלם, וזו שמתחברת ישר לדרך שבה צוותים אמיתיים עובדים.",
+      closing: [
+        "תורידו אחד מהם, וזה שוב סתם מודל.",
+        "לא המודל. מה שהוא יודע כשאתם שואלים.",
+      ],
     },
 
     /* 4b — המוח המשותף (M3): איך הקבצים מתחברים (מקטע הדיאגרמה). */
@@ -559,22 +541,22 @@ window.WORKSHOP_CONTENT = (function () {
         },
         {
           n: "05",
-          title: "בונוס: מגייסים קופירייטר, בפרומפט אחד",
-          body: "התבנית היא העיקר: עבודה מתחילה לחזור על עצמה, אז מוסיפים בשבילה חבר צוות. וה-Technical Lead הוא זה שבונה אותו.",
-          note: "מה אמור לחזור: בלי שאלת המשך. יש לו כל מה שהוא צריך, והוא בונה את חבר הצוות ישר מזה.",
+          title: "מגייסים את חבר הצוות שאתם באמת צריכים",
+          body: "התבנית היא העיקר. תפקיד חוזר על עצמו, אז מוסיפים חבר צוות בשבילו, וה-Technical Lead הוא זה שבונה אותו. הפעם אף אחד לא כותב אותו בשבילכם.",
+          note: "מה אמור לחזור: הודעה אחת עם שלוש שאלות - מה התפקיד האחד שלו, מה האופי שלו, ומה עוד הוא צריך. עונים על שלושתן בתשובה אחת, במילים שלכם. מה שכתבתם בשאלון הוא בדיוק מה שמתאים כאן.",
           prompts: [
             { key: "tlOpen", label: "1. שיחה חדשה, ומקלידים", intro: "חוזרים ל-Technical Lead. הוא היחיד שבונה חברי צוות אחרים." },
-            { key: "copyRecruit", label: "2. ואז, באותה שיחה", intro: "פרומפט אחד: התפקיד, האופי, ואיפה זה נגמר." },
+            { key: "recruitAsk", label: "2. ואז, באותה שיחה", intro: "שימו לב למה שלא כתוב כאן: מי הוא. החלק הזה שלכם." },
           ],
         },
         {
           n: "06",
-          title: "בונוס: הקופירייטר קובע כלל בית",
-          body: "כלל ששורד את השיחה. תראו אותו מצליב מידע עם המעצב, ואז כותב את הכלל כקובץ כישור משלו.",
-          note: "מה אמור לחזור: הכלל מוחל על העמוד שבניתם עכשיו, וקובץ כישור חדש שמחזיק אותו. בפעם הבאה אף אחד לא צריך לזכור להגיד את זה.",
+          title: "חבר הצוות החדש אומר את דעתו על מה שבנינו",
+          body: "הוא הולך לשאול כל אחד מחברי הצוות האחרים מה הוא רואה מהמקום שלו, ורק אז מגבש דעה משלו.",
+          note: "מה אמור לחזור: רואים את הקריאות יוצאות כשהוא מתייעץ עם כל אחד, ואז תשובה אחת בקול שלו - מה הוא היה משנה, למה, ואיזה חבר צוות שינה לו את הדעה. הסתייגות אחת כנה: חבר צוות שנקרא כעוזר לא משדר את העבודה שלו לצ׳אט שלכם. רואים את הקריאה ואת התשובה, לא את השיחה.",
           prompts: [
-            { key: "copyOpen", label: "1. שיחה חדשה, ומקלידים", intro: "חבר הצוות הכי חדש שלכם, בן דקה." },
-            { key: "copyRule", label: "2. ואז, באותה שיחה", intro: "כלל, ותיקון, בשורה אחת." },
+            { key: "newOpen", label: "1. שיחה חדשה, ומקלידים", intro: "השם הוא מה שקראתם לו. הוא שונה אצל כל אחד." },
+            { key: "weighIn", label: "2. ואז, באותה שיחה", intro: "הוא מתייעץ לפני שהוא מסכם. זה החלק ששווה להסתכל עליו." },
           ],
         },
         {

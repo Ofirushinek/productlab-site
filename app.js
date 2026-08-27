@@ -1305,44 +1305,44 @@ function planStep(step, open) {
     </details>`;
 }
 
-/* The narrowing-focus funnel - general AI narrowed, tier by tier, to one sharp
-   agent. Tokenized (fills use --pl-accent). Labels tie to the numbered stages.
-   RTL: SVG coordinates do not follow dir, so we mirror every x around the 520
-   viewBox (X helper) and flip the label anchor to end. In HE the funnel sits on
-   the right and the tier labels read out to the left, so it reads correctly. */
-function focusFunnel(tiers, pointLabel, lang) {
-  const mirror = lang === "he";
-  const W = 520;
-  const X = (v) => (mirror ? W - v : v);
-  const cx = 190, h = 66, gap = 12;
-  const geo = [
-    { top: 360, bot: 300 },
-    { top: 300, bot: 234 },
-    { top: 234, bot: 166 },
-    { top: 166, bot: 92 },
-  ];
-  const anchor = mirror ? "end" : "start";
-  const rows = tiers.map((t, i) => {
-    const g = geo[i]; const y = 16 + i * (h + gap);
-    const x1t = cx - g.top / 2, x2t = cx + g.top / 2;
-    const x1b = cx - g.bot / 2, x2b = cx + g.bot / 2;
-    const midY = y + h / 2; const rightMid = cx + (g.top + g.bot) / 4;
-    const op = 0.22 + i * 0.24;
+/* The media band inside a kit card. Both kit tiles get the SAME 16:9 frame
+   (.card__media) so the pair reads as a matched set. Ofir's ask, 2026-08-27:
+   "I want people to actually sense what it holds, not just the button."
+
+   The deck tile: slide 1 as a STATIC IMAGE. Deliberately not an iframe - the
+   deck stays private and will be shared by participant email after Sep 3, so a
+   live embed would render a permanent Google "you need access" panel on the
+   page. The button under it still opens the real deck; a student who is not on
+   the file hits Google's own wall in a new tab, which is a state Ofir owns.
+
+   The kit tile: the same frame carrying a figure for the FILE - the box glyph
+   plus the REAL top-level entries of the zip as path chips, on the site's
+   illustration wash so the two tiles carry comparable weight rather than one
+   photograph beside one small icon. .pcrumb__chip is the chip the setup steps
+   already use for a file path; dir="ltr" goes on each STRING (never on the row:
+   these are paths whose internal order is at risk, the row follows the page). */
+const KIT_ENTRIES = ["START-HERE.md", "agents/", "soul/", "memory/", "skills/", "shared/"];
+
+function kitMedia(k) {
+  if (k.image) {
     return `
-      <polygon points="${X(x1t)},${y} ${X(x2t)},${y} ${X(x2b)},${y + h} ${X(x1b)},${y + h}"
-        fill="var(--pl-accent)" fill-opacity="${op}" stroke="var(--pl-accent)" stroke-opacity="0.55" stroke-width="1.5" />
-      <text x="${X(cx)}" y="${midY + 6}" text-anchor="middle" font-size="17" font-weight="700" fill="var(--pl-fg)">${i + 1}</text>
-      <line x1="${X(rightMid)}" y1="${midY}" x2="${X(404)}" y2="${midY}" stroke="var(--pl-border-strong)" stroke-width="1" />
-      <circle cx="${X(rightMid)}" cy="${midY}" r="2.5" fill="var(--pl-accent)" />
-      <text x="${X(410)}" y="${midY + 5}" text-anchor="${anchor}" font-size="15" font-weight="700" fill="var(--pl-fg-secondary)">${t.label}</text>`;
-  }).join("");
-  const neckY = 16 + 4 * (h + gap) - gap;
+      <div class="card__media">
+        <img src="${k.image}" alt="${k.title}" loading="lazy" width="1440" height="810" />
+      </div>`;
+  }
+  if (!k.download) return "";
   return `
-    <svg viewBox="0 0 520 384" class="funnel" role="img" aria-label="A general AI narrowed stage by stage into one sharp, accurate agent">
-      ${rows}
-      <polygon points="${X(cx - 46)},${neckY} ${X(cx + 46)},${neckY} ${X(cx)},${neckY + 40}" fill="var(--pl-accent)" />
-      <text x="${X(cx)}" y="${neckY + 62}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--pl-fg)">${pointLabel}</text>
-    </svg>`;
+    <div class="card__media card__media--figure">
+      <div class="kitfile">
+        <div class="kitfile__hd">
+          <span class="card__ico" aria-hidden="true">${I.box}</span>
+          <span class="kitfile__name" dir="ltr">product-lab</span>
+        </div>
+        <div class="kitfile__paths">
+          ${KIT_ENTRIES.map((e) => `<span class="pcrumb__chip" dir="ltr">${e}</span>`).join("")}
+        </div>
+      </div>
+    </div>`;
 }
 
 /* The shared-brain map: a containment hierarchy. The outer panel IS the shared
@@ -1436,6 +1436,7 @@ function renderPrep(lang) {
             <p>${k.body}</p>
             ${k.note ? `<p class="pchecklist__note" style="margin-top:.75rem">${k.note}</p>` : ""}
             <div class="card__foot">
+              ${kitMedia(k)}
               <div class="cta-row">
                 <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download` : ` target="_blank" rel="noopener"`}>${k.cta}</a>
               </div>
@@ -1444,8 +1445,30 @@ function renderPrep(lang) {
       </div>
     </div></section>` : ""}
 
-    <!-- 2 — By the end of today (three parts) -->
-    ${canSee(C.end) ? `<section class="section section--alt"><div class="wrap">
+    <!-- 1c - How today runs (deck slide 3). Orientation before detail. Straight
+         reuse of the .grid--3 + .card recipe the end and crew sections use; the
+         only difference is that these cards carry no kicker and no foot. -->
+    ${canSee(C.howToday) ? `<section class="section section--alt"><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${C.howToday.kicker}</span>
+        <h2 class="section-title">${C.howToday.title}</h2>
+        <p class="section-lead">${C.howToday.subtitle}</p>
+      </div>
+      <div class="grid grid--3" style="margin-top:2rem">
+        ${C.howToday.tiles.map((tile) => `
+          <div class="card reveal">
+            <div class="card__ico">${I[tile.icon] || I.box}</div>
+            <h3>${tile.title}</h3>
+            <p>${tile.body}</p>
+          </div>`).join("")}
+      </div>
+      <p class="tech__closing reveal">${C.howToday.closing}</p>
+    </div></section>` : ""}
+
+    <!-- 2 — By the end of today (three parts).
+         PLAIN, not --alt: the panel alternates plain/tinted section by section,
+         and inserting howToday above pushed end onto the same tint as it. -->
+    ${canSee(C.end) ? `<section class="section"><div class="wrap">
       <div class="reveal">
         <span class="eyebrow">${C.end.kicker}</span>
         <h2 class="section-title">${C.end.title}</h2>
@@ -1476,47 +1499,31 @@ function renderPrep(lang) {
       </div>
     </div></section>` : ""}
 
-    <!-- 3 — Technical overview (mental model + funnel) -->
-    ${canSee(C.technical) ? `<section class="section"><div class="wrap">
+    <!-- 3 - The agent anatomy (deck slides 7 + 8). Replaced the narrowing-focus
+         section and its funnel figure on 2026-08-27: the deck teaches the anatomy
+         in this slot, and the closing exercise asks each student to write an
+         agent's job, character and skills, so this is now preparation for that.
+         Same .tech grid and the same numbered .stage-list as before - the two
+         groups are two clusters in the two existing columns. --groups only
+         swaps align-items to start so both group headings share one baseline
+         (the columns hold 4 items and 2, so centring them looked misaligned). -->
+    ${canSee(C.technical) ? `<section class="section section--alt"><div class="wrap">
       <div class="reveal">
         <span class="eyebrow">${C.technical.kicker}</span>
         <h2 class="section-title">${C.technical.title}</h2>
         <p class="section-lead">${C.technical.subtitle}</p>
       </div>
-      <div class="tech" style="margin-top:2rem">
-        <ol class="stage-list reveal">
-          ${C.technical.stages.map((s, i) => `
-            <li class="stage"><span class="stage__num">${i + 1}</span><div><h3>${s.title}</h3><p>${s.body}</p></div></li>`).join("")}
-        </ol>
-        <div class="tech__figure reveal">${focusFunnel(C.technical.funnelTiers, C.technical.funnelPoint, lang)}</div>
+      <div class="tech tech--groups" style="margin-top:2rem">
+        ${(() => { let n = 0; return C.technical.groups.map((g) => `
+          <div class="tech__group reveal">
+            <span class="eyebrow">${g.heading}</span>
+            <ol class="stage-list">
+              ${g.stages.map((s) => `
+                <li class="stage"><span class="stage__num">${++n}</span><div><h3>${s.title}</h3><p>${s.body}</p></div></li>`).join("")}
+            </ol>
+          </div>`).join(""); })()}
       </div>
-      <p class="tech__closing reveal">${C.technical.closing}</p>
-    </div></section>` : ""}
-
-    <!-- 4 — Choosing your stack (two tools) -->
-    ${canSee(C.tools) ? `<section class="section section--alt"><div class="wrap">
-      <div class="reveal">
-        <span class="eyebrow">${C.tools.kicker}</span>
-        <h2 class="section-title">${C.tools.title}</h2>
-        <p class="section-lead">${C.tools.subtitle}</p>
-      </div>
-      <div class="grid grid--2" style="margin-top:2rem">
-        ${C.tools.options.map((o) => `
-          <div class="card ${o.featured ? "card--feature" : ""} reveal">
-            <div class="card__ico">${I[o.icon] || I.box}</div>
-            <span class="card__kicker">${o.kicker}</span>
-            <h3>${o.title}</h3>
-            <p class="tool__lede">${o.lede}</p>
-            <ul class="tool__benefits">
-              ${o.benefits.map((b) => `<li><span class="tool__dot" aria-hidden="true"></span><span>${b}</span></li>`).join("")}
-            </ul>
-            <div class="tool__note">
-              <span class="tool__notelabel">${o.noteLabel}</span>
-              <p>${o.note}</p>
-            </div>
-          </div>`).join("")}
-      </div>
-      <p class="tech__closing reveal">${C.tools.closing}</p>
+      <p class="tech__closing reveal">${C.technical.closing.join("<br>")}</p>
     </div></section>` : ""}
 
     <!-- 4b - The shared brain (how the files connect) -->
