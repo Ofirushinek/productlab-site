@@ -1415,6 +1415,35 @@ function renderPrep(lang) {
   // Course-content panel — everything the student sees (title excluded; the
   // title stays above the tab bar, visible on every tab).
   const contentPanel = `
+    <!-- 1b — The kit and the deck. Always first, never collapsed: a student who
+         comes back months later on a new machine starts here. Built on the
+         existing .grid/.card recipe. The only addition is .card--anchored /
+         .card__foot, which pins both CTAs to one baseline at the card bottom —
+         without it the shorter card left its button floating in dead space.
+         The note sits ABOVE the foot on purpose so the two buttons still line up. -->
+    ${canSee(C.kit) ? `<section class="section"><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${C.kit.kicker}</span>
+        <h2 class="section-title">${C.kit.title}</h2>
+        <p class="section-lead">${C.kit.subtitle}</p>
+      </div>
+      <div class="grid grid--2" style="margin-top:2rem">
+        ${C.kit.items.map((k) => `
+          <div class="card card--anchored ${k.featured ? "card--feature" : ""} reveal">
+            <div class="card__ico">${I[k.icon] || I.box}</div>
+            <span class="card__kicker">${k.kicker}</span>
+            <h3>${k.title}</h3>
+            <p>${k.body}</p>
+            ${k.note ? `<p class="pchecklist__note" style="margin-top:.75rem">${k.note}</p>` : ""}
+            <div class="card__foot">
+              <div class="cta-row">
+                <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download` : ` target="_blank" rel="noopener"`}>${k.cta}</a>
+              </div>
+            </div>
+          </div>`).join("")}
+      </div>
+    </div></section>` : ""}
+
     <!-- 2 — By the end of today (three parts) -->
     ${canSee(C.end) ? `<section class="section section--alt"><div class="wrap">
       <div class="reveal">
@@ -1503,8 +1532,40 @@ function renderPrep(lang) {
       </div>
     </div></section>` : ""}
 
-    <!-- 5 — The plan (numbered steps with copyable prompt cards) -->
-    ${canSee(C.plan) ? `<section class="section section--alt"><div class="wrap narrow">
+    <!-- 4c - Meet the team you will work with. Three agents ship inside the kit;
+         the page introduced no cast at all before this, so a returning student met
+         three named agents for the first time inside a prompt. Same .grid--3/.card
+         recipe as the end section, plus .card--anchored/.card__foot so all three
+         badge rows sit on one baseline however the body copy wraps. -->
+    ${canSee(C.crew) ? `<section class="section section--alt"><div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">${C.crew.kicker}</span>
+        <h2 class="section-title">${C.crew.title}</h2>
+        <p class="section-lead">${C.crew.subtitle}</p>
+      </div>
+      <div class="grid grid--3" style="margin-top:2rem">
+        ${C.crew.members.map((m) => `
+          <div class="card card--anchored reveal">
+            <div class="card__ico">${I[m.icon] || I.users}</div>
+            <span class="card__kicker">${m.tag}</span>
+            <h3>${m.role}</h3>
+            <p>${m.body}</p>
+            <div class="card__foot">
+              <div class="card__badges">
+                ${m.badges.map((b) => `<span class="card__badge">${b}</span>`).join("")}
+              </div>
+            </div>
+          </div>`).join("")}
+      </div>
+      <p class="tech__closing reveal">${C.crew.closing}</p>
+    </div></section>` : ""}
+
+    <!-- 5 — The plan (numbered steps with copyable prompt cards).
+         PLAIN, not --alt: this panel alternates plain/tinted section by section,
+         and inserting kit + crew above pushed plan onto the same tint as crew —
+         one continuous 2,300px tinted slab. The tint flips here and on the help
+         section below so the alternation survives the two new sections. -->
+    ${canSee(C.plan) ? `<section class="section"><div class="wrap narrow">
       <div class="reveal">
         <span class="eyebrow">${C.plan.kicker}</span>
         <h2 class="section-title">${C.plan.title}</h2>
@@ -1516,8 +1577,10 @@ function renderPrep(lang) {
       <p class="tech__closing reveal">${C.plan.closing}</p>
     </div></section>` : ""}
 
-    <!-- Help + WhatsApp (site copy - bilingual, inherits the main dir) -->
-    <section class="section"><div class="wrap narrow">
+    <!-- Help + WhatsApp (site copy - bilingual, inherits the main dir).
+         --alt so it reads as its own block instead of running on from the very
+         long plan section above it — see the tint note on plan. -->
+    <section class="section section--alt"><div class="wrap narrow">
       <div class="reveal">
         <h2 class="prep__h">${t.prep_help_title}</h2>
         <p class="section-lead" style="margin-top:.5rem">${t.prep_help_body}</p>

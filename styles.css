@@ -1776,6 +1776,34 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 }
 .card--feature { background: var(--pl-illo-bg); border-color: var(--pl-border-strong); }
 
+/* --anchored + __foot: a card whose LAST block is an action (a button row) or a
+   row of badges. Cards in a .grid stretch to the tallest sibling, so a card with
+   shorter body copy left its button floating mid-card with dead space beneath
+   it, and a row of three cards put its badges on three different baselines.
+   Making the card a column lets __foot absorb the slack (margin-top:auto), so
+   every card in the row lands its action on ONE baseline however the copy wraps.
+   Tokens only, no new values. Used by the kit cards and the crew cards. */
+.card--anchored { display: flex; flex-direction: column; }
+.card--anchored .card__foot { margin-top: auto; padding-top: var(--space-4); }
+
+/* A row of small metadata badges at the foot of a card (the files each agent
+   carries). Same pill values this site already uses for a metadata tag on
+   .pchecklist__tag — a LABEL, not a control. Deliberately NOT .pcrumb__chip:
+   that one is a breadcrumb step (radius-sm, body colour, arrows between) and
+   four of them sitting on a white card read as four buttons.
+   NO dir="ltr" on the row: these are single Latin words, bidi orders them
+   correctly on its own, and forcing LTR pinned the row to the LEFT edge inside
+   an RTL card while every other element in it hugged the right.
+   gap is --space-1, not --space-2: four badges have to clear a 275px card
+   column at 1440 (the .grid--3 track) without orphaning one onto its own line. */
+.card__badges { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.card__badge {
+  padding: 0.1rem 0.5rem; border-radius: 999px;
+  border: 1px solid var(--pl-border); background: var(--pl-surface);
+  font-size: var(--text-caption); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--pl-accent); white-space: nowrap;
+}
+
 /* Teammates list inside the "build the team" card */
 .teammates { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
 .teammates__name { font-weight: 700; color: var(--pl-fg); }
