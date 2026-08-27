@@ -121,13 +121,13 @@ window.WORKSHOP_CONTENT = (function () {
       subtitle: "Three parts, in this order.",
       tiles: [
         { icon: "brain", title: "Background",
-          body: "Get everyone to a mutual language and a common understanding, so the rest of the session runs efficiently." },
+          body: "We line up on the words and what they mean, so nothing later needs explaining twice." },
         { icon: "users", title: "Meet your agents",
-          body: "Create the agents, set up their shared brain, and the techniques that make them understand each other." },
+          body: "Open the kit, meet the three teammates inside, and see the shared brain that keeps them working from one picture." },
         { icon: "flow", title: "See it connect",
-          body: "Build the first artifact and watch your new team work together." },
+          body: "Build the first page, and watch the work move from one teammate to the next." },
       ],
-      closing: "This is only the beginning. Take it from here, wherever you want.",
+      closing: "That is the whole day. What you build with the team after it is yours.",
     },
 
     /* 2 — By the end of today (three parts). */
@@ -170,22 +170,22 @@ window.WORKSHOP_CONTENT = (function () {
     technical: {
       kicker: "What an agent is",
       title: "The agent anatomy",
-      subtitle: "What every agent already has, and the layers we add.",
+      subtitle: "What every agent already has, and the layers we add. Later today you write these lines yourself, for a teammate of your own.",
       groups: [
         {
           heading: "Native to the agent",
           stages: [
-            { title: "Role", body: "its description" },
-            { title: "Memory", body: "a native repository" },
-            { title: "Skills", body: "a playbook it can use" },
-            { title: "Scheduling", body: "automated tasks" },
+            { title: "Role", body: "the one job it does" },
+            { title: "Memory", body: "what it keeps on its own" },
+            { title: "Skills", body: "a playbook it can run" },
+            { title: "Scheduling", body: "work that runs on a clock" },
           ],
         },
         {
           heading: "The layers we add",
           stages: [
-            { title: "Soul", body: "who it is" },
-            { title: "Memory", body: "the custom one we give it" },
+            { title: "Soul", body: "who it is, not what it does" },
+            { title: "Memory", body: "what we decide it remembers" },
           ],
         },
       ],
@@ -296,22 +296,22 @@ window.WORKSHOP_CONTENT = (function () {
         },
         {
           n: "05",
-          title: "Recruit the teammate you actually need",
-          body: "The pattern is the point. A job repeats, so you add a teammate for it, and your Technical Lead is the one that builds it. This time nobody writes them for you.",
-          note: "What comes back: one message with three questions - their one job, their character, and anything else they would need. Answer all three in a single reply, in your own words. Whatever you wrote in the survey is what belongs here.",
+          title: "Recruit the teammate you are missing",
+          body: "The pattern is the point. A job starts repeating, so you add a teammate for it, and your Technical Lead is the one that builds them. This one nobody writes for you.",
+          note: "What comes back: one message with three questions - their one job, their character, and anything else they would need. Answer all three in a single reply, in your own words. What you wrote in the survey belongs here.",
           prompts: [
-            { key: "tlOpen", label: "1. New conversation, then type", intro: "Back to your Technical Lead. It is the only teammate that builds other teammates." },
-            { key: "recruitAsk", label: "2. Then, in the same conversation", intro: "Notice what this does not say: who they are. That part is yours." },
+            { key: "tlOpen", label: "1. New conversation, then type", intro: "Back to your Technical Lead. It is the only one that can build another teammate." },
+            { key: "recruitAsk", label: "2. Then, in the same conversation", intro: "Notice what it does not say: who they are. That part is yours." },
           ],
         },
         {
           n: "06",
-          title: "Your new teammate weighs in on what we built",
-          body: "It goes and asks each of your other teammates what they see from where they sit, and only then forms its own view.",
-          note: "What comes back: you see the calls fire as it consults each teammate, then one answer in its own voice - what it would change, why, and which teammate moved it. One honest caveat: a teammate called as a helper does not stream its own working into your chat. You see the call and the answer, not the conversation.",
+          title: "Your new teammate weighs in on what you built",
+          body: "Before it says anything of its own, it asks each of your other teammates what they see from where they sit. Only then does it form a view.",
+          note: "What comes back: the calls firing one by one as it consults each teammate, then a single answer in its own voice - what it would change, why, and which teammate moved it. One thing to expect: a teammate answering as a helper does not stream its own thinking into your chat. You see the call and the answer, not the conversation in between.",
           prompts: [
-            { key: "newOpen", label: "1. New conversation, then type", intro: "Their name is whatever you called them. It is different for everyone." },
-            { key: "weighIn", label: "2. Then, in the same conversation", intro: "It consults before it concludes. That is the part worth watching." },
+            { key: "newOpen", label: "1. New conversation, then type", intro: "Use whatever name you gave them. This line is different for everyone." },
+            { key: "weighIn", label: "2. Then, in the same conversation", intro: "It consults before it concludes. That is the part to watch." },
           ],
         },
         {
@@ -377,13 +377,13 @@ window.WORKSHOP_CONTENT = (function () {
       subtitle: "שלושה חלקים, בסדר הזה.",
       tiles: [
         { icon: "brain", title: "רקע",
-          body: "מביאים את כולם לשפה משותפת ולהבנה משותפת, כדי שכל שאר המפגש ירוץ ביעילות." },
+          body: "מיישרים קו על המילים ועל מה שהן אומרות, כדי שבהמשך לא נצטרך להסביר שום דבר פעמיים." },
         { icon: "users", title: "מכירים את הסוכנים",
-          body: "יוצרים את הסוכנים, מקימים להם מוח משותף, ולומדים את השיטות שגורמות להם להבין אחד את השני." },
+          body: "פותחים את הערכה, מכירים את שלושת חברי הצוות שבפנים, ורואים את המוח המשותף שמחזיק את כולם על אותה תמונה." },
         { icon: "flow", title: "רואים את זה מתחבר",
-          body: "בונים את התוצר הראשון ורואים את הצוות החדש שלכם עובד יחד." },
+          body: "בונים את העמוד הראשון, ורואים את העבודה עוברת מחבר צוות אחד לשני." },
       ],
-      closing: "זו רק ההתחלה. קחו את זה מכאן לאן שתרצו.",
+      closing: "זה כל היום. מה שתבנו עם הצוות אחרי זה, כבר שלכם.",
     },
 
     /* 2 — עד סוף היום (שלושה חלקים). */
@@ -419,27 +419,27 @@ window.WORKSHOP_CONTENT = (function () {
     technical: {
       kicker: "מה זה סוכן",
       title: "האנטומיה של סוכן",
-      subtitle: "מה שלכל סוכן כבר יש, והשכבות שאנחנו מוסיפים.",
+      subtitle: "מה שלכל סוכן כבר יש, והשכבות שאנחנו מוסיפים. בהמשך היום תכתבו את השורות האלה בעצמכם, לחבר צוות משלכם.",
       groups: [
         {
           heading: "מובנה בסוכן",
           stages: [
-            { title: "תפקיד", body: "התיאור שלו" },
-            { title: "זיכרון", body: "מאגר מובנה" },
-            { title: "כישורים", body: "ספר הוראות שהוא יכול להשתמש בו" },
-            { title: "תזמון", body: "משימות אוטומטיות" },
+            { title: "תפקיד", body: "העבודה האחת שהוא עושה" },
+            { title: "זיכרון", body: "מה שהוא שומר לבד" },
+            { title: "כישורים", body: "שיטת עבודה מוכנה שהוא מפעיל" },
+            { title: "תזמון", body: "עבודה שרצה לפי שעון" },
           ],
         },
         {
           heading: "השכבות שאנחנו מוסיפים",
           stages: [
-            { title: "נשמה", body: "מי הוא" },
-            { title: "זיכרון", body: "זה שאנחנו נותנים לו" },
+            { title: "נשמה", body: "מי הוא, לא מה הוא עושה" },
+            { title: "זיכרון", body: "מה שאנחנו מחליטים שהוא יזכור" },
           ],
         },
       ],
       closing: [
-        "תורידו אחד מהם, וזה שוב סתם מודל.",
+        "מורידים אחד מהם, וזה שוב סתם מודל.",
         "לא המודל. מה שהוא יודע כשאתם שואלים.",
       ],
     },
@@ -541,21 +541,21 @@ window.WORKSHOP_CONTENT = (function () {
         },
         {
           n: "05",
-          title: "מגייסים את חבר הצוות שאתם באמת צריכים",
-          body: "התבנית היא העיקר. תפקיד חוזר על עצמו, אז מוסיפים חבר צוות בשבילו, וה-Technical Lead הוא זה שבונה אותו. הפעם אף אחד לא כותב אותו בשבילכם.",
-          note: "מה אמור לחזור: הודעה אחת עם שלוש שאלות - מה התפקיד האחד שלו, מה האופי שלו, ומה עוד הוא צריך. עונים על שלושתן בתשובה אחת, במילים שלכם. מה שכתבתם בשאלון הוא בדיוק מה שמתאים כאן.",
+          title: "מגייסים את חבר הצוות שחסר לכם",
+          body: "התבנית היא העיקר. יש עבודה שחוזרת על עצמה, אז מוסיפים בשבילה חבר צוות, וה-Technical Lead הוא זה שבונה אותו. את זה כבר אף אחד לא כותב בשבילכם.",
+          note: "מה אמור לחזור: הודעה אחת עם שלוש שאלות - מה התפקיד האחד שלו, מה האופי שלו, ומה עוד הוא צריך. עונים על שלושתן בתשובה אחת, במילים שלכם. מה שכתבתם בשאלון שייך בדיוק לכאן.",
           prompts: [
-            { key: "tlOpen", label: "1. שיחה חדשה, ומקלידים", intro: "חוזרים ל-Technical Lead. הוא היחיד שבונה חברי צוות אחרים." },
-            { key: "recruitAsk", label: "2. ואז, באותה שיחה", intro: "שימו לב למה שלא כתוב כאן: מי הוא. החלק הזה שלכם." },
+            { key: "tlOpen", label: "1. שיחה חדשה, ומקלידים", intro: "חוזרים ל-Technical Lead. הוא היחיד שיכול לבנות חבר צוות נוסף." },
+            { key: "recruitAsk", label: "2. ואז, באותה שיחה", intro: "שימו לב למה שלא כתוב שם: מי הוא. החלק הזה שלכם." },
           ],
         },
         {
           n: "06",
-          title: "חבר הצוות החדש אומר את דעתו על מה שבנינו",
-          body: "הוא הולך לשאול כל אחד מחברי הצוות האחרים מה הוא רואה מהמקום שלו, ורק אז מגבש דעה משלו.",
-          note: "מה אמור לחזור: רואים את הקריאות יוצאות כשהוא מתייעץ עם כל אחד, ואז תשובה אחת בקול שלו - מה הוא היה משנה, למה, ואיזה חבר צוות שינה לו את הדעה. הסתייגות אחת כנה: חבר צוות שנקרא כעוזר לא משדר את העבודה שלו לצ׳אט שלכם. רואים את הקריאה ואת התשובה, לא את השיחה.",
+          title: "חבר הצוות החדש אומר את דעתו על מה שבניתם",
+          body: "לפני שהוא אומר משהו משלו, הוא שואל כל אחד מחברי הצוות האחרים מה הוא רואה מהמקום שלו. רק אז הוא מגבש דעה.",
+          note: "מה אמור לחזור: רואים את הקריאות יוצאות אחת אחרי השנייה כשהוא מתייעץ עם כל אחד, ואז תשובה אחת בקול שלו - מה הוא היה משנה, למה, ומי שינה לו את הדעה. כדאי לדעת מראש: חבר צוות שנקרא לעזור לא משדר את החשיבה שלו לצ׳אט שלכם. רואים את הקריאה ואת התשובה, לא את השיחה שביניהן.",
           prompts: [
-            { key: "newOpen", label: "1. שיחה חדשה, ומקלידים", intro: "השם הוא מה שקראתם לו. הוא שונה אצל כל אחד." },
+            { key: "newOpen", label: "1. שיחה חדשה, ומקלידים", intro: "משתמשים בשם שנתתם לו. השורה הזאת שונה אצל כל אחד." },
             { key: "weighIn", label: "2. ואז, באותה שיחה", intro: "הוא מתייעץ לפני שהוא מסכם. זה החלק ששווה להסתכל עליו." },
           ],
         },
