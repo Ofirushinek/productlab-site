@@ -2346,7 +2346,25 @@ function wireSignout() {
 }
 
 /* Post-render wiring shared by every page. */
+/* ---- WebKit sticky-header fix -------------------------------------------- */
+/* Safari/WKWebView has a long-standing bug: a `position: sticky` element that
+   gets inserted into the DOM after first paint - exactly what every render()
+   call does, replacing #app's innerHTML wholesale - sometimes never activates
+   stickiness until the next real scroll event. Symptom: the header is simply
+   absent at the top of a fresh load, and only appears once the visitor
+   scrolls. Forcing a synchronous reflow on the nav right after insertion makes
+   WebKit recompute its sticky position immediately, with nothing left waiting
+   on a user gesture. */
+function fixStickyNav() {
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
+  nav.style.display = "none";
+  void nav.offsetHeight;
+  nav.style.display = "";
+}
+
 function afterRender() {
+  fixStickyNav();
   wireLang();
   wireReveal();
   wireHeroImage();
