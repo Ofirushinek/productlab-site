@@ -1346,12 +1346,13 @@ function kitMedia(k) {
     </div>`;
 }
 
-/* The shared-brain map: a containment hierarchy. The outer panel IS the shared
-   coordination layer (Shared brain + Learning log in its header); inside sit the
-   agents, each with its four files (role, character, skills, memory). A small
-   tick above each agent card links it up to the shared layer, signaling that
-   every agent reads and writes there. Pure HTML/CSS on DS tokens, so RTL is free
-   (logical layout) and it matches the site look with no new tokens. */
+/* The shared-brain map: one shared-brain node (with the learning log as its
+   caption) sits above the agents, each with its four files (role, character,
+   skills, memory). A bus/spine line runs from the brain node to every agent
+   card, so the connection reads as one system instead of separate tiles. The
+   diagram floats directly on the page background (no card). Pure HTML/CSS on
+   DS tokens, so RTL is free (logical layout) and it matches the site look
+   with no new tokens. */
 function sharedBrainDiagram(n) {
   const agentCard = () => `
     <div class="brainmap__agent">
@@ -1364,10 +1365,10 @@ function sharedBrainDiagram(n) {
       </div>
     </div>`;
   return `
-    <div class="brainmap" role="group" aria-label="How the team connects: one shared brain and a learning log above every agent, and each agent has its own role, character, skills and memory">
+    <div class="brainmap" role="group" aria-label="How the team connects: one shared brain with a learning log, wired to every agent that has its own role, character, skills and memory">
       <div class="brainmap__hd">
         <span class="brainmap__coord brainmap__coord--primary">${I.repeat}<span>${n.sharedBrain}</span></span>
-        <span class="brainmap__coord">${n.learningLog}</span>
+        <span class="brainmap__caption">${n.learningLog}</span>
       </div>
       <div class="brainmap__agents">
         ${agentCard()}${agentCard()}${agentCard()}

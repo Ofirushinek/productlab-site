@@ -1892,15 +1892,18 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .brain__figure { display: flex; justify-content: center; }
 .brainmap {
   width: 100%; max-width: 60rem;
-  background: var(--pl-surface); border: 1px solid var(--pl-border-strong);
-  border-radius: var(--radius-xl); box-shadow: var(--shadow-pl-md);
   padding: clamp(1.4rem, 3vw, 2rem);
 }
-/* Header = the coordination layer that sits above every agent */
+/* Header = the single shared-brain anchor, with the learning log demoted to a caption */
 .brainmap__hd {
-  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-  gap: 0.75rem; padding-bottom: clamp(1.25rem, 3vw, 1.75rem);
-  border-bottom: 1px solid var(--pl-border);
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.5rem; padding-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+  position: relative;
+}
+/* Trunk line: brain node down to the bus line / spine below */
+.brainmap__hd::after {
+  content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: 2px; height: clamp(1.5rem, 3.5vw, 2.25rem); background: var(--pl-border-strong);
 }
 .brainmap__coord {
   display: inline-flex; align-items: center; gap: 0.45rem;
@@ -1914,18 +1917,42 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   border-color: var(--pl-accent);
 }
 .brainmap__coord--primary svg { color: var(--pl-accent); }
-/* The agents, contained inside the shared layer */
+.brainmap__caption {
+  font-size: var(--text-caption); font-weight: 600; color: var(--pl-fg-body);
+}
+/* The agents, connected to the shared brain via a bus (desktop) or spine (mobile) */
 .brainmap__agents {
-  display: grid; grid-template-columns: 1fr; gap: clamp(1rem, 2.5vw, 1.4rem);
+  --bm-gap: clamp(1rem, 2.5vw, 1.4rem);
+  --bm-col: calc((100% - 2 * var(--bm-gap)) / 3);
+  position: relative;
+  display: grid; grid-template-columns: 1fr; gap: var(--bm-gap);
   margin-top: clamp(1.5rem, 3.5vw, 2.25rem);
 }
-@media (min-width: 720px) { .brainmap__agents { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 720px) {
+  .brainmap__agents { grid-template-columns: repeat(3, 1fr); }
+  /* Bus line: spans exactly from the center of the first card to the center of the last */
+  .brainmap__agents::before {
+    content: ""; position: absolute;
+    top: calc(-1 * clamp(1.5rem, 3.5vw, 2.25rem));
+    left: calc(var(--bm-col) / 2); right: calc(var(--bm-col) / 2);
+    height: 2px; background: var(--pl-border-strong);
+  }
+}
+@media (max-width: 719.98px) {
+  /* Spine: one continuous line running behind the stacked cards */
+  .brainmap__agents::after {
+    content: ""; position: absolute; z-index: 0;
+    top: calc(-1 * clamp(1.5rem, 3.5vw, 2.25rem)); bottom: 0;
+    left: 50%; transform: translateX(-50%);
+    width: 2px; background: var(--pl-border-strong);
+  }
+}
 .brainmap__agent {
-  position: relative; background: var(--pl-illo-bg);
+  position: relative; z-index: 1; background: var(--pl-illo-bg);
   border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
   padding: 1.1rem 1rem 1.15rem; text-align: center;
 }
-/* Tick + dot linking each agent up to the shared layer above */
+/* Tick + dot linking each agent up to the bus/spine above */
 .brainmap__agent::before {
   content: ""; position: absolute; top: calc(-1 * clamp(1.5rem, 3.5vw, 2.25rem));
   left: 50%; transform: translateX(-50%);
