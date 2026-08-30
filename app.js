@@ -2363,6 +2363,16 @@ function fixStickyNav() {
   nav.style.display = "";
 }
 
+/* An in-app browser (WhatsApp/Instagram/etc. opening a shared link) presents
+   its WKWebView with its own slide-up transition running IN PARALLEL with our
+   page's first paint. The single reflow above can land mid-transition, before
+   the host app's chrome has finished settling — so it re-arms once more,
+   after that transition has had time to finish, and again on `pageshow` for
+   the case where the in-app browser suspends/resumes the page (backgrounding
+   it to show WhatsApp itself, then returning) rather than reloading it. */
+window.setTimeout(fixStickyNav, 500);
+window.addEventListener("pageshow", fixStickyNav);
+
 function afterRender() {
   fixStickyNav();
   wireLang();
