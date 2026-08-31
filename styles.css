@@ -775,19 +775,21 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    a single moment, not a scrolling page. .page's own generous min-height and
    .section's own generous padding-block (both tuned for long marketing
    pages) are overridden here specifically, not changed at their source —
-   every other page still scrolls exactly as before. Verified with real
-   rendered heights (Playwright), not assumed: fits without scroll at both
-   390x844 and the tighter 375x667 (iPhone SE-class), the two most common
-   small-phone viewports. */
-.kit-page {
-  min-height: calc(100dvh - var(--nav-h-mobile));
-  display: flex; flex-direction: column;
-}
-@media (min-width: 760px) { .kit-page { min-height: calc(100dvh - var(--nav-h)); } }
-.kit-section {
-  flex: 1; display: flex; align-items: center;
-  padding-block: clamp(0.75rem, 3vw, 1.5rem);
-}
+   every other page still scrolls exactly as before.
+
+   ROOT CAUSE of the white/gray band Ofir saw below the button on a real
+   phone: this used to set its OWN `min-height: calc(100dvh - nav-h)` — a
+   SECOND, independent read of the dynamic-viewport unit, on top of #app's
+   own `min-height: 100dvh` (above). Two separate dvh reads can disagree on
+   a real device while the browser's address bar is still show/hide-
+   transitioning (a real-device timing quirk headless Chromium cannot
+   reproduce at all, which is why this passed every local check here) -
+   whichever one resolved smaller left a gap of the page's base background
+   showing through beneath the flex column. Fixed by having exactly ONE
+   height authority: #app already sizes itself once, and `#app > main {
+   flex: 1 0 auto }` (above) already grows any <main> - this one included -
+   to fill whatever's left. Nothing here needs its own height math. */
+.kit-page { display: flex; flex-direction: column; }
 
 /* ---- The final #/kit direction Ofir picked: character + text + button sit
    directly on the page's own cream background (var(--pl-intro-cream) — same
