@@ -2446,35 +2446,14 @@ function wireSignout() {
 }
 
 /* Post-render wiring shared by every page. */
-/* ---- WebKit sticky-header fix -------------------------------------------- */
-/* Safari/WKWebView has a long-standing bug: a `position: sticky` element that
-   gets inserted into the DOM after first paint - exactly what every render()
-   call does, replacing #app's innerHTML wholesale - sometimes never activates
-   stickiness until the next real scroll event. Symptom: the header is simply
-   absent at the top of a fresh load, and only appears once the visitor
-   scrolls. Forcing a synchronous reflow on the nav right after insertion makes
-   WebKit recompute its sticky position immediately, with nothing left waiting
-   on a user gesture. */
-function fixStickyNav() {
-  const nav = document.querySelector(".nav");
-  if (!nav) return;
-  nav.style.display = "none";
-  void nav.offsetHeight;
-  nav.style.display = "";
-}
-
-/* An in-app browser (WhatsApp/Instagram/etc. opening a shared link) presents
-   its WKWebView with its own slide-up transition running IN PARALLEL with our
-   page's first paint. The single reflow above can land mid-transition, before
-   the host app's chrome has finished settling — so it re-arms once more,
-   after that transition has had time to finish, and again on `pageshow` for
-   the case where the in-app browser suspends/resumes the page (backgrounding
-   it to show WhatsApp itself, then returning) rather than reloading it. */
-window.setTimeout(fixStickyNav, 500);
-window.addEventListener("pageshow", fixStickyNav);
-
+/* A WebKit sticky-header fix (forcing a reflow on the nav after every render,
+   plus a delayed retry and a `pageshow` listener) used to live here. .nav is
+   `position: fixed` now (2026-08-31, styles.css), which has no sticky
+   initialization state to ever need re-triggering — so this whole family of
+   patches is gone, not just quieted. Keeping it would have meant flickering
+   the header (display:none -> reflow -> "") on every render for a bug that
+   no longer exists in the CSS underneath it. */
 function afterRender() {
-  fixStickyNav();
   wireLang();
   wireReveal();
   wireHeroImage();
@@ -2768,14 +2747,13 @@ window.addEventListener("hashchange", () => {
 
   // Paint the signed-out shell immediately, before awaiting the network round
   // trip to Supabase below. Until this line, render()/route() only ran AFTER
-  // `await loadAuth()` resolved, which left #app - and the sticky `.nav`
-  // inside it - completely absent from the DOM for however long that request
-  // took (worse on a slow mobile connection, e.g. a WhatsApp-shared link).
-  // WebKit's sticky-position bug (see fixStickyNav below) is specifically a
-  // LATE-insertion bug; painting on the very first tick the script runs, with
-  // AUTH still at its safe signed-out default, removes that gap outright
-  // instead of racing to patch it after the fact. loadAuth() below still
-  // repaints with the real auth state once it resolves (existing behavior).
+  // `await loadAuth()` resolved, which left #app - and .nav inside it -
+  // completely absent from the DOM for however long that request took
+  // (worse on a slow mobile connection, e.g. a WhatsApp-shared link).
+  // Painting on the very first tick the script runs, with AUTH still at its
+  // safe signed-out default, removes that gap outright instead of racing to
+  // patch it after the fact. loadAuth() below still repaints with the real
+  // auth state once it resolves (existing behavior).
   if (!oauthReturn) setLang(lang);
 
   await loadAuth();
