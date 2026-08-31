@@ -2269,47 +2269,45 @@ function renderLegal(lang, kind) {
    target underneath (KIT_ZIP_URL, same one #/prep's kit tile already uses).
    Public, no auth gate — the people who reach this link already registered.
 
-   Ofir's own spec (voice note, 2026-08-31): clean page, no noise in the
-   middle or bottom — so NO siteFooter here, unlike every other page shell.
-   Header stays (so the EN/HE toggle is reachable). Character sits ABOVE the
-   text, then two actions: download again, back to the main site.
+   FULL-BLEED direction, Ofir's own pick after comparing two mockups: no
+   card, no boundary — character + text + button sit directly on the
+   illustration's own cream background (var(--pl-intro-cream)), edge to
+   edge, one continuous surface. Header stays (so the EN/HE toggle is
+   reachable) but there is deliberately no footer or second button — Ofir's
+   own words, "clean, no noise," and the header's own clickable wordmark
+   already covers "back to the main site."
 
-   REUSE LADDER, per Design System Lead consult (2026-08-31): the page shell
-   is renderLegal()'s pattern (navHeader + <main class="page"><section
-   class="section"><div class="wrap narrow">), minus the footer. Text/actions
-   are existing components (.eyebrow + .section-title + .login__sub, .cta-row
-   + .btn--primary/.btn--ghost, I.repeat — confirmed the right fit for
-   "download AGAIN", not a compromise). .kitclaim now builds on .moment-card,
-   a base class the DS Lead extracted from this + .noacct (the THIRD near-
-   duplicate "centered card" recipe on the site) rather than staying its own
-   one-off — .noacct was refactored onto the same base in the same pass.
+   ONE VIEWPORT, NO SCROLL (Ofir, 2026-08-31): this is a single moment, not
+   a scrolling page — see .kit-page/.kitfull in styles.css, verified with
+   real rendered heights at both 390x844 and 375x667.
 
    The character illustration is Marketing Designer's asset: Dean, the
-   established host puppet, holding the kit as a wrapped gift — flat
-   #FBEAD9 (--pl-intro-cream) background so the curtain-lift into this page
-   reads as one continuous scene, not a hard cut. Recommendation + 2
-   alternates + swap map: `projects/product-lab/brand/kit-landing/CAST.md`
-   (this repo). */
+   established host puppet, holding the kit as a wrapped gift. Recommendation
+   + swap map: `projects/product-lab/brand/kit-landing/CAST.md` (this repo).
+   KNOWN OPEN ITEM: the current asset is a flat-color JPEG/WebP fill, not a
+   transparent PNG, and its corners sample `#FDEEDB` against the page's
+   `--pl-intro-cream: #FBEAD9` — a visible seam Ofir flagged. Marketing
+   Designer is regenerating with a real alpha channel; swap the `<picture>`
+   below to a single `<img src="assets/kit/kit-hero-dean.png">` (no fill
+   color needed at all once it's transparent) the moment that lands. */
 function renderKit(lang) {
   const t = I18N[lang];
   document.getElementById("app").innerHTML = `
   ${navHeader(t, lang)}
 
-  <main id="top" class="page">
-    <section class="section"><div class="wrap narrow">
-      <div class="moment-card kitclaim reveal">
-        <picture class="kitclaim__illo">
-          <source type="image/webp" srcset="assets/kit/kit-hero-dean.webp" />
-          <img src="assets/kit/kit-hero-dean.jpg" alt="" width="1024" height="1536" decoding="async" />
-        </picture>
-        <span class="eyebrow">${t.kit_eyebrow}</span>
-        <h1 class="section-title">${t.kit_title}</h1>
-        <p class="login__sub">${t.kit_sub}</p>
-        <div class="cta-row kitclaim__cta">
-          <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}${t.kit_btn_download}</a>
-        </div>
+  <main id="top" class="page kit-page kitfull reveal">
+    <picture class="kitfull__illo">
+      <source type="image/webp" srcset="assets/kit/kit-hero-dean.webp" />
+      <img src="assets/kit/kit-hero-dean.jpg" alt="" width="1024" height="1536" decoding="async" />
+    </picture>
+    <div class="wrap narrow kitfull__body">
+      <span class="eyebrow">${t.kit_eyebrow}</span>
+      <h1 class="section-title">${t.kit_title}</h1>
+      <p class="login__sub">${t.kit_sub}</p>
+      <div class="cta-row kitfull__cta">
+        <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}${t.kit_btn_download}</a>
       </div>
-    </div></section>
+    </div>
   </main>
 
   ${studentModal(t)}`;

@@ -717,11 +717,14 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 /* ---- .moment-card — shared base for a centered "moment" card: illustration/
    icon, headline, body, actions. Extracted 2026-08-31 (Design System Lead)
-   after the THIRD near-duplicate of this recipe showed up (.login above,
-   .noacct below, .kitclaim further down) — .login stays separate (it's a
-   form container with different composition), .noacct and .kitclaim both
-   build on this. Scale is .kitclaim's (grid-aligned: 32-48px padding);
-   .noacct's own 28-40px was off the 8px grid, so this also fixes that drift. */
+   after a THIRD near-duplicate of this recipe showed up on `#/kit`'s first
+   direction (a boxed card) — .login stays separate (it's a form container
+   with different composition), .noacct builds on this. `#/kit` itself later
+   moved to a full-bleed direction with no card (see .kit-page/.kitfull
+   below) and dropped off this base, but the extraction is still correct:
+   .noacct alone was still a near-duplicate of .login's card recipe, drifted
+   off the 8px grid at 28-40px padding vs. this class's grid-aligned
+   32-48px — reuse it again the next time a third boxed-card need shows up. */
 .moment-card {
   max-width: 34rem; margin-inline: auto; text-align: center;
   padding: clamp(2rem, 5vw, 3rem);
@@ -747,43 +750,45 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .noacct__body { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body-lg); line-height: 1.6; }
 .noacct .cta-row { justify-content: center; }
 
-/* ---- #/kit — "here's your kit" branded landing page (2026-08-31).
-   Builds on .moment-card (base, above) — no extra surface/border/radius/
-   shadow/padding here, that's the whole point of the extraction. */
-.kitclaim__illo {
-  display: block; margin: 0 auto 1.5rem; width: 100%; max-width: 220px;
-  border-radius: var(--radius-lg); overflow: hidden;
-  background: var(--pl-illo-bg);
+/* ---- #/kit — ONE VIEWPORT, NO SCROLL (Ofir, 2026-08-31): this is
+   a single moment, not a scrolling page. .page's own generous min-height and
+   .section's own generous padding-block (both tuned for long marketing
+   pages) are overridden here specifically, not changed at their source —
+   every other page still scrolls exactly as before. Verified with real
+   rendered heights (Playwright), not assumed: fits without scroll at both
+   390x844 and the tighter 375x667 (iPhone SE-class), the two most common
+   small-phone viewports. */
+.kit-page {
+  min-height: calc(100dvh - var(--nav-h-mobile));
+  display: flex; flex-direction: column;
 }
-/* The source illustration (1024x1536, 2:3) is composed with the character in
-   the upper two-thirds and the bottom third deliberately empty cream — built
-   for a background-image treatment (Marketing Designer's own note), not a
-   cropped portrait frame. Displayed at the source's native 2:3 ratio, that
-   empty third reads as a large dead gap between the character and the
-   headline below it — this crops it off (object-fit:cover + top anchor keeps
-   the character, drops the built-in blank tail) rather than reusing
-   .bio__photo's identical-looking 4:5/cover/top recipe as-is, which on THIS
-   source was cropping the character almost entirely out of frame (that
-   recipe assumes a headshot-style source filling the whole frame; this one
-   doesn't). Give this specific image its own explicit ratio, don't inherit
-   an unrelated component's. */
-.kitclaim__illo img {
-  display: block; width: 100%; height: auto; aspect-ratio: 4 / 5;
-  object-fit: cover; object-position: center top;
+@media (min-width: 760px) { .kit-page { min-height: calc(100dvh - var(--nav-h)); } }
+.kit-section {
+  flex: 1; display: flex; align-items: center;
+  padding-block: clamp(0.75rem, 3vw, 1.5rem);
 }
-.kitclaim .eyebrow { justify-content: center; }
-.kitclaim .section-title { font-size: var(--text-h2); max-width: none; }
-.kitclaim .login__sub { margin-top: 0.75rem; }
-/* .moment-card sets text-align:center, but it's only ever INHERITED — a
-   sitewide RTL rule ([dir="rtl"] .section-title, .section-lead further down
-   this file) sets text-align:right directly on .section-title, and an
-   explicit declaration always beats an inherited one regardless of specificity
-   or source order. Same fix, same reason, for .login__sub (used the same way
-   elsewhere in RTL). The extra [dir] segment is only here to out-specificity
-   that rule, not for any dir-specific behavior — this page centers in both
-   languages. */
-[dir] .kitclaim .section-title, [dir] .kitclaim .login__sub { text-align: center; }
-.kitclaim__cta { margin-top: 1.75rem; justify-content: center; }
+
+/* ---- OPTION B (Ofir's requested alternate direction, TEMP #/kit-b route):
+   character + text + button sit directly on the illustration's own cream
+   background (var(--pl-intro-cream) — same one the loader curtain uses), no
+   card boundary, edge to edge. Sized to also fit one viewport (see .kit-page
+   above): the illustration is NOT cropped (the source's empty-cream bottom
+   third blends into this same background rather than fighting it), so it is
+   sized down instead — a clamp tied to viewport width rather than a fixed
+   px cap, so it fits equally on a small and a large phone. */
+.kitfull {
+  background: var(--pl-intro-cream, #FBEAD9);
+  padding-block: clamp(0.75rem, 3vw, 1.5rem);
+  text-align: center;
+  justify-content: center;
+}
+.kitfull__illo { display: block; width: 100%; max-width: clamp(140px, 34vw, 320px); margin: 0 auto; }
+.kitfull__illo img { display: block; width: 100%; height: auto; }
+.kitfull__body { margin-top: clamp(0.75rem, 3vw, 1.5rem); }
+[dir] .kitfull .eyebrow { justify-content: center; }
+[dir] .kitfull .section-title { text-align: center; max-width: none; margin-top: 0.5rem; }
+[dir] .kitfull .login__sub { text-align: center; margin-top: 0.5rem; }
+.kitfull__cta { justify-content: center; margin-top: 1.25rem; }
 
 /* ---- Register-your-interest FORM (inside the shared .modal__card) ----------
    Reuses .field/.input + the login card's centered header. The wider card fits
