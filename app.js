@@ -146,7 +146,21 @@ const I18N = {
       when_value: ["יום ה׳, 3 בספטמבר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
       where_value: ["אונליין בזום", "מכל מקום בעולם"],
-      cta: "דברו איתי",
+      cta: "הרשמה",
+      limited_note: "אזל המקום",
+    },
+    // Cohort #2, added 2026-08-31 (date+price decided by Ofir/CMO, shared-brain
+    // IN FLIGHT 2026-08-31 [cmo]). Same shape as `session` above + a price column,
+    // rendered directly beneath it — the ONLY place price appears on the page.
+    session2: {
+      badge: "המחזור הבא",
+      when_label: "מתי?",
+      when_value: ["יום ה׳, 15 באוקטובר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
+      where_label: "איפה?",
+      where_value: ["אונליין בזום", "מכל מקום בעולם"],
+      price_label: "מחיר",
+      price_value: ["₪600", "לאדם"],
+      cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
 
@@ -413,7 +427,21 @@ const I18N = {
       when_value: ["Thursday, 3 September", "17:30-20:30", "One session, 3 hours"],
       where_label: "Where?",
       where_value: ["Online, over Zoom", "From anywhere"],
-      cta: "Talk to me",
+      cta: "Sign up",
+      limited_note: "Sold out",
+    },
+    // Cohort #2, added 2026-08-31 (date+price decided by Ofir/CMO). Same shape
+    // as `session` above + a price column, rendered directly beneath it — the
+    // ONLY place price appears on the page.
+    session2: {
+      badge: "Next cohort",
+      when_label: "When?",
+      when_value: ["Thursday, 15 October", "17:30-20:30", "One session, 3 hours"],
+      where_label: "Where?",
+      where_value: ["Online, over Zoom", "From anywhere"],
+      price_label: "Price",
+      price_value: ["₪600", "per person"],
+      cta: "Sign up",
       limited_note: "Spots are limited",
     },
 
@@ -973,6 +1001,49 @@ function wireWhyCursors() {
   _whyCursorRAF = requestAnimationFrame(frame);
 }
 
+// SESSION STRIP — shared markup for the current cohort card and any future one
+// (2026-08-31: cohort #2 added directly beneath it). `opts.disabled` renders a
+// closed, non-clickable CTA (no href, aria-disabled, greyed via .btn--disabled);
+// `opts.price` adds a third when/where/price column, same visual pattern as
+// when/where. Do not duplicate this markup per-strip — edit once, both render.
+function sessionStripHtml(s, opts = {}) {
+  const priceCol = opts.price ? `
+        <div class="ss-div"></div>
+        <div class="ss-col">
+          <div class="ss-label">${s.price_label}</div>
+          <div class="ss-val">
+            <strong>${s.price_value[0]}</strong>
+            <span>${s.price_value[1]}</span>
+          </div>
+        </div>` : "";
+  const cta = opts.disabled
+    ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
+    : `<a class="btn btn--accent" href="${WA_URL}" target="_blank" rel="noopener">${s.cta}</a>`;
+  return `
+      <div class="session-strip reveal${opts.disabled ? " session-strip--closed" : ""}">
+        <span class="ss-badge">${I.spark} ${s.badge}</span>
+        <div class="ss-col">
+          <div class="ss-label">${s.when_label}</div>
+          <div class="ss-val">
+            <strong>${s.when_value[0]}</strong>
+            <span>${s.when_value[1]}, ${s.when_value[2]}</span>
+          </div>
+        </div>
+        <div class="ss-div"></div>
+        <div class="ss-col">
+          <div class="ss-label">${s.where_label}</div>
+          <div class="ss-val">
+            <strong>${s.where_value[0]}</strong>
+            <span>${s.where_value[1]}</span>
+          </div>
+        </div>${priceCol}
+        <div class="ss-col ss-col--cta">
+          ${cta}
+          <div class="ss-note">${s.limited_note}</div>
+        </div>
+      </div>`;
+}
+
 function render(lang) {
   const t = I18N[lang];
 
@@ -996,34 +1067,14 @@ function render(lang) {
     </picture>
   </section>
 
-  <!-- 1b NEXT SESSION — a FLAT full-width STRIP (like the site's other section bands),
-       flush below the hero so a hint peeks above the fold. NOT a floating/rounded card.
-       Same structure/content: badge + when/where columns divided by hairlines + CTA. -->
+  <!-- 1b SESSION STRIPS — flat full-width bands (like the site's other section
+       bands), flush below the hero so a hint peeks above the fold. NOT floating/
+       rounded cards. Current cohort stays on top, closed; cohort #2 goes directly
+       beneath it, active, price shown (2026-08-31 — see sessionStripHtml above). -->
   <section class="session-strip-band">
     <div class="wrap">
-      <div class="session-strip reveal">
-        <span class="ss-badge">${I.spark} ${t.session.badge}</span>
-        <div class="ss-col">
-          <div class="ss-label">${t.session.when_label}</div>
-          <div class="ss-val">
-            <strong>${t.session.when_value[0]}</strong>
-            <span>${t.session.when_value[1]}, ${t.session.when_value[2]}</span>
-          </div>
-        </div>
-        <div class="ss-div"></div>
-        <div class="ss-col">
-          <div class="ss-label">${t.session.where_label}</div>
-          <div class="ss-val">
-            <strong>${t.session.where_value[0]}</strong>
-            <span>${t.session.where_value[1]}</span>
-          </div>
-        </div>
-        <div class="ss-div"></div>
-        <div class="ss-col ss-col--cta">
-          <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.session.cta}</a>
-          <div class="ss-note">${t.session.limited_note}</div>
-        </div>
-      </div>
+      ${sessionStripHtml(t.session, { disabled: true })}
+      ${sessionStripHtml(t.session2, { price: true })}
     </div>
   </section>
 

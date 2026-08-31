@@ -1593,11 +1593,21 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .btn--accent:hover{ background:var(--pl-accent-hover); }
 .btn--accent svg{ color:#fff; width:1em; height:1em; }
 
+/* Sold-out/closed CTA — visually present, never clickable. Used on a past
+   cohort's strip once registration is closed (2026-08-31). */
+.btn--disabled {
+  background: var(--pl-border-strong); color: var(--pl-fg-secondary);
+  box-shadow: none; cursor: not-allowed; pointer-events: none; opacity: 0.7;
+}
+.btn--disabled:hover { background: var(--pl-border-strong); }
 
-/* ---- NEXT-SESSION strip — a FLAT full-width band like the site's other sections,
-   flush below the hero (a hint peeks above the fold). NOT a floating/rounded card.
-   Same structure: badge + when/where columns (hairline dividers) + contact CTA.
-   Content is CENTERED as one balanced group so it never scatters. Price dropped. */
+
+/* ---- SESSION strips — FLAT full-width bands like the site's other sections,
+   flush below the hero (a hint peeks above the fold). NOT floating/rounded cards.
+   Same structure: badge + when/where(/price) columns (hairline dividers) + CTA.
+   Content is CENTERED as one balanced group so it never scatters. Two stacked
+   instances since 2026-08-31: current cohort (closed, .session-strip--closed)
+   + cohort #2 (active, price column shown — see .btn--disabled below). */
 .session-strip-band {
   background: color-mix(in srgb, var(--pl-accent) 6%, var(--pl-bg));
   border-block: 1px solid var(--pl-border);
@@ -1624,6 +1634,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 
 .ss-col--cta { align-items: center; justify-content: center; gap: 0.55rem; }
 .ss-note { font-size: var(--text-sm); font-weight: 500; color: var(--pl-fg-secondary); text-align: center; }
+.session-strip--closed { opacity: 0.82; }
 
 @media (max-width: 820px) {
   .session-strip { flex-direction: column; align-items: center; gap: 1.1rem; text-align: center; }
