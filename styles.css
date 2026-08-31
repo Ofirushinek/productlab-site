@@ -1631,6 +1631,13 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .ss-val strong { font-weight: 700; font-size: var(--text-body-lg); color: var(--pl-fg); white-space: nowrap; }
 .ss-val span { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-body); white-space: nowrap; }
 .ss-div { width: 1px; background: var(--pl-border); align-self: stretch; flex: none; transform: translateZ(0); }
+.ss-price { display: flex; align-items: baseline; gap: 0.3rem; }
+.ss-price strong { font-weight: 700; font-size: var(--text-body-lg); color: var(--pl-fg); }
+.ss-price span { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-body); }
+
+/* Full-bleed rule between the two stacked strips — breaks out of `.wrap`'s
+   max-width to span the whole viewport, not just the centered content column. */
+.ss-divider-full { width: 100vw; margin-inline-start: calc(50% - 50vw); border-top: 1px solid var(--pl-border); }
 
 .ss-col--cta { align-items: center; justify-content: center; gap: 0.55rem; }
 .ss-note { font-size: var(--text-sm); font-weight: 500; color: var(--pl-fg-secondary); text-align: center; }

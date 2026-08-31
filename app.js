@@ -141,13 +141,13 @@ const I18N = {
     hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI משלכם,", "ותתחילו לבנות איתו את המוצר הראשון שלכם.", "בזמן אמת."],
     hero_cta: "הרשמה למחזור הבא",
     session: {
-      badge: "המפגש הבא",
+      badge: "המפגש הנוכחי",
       when_label: "מתי?",
       when_value: ["יום ה׳, 3 בספטמבר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
       where_value: ["אונליין בזום", "מכל מקום בעולם"],
       cta: "הרשמה",
-      limited_note: "אזל המקום",
+      limited_note: "אזל",
     },
     // Cohort #2, added 2026-08-31 (date+price decided by Ofir/CMO, shared-brain
     // IN FLIGHT 2026-08-31 [cmo]). Same shape as `session` above + a price column,
@@ -422,7 +422,7 @@ const I18N = {
     hero_sub_lines: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
     hero_cta: "Register for the next cohort",
     session: {
-      badge: "Next session",
+      badge: "Current session",
       when_label: "When?",
       when_value: ["Thursday, 3 September", "17:30-20:30", "One session, 3 hours"],
       where_label: "Where?",
@@ -1004,21 +1004,16 @@ function wireWhyCursors() {
 // SESSION STRIP — shared markup for the current cohort card and any future one
 // (2026-08-31: cohort #2 added directly beneath it). `opts.disabled` renders a
 // closed, non-clickable CTA (no href, aria-disabled, greyed via .btn--disabled);
-// `opts.price` adds a third when/where/price column, same visual pattern as
-// when/where. Do not duplicate this markup per-strip — edit once, both render.
+// `opts.price` adds a price line under the CTA button (not a separate column —
+// both strips stay the same 3-column width: when / where / cta). Do not
+// duplicate this markup per-strip — edit once, both render.
 function sessionStripHtml(s, opts = {}) {
-  const priceCol = opts.price ? `
-        <div class="ss-div"></div>
-        <div class="ss-col">
-          <div class="ss-label">${s.price_label}</div>
-          <div class="ss-val">
-            <strong>${s.price_value[0]}</strong>
-            <span>${s.price_value[1]}</span>
-          </div>
-        </div>` : "";
   const cta = opts.disabled
     ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
     : `<a class="btn btn--accent" href="${WA_URL}" target="_blank" rel="noopener">${s.cta}</a>`;
+  const price = opts.price
+    ? `<div class="ss-price"><strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
+    : "";
   return `
       <div class="session-strip reveal${opts.disabled ? " session-strip--closed" : ""}">
         <span class="ss-badge">${I.spark} ${s.badge}</span>
@@ -1036,9 +1031,10 @@ function sessionStripHtml(s, opts = {}) {
             <strong>${s.where_value[0]}</strong>
             <span>${s.where_value[1]}</span>
           </div>
-        </div>${priceCol}
+        </div>
+        <div class="ss-div"></div>
         <div class="ss-col ss-col--cta">
-          ${cta}
+          ${cta}${price}
           <div class="ss-note">${s.limited_note}</div>
         </div>
       </div>`;
@@ -1074,6 +1070,7 @@ function render(lang) {
   <section class="session-strip-band">
     <div class="wrap">
       ${sessionStripHtml(t.session, { disabled: true })}
+      <div class="ss-divider-full"></div>
       ${sessionStripHtml(t.session2, { price: true })}
     </div>
   </section>
