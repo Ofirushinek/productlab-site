@@ -1034,8 +1034,8 @@ function sessionStripHtml(s, opts = {}) {
         </div>
         <div class="ss-div"></div>
         <div class="ss-col ss-col--cta">
-          ${cta}${price}
-          <div class="ss-note">${s.limited_note}</div>
+          ${cta}${price}${opts.price ? "" : `
+          <div class="ss-note">${s.limited_note}</div>`}
         </div>
       </div>`;
 }
