@@ -33,10 +33,13 @@
     // 1. Reduced motion — out before anything is created.
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // 2. Root route only. app.js is hash-routed (#/prep, #/…); a deep link or a
-    //    sign-in redirect that lands with a hash must not sit behind a curtain.
+    // 2. Root route, OR #/kit — the branded "here's your kit" landing page a
+    //    workshop participant lands on straight from a shared link with no
+    //    prior visit; it gets the same first-arrival intro the homepage
+    //    does. app.js is hash-routed (#/prep, #/…); every OTHER deep link or
+    //    a sign-in redirect must still not sit behind a curtain.
     var h = window.location.hash || '';
-    if (h !== '' && h !== '#' && h !== '#/') return;
+    if (h !== '' && h !== '#' && h !== '#/' && h !== '#/kit') return;
 
     // 3. Once per session — EXCEPT on an explicit RELOAD. Ofir, 2026-08-24:
     //    hitting refresh has to replay the curtain, and with it the hero zoom

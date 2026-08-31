@@ -715,14 +715,27 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   color: var(--pl-fg-secondary); font-weight: 500;
 }
 
+/* ---- .moment-card — shared base for a centered "moment" card: illustration/
+   icon, headline, body, actions. Extracted 2026-08-31 (Design System Lead)
+   after the THIRD near-duplicate of this recipe showed up (.login above,
+   .noacct below, .kitclaim further down) — .login stays separate (it's a
+   form container with different composition), .noacct and .kitclaim both
+   build on this. Scale is .kitclaim's (grid-aligned: 32-48px padding);
+   .noacct's own 28-40px was off the 8px grid, so this also fixes that drift. */
+.moment-card {
+  max-width: 34rem; margin-inline: auto; text-align: center;
+  padding: clamp(2rem, 5vw, 3rem);
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-pl-md);
+}
+
 /* ---- "No access yet" notice — shown to a signed-in non-student (visitor).
-   Purple-tinted callout (accent recipe, brand-consistent) with a WhatsApp CTA. */
+   Purple-tinted callout (accent recipe, brand-consistent) with a WhatsApp CTA.
+   Builds on .moment-card (base); this is only the accent-tint override. */
 .noacct {
-  max-width: 34rem; margin: clamp(1rem, 6vw, 3rem) auto; text-align: center;
-  padding: clamp(1.75rem, 5vw, 2.5rem);
+  margin: clamp(1rem, 6vw, 3rem) auto;
   background: color-mix(in srgb, var(--pl-accent) 6%, var(--pl-surface));
-  border: 1px solid color-mix(in srgb, var(--pl-accent) 26%, transparent);
-  border-radius: var(--radius-xl); box-shadow: var(--shadow-pl-sm);
+  border-color: color-mix(in srgb, var(--pl-accent) 26%, transparent);
 }
 .noacct__ico {
   width: 48px; height: 48px; margin: 0 auto 1rem; border-radius: var(--radius-lg);
@@ -733,6 +746,35 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .noacct__title { font-size: var(--text-h2); font-weight: 700; color: var(--pl-fg); margin-bottom: 0.6rem; }
 .noacct__body { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body-lg); line-height: 1.6; }
 .noacct .cta-row { justify-content: center; }
+
+/* ---- #/kit — "here's your kit" branded landing page (2026-08-31).
+   Builds on .moment-card (base, above) — no extra surface/border/radius/
+   shadow/padding here, that's the whole point of the extraction. */
+.kitclaim__illo {
+  display: block; margin: 0 auto 1.5rem; width: 100%; max-width: 220px;
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--pl-illo-bg);
+}
+/* The source illustration (1024x1536, 2:3) is composed with the character in
+   the upper two-thirds and the bottom third deliberately empty cream — built
+   for a background-image treatment (Marketing Designer's own note), not a
+   cropped portrait frame. Displayed at the source's native 2:3 ratio, that
+   empty third reads as a large dead gap between the character and the
+   headline below it — this crops it off (object-fit:cover + top anchor keeps
+   the character, drops the built-in blank tail) rather than reusing
+   .bio__photo's identical-looking 4:5/cover/top recipe as-is, which on THIS
+   source was cropping the character almost entirely out of frame (that
+   recipe assumes a headshot-style source filling the whole frame; this one
+   doesn't). Give this specific image its own explicit ratio, don't inherit
+   an unrelated component's. */
+.kitclaim__illo img {
+  display: block; width: 100%; height: auto; aspect-ratio: 4 / 5;
+  object-fit: cover; object-position: center top;
+}
+.kitclaim .eyebrow { justify-content: center; }
+.kitclaim .section-title { font-size: var(--text-h2); max-width: none; }
+.kitclaim .login__sub { margin-top: 0.75rem; }
+.kitclaim__cta { margin-top: 1.75rem; justify-content: center; }
 
 /* ---- Register-your-interest FORM (inside the shared .modal__card) ----------
    Reuses .field/.input + the login card's centered header. The wider card fits

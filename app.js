@@ -9,6 +9,11 @@
 
 // WhatsApp only — no booking funnel. Ofir wants direct contact.
 const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2259730
+// Same relative target the gated #/prep kit tile already links to (content.js
+// EN + HE, both `href: "assets/product-lab.zip", download: true`). #/kit
+// (public, ungated) reuses the identical URL so there is exactly one zip
+// target on the whole site, not a second one that can drift from the first.
+const KIT_ZIP_URL = "assets/product-lab.zip";
 
 // When a gated redirect bounces a signed-out visitor home, this asks wireStudent
 // to auto-open the sign-in modal on the next render.
@@ -373,6 +378,14 @@ const I18N = {
     ],
     terms_updated: "עודכן לאחרונה: 5 באוגוסט 2026",
 
+    // ---- #/kit — "here's your kit" landing page (branded, public, no auth).
+    // Final copy, Copywriter pass 2026-08-31.
+    kit_eyebrow: "ערכת הסדנה שלכם",
+    kit_title: "מזל טוב, היא כאן!",
+    kit_sub: "מורידים את הקובץ ומחלצים אותו (unzip). נתראה ביום חמישי, 3.9, בשעה 17:30.",
+    kit_btn_download: "להוריד שוב",
+    kit_btn_home: "לחזור לאתר הראשי",
+
     footer_privacy: "מדיניות פרטיות",
     footer_terms: "תנאי שימוש",
 
@@ -631,6 +644,13 @@ const I18N = {
     ],
     terms_updated: "Last updated: 5 August 2026",
 
+    // ---- #/kit — same final-copy note as the Hebrew block above.
+    kit_eyebrow: "Your workshop kit",
+    kit_title: "Congrats, it's here!",
+    kit_sub: "Download the file and unzip it. See you Thursday, 3.9, at 17:30.",
+    kit_btn_download: "Download again",
+    kit_btn_home: "Back to main site",
+
     footer_privacy: "Privacy Policy",
     footer_terms: "Terms of Use",
 
@@ -732,7 +752,7 @@ const navHeader = (t, lang, opts = {}) => {
 const noticeModal = (key, title, body, t) => `
   <div class="modal" data-notice="${key}" hidden>
     <div class="modal__overlay" data-notice-close></div>
-    <div class="noacct" role="dialog" aria-modal="true" aria-label="${title}" style="position:relative; z-index:1; margin:0">
+    <div class="moment-card noacct" role="dialog" aria-modal="true" aria-label="${title}" style="position:relative; z-index:1; margin:0">
       <button class="modal__close" type="button" data-notice-close aria-label="${t.modal_close}" data-tooltip="${t.modal_close}">${I.x}</button>
       <div class="noacct__ico">${I.info}</div>
       <h2 class="noacct__title">${title}</h2>
@@ -2244,6 +2264,95 @@ function renderLegal(lang, kind) {
   afterRender();
 }
 
+/* ---- #/kit — the branded "here's your kit" landing page ------------------
+   Ofir, 2026-08-31: a participant currently gets a raw zip URL
+   (productlab.studio/assets/product-lab.zip) sent by hand. This route
+   replaces the LINK they click; the direct zip stays the actual download
+   target underneath (KIT_ZIP_URL, same one #/prep's kit tile already uses).
+   Public, no auth gate — the people who reach this link already registered.
+
+   Ofir's own spec (voice note, 2026-08-31): clean page, no noise in the
+   middle or bottom — so NO siteFooter here, unlike every other page shell.
+   Header stays (so the EN/HE toggle is reachable). Character sits ABOVE the
+   text, then two actions: download again, back to the main site.
+
+   REUSE LADDER, per Design System Lead consult (2026-08-31): the page shell
+   is renderLegal()'s pattern (navHeader + <main class="page"><section
+   class="section"><div class="wrap narrow">), minus the footer. Text/actions
+   are existing components (.eyebrow + .section-title + .login__sub, .cta-row
+   + .btn--primary/.btn--ghost, I.repeat — confirmed the right fit for
+   "download AGAIN", not a compromise). .kitclaim now builds on .moment-card,
+   a base class the DS Lead extracted from this + .noacct (the THIRD near-
+   duplicate "centered card" recipe on the site) rather than staying its own
+   one-off — .noacct was refactored onto the same base in the same pass.
+
+   The character illustration is Marketing Designer's asset: Dean, the
+   established host puppet, holding the kit as a wrapped gift — flat
+   #FBEAD9 (--pl-intro-cream) background so the curtain-lift into this page
+   reads as one continuous scene, not a hard cut. Recommendation + 2
+   alternates + swap map: `projects/product-lab/brand/kit-landing/CAST.md`
+   (this repo). */
+function renderKit(lang) {
+  const t = I18N[lang];
+  document.getElementById("app").innerHTML = `
+  ${navHeader(t, lang)}
+
+  <main id="top" class="page">
+    <section class="section"><div class="wrap narrow">
+      <div class="moment-card kitclaim reveal">
+        <picture class="kitclaim__illo">
+          <source type="image/webp" srcset="assets/kit/kit-hero-dean.webp" />
+          <img src="assets/kit/kit-hero-dean.jpg" alt="" width="1024" height="1536" decoding="async" />
+        </picture>
+        <span class="eyebrow">${t.kit_eyebrow}</span>
+        <h1 class="section-title">${t.kit_title}</h1>
+        <p class="login__sub">${t.kit_sub}</p>
+        <div class="cta-row kitclaim__cta">
+          <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}${t.kit_btn_download}</a>
+          <a class="btn btn--ghost" href="#/">${t.kit_btn_home}</a>
+        </div>
+      </div>
+    </div></section>
+  </main>
+
+  ${studentModal(t)}`;
+
+  afterRender();
+  wireKitAutoDownload();
+}
+
+/* Auto-fires the download once per page entry via a real, off-screen
+   `<a download>` click — never a location redirect, so the tab is never
+   navigated away from this page. The visible "download again" button is the
+   SAME href/download pair as a plain link, so it still works anywhere a
+   script-fired click is blocked (iOS Safari, some in-app browsers): a real
+   tap on a real `<a download>` always works, independent of this function.
+   Timing: if the intro curtain (#pl-intro) is on screen, wait for it to lift
+   (assets/intro.js's LIFT=2630ms) before firing, so the browser's download
+   UI doesn't appear before the headline is even visible; skip the wait
+   entirely when there's no curtain to wait for (repeat visit same session,
+   reduced motion, or intro.js failed to load — this download must not
+   depend on the veil, which is explicitly optional by its own contract). */
+let kitAutoFired = false;
+function wireKitAutoDownload() {
+  kitAutoFired = false;
+  const curtain = document.getElementById("pl-intro");
+  const delay = curtain ? 2900 : 500;
+  window.setTimeout(() => {
+    if (kitAutoFired) return;
+    kitAutoFired = true;
+    try {
+      const a = document.createElement("a");
+      a.href = KIT_ZIP_URL;
+      a.setAttribute("download", "");
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      window.setTimeout(() => { if (a.parentNode) a.parentNode.removeChild(a); }, 0);
+    } catch (e) { /* the visible "download again" button still works */ }
+  }, delay);
+}
+
 /* ---- Mobile nav tray (hamburger) ---------------------------------------- */
 function wireNav() {
   const burger = document.querySelector("[data-nav-toggle]");
@@ -2388,11 +2497,12 @@ function afterRender() {
   wireWhyCursors();
 }
 
-/* ---- Router — hash routes: #/prep, #/privacy, #/terms, else home ---------- */
+/* ---- Router — hash routes: #/prep, #/kit, #/privacy, #/terms, else home --- */
 function currentRoute() {
   // Strip any query suffix (e.g. #/prep?lang=en) before matching the route.
   const h = (location.hash || "").replace(/^#\/?/, "").split("?")[0];
   if (h === "prep") return "prep";
+  if (h === "kit") return "kit";
   if (h === "privacy") return "privacy";
   if (h === "terms") return "terms";
   return "home";
@@ -2428,6 +2538,7 @@ function route(lang) {
   document.body.classList.remove("modal-open");
   const r = currentRoute();
   if (r === "prep") renderPrep(lang);
+  else if (r === "kit") renderKit(lang);
   else if (r === "privacy") renderLegal(lang, "privacy");
   else if (r === "terms") renderLegal(lang, "terms");
   else render(lang);
