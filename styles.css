@@ -782,14 +782,15 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   justify-content: center;
 }
 .kitfull__illo { display: block; width: 100%; max-width: clamp(160px, 38vw, 340px); margin: 0 auto; }
-/* The source (1024x1536, 2:3) has the character in the upper ~two-thirds and
-   a transparent bottom third (built for a background treatment). Transparent
-   pixels are invisible but still occupy layout height — left uncropped, that
-   empty third reads as a dead gap between the character and the text below
-   it (Ofir: "the text needs to be closer to the character"). Crop it off
-   with a shorter aspect-ratio + top anchor, same fix as the boxed-card
-   direction used, so the text sits right under the character. */
-.kitfull__illo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; }
+/* The source (1024x1536) has the character in the upper portion and a
+   transparent tail below (built for a background treatment). Transparent
+   pixels are invisible but still occupy layout height — a 4:5 crop still
+   left ~100px of dead air below the feet (Ofir: "the character is like a
+   hundred pixels above the headline... make it more proximate"). Measured
+   the actual alpha channel instead of eyeballing another guess: content
+   (Dean + the gift) ends at row 879 of 1536. Cropping to 910 (a small ~30px
+   margin below the feet, not zero) is exact, not approximate. */
+.kitfull__illo img { display: block; width: 100%; height: auto; aspect-ratio: 1024 / 910; object-fit: cover; object-position: center top; }
 .kitfull__body { margin-top: clamp(0.25rem, 1.5vw, 0.75rem); }
 [dir] .kitfull .eyebrow { justify-content: center; }
 [dir] .kitfull .section-title { text-align: center; max-width: none; margin-top: 0.5rem; }
