@@ -1010,7 +1010,7 @@ function wireWhyCursors() {
 function sessionStripHtml(s, opts = {}) {
   const cta = opts.disabled
     ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
-    : `<a class="btn btn--accent" href="${WA_URL}" target="_blank" rel="noopener">${s.cta}</a>`;
+    : `<button class="btn btn--accent" type="button" data-register-open>${s.cta}</button>`;
   const price = opts.price
     ? `<div class="ss-price"><strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
     : "";
