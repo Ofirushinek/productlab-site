@@ -768,23 +768,29 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   padding-block: clamp(0.75rem, 3vw, 1.5rem);
 }
 
-/* ---- OPTION B (Ofir's requested alternate direction, TEMP #/kit-b route):
-   character + text + button sit directly on the illustration's own cream
-   background (var(--pl-intro-cream) — same one the loader curtain uses), no
-   card boundary, edge to edge. Sized to also fit one viewport (see .kit-page
-   above): the illustration is NOT cropped (the source's empty-cream bottom
-   third blends into this same background rather than fighting it), so it is
-   sized down instead — a clamp tied to viewport width rather than a fixed
-   px cap, so it fits equally on a small and a large phone. */
+/* ---- The final #/kit direction Ofir picked: character + text + button sit
+   directly on the page's own cream background (var(--pl-intro-cream) — same
+   one the loader curtain uses), no card, no boundary, edge to edge.
+   The illustration itself (kit-hero-dean.webp/.png) now carries a real alpha
+   channel — no fill color of its own at all (Marketing Designer's matte
+   pass, 2026-08-31) — so there is nothing left to color-match; it sits on
+   whatever this page's background is. */
 .kitfull {
   background: var(--pl-intro-cream, #FBEAD9);
   padding-block: clamp(0.75rem, 3vw, 1.5rem);
   text-align: center;
   justify-content: center;
 }
-.kitfull__illo { display: block; width: 100%; max-width: clamp(140px, 34vw, 320px); margin: 0 auto; }
-.kitfull__illo img { display: block; width: 100%; height: auto; }
-.kitfull__body { margin-top: clamp(0.75rem, 3vw, 1.5rem); }
+.kitfull__illo { display: block; width: 100%; max-width: clamp(160px, 38vw, 340px); margin: 0 auto; }
+/* The source (1024x1536, 2:3) has the character in the upper ~two-thirds and
+   a transparent bottom third (built for a background treatment). Transparent
+   pixels are invisible but still occupy layout height — left uncropped, that
+   empty third reads as a dead gap between the character and the text below
+   it (Ofir: "the text needs to be closer to the character"). Crop it off
+   with a shorter aspect-ratio + top anchor, same fix as the boxed-card
+   direction used, so the text sits right under the character. */
+.kitfull__illo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; }
+.kitfull__body { margin-top: clamp(0.25rem, 1.5vw, 0.75rem); }
 [dir] .kitfull .eyebrow { justify-content: center; }
 [dir] .kitfull .section-title { text-align: center; max-width: none; margin-top: 0.5rem; }
 [dir] .kitfull .login__sub { text-align: center; margin-top: 0.5rem; }

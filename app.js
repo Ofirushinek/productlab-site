@@ -2282,14 +2282,10 @@ function renderLegal(lang, kind) {
    real rendered heights at both 390x844 and 375x667.
 
    The character illustration is Marketing Designer's asset: Dean, the
-   established host puppet, holding the kit as a wrapped gift. Recommendation
-   + swap map: `projects/product-lab/brand/kit-landing/CAST.md` (this repo).
-   KNOWN OPEN ITEM: the current asset is a flat-color JPEG/WebP fill, not a
-   transparent PNG, and its corners sample `#FDEEDB` against the page's
-   `--pl-intro-cream: #FBEAD9` — a visible seam Ofir flagged. Marketing
-   Designer is regenerating with a real alpha channel; swap the `<picture>`
-   below to a single `<img src="assets/kit/kit-hero-dean.png">` (no fill
-   color needed at all once it's transparent) the moment that lands. */
+   established host puppet, holding the kit as a wrapped gift, matted with a
+   real alpha channel (2026-08-31) — no fill color of its own, so there is
+   nothing to color-match against the page background. Recommendation + swap
+   map: `projects/product-lab/brand/kit-landing/CAST.md` (this repo). */
 function renderKit(lang) {
   const t = I18N[lang];
   document.getElementById("app").innerHTML = `
@@ -2298,7 +2294,7 @@ function renderKit(lang) {
   <main id="top" class="page kit-page kitfull reveal">
     <picture class="kitfull__illo">
       <source type="image/webp" srcset="assets/kit/kit-hero-dean.webp" />
-      <img src="assets/kit/kit-hero-dean.jpg" alt="" width="1024" height="1536" decoding="async" />
+      <img src="assets/kit/kit-hero-dean.png" alt="" width="1024" height="1536" decoding="async" />
     </picture>
     <div class="wrap narrow kitfull__body">
       <span class="eyebrow">${t.kit_eyebrow}</span>
