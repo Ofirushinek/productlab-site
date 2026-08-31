@@ -384,7 +384,6 @@ const I18N = {
     kit_title: "מזל טוב, היא כאן!",
     kit_sub: "מורידים את הקובץ ומחלצים אותו (unzip). נתראה ביום חמישי, 3.9, בשעה 17:30.",
     kit_btn_download: "להוריד שוב",
-    kit_btn_home: "לחזור לאתר הראשי",
 
     footer_privacy: "מדיניות פרטיות",
     footer_terms: "תנאי שימוש",
@@ -649,7 +648,6 @@ const I18N = {
     kit_title: "Congrats, it's here!",
     kit_sub: "Download the file and unzip it. See you Thursday, 3.9, at 17:30.",
     kit_btn_download: "Download again",
-    kit_btn_home: "Back to main site",
 
     footer_privacy: "Privacy Policy",
     footer_terms: "Terms of Use",
@@ -2309,7 +2307,6 @@ function renderKit(lang) {
         <p class="login__sub">${t.kit_sub}</p>
         <div class="cta-row kitclaim__cta">
           <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}${t.kit_btn_download}</a>
-          <a class="btn btn--ghost" href="#/">${t.kit_btn_home}</a>
         </div>
       </div>
     </div></section>

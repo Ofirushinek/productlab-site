@@ -774,6 +774,15 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .kitclaim .eyebrow { justify-content: center; }
 .kitclaim .section-title { font-size: var(--text-h2); max-width: none; }
 .kitclaim .login__sub { margin-top: 0.75rem; }
+/* .moment-card sets text-align:center, but it's only ever INHERITED — a
+   sitewide RTL rule ([dir="rtl"] .section-title, .section-lead further down
+   this file) sets text-align:right directly on .section-title, and an
+   explicit declaration always beats an inherited one regardless of specificity
+   or source order. Same fix, same reason, for .login__sub (used the same way
+   elsewhere in RTL). The extra [dir] segment is only here to out-specificity
+   that rule, not for any dir-specific behavior — this page centers in both
+   languages. */
+[dir] .kitclaim .section-title, [dir] .kitclaim .login__sub { text-align: center; }
 .kitclaim__cta { margin-top: 1.75rem; justify-content: center; }
 
 /* ---- Register-your-interest FORM (inside the shared .modal__card) ----------
