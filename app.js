@@ -2664,6 +2664,18 @@ window.addEventListener("hashchange", () => {
   // straight in the vault instead of on the home page.
   const oauthReturn = /access_token|[?&#]code=|error_description/.test(location.hash + location.search);
 
+  // Paint the signed-out shell immediately, before awaiting the network round
+  // trip to Supabase below. Until this line, render()/route() only ran AFTER
+  // `await loadAuth()` resolved, which left #app - and the sticky `.nav`
+  // inside it - completely absent from the DOM for however long that request
+  // took (worse on a slow mobile connection, e.g. a WhatsApp-shared link).
+  // WebKit's sticky-position bug (see fixStickyNav below) is specifically a
+  // LATE-insertion bug; painting on the very first tick the script runs, with
+  // AUTH still at its safe signed-out default, removes that gap outright
+  // instead of racing to patch it after the fact. loadAuth() below still
+  // repaints with the real auth state once it resolves (existing behavior).
+  if (!oauthReturn) setLang(lang);
+
   await loadAuth();
 
   // React to later auth changes (sign-in, sign-out, token refresh, other tabs).
