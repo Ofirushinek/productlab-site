@@ -191,6 +191,13 @@ p { margin: 0; }
    On the long home page this is a no-op (content already exceeds the viewport). */
 #app { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
 #app > main { flex: 1 0 auto; }
+/* Compensates .nav's switch from sticky to fixed (below) — fixed removes it
+   from flex flow entirely, so without this every page's content would start
+   at y:0, underneath the now out-of-flow header. Matches --nav-h/-mobile
+   exactly (the same values .nav__in's own height already uses) so this is
+   invisible: content sits exactly where it always did. */
+#app { padding-top: var(--nav-h); }
+@media (max-width: 620px) { #app { padding-top: var(--nav-h-mobile); } }
 
 img { max-width: 100%; display: block; }
 
@@ -281,8 +288,22 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .chip .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--pl-accent); }
 
 /* ---- Navbar -------------------------------------------------------------- */
+/* FIXED, not sticky (2026-08-31) — real root cause of the recurring "no
+   header on first load" bug (3rd+ sighting, confirmed live inside WhatsApp's
+   in-app browser after every JS-timing patch: painting the header
+   immediately, forcing a reflow, retrying on a delay and on `pageshow`).
+   `position: sticky` requires the browser to establish scroll-anchored state
+   for the element; WebKit is documented to sometimes fail to do that when
+   the element enters the DOM after first paint, or when another native UI
+   surface (this page's own auto-triggered download sheet) interrupts the
+   render pipeline around the same moment. `position: fixed` has no such
+   state to establish — it is simply always pinned to the viewport, so there
+   is no initialization step left to race or fail. Since .nav sits at the
+   very top of every page with nothing above it, fixed and sticky look
+   IDENTICAL when they work; #app's own padding-top (above) exactly
+   compensates for taking .nav out of flow, so no page shifts. */
 .nav {
-  position: sticky; top: 0; z-index: 50;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   background: color-mix(in srgb, var(--pl-bg) 82%, transparent);
   backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--pl-border);
