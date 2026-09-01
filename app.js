@@ -196,7 +196,7 @@ const I18N = {
     agenda_intro: "בשלושה שלבים נבנה יחד את מערכת העבודה החדשה שלכם, מהיכרות עם השיטה, דרך הקמת צוות סוכני AI אישי ועד לבניית הפרויקט הראשון שלכם.",
     agenda_phases: [
       { time: "שלב ראשון", t: "מתחילים", b: "מבינים את שיטת העבודה, מכירים את הכלים שנשתמש בהם ומניחים את היסודות לצוות שנבנה בהמשך." },
-      { time: "שלב שני", t: "פוגשים את הצוות", b: "פותחים את הערכה, ומגלים שהצוות כבר בפנים ומחובר לזיכרון משותף. מוכיחים שהוא אמיתי, ומתכוננים לבנות איתו." },
+      { time: "שלב שני", t: "פוגשים את הצוות", b: "פותחים את הערכה ומגלים שהצוות כבר בפנים, מחובר לזיכרון משותף ומוכן לעבוד. משם בונים יחד." },
       { time: "שלב שלישי", t: "בונים עם הצוות", b: "מפעילים את הצוות שבניתם ומתחילים לעבוד יחד על הפרויקט הראשון שלכם." },
     ],
     agenda_toggle: "מה יש בפנים",
@@ -208,11 +208,11 @@ const I18N = {
       { t: "מבינים את הדרך", b: "מכירים את שלבי הסדנה ומבינים איך כל חלק מתחבר לתהליך עבודה אחד." },
     ],
     agenda_p2_items: [
-      { t: "מכירים את הצוות", b: "פוגשים שלושה שותפים שכבר בפנים: שותף טכני, מנהל מוצר ומעצב מוצר, כל אחד עם תפקיד ברור וכלים משלו." },
+      { t: "מכירים את הצוות", b: "שלושה שותפים כבר בפנים: שותף טכני, מנהל מוצר ומעצב מוצר, כל אחד עם תפקיד ברור וכלים משלו." },
       { t: "רואים את המוח המשותף", b: "כל הידע, ההחלטות והתובנות נשמרים במקום אחד, וכל הצוות כבר קורא וכותב ממנו." },
       { t: "פותחים את הערכה", b: "מחברים את Claude לתיקיית הערכה שתלווה אתכם גם אחרי הסדנה, בלי שום התקנה נוספת." },
-      { t: "מבינים איך הם מתואמים", b: "כל שותף עובד בשיחה נפרדת משלו, אבל קורא קודם מה שהאחרים כתבו בזיכרון המשותף וממשיך משם." },
-      { t: "מוכיחים שהצוות אמיתי", b: "מריצים בדיקה אחת שמראה שהצוות באמת שם, מחובר וזמין, ולא רק כתוב על הנייר." },
+      { t: "רואים איך הם מתואמים", b: "כל שותף עובד בשיחה נפרדת משלו, וקודם קורא מה שהאחרים כתבו בזיכרון המשותף. ככה הם נשארים מסונכרנים בלי לדבר ישירות." },
+      { t: "מריצים בדיקת התקנה", b: "מריצים `/check`, והמערכת מאשרת שהצוות מותקן ופעיל על המכונה שלכם." },
     ],
     agenda_p3_items: [
       { t: "נותנים בריף", b: "מסבירים למנהל המוצר מה רוצים לבנות, והוא מתחיל לתעדף, לכוון ולתזמר את העבודה." },
@@ -485,7 +485,7 @@ const I18N = {
     agenda_intro: "In three stages we'll build your new way of working together, from learning the method, through setting up your own team of AI agents, to building your first project.",
     agenda_phases: [
       { time: "Stage one", t: "Getting started", b: "You'll understand the method, get to know the tools we'll use, and lay the foundations for the team you'll build next." },
-      { time: "Stage two", t: "Meet the team", b: "Open the kit and find the team already inside, connected to a shared memory. Prove it's real, and get ready to build with it." },
+      { time: "Stage two", t: "Meet the team", b: "Open the kit and find the team already inside, connected to shared memory and ready to work. From there, you build together." },
       { time: "Stage three", t: "Building with the team", b: "You'll put the team you built to work and start building your first project together." },
     ],
     agenda_toggle: "What's inside",
@@ -497,11 +497,11 @@ const I18N = {
       { t: "See the path ahead", b: "Get to know the stages of the workshop and how each part connects into one way of working." },
     ],
     agenda_p2_items: [
-      { t: "Meet the team", b: "Meet three teammates who are already inside: a technical partner, a product manager, and a product designer, each with a clear role and their own tools." },
+      { t: "Meet the team", b: "Three teammates already inside: a technical partner, a product manager, and a product designer, each with a clear role and their own tools." },
       { t: "See the shared brain", b: "All the knowledge, decisions, and insights live in one place, and the whole team already reads and writes to it." },
       { t: "Open the kit", b: "Point Claude at the kit folder that stays with you after the workshop, no extra install needed." },
-      { t: "See how they stay in sync", b: "Each teammate works in its own conversation, but reads what the others already wrote in the shared memory first, and builds from there." },
-      { t: "Prove the team is real", b: "Run one check that shows the team is actually there, connected and ready, not just written on paper." },
+      { t: "See how they stay in sync", b: "Each teammate works in their own conversation, and reads what the others wrote in shared memory first. That's how they stay aligned without talking directly." },
+      { t: "Run the setup check", b: "Run `/check`, and the system confirms the team is installed and live on your machine." },
     ],
     agenda_p3_items: [
       { t: "Give the brief", b: "Tell your product manager what you want to build, and it starts prioritizing, steering, and orchestrating the work." },
