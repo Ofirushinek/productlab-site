@@ -175,7 +175,7 @@ const I18N = {
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "צוות סוכני AI אישי שבנית בעצמך", b: "תיצרו צוות סוכני AI שמותאם בדיוק לאופן שבו אתם עובדים, עם תפקידים ברורים וידע משותף." },
+      { t: "צוות סוכני AI אישי, מותאם בדיוק אליכם", b: "יוצאים עם צוות שכבר מכיר את הפרויקט שלכם, ועם חבר צוות אחד שהגדרתם בעצמכם מאפס." },
       { t: "זיכרון משותף שכל הצוות עובד ממנו", b: "כל הסוכנים עובדים מאותו מקור ידע, מכירים את הפרויקט ומשתפים ביניהם הקשר ומידע לאורך כל העבודה." },
       { t: "הפרויקט הראשון שכבר התחלתם לבנות", b: "כבר במהלך הסדנה תתחילו לעבוד עם הצוות שבניתם על הפרויקט שלכם, במקום לצאת רק עם ידע תיאורטי." },
       { t: "שיטת עבודה שתמשיך איתכם גם אחרי הסדנה", b: "תצאו עם צוות, זיכרון ותהליך עבודה שתוכלו להמשיך לפתח ולהשתמש בהם גם בפרויקטים הבאים." },
@@ -196,7 +196,7 @@ const I18N = {
     agenda_intro: "בשלושה שלבים נבנה יחד את מערכת העבודה החדשה שלכם, מהיכרות עם השיטה, דרך הקמת צוות סוכני AI אישי ועד לבניית הפרויקט הראשון שלכם.",
     agenda_phases: [
       { time: "שלב ראשון", t: "מתחילים", b: "מבינים את שיטת העבודה, מכירים את הכלים שנשתמש בהם ומניחים את היסודות לצוות שנבנה בהמשך." },
-      { time: "שלב שני", t: "מקימים את הצוות", b: "בונים את צוות סוכני ה-AI הראשון שלכם, מחברים אותו לזיכרון משותף ומתאימים אותו בדיוק לאופן שבו אתם עובדים." },
+      { time: "שלב שני", t: "פוגשים את הצוות", b: "פותחים את הערכה, ומגלים שהצוות כבר בפנים ומחובר לזיכרון משותף. מוכיחים שהוא אמיתי, ומתכוננים לבנות איתו." },
       { time: "שלב שלישי", t: "בונים עם הצוות", b: "מפעילים את הצוות שבניתם ומתחילים לעבוד יחד על הפרויקט הראשון שלכם." },
     ],
     agenda_toggle: "מה יש בפנים",
@@ -208,16 +208,16 @@ const I18N = {
       { t: "מבינים את הדרך", b: "מכירים את שלבי הסדנה ומבינים איך כל חלק מתחבר לתהליך עבודה אחד." },
     ],
     agenda_p2_items: [
-      { t: "מקימים את סביבת העבודה", b: "מחברים את Claude למוח המשותף ומקימים את סביבת העבודה שתלווה אתכם גם אחרי הסדנה." },
-      { t: "בונים את הסוכן הראשון", b: "יוצרים את ה-CTO שלכם מתוך פרומפט מוכן, עם תפקיד ברור, כישורים וכלי העבודה הנכונים." },
-      { t: "מרחיבים את הצוות", b: "מוסיפים מנהל מוצר ומעצב מוצר, כדי ליצור צוות שיודע לחשוב, לקבל החלטות ולעבוד יחד." },
-      { t: "מחברים את כולם", b: "מחברים את כל הסוכנים לזיכרון משותף, כך שכל הידע, ההחלטות והתובנות נשמרים במקום אחד." },
-      { t: "הופכים את הצוות לשלכם", b: "מתאימים תפקידים, מוסיפים יכולות ובונים צוות שמתאים בדיוק לדרך שבה אתם עובדים." },
+      { t: "מכירים את הצוות", b: "פוגשים שלושה שותפים שכבר בפנים: שותף טכני, מנהל מוצר ומעצב מוצר, כל אחד עם תפקיד ברור וכלים משלו." },
+      { t: "רואים את המוח המשותף", b: "כל הידע, ההחלטות והתובנות נשמרים במקום אחד, וכל הצוות כבר קורא וכותב ממנו." },
+      { t: "פותחים את הערכה", b: "מחברים את Claude לתיקיית הערכה שתלווה אתכם גם אחרי הסדנה, בלי שום התקנה נוספת." },
+      { t: "מבינים איך הם מתואמים", b: "כל שותף עובד בשיחה נפרדת משלו, אבל קורא קודם מה שהאחרים כתבו בזיכרון המשותף וממשיך משם." },
+      { t: "מוכיחים שהצוות אמיתי", b: "מריצים בדיקה אחת שמראה שהצוות באמת שם, מחובר וזמין, ולא רק כתוב על הנייר." },
     ],
     agenda_p3_items: [
       { t: "נותנים בריף", b: "מסבירים למנהל המוצר מה רוצים לבנות, והוא מתחיל לתעדף, לכוון ולתזמר את העבודה." },
-      { t: "רואים את הצוות בפעולה", b: "צופים במעצב, במנהל המוצר וב-CTO עובדים יחד, מתייעצים ומקבלים החלטות בזמן אמת." },
-      { t: "בונים את הפרויקט הראשון", b: "הופכים את הרעיון שלכם לעמוד נחיתה עובד, יחד עם צוות סוכני ה-AI שבניתם." },
+      { t: "רואים את הצוות בפעולה", b: "כל שותף בצוות עובד בשיחה משלו, אבל קורא קודם מה שהאחרים כתבו בזיכרון המשותף וממשיך משם." },
+      { t: "בונים את הפרויקט הראשון", b: "הופכים את הרעיון שלכם לעמוד נחיתה עובד, יחד עם צוות סוכני ה-AI שכבר איתכם." },
       { t: "ממשיכים גם אחרי הסדנה", b: "יוצאים עם צוות סוכני AI אישי שתוכלו להמשיך להתייעץ איתו, לבנות איתו ולהרחיב אותו גם אחרי שהמפגש מסתיים." },
     ],
 
@@ -456,7 +456,7 @@ const I18N = {
     walk_eyebrow: "What you take home",
     walk_title: "What you leave with",
     walk_items: [
-      { t: "A personal team of AI agents you built yourself", b: "You'll create a team of AI agents tuned to exactly how you work, with clear roles and shared knowledge." },
+      { t: "A personal team of AI agents, tuned to exactly how you work", b: "You leave with a team that already knows your project, and one teammate you defined yourself, from scratch." },
       { t: "A shared memory the whole team works from", b: "Every agent works from the same source of knowledge, knows the project, and shares context and information across the entire process." },
       { t: "Your first project, already underway", b: "During the workshop itself you'll start working with the team you built on your own project, instead of leaving with only theory." },
       { t: "A way of working that stays with you after the workshop", b: "You'll leave with a team, a memory, and a workflow you can keep developing and using on your next projects too." },
@@ -477,7 +477,7 @@ const I18N = {
     agenda_intro: "In three stages we'll build your new way of working together, from learning the method, through setting up your own team of AI agents, to building your first project.",
     agenda_phases: [
       { time: "Stage one", t: "Getting started", b: "You'll understand the method, get to know the tools we'll use, and lay the foundations for the team you'll build next." },
-      { time: "Stage two", t: "Building the team", b: "You'll build your first team of AI agents, connect it to a shared memory, and tune it to exactly how you work." },
+      { time: "Stage two", t: "Meet the team", b: "Open the kit and find the team already inside, connected to a shared memory. Prove it's real, and get ready to build with it." },
       { time: "Stage three", t: "Building with the team", b: "You'll put the team you built to work and start building your first project together." },
     ],
     agenda_toggle: "What's inside",
@@ -489,16 +489,16 @@ const I18N = {
       { t: "See the path ahead", b: "Get to know the stages of the workshop and how each part connects into one way of working." },
     ],
     agenda_p2_items: [
-      { t: "Set up your workspace", b: "Connect Claude to the shared brain and set up the workspace that stays with you after the workshop." },
-      { t: "Build your first agent", b: "Create your CTO from a ready-made prompt, with a clear role, the right skills, and the right tools." },
-      { t: "Grow the team", b: "Add a product manager and a product designer, to create a team that can think, decide, and work together." },
-      { t: "Connect everyone", b: "Connect all the agents to a shared memory, so all the knowledge, decisions, and insights live in one place." },
-      { t: "Make the team yours", b: "Adjust roles, add capabilities, and build a team that fits exactly the way you work." },
+      { t: "Meet the team", b: "Meet three teammates who are already inside: a technical partner, a product manager, and a product designer, each with a clear role and their own tools." },
+      { t: "See the shared brain", b: "All the knowledge, decisions, and insights live in one place, and the whole team already reads and writes to it." },
+      { t: "Open the kit", b: "Point Claude at the kit folder that stays with you after the workshop, no extra install needed." },
+      { t: "See how they stay in sync", b: "Each teammate works in its own conversation, but reads what the others already wrote in the shared memory first, and builds from there." },
+      { t: "Prove the team is real", b: "Run one check that shows the team is actually there, connected and ready, not just written on paper." },
     ],
     agenda_p3_items: [
       { t: "Give the brief", b: "Tell your product manager what you want to build, and it starts prioritizing, steering, and orchestrating the work." },
-      { t: "See the team in action", b: "Watch the designer, the product manager, and the CTO work together, consult each other, and make decisions in real time." },
-      { t: "Build your first project", b: "Turn your idea into a working landing page, together with the team of AI agents you built." },
+      { t: "See the team at work", b: "Each teammate works in their own conversation, but reads what the others already wrote in the shared memory first, and builds from there." },
+      { t: "Build your first project", b: "Turn your idea into a working landing page, together with the team of AI agents already with you." },
       { t: "Keep going after the workshop", b: "Walk out with your own team of AI agents you can keep consulting, building with, and expanding long after the session ends." },
     ],
 
