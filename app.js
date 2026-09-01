@@ -218,15 +218,8 @@ const I18N = {
       { t: "נותנים בריף", b: "מסבירים למנהל המוצר מה רוצים לבנות, והוא מתחיל לתעדף, לכוון ולתזמר את העבודה." },
       { t: "רואים את הצוות בפעולה", b: "כל שותף בצוות עובד בשיחה משלו, אבל קורא קודם מה שהאחרים כתבו בזיכרון המשותף וממשיך משם." },
       { t: "בונים את הפרויקט הראשון", b: "הופכים את הרעיון שלכם לעמוד נחיתה עובד, יחד עם צוות סוכני ה-AI שכבר איתכם." },
+      { t: "מוסיפים שותף משלכם", b: "עונים בהודעה אחת מי הוא, מה התפקיד שלו ומה האופי שלו, והמשימה הראשונה שלו היא לחוות דעה על העמוד שכבר בניתם." },
       { t: "ממשיכים גם אחרי הסדנה", b: "יוצאים עם צוות סוכני AI אישי שתוכלו להמשיך להתייעץ איתו, לבנות איתו ולהרחיב אותו גם אחרי שהמפגש מסתיים." },
-    ],
-
-    closing_eyebrow: "התרגיל האחרון",
-    closing_title: "חבר הצוות הרביעי, שאתם מגדירים בעצמכם.",
-    closing_items: [
-      { t: "מבקשים חבר צוות חדש", b: "אתם מבקשים מהצוות עוד חבר, בלי לדעת עדיין מי הוא. השותף הטכני שואל בהודעה אחת מי הוא, מה התפקיד היחיד שלו ומה האופי שלו, ואתם עונים על השלוש בבת אחת." },
-      { t: "נבנה מהתשובה שלכם", b: "מהתשובה האחת הזו קם חבר צוות חדש, עם תפקיד ואופי משלו, ומצטרף לשלושת האחרים." },
-      { t: "המשימה הראשונה שלו", b: "חבר הצוות החדש שוקל את מה שכבר בניתם באותו יום, ויכול להצביע בדיוק מי משלושת האחרים שינה את דעתו לנוכח מה שראה. מריצים אותו ברקע, ורואים את דעתו חוזרת." },
     ],
 
     proof_eyebrow: "לא מצגת. מוצרים אמיתיים.",
@@ -507,15 +500,8 @@ const I18N = {
       { t: "Give the brief", b: "Tell your product manager what you want to build, and it starts prioritizing, steering, and orchestrating the work." },
       { t: "See the team at work", b: "Each teammate works in their own conversation, but reads what the others already wrote in the shared memory first, and builds from there." },
       { t: "Build your first project", b: "Turn your idea into a working landing page, together with the team of AI agents already with you." },
+      { t: "Add your own agent", b: "Answer who it is, its one job, and its character, all in one message, and its first task is to weigh in on the page you just built." },
       { t: "Keep going after the workshop", b: "Walk out with your own team of AI agents you can keep consulting, building with, and expanding long after the session ends." },
-    ],
-
-    closing_eyebrow: "The closing exercise",
-    closing_title: "The fourth teammate, defined by you.",
-    closing_items: [
-      { t: "Ask for a new teammate", b: "You ask the team for one more teammate, without knowing yet who it is. The technical partner asks, in one message, who it is, what its one job is, and what its character is, and you answer all three at once." },
-      { t: "Built from your answer", b: "From that one answer, a new teammate is created, with its own role and character, and joins the other three." },
-      { t: "Its first job", b: "The new teammate weighs in on what the team already built that day, and can point to exactly which of the other three changed its mind after seeing it. You run it in the background, and watch its answer come back." },
     ],
 
     proof_eyebrow: "Not a slide deck. Real products.",
@@ -1223,23 +1209,6 @@ function render(lang) {
           </div>
         </details>`;
       }).join("")}
-    </div>
-  </div></section>
-
-  <!-- 5b CLOSING EXERCISE — the one thing built from scratch, after the pre-built
-       team + agenda above. Reuses the .section/.grid--3/.card recipe verbatim
-       (same as howToday/end below) — zero new markup or tokens. -->
-  <section class="section section--alt"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${t.closing_eyebrow}</span>
-      <h2 class="section-title">${t.closing_title}</h2>
-    </div>
-    <div class="grid grid--3" style="margin-top:2rem">
-      ${t.closing_items.map((d, i) => `
-        <div class="card reveal">
-          <div class="card__ico">${[I.user, I.box, I.check][i] || I.check}</div>
-          <h3>${d.t}</h3><p>${d.b}</p>
-        </div>`).join("")}
     </div>
   </div></section>
 
