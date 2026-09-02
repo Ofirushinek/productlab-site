@@ -1816,13 +1816,21 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 
 /* Full-width brand banner for the gated #/prep workspace's page title — sits
    flush under the fixed nav (no gap) so it doesn't read as disconnected from
-   the tab bar below it. Full-bleed math and the accent tint are the SAME
-   mechanism as .ss-divider-full / .session-strip-band, just applied to a
-   whole section instead of a rule/band (Ofir, 2026-09-02: reuse, no new
-   pattern). Title copy is unchanged (C.hero.title) — presentation only. */
+   the tab bar below it. Full-bleed math is the SAME mechanism as
+   .ss-divider-full (Ofir, 2026-09-02). The gradient is a genuinely new
+   composition — flagged to the Design System Lead to decide canonical vs
+   one-off — but every stop is an EXISTING token: the crew palette (already
+   documented as "playful accents") left-to-right into the accent purple, so
+   it reads as a felt-puppet-brand tile, not a flat generic tint. Title copy
+   is unchanged (C.hero.title) — presentation only. */
 .prep-banner {
   width: 100vw; margin-inline-start: calc(50% - 50vw);
-  background: color-mix(in srgb, var(--pl-accent) 6%, var(--pl-bg));
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--pl-crew-yellow) 16%, var(--pl-bg)) 0%,
+    color-mix(in srgb, var(--pl-crew-orange) 16%, var(--pl-bg)) 30%,
+    color-mix(in srgb, var(--pl-accent) 16%, var(--pl-bg)) 55%,
+    color-mix(in srgb, var(--pl-crew-teal) 16%, var(--pl-bg)) 80%,
+    color-mix(in srgb, var(--pl-crew-purple) 16%, var(--pl-bg)) 100%);
   border-bottom: 1px solid var(--pl-border);
   padding-block: clamp(2.5rem, 6vw, 4rem);
   text-align: center;
