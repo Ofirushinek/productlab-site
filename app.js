@@ -1436,9 +1436,9 @@ function sharedBrainDiagram(n) {
   return `
     <div class="brainmap" role="group" aria-label="How the team connects: one shared brain, holding the rules and the roles, wired to every agent that has its own role, character, skills and memory">
       <div class="brainmap__hd">
-        <span class="brainmap__wing"><span class="brainmap__wing-ico">${I.doc}</span><span class="brainmap__wing-label">${n.rules}</span></span>
+        <span class="brainmap__coord brainmap__coord--primary">${I.doc}<span>${n.rules}</span></span>
         <span class="brainmap__coord brainmap__coord--primary">${I.repeat}<span>${n.sharedBrain}</span></span>
-        <span class="brainmap__wing"><span class="brainmap__wing-ico">${I.doc}</span><span class="brainmap__wing-label">${n.roles}</span></span>
+        <span class="brainmap__coord brainmap__coord--primary">${I.doc}<span>${n.roles}</span></span>
       </div>
       <div class="brainmap__agents">
         ${agentCard()}${agentCard()}${agentCard()}
