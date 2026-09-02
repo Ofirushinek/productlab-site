@@ -119,6 +119,7 @@ const I = {
   globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9Z"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
   linkedin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>',
+  doc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
 };
 
 /* ---- COPY (final, Copywriter 2026-08-03) -------------------------------- */
@@ -1435,9 +1436,9 @@ function sharedBrainDiagram(n) {
   return `
     <div class="brainmap" role="group" aria-label="How the team connects: one shared brain, holding the rules and the roles, wired to every agent that has its own role, character, skills and memory">
       <div class="brainmap__hd">
-        <span class="brainmap__wing">${n.rules}</span>
+        <span class="brainmap__wing"><span class="brainmap__wing-ico">${I.doc}</span><span class="brainmap__wing-label">${n.rules}</span></span>
         <span class="brainmap__coord brainmap__coord--primary">${I.repeat}<span>${n.sharedBrain}</span></span>
-        <span class="brainmap__wing">${n.roles}</span>
+        <span class="brainmap__wing"><span class="brainmap__wing-ico">${I.doc}</span><span class="brainmap__wing-label">${n.roles}</span></span>
       </div>
       <div class="brainmap__agents">
         ${agentCard()}${agentCard()}${agentCard()}
