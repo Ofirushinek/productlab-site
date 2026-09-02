@@ -1716,12 +1716,12 @@ function renderPrep(lang) {
   ${navHeader(t, lang, { account: true })}
 
   <main id="top" class="page vault" dir="${lang === "he" ? "rtl" : "ltr"}">
-    <!-- 1 — Plain functional page title; stays above the tab bar on every tab -->
-    <section class="section"><div class="wrap narrow">
-      <div class="reveal">
-        <h1 class="prep__pagetitle">${C.hero.title}</h1>
-      </div>
-    </div></section>
+    <!-- 1 — Full-bleed brand banner, stays above the tab bar on every tab.
+         Full-bleed technique + accent tint reused verbatim from
+         .ss-divider-full / .session-strip-band (styles.css) — no new pattern. -->
+    <section class="prep-banner reveal">
+      <h1 class="prep-banner__title">${C.hero.title}</h1>
+    </section>
 
     ${tabBar}
     ${panelsHtml}

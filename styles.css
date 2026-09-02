@@ -1812,9 +1812,22 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 
 /* ---- Sub-pages (prep / legal) -------------------------------------------- */
 .page { min-height: 60vh; }
-/* Plain functional page title for the gated #/prep workspace (not a hero). */
-.prep__pagetitle { font-size: var(--text-h2); max-width: 26ch; }
 .prep__h { font-size: var(--text-h2); margin-bottom: 1rem; }
+
+/* Full-width brand banner for the gated #/prep workspace's page title — sits
+   flush under the fixed nav (no gap) so it doesn't read as disconnected from
+   the tab bar below it. Full-bleed math and the accent tint are the SAME
+   mechanism as .ss-divider-full / .session-strip-band, just applied to a
+   whole section instead of a rule/band (Ofir, 2026-09-02: reuse, no new
+   pattern). Title copy is unchanged (C.hero.title) — presentation only. */
+.prep-banner {
+  width: 100vw; margin-inline-start: calc(50% - 50vw);
+  background: color-mix(in srgb, var(--pl-accent) 6%, var(--pl-bg));
+  border-bottom: 1px solid var(--pl-border);
+  padding-block: clamp(2.5rem, 6vw, 4rem);
+  text-align: center;
+}
+.prep-banner__title { font-size: var(--text-h1); max-width: 26ch; margin: 0 auto; color: var(--pl-fg); }
 
 /* Session facts — label/value rows split by hairlines, one bounded panel */
 .facts { display: grid; gap: 0; margin: 0; border: 1px solid var(--pl-border);
