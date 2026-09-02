@@ -2019,10 +2019,16 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   width: 100%; max-width: 60rem;
   padding: clamp(1.4rem, 3vw, 2rem);
 }
-/* Header = the single shared-brain anchor, with the learning log demoted to a caption */
+/* Header = the shared-brain hub, flanked by what it holds (rules / roles).
+   Grid, not flex: 1fr/auto/1fr keeps the hub exactly centered regardless of
+   the two wing labels' length, so the trunk line (::after, left:50%) always
+   lands under the hub, not off to one side. The wings sit BESIDE the hub, on
+   the same row, so the trunk line starts flush under the hub with no caption
+   in between (Ofir, 2026-09-02: the old below-hub caption read as a gap). */
 .brainmap__hd {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 0.5rem; padding-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  padding-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
   position: relative;
 }
 /* Trunk line: brain node down to the bus line / spine below */
@@ -2042,8 +2048,14 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   border-color: var(--pl-accent);
 }
 .brainmap__coord--primary svg { color: var(--pl-accent); }
-.brainmap__caption {
-  font-size: var(--text-caption); font-weight: 600; color: var(--pl-fg-body);
+.brainmap__wing {
+  font-size: var(--text-caption); font-weight: 700; color: var(--pl-fg-secondary);
+  text-transform: uppercase; letter-spacing: 0.06em; text-align: center;
+}
+@media (max-width: 560px) {
+  /* Wings wrap under the hub on very narrow phones rather than squeezing it off-center. */
+  .brainmap__hd { grid-template-columns: 1fr; justify-items: center; gap: 0.35rem; }
+  .brainmap__wing { order: 2; }
 }
 /* The agents, connected to the shared brain via a bus (desktop) or spine (mobile) */
 .brainmap__agents {
