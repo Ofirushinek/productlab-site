@@ -75,7 +75,7 @@ window.WORKSHOP_CONTENT = (function () {
   const EN = {
     /* 1 — Plain functional page title (no hero: no kicker, no marketing body, no CTA). */
     hero: {
-      title: "Your workshop workspace",
+      title: "Your Product Lab workspace",
     },
 
     /* 1b — The kit and the deck. First on the page and never collapsed: this is
@@ -83,7 +83,7 @@ window.WORKSHOP_CONTENT = (function () {
     kit: {
       kicker: "Start here",
       title: "Your kit, and the deck",
-      subtitle: "The two things you keep after today. They stay on this page, so come back whenever you need them.",
+      subtitle: "The two things you keep from the workshop. They stay on this page, so come back whenever you need them.",
       items: [
         {
           icon: "box", featured: true,
@@ -116,24 +116,24 @@ window.WORKSHOP_CONTENT = (function () {
        student gets the shape of the day early. Reuses the crew three-card
        recipe (.grid--3 + .card), no new component. */
     howToday: {
-      kicker: "The shape of the day",
-      title: "How today runs",
+      kicker: "The shape of the session",
+      title: "How the session is structured",
       subtitle: "Three parts, in this order.",
       tiles: [
         { icon: "brain", title: "Background",
-          body: "We line up on the words and what they mean, so nothing later needs explaining twice." },
+          body: "Lining up on the words and what they mean, so nothing later needs explaining twice." },
         { icon: "users", title: "Meet your agents",
-          body: "Open the kit, meet the three teammates inside, and see the shared brain that keeps them working from one picture." },
+          body: "Opening the kit, meeting the three teammates inside, and seeing the shared brain that keeps them working from one picture." },
         { icon: "flow", title: "See it connect",
-          body: "Build the first page, and watch the work move from one teammate to the next." },
+          body: "Building the first page, and watching the work move from one teammate to the next." },
       ],
-      closing: "That is the whole day. What you build with the team after it is yours.",
+      closing: "That is the whole session. What you build with the team after it stays yours.",
     },
 
     /* 2 — By the end of today (three parts). */
     end: {
-      kicker: "Start from the end",
-      title: "By the end of today",
+      kicker: "The outcome",
+      title: "What the workshop adds up to",
       subtitle:
         "Two things you walk away with, and one you take home to finish.",
       team: {
@@ -170,7 +170,7 @@ window.WORKSHOP_CONTENT = (function () {
     technical: {
       kicker: "What an agent is",
       title: "The agent anatomy",
-      subtitle: "What every agent already has, and the layers we add. Later today you write these lines yourself, for a teammate of your own.",
+      subtitle: "What every agent already has, and the layers we add. You write these same lines yourself for a teammate of your own, in the recruiting step below.",
       groups: [
         {
           heading: "Native to the agent",
@@ -218,7 +218,7 @@ window.WORKSHOP_CONTENT = (function () {
     crew: {
       kicker: "Your team",
       title: "Meet the team you will work with",
-      subtitle: "Three today. The same pattern adds a fourth whenever you need one.",
+      subtitle: "Three in the kit. The same pattern adds a fourth whenever you need one.",
       members: [
         { icon: "laptop", role: "Technical Lead", tag: "Your technical partner",
           body: "Holds the tools, and is the only one that builds the other agents.",
@@ -230,7 +230,7 @@ window.WORKSHOP_CONTENT = (function () {
           body: "Sets the look, and writes it down.",
           badges: ["SOUL", "MEMORY", "BRAIN", "LOG"] },
       ],
-      closing: "All three come inside the kit, already built. Today you direct them, and when a job starts repeating you add a fourth the same way.",
+      closing: "All three come inside the kit, already built. You direct them, and when a job starts repeating you add a fourth the same way.",
     },
 
     /* 5 — The session flow. REWRITTEN 2026-08-27 (Dean) from deck.json slides
@@ -245,8 +245,8 @@ window.WORKSHOP_CONTENT = (function () {
       steps: [
         {
           n: "00",
-          title: "Before the workshop",
-          body: "Set all of this up before we meet. About 15-20 minutes. If something gets stuck, message me before the day, so we fix it together and not live in the session.",
+          title: "Getting set up",
+          body: "The tools the whole method runs on. About 15-20 minutes the first time. Worth re-checking if you are picking this up again on a new machine.",
           checklist: [
             { name: "Create a Claude Pro account", tag: "$20 / mo", note: 'Not optional: Claude Code does not run on the free plan. Sign up at <a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>.' },
             { name: "Claude desktop app", note: 'Download from <a class="plink" dir="ltr" href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> and install it. The desktop app, not the terminal. No code.' },
@@ -327,10 +327,10 @@ window.WORKSHOP_CONTENT = (function () {
           n: "08",
           title: "Take it home: make the page real",
           body: "Finish the checklist with your Product Manager. The next two items are already written down. Connect the email field to something real, so an address actually lands somewhere. Then put it online: an account, a page, and a domain when you want one.",
-          note: "Ask your Technical Lead to walk you through each step. It holds the whole blueprint, and it still remembers today.",
+          note: "Ask your Technical Lead to walk you through each step. It holds the whole blueprint, and it still remembers the session.",
         },
       ],
-      closing: "You built a page, and you kept a team. The page was today. The team is what you take with you.",
+      closing: "A page, and a team you keep. The page is an afternoon's work. The team is what stays with you.",
     },
 
   };
@@ -339,14 +339,14 @@ window.WORKSHOP_CONTENT = (function () {
   const HE = {
     /* 1 — כותרת עמוד פשוטה ופונקציונלית (ללא hero: בלי קיקר, בלי גוף שיווקי, בלי CTA). */
     hero: {
-      title: "המרחב שלכם לסדנה",
+      title: "המרחב שלכם ב-Product Lab",
     },
 
     /* 1b — הערכה והמצגת. ראשונות בעמוד ולא מקופלות. */
     kit: {
       kicker: "מתחילים כאן",
       title: "הערכה שלכם, והמצגת",
-      subtitle: "שני הדברים שנשארים לכם אחרי היום. שניהם יושבים כאן בעמוד, אז תחזרו אליהם מתי שתצטרכו.",
+      subtitle: "שני הדברים שנשארים לכם מהסדנה. שניהם יושבים כאן בעמוד, אז תחזרו אליהם מתי שתצטרכו.",
       items: [
         {
           icon: "box", featured: true,
@@ -372,8 +372,8 @@ window.WORKSHOP_CONTENT = (function () {
 
     /* 1c — איך היום עובד (שקופית 3 במצגת). */
     howToday: {
-      kicker: "המבנה של היום",
-      title: "איך היום עובד",
+      kicker: "המבנה של הסדנה",
+      title: "איך הסדנה בנויה",
       subtitle: "שלושה חלקים, בסדר הזה.",
       tiles: [
         { icon: "brain", title: "רקע",
@@ -383,13 +383,13 @@ window.WORKSHOP_CONTENT = (function () {
         { icon: "flow", title: "רואים את זה מתחבר",
           body: "בונים את העמוד הראשון, ורואים את העבודה עוברת מחבר צוות אחד לשני." },
       ],
-      closing: "זה כל היום. מה שתבנו עם הצוות אחרי זה, כבר שלכם.",
+      closing: "זה כל הסדנה. מה שתבנו עם הצוות אחריה, כבר שלכם.",
     },
 
     /* 2 — עד סוף היום (שלושה חלקים). */
     end: {
-      kicker: "מתחילים מהסוף",
-      title: "עד סוף היום",
+      kicker: "התוצאה",
+      title: "מה נשאר בסוף הסדנה",
       subtitle:
         "שני דברים שאתם לוקחים איתכם, ואחד שתסיימו בבית.",
       team: {
@@ -419,7 +419,7 @@ window.WORKSHOP_CONTENT = (function () {
     technical: {
       kicker: "מה זה סוכן",
       title: "האנטומיה של סוכן",
-      subtitle: "מה שלכל סוכן כבר יש, והשכבות שאנחנו מוסיפים. בהמשך היום תכתבו את השורות האלה בעצמכם, לחבר צוות משלכם.",
+      subtitle: "מה שלכל סוכן כבר יש, והשכבות שאנחנו מוסיפים. את אותן שורות תכתבו בעצמכם לחבר צוות משלכם, בשלב הגיוס בהמשך.",
       groups: [
         {
           heading: "מובנה בסוכן",
@@ -467,7 +467,7 @@ window.WORKSHOP_CONTENT = (function () {
     crew: {
       kicker: "הצוות שלכם",
       title: "הכירו את הצוות שתעבדו איתו",
-      subtitle: "שלושה היום. באותה שיטה מוסיפים רביעי מתי שצריך.",
+      subtitle: "שלושה בערכה. באותה שיטה מוסיפים רביעי מתי שצריך.",
       members: [
         { icon: "laptop", role: "Technical Lead", tag: "השותף הטכני שלכם",
           body: "מחזיק את הכלים, והיחיד שבונה סוכנים נוספים.",
@@ -479,7 +479,7 @@ window.WORKSHOP_CONTENT = (function () {
           body: "קובע את המראה, ומעלה אותו על הכתב.",
           badges: ["SOUL", "MEMORY", "BRAIN", "LOG"] },
       ],
-      closing: "כל השלושה כבר בנויים בתוך הערכה. היום אתם מנהלים אותם, וכשעבודה מתחילה לחזור על עצמה מוסיפים רביעי בדיוק באותה דרך.",
+      closing: "כל השלושה כבר בנויים בתוך הערכה. אתם מנהלים אותם, וכשעבודה מתחילה לחזור על עצמה מוסיפים רביעי בדיוק באותה דרך.",
     },
 
     /* 5 — הזרימה של המפגש. נכתב מחדש 2026-08-27 (Dean) מתוך deck.json. */
@@ -490,8 +490,8 @@ window.WORKSHOP_CONTENT = (function () {
       steps: [
         {
           n: "00",
-          title: "לפני הסדנה",
-          body: "מסדרים את כל זה לפני שנפגשים, בערך 15-20 דקות. אם משהו נתקע, כתבו לי לפני היום עצמו, כדי שנסדר את זה יחד ולא באמצע המפגש.",
+          title: "מסדרים את הכלים",
+          body: "הכלים שכל השיטה רצה עליהם. בערך 15-20 דקות בפעם הראשונה. שווה לבדוק שוב אם חוזרים לזה על מחשב חדש.",
           checklist: [
             { name: "פתיחת חשבון Claude Pro", tag: "20 דולר לחודש", note: 'לא אופציונלי: Claude Code לא רץ בגרסה החינמית. נרשמים ב-<a class="plink" dir="ltr" href="https://claude.ai/upgrade" target="_blank" rel="noopener">claude.ai/upgrade</a>.' },
             { name: "אפליקציית Claude לדסקטופ", note: 'מורידים מ-<a class="plink" dir="ltr" href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> ומתקינים. אפליקציית הדסקטופ, לא הטרמינל. בלי קוד.' },
@@ -572,10 +572,10 @@ window.WORKSHOP_CONTENT = (function () {
           n: "08",
           title: "לוקחים הביתה: להפוך את העמוד לאמיתי",
           body: "מסיימים את הרשימה עם ה-Product Manager. שני הסעיפים הבאים כבר כתובים שם. מחברים את שדה האימייל למשהו אמיתי, כדי שכתובת באמת תגיע לאנשהו. ואז מעלים לאוויר: חשבון, עמוד, ודומיין כשתרצו.",
-          note: "בקשו מה-Technical Lead ללוות אתכם שלב שלב. הוא מחזיק את כל התוכנית, והוא עדיין זוכר את היום הזה.",
+          note: "בקשו מה-Technical Lead ללוות אתכם שלב שלב. הוא מחזיק את כל התוכנית, והוא עדיין זוכר את הסדנה.",
         },
       ],
-      closing: "בניתם עמוד, ונשאר לכם צוות. העמוד היה היום. הצוות הוא מה שהולך אתכם הלאה.",
+      closing: "עמוד, וצוות שנשאר אתכם. העמוד הוא עבודה של אחר צהריים אחד. הצוות הוא מה שנשאר.",
     },
 
   };
