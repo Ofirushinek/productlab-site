@@ -369,7 +369,7 @@ const I18N = {
     prep_page_title: "אזור התלמידים",
     prep_welcome_title: "אתם בפנים. ברוכים הבאים למחזור הראשון של Product Lab.",
     prep_help_title: "שאלה, או תקועים?",
-    prep_help_body: "תקועים בהכנות או שיש שאלה? כתבו לי בוואטסאפ. עדיף לסדר את זה עכשיו ולא ב-17:30 ביום המפגש.",
+    prep_help_body: "תקועים על משהו, או שיש שאלה? כתבו לי בוואטסאפ.",
 
     // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
     privacy_title: "מדיניות פרטיות",
@@ -649,7 +649,7 @@ const I18N = {
     prep_page_title: "Student area",
     prep_welcome_title: "You're in. Welcome to cohort #1 of Product Lab.",
     prep_help_title: "Questions, or stuck?",
-    prep_help_body: "Stuck on the setup, or have a question? Message me on WhatsApp. Better to sort it now than at 17:30 on the day.",
+    prep_help_body: "Stuck on something, or have a question? Message me on WhatsApp.",
 
     // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
     privacy_title: "Privacy Policy",
