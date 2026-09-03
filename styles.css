@@ -275,6 +275,17 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .btn--ghost:hover { background: var(--pl-bg-alt); border-color: var(--pl-fg); }
 .btn--ghost svg { color: var(--pl-fg-secondary); }
 
+/* Destructive action. Additive modifier, same pattern as .btn--icon stacking
+   with .btn--sm/--lg: stack it onto .btn--ghost for an icon-only destructive
+   control (roster row delete), or use it alone for a solid destructive CTA
+   (the delete-confirm dialog's "Delete" button). DSL-confirmed, 2026-09-03 -
+   reuses the existing --pl-stage-dropped red token, no new color. */
+.btn--danger { background: var(--pl-stage-dropped); color: #fff; box-shadow: var(--shadow-pl-md); }
+.btn--danger:hover { opacity: 0.9; }
+.btn--ghost.btn--danger { background: transparent; color: var(--pl-stage-dropped); border-color: var(--pl-stage-dropped); }
+.btn--ghost.btn--danger:hover { background: color-mix(in srgb, var(--pl-stage-dropped) 12%, transparent); border-color: var(--pl-stage-dropped); }
+.btn--ghost.btn--danger svg { color: var(--pl-stage-dropped); }
+
 .cta-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 /* invite chip */
@@ -767,6 +778,12 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   background: color-mix(in srgb, var(--pl-accent) 12%, transparent); color: var(--pl-accent);
 }
 .noacct__ico svg { width: 26px; height: 26px; }
+/* Destructive-tint override, same recipe as .noacct itself over .moment-card:
+   only the color-mix tint changes. Used by the delete-confirm dialog. */
+.noacct__ico--danger {
+  background: color-mix(in srgb, var(--pl-stage-dropped) 12%, transparent);
+  color: var(--pl-stage-dropped);
+}
 .noacct__title { font-size: var(--text-h2); font-weight: 700; color: var(--pl-fg); margin-bottom: 0.6rem; }
 .noacct__body { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body-lg); line-height: 1.6; }
 .noacct .cta-row { justify-content: center; }
@@ -924,6 +941,15 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   font-weight: 600; color: var(--pl-fg-secondary);
   text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem;
 }
+/* Info icon inline in a column header (Access), explaining what its button
+   does via the existing [data-tooltip] component - no new tooltip mechanism. */
+.roster__colhelp {
+  display: inline-flex; vertical-align: middle; margin-inline-start: 0.3rem;
+  border: 0; background: transparent; padding: 0; color: var(--pl-fg-muted);
+  cursor: help; text-transform: none; letter-spacing: normal;
+}
+.roster__colhelp:hover, .roster__colhelp:focus-visible { color: var(--pl-fg-secondary); }
+.roster__colhelp svg { width: 13px; height: 13px; }
 /* Column budget. Person and Access each carry two lines instead of taking two
    columns apiece, which is what leaves `צעד הבא` the remaining width - it is the
    one field that has to be readable without opening the row. */

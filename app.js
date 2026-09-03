@@ -96,6 +96,9 @@ const I = {
   arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
   check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
   x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  // Destructive delete only - distinct from `x` (close/dismiss). DSL-confirmed
+  // new icon, 2026-09-03 (roster row delete + confirm dialog).
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-.87 14.14A2 2 0 0 1 16.14 22H7.86a2 2 0 0 1-1.99-1.86L5 6M10 11v6M14 11v6"/></svg>',
   chev: '<svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
   users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
   brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.99.14 4 4 0 0 0-1.66 6.16A3.5 3.5 0 0 0 6 18a3 3 0 0 0 6 0V5ZM12 5a3 3 0 1 1 5.99.14 4 4 0 0 1 1.66 6.16A3.5 3.5 0 0 1 18 18a3 3 0 0 1-6 0"/></svg>',
@@ -320,7 +323,12 @@ const I18N = {
     roster_add_hint: "אפשר להוסיף ליד עם שם בלבד; אימייל לא חובה. הוספה לא מאשרת גישה. אחרי ההוספה, לחצו \"אישור\" כדי לפתוח גישה.",
     roster_col_name: "שם",
     roster_col_email: "אימייל",
-    roster_col_status: "סטטוס",
+    roster_col_status: "גישה לאתר",
+    // Explains the אישור/ביטול אישור button - Ofir's own confusion, 2026-09-03:
+    // read it as "approve the student for the workshop," it actually grants/
+    // revokes the gated site content. Copy reused verbatim from the CMO's
+    // already-cleared `access_help` string, crm-status-ux-spec-2026-08-27.md.
+    roster_access_help: "פותח לתלמיד/ה גישה לתוכן הסגור באתר. לא קשור לאישור ההרשמה לסדנה.",
     roster_col_signedin: "נכנס?",
     roster_col_stage: "שלב",
     roster_col_source: "מקור",
@@ -335,6 +343,14 @@ const I18N = {
     roster_confirm: "אישור",
     roster_unconfirm: "ביטול אישור",
     roster_remove: "הסרה",
+    // Delete-confirm modal (Ofir, 2026-09-03: trash icon + "are you sure" before
+    // an actual delete). PLACEHOLDER copy, same standing as the rest of this
+    // roster section - Copywriter to refine.
+    roster_remove_title: "למחוק תלמיד/ה?",
+    roster_remove_body_pre: "הפעולה תמחק לצמיתות את ",
+    roster_remove_body_post: " מהרשימה. אי אפשר לבטל.",
+    roster_remove_cancel: "ביטול",
+    roster_remove_confirm: "מחיקה",
     roster_add_to_list: "הוספה לרשימה",
     roster_empty: "עדיין אין תלמידים. הוסיפו שם למעלה כדי להתחיל.",
     roster_loading: "טוען...",
@@ -600,7 +616,8 @@ const I18N = {
     roster_add_hint: "A lead can be added with a name only; email is optional. Adding does not grant access. After adding, hit \"Confirm\" to grant access.",
     roster_col_name: "Name",
     roster_col_email: "Email",
-    roster_col_status: "Status",
+    roster_col_status: "Site access",
+    roster_access_help: "Grants this student access to the gated site content. Unrelated to workshop registration approval.",
     roster_col_signedin: "Signed in?",
     roster_col_stage: "Stage",
     roster_col_source: "Source",
@@ -615,6 +632,11 @@ const I18N = {
     roster_confirm: "Confirm",
     roster_unconfirm: "Unconfirm",
     roster_remove: "Remove",
+    roster_remove_title: "Delete student?",
+    roster_remove_body_pre: "This permanently removes ",
+    roster_remove_body_post: " from the list. This can't be undone.",
+    roster_remove_cancel: "Cancel",
+    roster_remove_confirm: "Delete",
     roster_add_to_list: "Add to list",
     roster_empty: "No students yet. Add a name above to get started.",
     roster_loading: "Loading...",
@@ -788,6 +810,28 @@ const noticeModal = (key, title, body, t) => `
       <p class="noacct__body">${body}</p>
       <div class="cta-row" style="margin-top:1.5rem">
         <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+      </div>
+    </div>
+  </div>`;
+
+// Delete-confirm dialog for the admin roster (Ofir, 2026-09-03: a trash icon
+// should never delete on click alone). Reuses .modal/.modal__card verbatim
+// (4th use of the same shell after student/notice/register) plus the
+// .noacct__ico + .login__title/.login__sub sub-components noticeModal already
+// uses - no new modal primitive, no new sub-component. The student name is
+// filled in at open time (wireRemoveConfirm) into the empty <strong>, never
+// baked into this static template. Admin-only, so only rendered when isAdmin.
+const confirmRemoveModal = (t) => `
+  <div class="modal" data-remove-modal hidden>
+    <div class="modal__overlay" data-remove-cancel></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-label="${t.roster_remove_title}">
+      <button class="modal__close" type="button" data-remove-cancel aria-label="${t.modal_close}" data-tooltip="${t.modal_close}">${I.x}</button>
+      <div class="noacct__ico noacct__ico--danger">${I.trash}</div>
+      <h2 class="login__title">${t.roster_remove_title}</h2>
+      <p class="login__sub">${t.roster_remove_body_pre}<strong data-remove-name></strong>${t.roster_remove_body_post}</p>
+      <div class="cta-row" style="margin-top:1.5rem; justify-content:center">
+        <button class="btn btn--ghost" type="button" data-remove-cancel>${t.roster_remove_cancel}</button>
+        <button class="btn btn--danger" type="button" data-remove-confirm>${t.roster_remove_confirm}</button>
       </div>
     </div>
   </div>`;
@@ -1730,13 +1774,14 @@ function renderPrep(lang) {
   </main>
 
   ${studentModal(t)}
+  ${isAdmin ? confirmRemoveModal(t) : ""}
   ${siteFooter(t)}`;
 
   afterRender();
   initPrepTabs();
   // Admin only: bind the "Add user" form once, then fetch + draw the roster. RLS
   // returns zero rows to non-admins, so this is safe even if the div is forced open.
-  if (isAdmin) { wireRosterAdd(lang); renderRoster(lang); }
+  if (isAdmin) { wireRosterAdd(lang); wireRemoveConfirm(); renderRoster(lang); }
 }
 
 /* Which student-area tab is open. Module state so it survives a re-render, and
@@ -2055,6 +2100,39 @@ async function confirmUser(email, next, lang) {
   renderRoster(lang);
 }
 
+// Set by openRemoveConfirm() when a row's trash icon is clicked; read only by
+// wireRemoveConfirm()'s own confirm handler - module state, not a DOM
+// data-attribute, because `key` can be an {id, email} object, not a string.
+let PENDING_REMOVE = null;
+
+// Opens the delete-confirm modal (Ofir, 2026-09-03: a trash icon must never
+// delete on click alone). Fills in the person's name, does not touch the row.
+function openRemoveConfirm(key, name, lang) {
+  const modal = document.querySelector("[data-remove-modal]");
+  if (!modal) return;
+  PENDING_REMOVE = { key, lang };
+  const nameEl = modal.querySelector("[data-remove-name]");
+  if (nameEl) nameEl.textContent = name || (lang === "he" ? "התלמיד/ה" : "this student");
+  modal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+// Cancel / overlay click / Escape all close without acting. Only the confirm
+// button ever calls removeUser() - same open/close mechanics as wireStudent().
+function wireRemoveConfirm() {
+  const modal = document.querySelector("[data-remove-modal]");
+  if (!modal) return;
+  const close = () => { modal.hidden = true; document.body.classList.remove("modal-open"); PENDING_REMOVE = null; };
+  modal.querySelectorAll("[data-remove-cancel]").forEach((b) => b.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
+  modal.querySelector("[data-remove-confirm]")?.addEventListener("click", () => {
+    if (!PENDING_REMOVE) return;
+    const { key, lang } = PENDING_REMOVE;
+    close();
+    removeUser(key, lang);
+  });
+}
+
 async function removeUser(key, lang) {
   // key may be a bare email (legacy) or { id, email }. Prefer id so name-only
   // leads (nullable email) can still be removed.
@@ -2079,6 +2157,9 @@ async function renderRoster(lang) {
   // save/remove). Guarded: any of these CRM fields may be absent if the migration
   // has not run yet; every read defaults, so the table always renders.
   const keys = rows.map((r) => ({ id: r.id ?? null, email: r.email || null }));
+  // Display name for the delete-confirm dialog only - falls back to the email
+  // so a name-only-missing lead still reads as a specific person, not blank.
+  const names = rows.map((r) => r.name || r.full_name || r.email || "");
 
   const stageSelect = (i, cur) => `<select class="roster__stage roster__stage--${escapeHtml(cur)}" data-stage-select data-field="stage" data-i="${i}" aria-label="${t.roster_col_stage}">
         ${CRM_STAGES.map((s) => `<option value="${s}"${s === cur ? " selected" : ""}>${escapeHtml(t.stages[s] || s)}</option>`).join("")}
@@ -2115,7 +2196,7 @@ async function renderRoster(lang) {
         ? `<button type="button" class="btn ${r.confirmed ? "btn--ghost" : "btn--primary"} btn--sm" data-confirm="${escapeAttr(r.email)}" data-next="${r.confirmed ? "0" : "1"}">${r.confirmed ? t.roster_unconfirm : t.roster_confirm}</button>`
         : "";
       actions = `${confirmBtn}
-         <button type="button" class="btn btn--ghost btn--sm roster__remove" data-remove-i="${i}" aria-label="${t.roster_remove}" data-tooltip="${t.roster_remove}">${I.x}</button>`;
+         <button type="button" class="btn btn--ghost btn--danger btn--sm roster__remove" data-remove-ask="${i}" aria-label="${t.roster_remove}" data-tooltip="${t.roster_remove}">${I.trash}</button>`;
     }
 
     // Name and email are ONE cell (the email is a second line, not a column of
@@ -2189,7 +2270,7 @@ async function renderRoster(lang) {
         <thead><tr>
           <th aria-hidden="true"></th>
           <th>${t.roster_col_name}</th>
-          <th>${t.roster_col_status}</th>
+          <th>${t.roster_col_status}<button type="button" class="roster__colhelp" data-tooltip="${t.roster_access_help}" data-tip-pos="top" aria-label="${t.roster_access_help}">${I.info}</button></th>
           <th>${t.roster_col_stage}</th>
           <th>${t.roster_col_source}</th>
           <th>${t.roster_col_next}</th>
@@ -2275,8 +2356,11 @@ async function renderRoster(lang) {
 
   host.querySelectorAll("[data-confirm]").forEach((b) =>
     b.addEventListener("click", () => confirmUser(b.getAttribute("data-confirm"), b.getAttribute("data-next") === "1", lang)));
-  host.querySelectorAll("[data-remove-i]").forEach((b) =>
-    b.addEventListener("click", () => removeUser(keys[b.getAttribute("data-remove-i")], lang)));
+  host.querySelectorAll("[data-remove-ask]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const i = b.getAttribute("data-remove-ask");
+      openRemoveConfirm(keys[i], names[i], lang);
+    }));
   host.querySelectorAll("[data-add]").forEach((b) =>
     b.addEventListener("click", () => addUser(b.getAttribute("data-add"), lang)));
 }
