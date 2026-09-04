@@ -385,8 +385,8 @@ const I18N = {
     // defensive no-content fallback plus the bilingual Help/WhatsApp block.
     prep_page_title: "אזור התלמידים",
     prep_welcome_title: "אתם בפנים. ברוכים הבאים למחזור הראשון של Product Lab.",
-    prep_help_title: "שאלה, או תקועים?",
-    prep_help_body: "תקועים על משהו, או שיש שאלה? כתבו לי בוואטסאפ.",
+    prep_help_title: "יש שאלה?",
+    prep_help_body: "כתבו לי בוואטסאפ, אני כאן לכל מה שצריך.",
 
     // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
     privacy_title: "מדיניות פרטיות",
@@ -671,8 +671,8 @@ const I18N = {
     // defensive no-content fallback plus the bilingual Help/WhatsApp block.
     prep_page_title: "Student area",
     prep_welcome_title: "You're in. Welcome to cohort #1 of Product Lab.",
-    prep_help_title: "Questions, or stuck?",
-    prep_help_body: "Stuck on something, or have a question? Message me on WhatsApp.",
+    prep_help_title: "Got a question?",
+    prep_help_body: "Message me on WhatsApp, I'm here for whatever comes up.",
 
     // ---- Legal: Privacy (privacy_*) — copy Copywriter 2026-08-05
     privacy_title: "Privacy Policy",
