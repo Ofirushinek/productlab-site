@@ -86,7 +86,7 @@ window.WORKSHOP_CONTENT = (function () {
       subtitle: "The two things you keep from the workshop. They stay on this page, so come back whenever you need them.",
       items: [
         {
-          icon: "box", featured: true,
+          icon: "box",
           kicker: "Download",
           poster: true, posterIcon: "box",
           title: "The Product Lab kit",
@@ -361,7 +361,7 @@ window.WORKSHOP_CONTENT = (function () {
       subtitle: "שני הדברים שנשארים לכם מהסדנה. שניהם יושבים כאן בעמוד, אז תחזרו אליהם מתי שתצטרכו.",
       items: [
         {
-          icon: "box", featured: true,
+          icon: "box",
           kicker: "הורדה",
           poster: true, posterIcon: "box",
           title: "ערכת Product Lab",
