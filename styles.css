@@ -2072,30 +2072,6 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .card__media::before { content: ""; display: block; padding-top: 56.25%; }  /* 16:9 */
 .card__media > * { position: absolute; inset: 0; }
 .card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* The figure half of the pair: the unzipped kit drawn as a folder listing, so
-   the tile carries a picture of a FILE beside the deck tile's photograph rather
-   than one small glyph. It keeps the base .card__media background (--pl-bg): the
-   kit card is .card--feature, whose background is --pl-illo-bg, so washing the
-   figure in --pl-illo-bg too made the whole panel invisible against its own card.
-
-   The contents sit in ONE .kitfile wrapper, not loose in the frame: `> *` above
-   absolutely positions every direct child to inset:0, so two loose children
-   would stack on top of each other, and padding on the frame itself would be
-   added to the ::before ratio box and skew the 16:9 (measured 1.66, not 1.78).
-   Both belong on the wrapper. */
-.kitfile {
-  display: grid; align-content: center;
-  gap: var(--space-3); padding: var(--space-3);
-}
-.kitfile__hd { display: flex; align-items: center; gap: var(--space-2); }
-.kitfile__hd .card__ico { width: var(--ctl-xs); height: var(--ctl-xs); margin-bottom: 0; }
-.kitfile__hd .card__ico svg { width: var(--icon-md); height: var(--icon-md); }
-.kitfile__name { font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); }
-/* Two fixed columns, never a wrapping flex row: six entries in a flex row
-   orphaned the sixth onto a line of its own, centred under the other five.
-   Same 1fr 1fr the shared-brain diagram uses for an agent's four files. */
-.kitfile__paths { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-
 /* Teammates list inside the "build the team" card */
 .teammates { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
 .teammates__name { font-weight: 700; color: var(--pl-fg); }
