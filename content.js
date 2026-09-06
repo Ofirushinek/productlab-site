@@ -88,7 +88,7 @@ window.WORKSHOP_CONTENT = (function () {
         {
           icon: "box",
           kicker: "Download",
-          poster: true, posterIcon: "box",
+          image: "assets/kit-page-cover.jpg",
           title: "The Product Lab kit",
           body: "Your three teammates, the shared brain they write to, and the skills they work from. Unzip it into your Documents folder and point Claude at it. It is the same file you got before the session.",
           href: "assets/product-lab.zip", download: true,
@@ -363,7 +363,7 @@ window.WORKSHOP_CONTENT = (function () {
         {
           icon: "box",
           kicker: "הורדה",
-          poster: true, posterIcon: "box",
+          image: "assets/kit-page-cover.jpg",
           title: "ערכת Product Lab",
           body: "שלושת חברי הצוות שלכם, המוח המשותף שהם כותבים אליו, והכישורים שהם עובדים לפיהם. פורסים את הקובץ לתיקיית Documents ומכוונים לשם את Claude. זה אותו קובץ שקיבלתם לפני המפגש.",
           href: "assets/product-lab.zip", download: true,
