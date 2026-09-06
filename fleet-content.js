@@ -194,9 +194,9 @@ window.FLEET_CONTENT = {
     mic_denied: "The browser blocked the microphone. Allow it, or keep typing.",
     questions: [
       { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. One sentence, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too." },
-      { key: "q2", title: "What stopped and waited for you this week?", hint: "Whatever does not move until you look. The team is built from this.", ph: "Every screen before it goes to dev, and every small change to the component library. Even when I am on vacation." },
-      { key: "q3", title: "What have you already decided, and are tired of explaining again?", hint: "This goes into memory, so you never explain it a fourth time.", ph: "The palette is locked, the audience is clinic managers not doctors, and no Android app this year. I have said this three times already." },
-      { key: "q4", title: "What does nobody close without you?", hint: "This is what the team never closes alone.", ph: "The handoff to dev, a price change, and any message that goes out to a customer. Nothing moves without my eyes on it." },
+      { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users." },
+      { key: "q3", title: "What is already settled, and not up for debate?", hint: "Already decided, even if only in your head. This goes into memory.", ph: "The audience is clinic managers, not doctors, the palette is locked, and no Android app this year. Not revisiting any of it." },
+      { key: "q4", title: "What will nobody close without you?", hint: "Not even an agent. This stays with you.", ph: "The handoff to dev, a price change, and any message that goes out to a customer. Nothing will move without my eyes on it." },
       { key: "q5", title: "Tried it already?", hint: "Handing part of the work to an agent. What came of it?", ph: "",
         choices: [
           { v: "none", l: "No" },
