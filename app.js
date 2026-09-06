@@ -114,6 +114,7 @@ const I = {
   calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
   claude: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7v10l10 5 10-5V7L12 2ZM2 7l10 5 10-5M12 22V12"/></svg>',
   login: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>',
+  mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8"/></svg>',
   info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>',
   // Google "G" - brand colors are intentional (not tokenized: this is a third-party logo).
@@ -2524,6 +2525,12 @@ function wireKitAutoDownload() {
    localhost and `#/fleet?mock=ok|error|limited|broke` return FLEET_MOCK,
    the CTO's §6 mock, byte-shape identical to the live 200 body. */
 const FLEET_STORE = { answers: "pl_fleet_answers", result: "pl_fleet_blueprint" };
+/* Voice input (Ofir, 2026-09-06: "a microphone in every one of those questions,
+   record himself thinking, not only type, and functional"). Browser speech-to-
+   text via the Web Speech API: Chrome + Safari + Edge, he-IL / en-US, no
+   backend, nothing recorded or stored by us. Firefox has no SpeechRecognition,
+   so there the button simply does not render. */
+const FLEET_SR = typeof window !== "undefined" ? (window.SpeechRecognition || window.webkitSpeechRecognition || null) : null;
 const FLEET_LIB = ["user-researcher", "copywriter", "design-system-lead", "reviewer", "chief-of-staff", "marketing-designer"];
 const FLEET_MAX = 300;      // spec §2: text ≤ 300 chars
 const FLEET_MIN = 10;       // spec §2: < 10 chars on Q1–Q2 → inline nudge
@@ -2737,11 +2744,28 @@ function fleetEntry(f, saved) {
     ? `<button class="btn btn--accent" type="button" data-fleet="open">${f.return_open}</button>
        <button class="btn btn--ghost" type="button" data-fleet="reset">${f.return_reset}</button>`
     : `<button class="btn btn--accent btn--lg" type="button" data-fleet="start">${f.entry_cta}</button>`;
+  /* The crew avatars take the .login__ico illustration slot (DSL ruling
+     2026-09-06): three overlapping circles, hover/focus/tap shows a light
+     tooltip "nickname / role" so the visitor sees WHO they get before they
+     answer anything (Ofir). Tap-to-pin for touch lives in the click handler. */
+  const stack = `
+    <div class="avatar-stack" role="group" aria-label="${escapeAttr(f.entry_crew_aria || "")}">
+      ${f.crew.map((c) => `<button type="button" class="avatar-stack__item" data-tooltip="${escapeAttr(c.tag + "\n" + c.role)}" data-tip-theme="light" data-tip-pos="top" aria-label="${escapeAttr(c.tag + ", " + c.role)}" data-fleet-avatar>
+        <img src="assets/${c.img}.webp?v=2" alt="" loading="lazy" />
+      </button>`).join("")}
+    </div>`;
+  const outcome = f.entry_outcome_line
+    ? `<div class="fleet-outcome">
+        <span class="fleet-outcome__label">${f.entry_outcome_label || ""}</span>
+        <p class="login__sub fleet-outcome__line">${f.entry_outcome_line}</p>
+       </div>`
+    : "";
   return fleetCard(`
-    <div class="login__ico">${I.users}</div>
+    ${stack}
     <span class="eyebrow">${f.entry_eyebrow}</span>
     <h1 class="login__title">${f.entry_title}</h1>
     <p class="login__sub">${f.entry_sub}</p>
+    ${outcome}
     ${saved ? `<p class="login__note">${I.info}<span>${f.return_note}</span></p>` : ""}
     <div class="cta-row">${actions}</div>
     ${saved ? "" : `<p class="ss-note">${f.entry_meta}</p>`}`);
@@ -2756,9 +2780,13 @@ function fleetQuestion(f) {
         ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="radio" data-fleet-choice="${c.v}" aria-checked="${val === c.v}">${c.l}</button>`).join("")}
        </div>`
     : `<div class="field">
-        <label class="field__label" for="fleet-q">${f.q_answer_label}</label>
-        <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="auto" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" data-fleet-answer>${escapeHtml(val)}</textarea>
+        <div class="field__head">
+          <label class="field__label" for="fleet-q">${f.q_answer_label}</label>
+          ${FLEET_SR ? `<button type="button" class="chip chip--toggle" data-fleet-mic aria-pressed="false" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}<span data-fleet-mic-label>${f.mic_start || ""}</span></button>` : ""}
+        </div>
+        <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" data-fleet-answer>${escapeHtml(val)}</textarea>
         <div class="field__hint"><span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: val.length, max: FLEET_MAX })}</span></div>
+        ${FLEET_SR ? `<p class="reg__error" data-fleet-mic-error hidden>${I.info}<span>${f.mic_denied || ""}</span></p>` : ""}
        </div>`;
   return fleetCard(`
     <span class="eyebrow">${fleetFmt(f.q_counter, { n: FLEET.qi + 1 })}</span>
@@ -3039,7 +3067,7 @@ async function fleetSubmit(lang) {
 function wireFleet(lang, f) {
   const root = document.querySelector("main.fleet");
   if (!root) return;
-  const go = (step) => { FLEET.step = step; renderFleet(lang); };
+  const go = (step) => { if (FLEET.stopMic) { FLEET.stopMic(); FLEET.stopMic = null; } FLEET.step = step; renderFleet(lang); };
 
   root.querySelectorAll("[data-fleet]").forEach((b) => b.addEventListener("click", () => {
     const act = b.getAttribute("data-fleet");
@@ -3058,6 +3086,23 @@ function wireFleet(lang, f) {
     else if (act === "limited-gate") { FLEET.gateMode = "limited"; go("gate"); }
   }));
 
+  // S0 crew avatars: hover/focus show the tooltip via CSS; touch has neither,
+  // so a tap pins it (data-tip-open, DSL ruling 2026-09-06), a second tap or
+  // a tap anywhere else clears it. Never aria-expanded (global rule hides
+  // tooltips on expanded controls).
+  const avatars = root.querySelectorAll("[data-fleet-avatar]");
+  if (avatars.length) {
+    const clear = () => avatars.forEach((a) => a.removeAttribute("data-tip-open"));
+    avatars.forEach((a) => a.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const on = a.hasAttribute("data-tip-open");
+      clear();
+      if (!on) a.setAttribute("data-tip-open", "");
+    }));
+    document.addEventListener("click", clear, { once: false });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") clear(); });
+  }
+
   // Question screen: live counter, chips, validate, next / submit.
   const form = root.querySelector("[data-fleet-form]");
   if (form) {
@@ -3074,6 +3119,48 @@ function wireFleet(lang, f) {
         if (err && !err.hidden && ta.value.trim().length >= FLEET_MIN) err.hidden = true;
       });
       setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 50);
+    }
+    // Voice: one toggle. Listening appends live transcript after whatever is
+    // already typed; the counter and the max follow the same input event.
+    const mic = form.querySelector("[data-fleet-mic]");
+    if (mic && ta && FLEET_SR) {
+      const micLabel = mic.querySelector("[data-fleet-mic-label]");
+      const micErr = form.querySelector("[data-fleet-mic-error]");
+      let rec = null;
+      const setState = (on) => {
+        mic.setAttribute("aria-pressed", on ? "true" : "false");
+        mic.classList.toggle("is-listening", on);
+        if (micLabel) micLabel.textContent = on ? (f.mic_stop || "") : (f.mic_start || "");
+      };
+      const stop = () => { if (rec) { try { rec.stop(); } catch (e) {} } };
+      FLEET.stopMic = stop;
+      mic.addEventListener("click", () => {
+        if (rec) { stop(); return; }
+        let base = ta.value.trim();
+        try {
+          rec = new FLEET_SR();
+          rec.lang = lang === "he" ? "he-IL" : "en-US";
+          rec.continuous = true;
+          rec.interimResults = true;
+          rec.onresult = (e) => {
+            let done = "", live = "";
+            for (let i = 0; i < e.results.length; i++) {
+              const r = e.results[i];
+              if (r.isFinal) done += r[0].transcript + " "; else live += r[0].transcript;
+            }
+            const sep = base ? " " : "";
+            ta.value = (base + sep + done + live).replace(/\s+/g, " ").slice(0, FLEET_MAX);
+            ta.dispatchEvent(new Event("input", { bubbles: true }));
+          };
+          rec.onerror = (e) => {
+            if (micErr && (e.error === "not-allowed" || e.error === "service-not-allowed")) micErr.hidden = false;
+          };
+          rec.onend = () => { rec = null; setState(false); FLEET.answers[q.key] = (ta.value || "").trim().slice(0, FLEET_MAX); fleetSaveAnswers(); };
+          rec.start();
+          setState(true);
+          if (micErr) micErr.hidden = true;
+        } catch (e) { rec = null; setState(false); }
+      });
     }
     form.querySelectorAll("[data-fleet-choice]").forEach((c) => c.addEventListener("click", () => {
       const v = c.getAttribute("data-fleet-choice");
@@ -3097,7 +3184,7 @@ function wireFleet(lang, f) {
         fleetSaveAnswers();
       }
       if (FLEET.qi < f.questions.length - 1) { FLEET.qi += 1; go("q"); }
-      else fleetSubmit(lang);
+      else { if (FLEET.stopMic) { FLEET.stopMic(); FLEET.stopMic = null; } fleetSubmit(lang); }
     });
   }
 

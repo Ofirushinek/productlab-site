@@ -7,7 +7,16 @@
    <script> in index.html BEFORE app.js, with a ?v= cache-bust — bump it when
    this file changes.
 
-   ✅ FINAL COPY (Copywriter, 2026-09-05). Every key, HE + EN.
+   ✅ FINAL COPY v2 (Copywriter, 2026-09-06) - Ofir's S0 clarity redo.
+   v2 rule: no abstract nouns for the deliverable. "תוכנית" is gone everywhere;
+   the thing the reader gets is "הרכב הצוות" / "the lineup", and S0 says in
+   plain words what it contains. Questions name the product, never "what you do".
+   v2 round 2 (Ofir): entry_sub is ONE sentence, no colon; the outcome is its
+   own mini block (entry_outcome_label + entry_outcome_line) above the three
+   crew avatars (entry_crew_aria; the tooltip reuses crew[n].role + crew[n].line).
+   v2 round 3 (Ofir): q1-q4 rewritten as questions a person asks someone
+   sharing a project. Placeholders are ONE example written like a real answer,
+   no "למשל:", no "או:", no colon anywhere on the question screens.
    Written against the UR brief (shared/research/briefs/fleet-blueprint-
    2026-09-05.md §2 to §4), curriculum-truth.md §14.5 (the page describes a PLAN;
    the working team appears only in the workshop CTA) and the CMO ban list
@@ -30,15 +39,18 @@ window.FLEET_CONTENT = {
     page_title: "איזה צוות סוכנים אתם צריכים | Product Lab",
 
     /* ---- S0 entry ---- */
-    entry_eyebrow: "תוכנית הצוות שלכם",
+    entry_eyebrow: "מי יעזור לכם לבנות",
     entry_title: "איזה צוות סוכנים אתם צריכים?",
-    entry_sub: "חמש שאלות על מה שאתם עושים. בסוף: תוכנית של הצוות שאתם צריכים, במילים שלכם. מי בצוות, מה כל אחד עושה, ומה הוא לא סוגר בלעדיכם.",
+    entry_sub: "5 שאלות על מה אתם מנסים לבנות, מה נתקע אצלכם, ומה כבר הוחלט.",
+    entry_outcome_label: "מה תקבלו",
+    entry_outcome_line: "הסוכנים שיבנו איתכם, מה כל אחד עושה, ומה הוא לא סוגר בלעדיכם.",
+    entry_crew_aria: "שלושת הסוכנים שבכל הרכב",
     entry_cta: "להתחיל",
     entry_meta: "5 שאלות. 3 דקות.",
 
     /* ---- S0, returning visitor ---- */
-    return_note: "יש לכם כבר תוכנית מהפעם הקודמת.",
-    return_open: "לתוכנית שלי",
+    return_note: "כבר יש לכם הרכב צוות מהפעם הקודמת.",
+    return_open: "לצוות שלי",
     return_reset: "להתחיל מחדש",
 
     /* ---- S1–S5 questions (UR brief §2, one per screen) ---- */
@@ -47,14 +59,19 @@ window.FLEET_CONTENT = {
     q_back: "חזרה",
     q_next: "הבאה",
     q_submit: "לראות את הצוות שלי",
-    q_short: "עוד כמה מילים. ככה התוצאה תדבר עליכם, ולא על כולם.",
+    q_short: "עוד כמה מילים. ככה ההרכב ידבר עליכם, ולא על כולם.",
     q_choose: "בחרו אפשרות אחת.",
     q_chars: "{n}/{max}",
+    mic_start: "או פשוט לדבר",
+    mic_stop: "מקשיבים. לעצור",
+    mic_aria_start: "לדבר במקום להקליד",
+    mic_aria_stop: "להפסיק להקשיב",
+    mic_denied: "המיקרופון חסום בדפדפן. אפשר לאשר אותו, או להמשיך להקליד.",
     questions: [
-      { key: "q1", title: "מה אתם עושים, ובשביל מי?", hint: "המוצר, בשם. משפט אחד מספיק.", ph: "למשל: אפליקציה לניהול תורים לקליניקות קטנות. אני המוצר, העיצוב וההשקה. או: מערכת הזמנות למסעדות, וארבעה מעצבים שכל מסך שלהם עובר דרכי." },
-      { key: "q2", title: "מה עבר דרככם השבוע שלא היה צריך?", hint: "כל מה שעצר וחיכה לכם. מזה נבנה הצוות.", ph: "למשל: כל מסך לפני שהוא הולך לפיתוח. כל שינוי בספריית הקומפוננטות." },
-      { key: "q3", title: "מה כבר הוחלט, ונמאס להסביר מחדש?", hint: "זה מה שנכנס לזיכרון.", ph: "למשל: הפלטה, מי קהל היעד, מה לא בונים השנה." },
-      { key: "q4", title: "מה אסור שיקרה בלי שאתם מסתכלים?", hint: "זה מה שהצוות לא סוגר לבד.", ph: "למשל: מסירה לפיתוח. שינוי מחיר. הודעה ללקוח." },
+      { key: "q1", title: "מה אתם בונים שלא נותן לכם לישון?", hint: "מה זה ולמי זה. משפט אחד, במילים שלכם.", ph: "אפליקציה לניהול תורים לקליניקות קטנות. אני לבד על המוצר, העיצוב וההשקה, ורוב הזמן גם על התמיכה." },
+      { key: "q2", title: "מה עצר וחיכה לכם השבוע?", hint: "כל מה שלא זז עד שהסתכלתם. מזה נבנה הצוות.", ph: "כל מסך לפני שהוא הולך לפיתוח, וכל שינוי קטן בספריית הקומפוננטות. גם כשאני בחופש." },
+      { key: "q3", title: "מה כבר החלטתם, ונמאס להסביר שוב?", hint: "זה נכנס לזיכרון, כדי לא להסביר פעם רביעית.", ph: "הפלטה סגורה, קהל היעד הוא מנהלי קליניקות ולא רופאים, והשנה לא בונים אפליקציה לאנדרואיד. אמרתי את זה כבר שלוש פעמים." },
+      { key: "q4", title: "מה אף אחד לא סוגר בלעדיכם?", hint: "זה מה שהצוות לא סוגר לבד.", ph: "מסירה לפיתוח, שינוי מחיר, וכל הודעה שיוצאת ללקוח. בלי העין שלי זה לא זז." },
       { key: "q5", title: "ניסיתם כבר?", hint: "לתת חלק מהעבודה לסוכן. מה יצא מזה?", ph: "",
         choices: [
           { v: "none", l: "לא" },
@@ -67,7 +84,7 @@ window.FLEET_CONTENT = {
     loading_line: "קוראים מה שכתבתם.",
 
     /* ---- S7 result ---- */
-    result_eyebrow: "תוכנית הצוות שלכם",
+    result_eyebrow: "הרכב הצוות שלכם",
     result_title: "הצוות שאתם צריכים.",
     result_lead: "בשביל",
     crew_eyebrow: "מגיע עם כל צוות",
@@ -75,7 +92,7 @@ window.FLEET_CONTENT = {
     crew: [
       { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", line: "מחדד מה בונים קודם. לא סוגר לבד מה נכנס לגרסה." },
       { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", line: "בונה מסכים מתוך מערכת העיצוב. לא מוסר לפיתוח בלעדיכם." },
-      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", line: "בונה מה שהשניים סיכמו. לא מעלה לאוויר בלי שראיתם." },
+      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", line: "בונה מה שסוכם. לא מעלה לאוויר בלי שראיתם." },
     ],
     spec_eyebrow: "המומחים שלכם",
     spec_title: "מי שמצטרף בגלל מה שכתבתם.",
@@ -110,18 +127,18 @@ window.FLEET_CONTENT = {
       { t: "דף אחד שנבנה עם צוות הבנייה", b: "דף רשימת המתנה אמיתי למוצר שכתבתם בשאלה הראשונה. שלושה סוכנים בונים אותו לפי סדר, והמומחים שלכם אומרים עליו את דעתם." },
       { t: "מוח משותף אמיתי", b: "קובץ אחד עם ההחלטות מהערב הזה. כל סוכן קורא אותו לפני שהוא מתחיל, וזה מחזיק גם ביום שלישי." },
     ],
-    result_cta_title: "רוצים את התוכנית הזאת באימייל?",
-    result_cta_sub: "שולחים אותה כמו שהיא, ומוסיפים מה הסדנה עושה איתה.",
-    result_cta: "לשלוח לי את התוכנית",
+    result_cta_title: "רוצים את ההרכב הזה באימייל?",
+    result_cta_sub: "שולחים אותו כמו שהוא, ומוסיפים מה הסדנה עושה איתו.",
+    result_cta: "לשלוח לי את ההרכב",
     result_restart: "להתחיל מחדש",
 
     /* ---- S8 email gate (after the full result, never before) ---- */
-    gate_title: "לאן לשלוח את התוכנית?",
-    gate_sub: "באימייל: התוכנית הזאת כמו שהיא, בקובץ שנשאר אצלכם, ומה הסדנה עושה איתה. אופיר קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
-    gate_manual_title: "נכין לכם אותה בעצמנו.",
-    gate_manual_sub: "משהו לא עבד אצלנו. התשובות שלכם שמורות. תשאירו אימייל, אופיר קורא אותן ושולח את התוכנית בעצמו.",
+    gate_title: "לאן לשלוח את ההרכב?",
+    gate_sub: "באימייל: ההרכב הזה כמו שהוא, בקובץ שנשאר אצלכם, ומה הסדנה עושה איתו. אופיר קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
+    gate_manual_title: "נכין לכם אותו בעצמנו.",
+    gate_manual_sub: "משהו לא עבד אצלנו. התשובות שלכם שמורות. תשאירו אימייל, אופיר קורא אותן ושולח את ההרכב בעצמו.",
     gate_limited_title: "יותר מדי בקשות היום מהרשת הזאת.",
-    gate_limited_sub: "תשאירו אימייל, ונשלח לכם את התוכנית.",
+    gate_limited_sub: "תשאירו אימייל, ונשלח לכם את ההרכב.",
     gate_name_label: "שם",
     gate_email_label: "אימייל",
     gate_email_ph: "you@email.com",
@@ -131,7 +148,7 @@ window.FLEET_CONTENT = {
     gate_error: "משהו לא נשלח. אפשר לנסות שוב, או לכתוב לאופיר בוואטסאפ.",
 
     /* ---- S9 confirmation + cohort #2 ---- */
-    done_title: "התוכנית בדרך אליכם.",
+    done_title: "ההרכב בדרך אליכם.",
     done_sub: "אופיר קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
     done_cohort_eyebrow: "הצעד הבא",
     done_cohort_title: "הצוות הזה קם בסדנה.",
@@ -140,23 +157,26 @@ window.FLEET_CONTENT = {
     error_title: "משהו השתבש אצלנו.",
     error_sub: "התשובות שלכם שמורות. אפשר לנסות עוד פעם אחת.",
     error_retry: "לנסות שוב",
-    error_manual: "לקבל אותה באימייל",
+    error_manual: "לקבל אותו באימייל",
     limited_title: "יותר מדי בקשות היום מהרשת הזאת.",
-    limited_sub: "התשובות שלכם שמורות. תשאירו אימייל ונשלח לכם את התוכנית.",
+    limited_sub: "התשובות שלכם שמורות. תשאירו אימייל ונשלח לכם את ההרכב.",
     limited_cta: "להשאיר אימייל",
   },
 
   en: {
     page_title: "Which agent team do you need | Product Lab",
 
-    entry_eyebrow: "Your team blueprint",
+    entry_eyebrow: "Who will help you build",
     entry_title: "Which agent team do you need?",
-    entry_sub: "Five questions about what you do. At the end: a blueprint of the team you need, in your own words. Who is on it, what each one does, and what it never closes without you.",
+    entry_sub: "5 questions about what you are trying to build, what gets stuck with you, and what is already decided.",
+    entry_outcome_label: "What you get",
+    entry_outcome_line: "The agents that will build with you, what each one does, and what it never closes without you.",
+    entry_crew_aria: "The three agents in every lineup",
     entry_cta: "Start",
     entry_meta: "5 questions. 3 minutes.",
 
-    return_note: "You already have a blueprint from last time.",
-    return_open: "Open my blueprint",
+    return_note: "You already have a team lineup from last time.",
+    return_open: "Show me my team",
     return_reset: "Start over",
 
     q_counter: "Question {n} of 5",
@@ -164,14 +184,19 @@ window.FLEET_CONTENT = {
     q_back: "Back",
     q_next: "Next",
     q_submit: "Show me my team",
-    q_short: "A few more words. That is how the result speaks about you, not about everyone.",
+    q_short: "A few more words. That is how the lineup speaks about you, not about everyone.",
     q_choose: "Pick one.",
     q_chars: "{n}/{max}",
+    mic_start: "Or just talk",
+    mic_stop: "Listening. Stop",
+    mic_aria_start: "Talk instead of typing",
+    mic_aria_stop: "Stop listening",
+    mic_denied: "The browser blocked the microphone. Allow it, or keep typing.",
     questions: [
-      { key: "q1", title: "What do you do, and for whom?", hint: "Name the product. One sentence is enough.", ph: "e.g. A scheduling app for small clinics. I am the product, the design and the launch. Or: an ordering system for restaurants, and four designers whose every screen goes through me." },
-      { key: "q2", title: "What went through you this week that should not have?", hint: "Everything that stopped and waited for you. That is what the team is built from.", ph: "e.g. Every screen before it goes to dev. Every change to the component library." },
-      { key: "q3", title: "What is already decided, and you are tired of re-explaining?", hint: "This is what goes into memory.", ph: "e.g. The palette, who the audience is, what we are not building this year." },
-      { key: "q4", title: "What must never happen without you looking?", hint: "This is what the team never closes alone.", ph: "e.g. The handoff to dev. A price change. A message to a customer." },
+      { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. One sentence, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too." },
+      { key: "q2", title: "What stopped and waited for you this week?", hint: "Whatever does not move until you look. The team is built from this.", ph: "Every screen before it goes to dev, and every small change to the component library. Even when I am on vacation." },
+      { key: "q3", title: "What have you already decided, and are tired of explaining again?", hint: "This goes into memory, so you never explain it a fourth time.", ph: "The palette is locked, the audience is clinic managers not doctors, and no Android app this year. I have said this three times already." },
+      { key: "q4", title: "What does nobody close without you?", hint: "This is what the team never closes alone.", ph: "The handoff to dev, a price change, and any message that goes out to a customer. Nothing moves without my eyes on it." },
       { key: "q5", title: "Tried it already?", hint: "Handing part of the work to an agent. What came of it?", ph: "",
         choices: [
           { v: "none", l: "No" },
@@ -182,7 +207,7 @@ window.FLEET_CONTENT = {
 
     loading_line: "Reading what you wrote.",
 
-    result_eyebrow: "Your team blueprint",
+    result_eyebrow: "Your team lineup",
     result_title: "The team you need.",
     result_lead: "For",
     crew_eyebrow: "Included with every team",
@@ -190,7 +215,7 @@ window.FLEET_CONTENT = {
     crew: [
       { img: "crew-strategist", tag: "The Strategist", role: "The product manager", line: "Sharpens what gets built first. Never closes alone what makes the release." },
       { img: "crew-designer", tag: "The Designer", role: "The product designer", line: "Builds screens from the design system. Never hands off to dev without you." },
-      { img: "crew-architect", tag: "The Architect", role: "The lead engineer", line: "Builds what the other two agreed on. Never ships without you seeing it." },
+      { img: "crew-architect", tag: "The Architect", role: "The lead engineer", line: "Builds what was agreed. Never ships without you seeing it." },
     ],
     spec_eyebrow: "Your specialists",
     spec_title: "Who joins because of what you wrote.",
@@ -225,17 +250,17 @@ window.FLEET_CONTENT = {
       { t: "One page built with the build crew", b: "A real waiting-list page for the product from your first answer. Three agents build it in order, and your specialists weigh in on it." },
       { t: "A real shared brain", b: "One file with the decisions from that evening. Every agent reads it before it starts, and it still holds on Tuesday." },
     ],
-    result_cta_title: "Want this blueprint in your inbox?",
+    result_cta_title: "Want this lineup in your inbox?",
     result_cta_sub: "We send it as it is, plus what the workshop does with it.",
-    result_cta: "Send me the blueprint",
+    result_cta: "Send me the lineup",
     result_restart: "Start over",
 
-    gate_title: "Where should the blueprint go?",
-    gate_sub: "By email: this blueprint as it is, in a file you keep, and what the workshop does with it. Ofir reads what you wrote and replies personally within 24 hours.",
+    gate_title: "Where should the lineup go?",
+    gate_sub: "By email: this lineup as it is, in a file you keep, and what the workshop does with it. Ofir reads what you wrote and replies personally within 24 hours.",
     gate_manual_title: "We will put it together ourselves.",
-    gate_manual_sub: "Something failed on our side. Your answers are saved. Leave an email, and Ofir reads them and sends the blueprint himself.",
+    gate_manual_sub: "Something failed on our side. Your answers are saved. Leave an email, and Ofir reads them and sends the lineup himself.",
     gate_limited_title: "Too many requests today from this network.",
-    gate_limited_sub: "Leave an email and we will send you the blueprint.",
+    gate_limited_sub: "Leave an email and we will send you the lineup.",
     gate_name_label: "Name",
     gate_email_label: "Email",
     gate_email_ph: "you@email.com",
@@ -244,7 +269,7 @@ window.FLEET_CONTENT = {
     gate_submit: "Send it to me",
     gate_error: "That did not go through. Try again, or write to Ofir on WhatsApp.",
 
-    done_title: "Your blueprint is on its way.",
+    done_title: "Your lineup is on its way.",
     done_sub: "Ofir reads what you wrote and replies personally within 24 hours.",
     done_cohort_eyebrow: "The next step",
     done_cohort_title: "The workshop is where this team gets built.",
@@ -254,7 +279,7 @@ window.FLEET_CONTENT = {
     error_retry: "Try again",
     error_manual: "Email it to me instead",
     limited_title: "Too many requests today from this network.",
-    limited_sub: "Your answers are saved. Leave an email and we will send you the blueprint.",
+    limited_sub: "Your answers are saved. Leave an email and we will send you the lineup.",
     limited_cta: "Leave an email",
   },
 };

@@ -186,6 +186,33 @@ p { margin: 0; }
   border-bottom-color: transparent; border-top-color: var(--pl-tooltip-bg);
 }
 
+/* ---- Tooltip: light theme (design-system, extended 2026-09-06) ------------
+   White bubble for content tooltips (who/what a thing is), not icon labels.
+   Same floating-surface recipe as .nav__accmenu / .langswitch__menu. Allows
+   multiple lines: put a real newline (&#10;) in data-tooltip.               */
+[data-tooltip][data-tip-theme="light"]::after {
+  background: var(--pl-surface); color: var(--pl-fg);
+  border: 1px solid var(--pl-border); border-radius: var(--radius-md);
+  font-size: var(--text-sm); font-weight: 600; line-height: 1.35;
+  white-space: pre-line; text-align: center; max-width: 16rem; width: max-content;
+  padding: var(--space-2) var(--space-3);
+}
+[data-tooltip][data-tip-theme="light"]::before {
+  border: 0; width: 10px; height: 10px; top: calc(100% + 4px);
+  background: var(--pl-surface);
+  border-left: 1px solid var(--pl-border); border-top: 1px solid var(--pl-border);
+  transform: translateX(-50%) rotate(45deg); z-index: 101;
+}
+[data-tooltip][data-tip-theme="light"][data-tip-pos="top"]::before {
+  top: auto; bottom: calc(100% + 4px);
+  border-left: 0; border-top: 0;
+  border-right: 1px solid var(--pl-border); border-bottom: 1px solid var(--pl-border);
+}
+/* Pinned state (touch): a tap toggles data-tip-open on the control; shows the
+   bubble with no hover/focus. Theme-agnostic. Never use aria-expanded for this. */
+[data-tooltip][data-tip-open]::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+[data-tooltip][data-tip-open]::before { opacity: 1; }
+
 /* Sticky footer: on short pages (legal / prep / login) keep the footer pinned to
    the viewport bottom so the paper background never shows as dead space below it.
    On the long home page this is a no-op (content already exceeds the viewport). */
@@ -1462,6 +1489,36 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .agentcard__role { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); margin-bottom: 0.35rem; }
 .agentcard__body p { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
 
+/* ---- .avatar-stack — overlapping crew circles (molecule, 2026-09-06) -------
+   Items are buttons on the control ladder (--ctl-sm). DOM order = reading order
+   = paint order; margin-inline-start mirrors in RTL. Radius/overflow live on
+   the img, never on the button, so the tooltip pseudo is not clipped.
+   First use: #/fleet S0 (Ofir: "avatar images of the crew, circles overlapping,
+   hover shows a white tooltip with each one's role, so you understand what you
+   get at the end of the questionnaire"). DSL ruling 2026-09-06, canonical.  */
+.avatar-stack { display: flex; justify-content: center; margin: 0 auto var(--space-4); }
+.avatar-stack__item {
+  position: relative; flex: none; width: var(--ctl-sm); height: var(--ctl-sm);
+  padding: 0; border: 2px solid var(--pl-surface); border-radius: 999px;
+  background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+}
+.avatar-stack__item + .avatar-stack__item { margin-inline-start: calc(-1 * var(--space-3)); }
+.avatar-stack__item img {
+  width: 100%; height: 100%; border-radius: 999px; display: block;
+  object-fit: cover; object-position: center top;
+}
+.avatar-stack__item:hover, .avatar-stack__item:focus-visible, .avatar-stack__item[data-tip-open] {
+  z-index: 1; transform: translateY(-2px);
+  box-shadow: 0 0 0 1px var(--pl-border), var(--shadow-pl-md);
+}
+.avatar-stack__item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent), var(--shadow-pl-md);
+}
+@media (prefers-reduced-motion: reduce) { .avatar-stack__item { transition: none; } }
+
 /* ===== Student sign-in MODAL (opens from the header button) ===== */
 body.modal-open { overflow: hidden; }
 /* Overflow-safe modal: the minmax() spacer rows center the card when it fits and
@@ -2306,13 +2363,13 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    Sits on the control ladder (sm = 40px). Selected state = the system's
    accent-tint pill recipe already used by .pcrumb__chip--target and
    .agentcard__tag; focus ring = .input's. */
-.chip--choice {
+.chip--choice, .chip--toggle {
   cursor: pointer; font-family: inherit; height: var(--ctl-sm); min-width: var(--ctl-sm);
   padding-inline: var(--space-4);
   transition: border-color 0.2s var(--ease-pl), background-color 0.2s var(--ease-pl), color 0.2s var(--ease-pl);
 }
-.chip--choice:hover { border-color: var(--pl-fg); }
-.chip--choice:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent); }
+.chip--choice:hover, .chip--toggle:hover { border-color: var(--pl-fg); }
+.chip--choice:focus-visible, .chip--toggle:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent); }
 .chip--choice[aria-checked="true"] {
   background: color-mix(in srgb, var(--pl-accent) 12%, var(--pl-surface));
   border-color: var(--pl-accent); color: var(--pl-accent);
@@ -2347,3 +2404,66 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .fleet-done-cohort { text-align: center; padding-bottom: var(--space-6); }
 .fleet-done-cohort .eyebrow { justify-content: center; }
 [dir] .fleet-done-cohort .section-title { text-align: center; max-width: none; margin-inline: auto; }
+
+/* ---- #/fleet single-moment steps — ONE VIEWPORT, NO SCROLL (Ofir, 2026-09-06,
+   second time: "there is a scrolling in the page which doesn't make sense
+   since there's only one card"). FLEET-WIDE RULE from today: a screen whose
+   content fits the viewport shows NO scrollbar. Same mechanism as #/kit
+   (above): #app is the ONE height authority, main grows to fill, the card
+   centers in what is left. What produced the scroll: .section's marketing-
+   page padding (up to 104px top AND bottom) plus the full footer pushed a
+   ~570px card past a 900-940px viewport by a few dozen px. Fixes, scoped to
+   the single-card steps only (S7 result + S9 done are real long pages and
+   keep the normal rhythm):
+   1. .section padding shrinks to a card-page rhythm, the card centers.
+   2. S0 keeps the footer (public landing, legal links) but compact.
+   3. Mid-task steps (questions, loading, gate, error, limited) drop the
+      footer, exactly as #/kit does: a task in progress, nav is still there.
+   4. Short viewports (<= 780px tall, a 13" laptop) tighten padding once more.
+   Verified with the rig at 2000x1090 / 1440x900 / 1280x720 / 390x844, HE+EN,
+   real Heebo/Inter: documentElement.scrollHeight === clientHeight on every
+   single-card step (numbers in the render report next to this change). */
+main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) {
+  display: flex; flex-direction: column;
+}
+main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) > .section {
+  flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center;
+  padding-block: clamp(1.25rem, 3vw, 2.5rem);
+}
+#app:has(main.fleet[data-fleet-step="entry"]) .footer { padding-block: 1.25rem; margin-top: 0; }
+#app:has(main.fleet[data-fleet-step="q"]) .footer,
+#app:has(main.fleet[data-fleet-step="loading"]) .footer,
+#app:has(main.fleet[data-fleet-step="gate"]) .footer,
+#app:has(main.fleet[data-fleet-step="error"]) .footer,
+#app:has(main.fleet[data-fleet-step="limited"]) .footer { display: none; }
+@media (max-height: 780px) {
+  main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) > .section { padding-block: 1rem; }
+  main.fleet .fleet-card { padding-block: clamp(1.5rem, 3vh, 2rem); }
+}
+
+/* EXTEND .field — label row with one action at the inline-end (DSL, 2026-09-06).
+   The action is a sibling of the label, never nested inside it. First use:
+   the #/fleet question screens' voice button. */
+.field__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+
+/* EXTEND .chip — a pressable chip (aria-pressed), e.g. voice input. State model
+   is split on purpose: .chip--choice = radio/aria-checked, .chip--toggle =
+   aria-pressed. Pressed = the accent-tint pill; the .dot is the live signal. */
+.chip--toggle { cursor: pointer; }
+.chip--toggle svg { width: 18px; height: 18px; flex: none; }
+.chip--toggle .dot { display: none; }
+.chip--toggle[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--pl-accent) 12%, var(--pl-surface));
+  border-color: var(--pl-accent); color: var(--pl-accent);
+}
+.chip--toggle[aria-pressed="true"] .dot { display: block; animation: chip-live 1.2s var(--ease-pl) infinite; }
+@keyframes chip-live { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.8); } }
+@media (prefers-reduced-motion: reduce) { .chip--toggle[aria-pressed="true"] .dot { animation: none; } }
+
+/* #/fleet S0 "what you get" block under the intro line (Ofir, 2026-09-06: the
+   outcome as its own small title, not folded into the paragraph). Composed
+   from existing type roles only: .field__label weight for the label, .login__sub
+   for the line. */
+.fleet-outcome { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--pl-border); }
+.fleet-outcome__label { display: block; font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); margin-bottom: var(--space-1); }
+.fleet-card .fleet-outcome__line { margin: 0; }
