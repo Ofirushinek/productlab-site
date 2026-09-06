@@ -2453,3 +2453,65 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    in the browser (Chrome 114+, Safari 17.5+); older browsers keep the normal
    wrap, nothing breaks. Kept to the card's title + sub, not site-wide. */
 .fleet-card .login__title, .fleet-card .login__sub { text-wrap: balance; }
+
+/* EXTEND .chip — leading brand mark (DSL, 2026-09-06). Monochrome, currentColor:
+   it takes the chip's ink and turns accent when selected. Brand colors never
+   enter the palette. Same 18px as the mic icon in .chip--toggle. */
+.chip__logo { width: 18px; height: 18px; flex: none; display: grid; place-items: center; }
+.chip__logo svg { width: 100%; height: 100%; fill: currentColor; }
+/* No mark exists for the tool: its initial in a disc (the .quote__av recipe at chip scale). */
+.chip__logo--initial {
+  border-radius: 999px; background: var(--pl-bg-alt);
+  font-size: var(--text-caption); font-weight: 700; line-height: 1;
+}
+.chip--choice[aria-checked="true"] .chip__logo--initial {
+  background: color-mix(in srgb, var(--pl-accent) 16%, var(--pl-surface));
+}
+.chip--choice { max-width: 100%; }
+
+/* Page glue (product code, not system): the "Other" disclosure under the row.
+   Reuses .field + .input; .field is display:grid so [hidden] needs the rule. */
+.fleet-other { max-width: 16rem; margin: var(--space-4) auto 0; }
+.fleet-other[hidden] { display: none; }
+
+/* ---- #/fleet S6 readers — the crew reading your answers (2026-09-06) --------
+   Page composition from existing parts: .moment-card, the crew portraits at
+   reading size (--ctl-lg = 56px disc, same crop as .team__photo img), a light
+   speech bubble on the .nav__accmenu floating-surface recipe, the crew-tag
+   register under each, and .skel's opacity language for the bar. The bob is
+   the only new motion: 2.4s, 3px, staggered by --i, off under reduced-motion. */
+.fleet-card--loading { max-width: 40rem; }
+.fleet-loading { margin-top: var(--space-5); }
+.readers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); align-items: start; }
+.reader { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); animation: reader-bob 2.4s var(--ease-pl) infinite; animation-delay: calc(var(--i, 0) * -0.8s); }
+.reader__av { width: var(--ctl-lg, 56px); height: var(--ctl-lg, 56px); border-radius: 999px; overflow: hidden; background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border); }
+.reader__av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.reader__name { font-size: var(--text-caption); font-weight: 700; color: var(--pl-fg-secondary); }
+.reader__bubble {
+  position: relative; display: block; min-height: 3.2em; width: 100%;
+  padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+  background: var(--pl-surface); border: 1px solid var(--pl-border); box-shadow: var(--shadow-pl-md);
+  font-size: var(--text-sm); font-weight: 600; color: var(--pl-fg); line-height: 1.35; text-align: center;
+  transition: opacity 0.18s var(--ease-pl), transform 0.18s var(--ease-pl);
+}
+.reader__bubble::after {
+  content: ""; position: absolute; left: 50%; top: 100%; width: 10px; height: 10px; margin-top: -5px;
+  background: var(--pl-surface); border-right: 1px solid var(--pl-border); border-bottom: 1px solid var(--pl-border);
+  transform: translateX(-50%) rotate(45deg);
+}
+.reader__bubble.is-swapping { opacity: 0; transform: translateY(2px); }
+.reader__bar { position: relative; height: 4px; margin: var(--space-5) auto 0; max-width: 16rem; border-radius: 999px; background: var(--pl-bg-alt); overflow: hidden; }
+.reader__bar span { position: absolute; inset: 0 auto 0 0; width: 40%; border-radius: 999px; background: var(--pl-accent); animation: reader-bar 1.6s var(--ease-pl) infinite; }
+.fleet-loading .ss-note { margin-top: var(--space-4); }
+@keyframes reader-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes reader-bar { 0% { left: -40%; } 100% { left: 100%; } }
+@media (max-width: 620px) {
+  .readers { grid-template-columns: 1fr; gap: var(--space-3); }
+  .reader { flex-direction: row-reverse; justify-content: flex-start; text-align: start; }
+  [dir="ltr"] .reader { flex-direction: row; }
+  .reader__bubble { min-height: 0; text-align: start; }
+  .reader__bubble::after { left: auto; inset-inline-end: -5px; top: 50%; margin-top: -5px; transform: translateY(-50%) rotate(-45deg); }
+  [dir="ltr"] .reader__bubble::after { transform: translateY(-50%) rotate(135deg); }
+  .reader__name { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .reader, .reader__bar span { animation: none; } .reader__bar span { width: 100%; opacity: 0.4; } }

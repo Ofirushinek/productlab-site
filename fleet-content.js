@@ -21,6 +21,14 @@
    SCREEN ORDER is q1, q5, q2, q3, q4 (array order = screen order, keys and
    chip values unchanged, the backend reads by key). q5 asks which tool is in
    their hands so q3 ("what you explain to it again and again") has context.
+   v2 round 8 (Ofir): q5 is a MULTI-SELECT of tools (q5.tools, with logos) +
+   tools_none / tools_other / tools_other_ph / q_choose_many; the old q5.choices
+   stays as fallback. q_submit is a question, on purpose: the reader gets a
+   lineup, not a working team, so the button asks instead of promising.
+   v2 round 9 (Ofir): S6 loading is the three crew characters reading the
+   answers (loading_title + loading_lines keyed by crew img suffix, 4 lines
+   each, + loading_note). loading_line stays as fallback. Lines are what each
+   one is doing NOW; none says the result is ready.
    Written against the UR brief (shared/research/briefs/fleet-blueprint-
    2026-09-05.md §2 to §4), curriculum-truth.md §14.5 (the page describes a PLAN;
    the working team appears only in the workshop CTA) and the CMO ban list
@@ -62,9 +70,13 @@ window.FLEET_CONTENT = {
     q_answer_label: "התשובה שלכם",
     q_back: "חזרה",
     q_next: "הבאה",
-    q_submit: "לראות את הצוות שלי",
+    q_submit: "מי בצוות החלומות שלי?",
     q_short: "עוד כמה מילים. ככה ההרכב ידבר עליכם, ולא על כולם.",
     q_choose: "בחרו אפשרות אחת.",
+    q_choose_many: "סמנו לפחות אחד. גם עדיין כלום זו תשובה.",
+    tools_none: "עדיין כלום",
+    tools_other: "משהו אחר",
+    tools_other_ph: "איזה כלי? נשמח לדעת.",
     q_chars: "{n}/{max}",
     mic_start: "או פשוט לדבר",
     mic_stop: "מקשיבים. לעצור",
@@ -73,19 +85,55 @@ window.FLEET_CONTENT = {
     mic_denied: "המיקרופון חסום בדפדפן. אפשר לאשר אותו, או להמשיך להקליד.",
     questions: [
       { key: "q1", title: "מה אתם בונים שלא נותן לכם לישון?", hint: "מה זה ולמי זה. משפט או שניים, במילים שלכם.", ph: "אפליקציה לניהול תורים לקליניקות קטנות. אני לבד על המוצר, העיצוב וההשקה, ורוב הזמן גם על התמיכה." },
-      { key: "q5", title: "עם מה אתם עובדים היום?", hint: "הכלי שכבר פתוח אצלכם. משם ממשיכים.", ph: "",
+      { key: "q5", title: "עם אילו כלים כבר יצא לכם לעבוד?", hint: "סמנו כל מה שנגעתם בו, גם פעם אחת.", ph: "",
+        tools: [
+          { v: "chatgpt", l: "ChatGPT" },
+          { v: "claude", l: "Claude" },
+          { v: "gemini", l: "Gemini" },
+          { v: "copilot", l: "Copilot" },
+          { v: "perplexity", l: "Perplexity" },
+          { v: "notion_ai", l: "Notion AI" },
+          { v: "cursor", l: "Cursor" },
+          { v: "claude_code", l: "Claude Code" },
+          { v: "lovable", l: "Lovable" },
+          { v: "v0", l: "v0" },
+          { v: "replit", l: "Replit" },
+          { v: "bolt", l: "Bolt" },
+        ],
         choices: [
           { v: "none", l: "עדיין כלום" },
           { v: "chat", l: "צ'אט, ChatGPT או Claude" },
           { v: "claude_code_broke", l: "Claude Code, Cursor, Lovable" },
         ] },
       { key: "q2", title: "מה נתקע אצלכם, או עוד ייתקע?", hint: "כל מה שיחכה לכם עד שתתפנו. מזה נבנה הצוות.", ph: "בינתיים הכול, כי אני לבד. בעיקר המסכים לפני פיתוח, וכל טקסט שיוצא למשתמשים." },
-      { key: "q3", title: "מה אתם מסבירים לו שוב ושוב?", hint: "כל מה שחוזרים עליו בכל שיחה חדשה. זה נכנס לזיכרון.", ph: "שהלקוח הוא מנהל הקליניקה ולא הרופא, שהפלטה סגורה, ושאנדרואיד לא השנה. כל שיחה חדשה מתחילה מאפס." },
+      { key: "q3", title: "מה אתם חוזרים ומסבירים בכל שיחה?", hint: "מה שנשכח בין שיחה לשיחה. זה נכנס לזיכרון.", ph: "שהלקוח הוא מנהל הקליניקה ולא הרופא, שהפלטה סגורה, ושאנדרואיד לא השנה. כל שיחה חדשה מתחילה מאפס." },
       { key: "q4", title: "מה לא קורה בלי האישור שלכם?", hint: "במוצר או בשירות שלכם. זה הקו שהצוות לא חוצה לבד.", ph: "כל הודעה ללקוח, אימייל לכל הרשימה, שינוי מחיר, ועדכון שעולה לאוויר. בלי האישור שלי זה לא זז." },
     ],
 
     /* ---- S6 loading ---- */
     loading_line: "קוראים מה שכתבתם.",
+    loading_title: "שלושה קוראים את מה שכתבתם.",
+    loading_lines: {
+      strategist: [
+        "קורא שוב את השורה על המוצר.",
+        "מסמן מה כבר סגור אצלכם.",
+        "שואל את עצמו מה בונים קודם.",
+        "מחפש את המילה שחזרה פעמיים.",
+      ],
+      designer: [
+        "מסתכל על מה שנתקע אצלכם.",
+        "סופר כמה מסכים עוברים דרככם.",
+        "מסמן מה אפשר להוריד מכם.",
+        "מצייר משהו בצד. עוד לא מראה.",
+      ],
+      architect: [
+        "בודק עם אילו כלים כבר עבדתם.",
+        "רושם מה לא עולה בלי אישור.",
+        "קורא את הרשימה של מה שנשאר אצלכם.",
+        "שותק. זה סימן טוב.",
+      ],
+    },
+    loading_note: "עוד כמה שניות. הם קוראים לאט בכוונה.",
 
     /* ---- S7 result ---- */
     result_eyebrow: "הרכב הצוות שלכם",
@@ -187,9 +235,13 @@ window.FLEET_CONTENT = {
     q_answer_label: "Your answer",
     q_back: "Back",
     q_next: "Next",
-    q_submit: "Show me my team",
+    q_submit: "Who is on my dream team?",
     q_short: "A few more words. That is how the lineup speaks about you, not about everyone.",
     q_choose: "Pick one.",
+    q_choose_many: "Tick at least one. Nothing yet counts too.",
+    tools_none: "Nothing yet",
+    tools_other: "Something else",
+    tools_other_ph: "Which tool? We want to know.",
     q_chars: "{n}/{max}",
     mic_start: "Or just talk",
     mic_stop: "Listening. Stop",
@@ -198,18 +250,54 @@ window.FLEET_CONTENT = {
     mic_denied: "The browser blocked the microphone. Allow it, or keep typing.",
     questions: [
       { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. A sentence or two, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too." },
-      { key: "q5", title: "What do you work with today?", hint: "The tool already open on your screen. We go on from there.", ph: "",
+      { key: "q5", title: "Which AI tools have you already worked with?", hint: "Tick everything you have touched, even once.", ph: "",
+        tools: [
+          { v: "chatgpt", l: "ChatGPT" },
+          { v: "claude", l: "Claude" },
+          { v: "gemini", l: "Gemini" },
+          { v: "copilot", l: "Copilot" },
+          { v: "perplexity", l: "Perplexity" },
+          { v: "notion_ai", l: "Notion AI" },
+          { v: "cursor", l: "Cursor" },
+          { v: "claude_code", l: "Claude Code" },
+          { v: "lovable", l: "Lovable" },
+          { v: "v0", l: "v0" },
+          { v: "replit", l: "Replit" },
+          { v: "bolt", l: "Bolt" },
+        ],
         choices: [
           { v: "none", l: "Nothing yet" },
           { v: "chat", l: "Chat, ChatGPT or Claude" },
           { v: "claude_code_broke", l: "Claude Code, Cursor, Lovable" },
         ] },
       { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users." },
-      { key: "q3", title: "What do you explain to it again and again?", hint: "Everything you repeat in every new chat. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero." },
+      { key: "q3", title: "What do you keep explaining in every chat?", hint: "What gets forgotten between one chat and the next. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero." },
       { key: "q4", title: "What does not happen without your approval?", hint: "In your product or service. The line the team never crosses alone.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move." },
     ],
 
     loading_line: "Reading what you wrote.",
+    loading_title: "Three are reading what you wrote.",
+    loading_lines: {
+      strategist: [
+        "Reading the product line again.",
+        "Marking what is already settled.",
+        "Asking himself what gets built first.",
+        "Looking for the word you used twice.",
+      ],
+      designer: [
+        "Looking at what gets stuck with you.",
+        "Counting how many screens go through you.",
+        "Marking what could come off your plate.",
+        "Sketching something on the side. Not showing yet.",
+      ],
+      architect: [
+        "Checking which tools you have worked with.",
+        "Noting what does not go live without approval.",
+        "Reading the list of what stays with you.",
+        "Quiet. That is a good sign.",
+      ],
+    },
+    loading_note: "A few more seconds. They read slowly on purpose.",
 
     result_eyebrow: "Your team lineup",
     result_title: "The team you need.",
