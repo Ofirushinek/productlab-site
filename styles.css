@@ -2467,3 +2467,10 @@ main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) > .sect
 .fleet-outcome { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--pl-border); }
 .fleet-outcome__label { display: block; font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); margin-bottom: var(--space-1); }
 .fleet-card .fleet-outcome__line { margin: 0; }
+
+/* Question / entry titles: never a one-word orphan on the second line (Ofir,
+   2026-09-06: "why does the title drop a line when only one word is beneath?
+   make the two rows almost equal"). `text-wrap: balance` is exactly that rule
+   in the browser (Chrome 114+, Safari 17.5+); older browsers keep the normal
+   wrap, nothing breaks. Kept to the card's title + sub, not site-wide. */
+.fleet-card .login__title, .fleet-card .login__sub { text-wrap: balance; }
