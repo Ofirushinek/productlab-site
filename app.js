@@ -2832,8 +2832,8 @@ function fleetQuestion(f) {
     : `<div class="field">
         <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fleet-answer>${escapeHtml(val)}</textarea>
         <div class="field__hint field__hint--mic">
-          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" data-tooltip="${escapeAttr(f.mic_start || "")}" data-tip-theme="light" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}</button>` : ""}
           <span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: val.length, max: FLEET_MAX })}</span>
+          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" data-tooltip="${escapeAttr(f.mic_start || "")}" data-tip-theme="light" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}</button>` : ""}
         </div>
         ${FLEET_SR ? `<p class="reg__error" data-fleet-mic-error hidden>${I.info}<span>${f.mic_denied || ""}</span></p>` : ""}
        </div>`;

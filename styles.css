@@ -2375,17 +2375,16 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    Discoverability moves from a permanent text label to the light tooltip
    (already established today) - hover/focus/tap-and-hold reveals what it does. */
 .field__hint--mic {
-  display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm);
-  /* Ofir, 2026-09-06, live: the bottom-right corner specifically, not the RTL
-     "end" side — for a Hebrew page, .field__hint's own logical `text-align: end`
-     resolves to physical LEFT, the opposite corner. flex-start in an inherited
-     RTL container packs at physical RIGHT; the EN page is unaffected (its
-     inherited LTR direction already puts flex-start on the physical left,
-     which is the correct EN mirror of "bottom-right" per this same rule -
-     both languages land the cluster in the box's own trailing physical corner). */
-  justify-content: flex-start;
+  /* Ofir, 2026-09-06, live, explicit: counter at the box's physical bottom-LEFT,
+     mic at its physical bottom-RIGHT — in EITHER language. Logical RTL "start"/
+     "end" flips which side is which per page direction, which is the opposite
+     of what was asked twice; forcing this row's own `direction: ltr` (DOM order
+     counter-then-mic, matching a normal left-to-right reading of "1/300 🎤")
+     makes flex-start = physical left and flex-end = physical right unconditionally,
+     so the layout no longer depends on the page's language at all. */
+  display: flex; align-items: center; justify-content: space-between;
+  direction: ltr; gap: var(--space-2); font-size: var(--text-sm); line-height: 1;
 }
-[dir="ltr"] .field__hint--mic { justify-content: flex-end; }
 .mic-btn {
   position: relative; display: grid; place-items: center; flex: none;
   width: 28px; height: 28px; padding: 0; border: 0; border-radius: 999px;
