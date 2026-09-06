@@ -151,7 +151,7 @@ window.FLEET_CONTENT = {
 
     /* ---- S6 loading ---- */
     loading_line: "קוראים מה שכתבתם.",
-    loading_title: "שלושה קוראים את מה שכתבתם.",
+    loading_title: "שלושה סוכנים קוראים את מה שכתבתם.",
     loading_lines: {
       strategist: [
         "קורא שוב את השורה על המוצר.",
@@ -226,8 +226,8 @@ window.FLEET_CONTENT = {
     /* ---- S8 email gate (after the full result, never before) ---- */
     gate_title: "לאן לשלוח את ההרכב?",
     gate_sub: "באימייל: ההרכב הזה כמו שהוא, בקובץ שנשאר אצלכם, ומה הסדנה עושה איתו. הצוות של Product Lab קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
-    gate_manual_title: "פדיחה קטנה מהצד שלנו.",
-    gate_manual_sub: "ההרכב לא יצא הפעם, אבל כל מה שכתבתם שמור אצלנו מילה במילה. תשאירו אימייל, ונשמח לשלוח לכם אותו ברגע שהוא מוכן.",
+    gate_manual_title: "ההרכב לא יצא הפעם.",
+    gate_manual_sub: "כל מה שכתבתם שמור אצלנו מילה במילה. תשאירו אימייל, ונשמח לשלוח לכם אותו ברגע שהוא מוכן.",
     gate_limited_title: "יותר מדי בקשות היום מהרשת הזאת.",
     gate_limited_sub: "תשאירו אימייל, ונשלח לכם את ההרכב.",
     gate_name_label: "שם",
@@ -319,7 +319,7 @@ window.FLEET_CONTENT = {
 
     /* ---- S6 loading ---- */
     loading_line: "Reading what you wrote.",
-    loading_title: "Three are reading what you wrote.",
+    loading_title: "Three agents are reading what you wrote.",
     loading_lines: {
       strategist: [
         "Reading the product line again.",
@@ -392,8 +392,8 @@ window.FLEET_CONTENT = {
 
     gate_title: "Where should the lineup go?",
     gate_sub: "By email: this lineup as it is, in a file you keep, and what the workshop does with it. The Product Lab team reads what you wrote and replies personally within 24 hours.",
-    gate_manual_title: "A little blooper on our end.",
-    gate_manual_sub: "Your lineup did not make it out this time, but every word you wrote is saved. Leave an email, and we will happily send it over the moment it is ready.",
+    gate_manual_title: "Your lineup did not make it out this time.",
+    gate_manual_sub: "Everything you wrote is saved, word for word. Leave an email, and we will send you the lineup the moment it is ready.",
     gate_limited_title: "Too many requests today from this network.",
     gate_limited_sub: "Leave an email and we will send you the lineup.",
     gate_name_label: "Name",
