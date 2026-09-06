@@ -910,8 +910,8 @@ const registerModal = (t) => `
   </div>`;
 
 // FOOTER — now carries the Privacy + Terms routes alongside contact.
-const siteFooter = (t) => `
-  <footer class="footer"><div class="wrap footer__in">
+const siteFooter = (t, compact = false) => `
+  <footer class="footer${compact ? " footer--compact" : ""}"><div class="wrap footer__in">
     <div class="footer__brand"><span class="footer__wordmark">Product Lab</span></div>
     <div class="footer__meta">${t.footer_line}</div>
     <nav class="footer__links">
@@ -2415,7 +2415,7 @@ function renderLegal(lang, kind) {
    already covers "back to the main site."
 
    ONE VIEWPORT, NO SCROLL (Ofir, 2026-08-31): this is a single moment, not
-   a scrolling page — see .kit-page/.kitfull in styles.css, verified with
+   a scrolling page — see .moment-page/.kitfull in styles.css, verified with
    real rendered heights at both 390x844 and 375x667.
 
    The character illustration is Marketing Designer's asset: Dean, the
@@ -2428,7 +2428,7 @@ function renderKit(lang) {
   document.getElementById("app").innerHTML = `
   ${navHeader(t, lang)}
 
-  <main id="top" class="page kit-page kitfull reveal">
+  <main id="top" class="page moment-page kitfull reveal">
     <picture class="kitfull__illo">
       <source type="image/webp" srcset="assets/kit/kit-hero-dean.webp" />
       <img src="assets/kit/kit-hero-dean.png" alt="" width="1024" height="1536" decoding="async" />
@@ -3016,10 +3016,10 @@ function renderFleet(lang) {
   document.getElementById("app").innerHTML = `
   ${navHeader(t, lang)}
 
-  <main id="top" class="page fleet" data-fleet-step="${FLEET.step}">${body}</main>
+  <main id="top" class="page fleet${FLEET.step === "result" || FLEET.step === "done" ? "" : " moment-page"}" data-fleet-step="${FLEET.step}">${body}</main>
 
   ${studentModal(t)}
-  ${siteFooter(t)}`;
+  ${FLEET.step === "entry" ? siteFooter(t, true) : FLEET.step === "result" || FLEET.step === "done" ? siteFooter(t) : ""}`;
 
   afterRender();
   wireFleet(lang, f);
@@ -3129,14 +3129,13 @@ function wireFleet(lang, f) {
       let rec = null;
       const setState = (on) => {
         mic.setAttribute("aria-pressed", on ? "true" : "false");
-        mic.classList.toggle("is-listening", on);
         if (micLabel) micLabel.textContent = on ? (f.mic_stop || "") : (f.mic_start || "");
       };
       const stop = () => { if (rec) { try { rec.stop(); } catch (e) {} } };
       FLEET.stopMic = stop;
       mic.addEventListener("click", () => {
         if (rec) { stop(); return; }
-        let base = ta.value.trim();
+        let inserted = "";   // what recognition wrote last; anything else in the box is hers
         try {
           rec = new FLEET_SR();
           rec.lang = lang === "he" ? "he-IL" : "en-US";
@@ -3148,8 +3147,11 @@ function wireFleet(lang, f) {
               const r = e.results[i];
               if (r.isFinal) done += r[0].transcript + " "; else live += r[0].transcript;
             }
-            const sep = base ? " " : "";
-            ta.value = (base + sep + done + live).replace(/\s+/g, " ").slice(0, FLEET_MAX);
+            const cur = ta.value;
+            const base = (inserted && cur.endsWith(inserted) ? cur.slice(0, -inserted.length) : cur).replace(/\s+$/, "");
+            inserted = ((base ? " " : "") + done + live).replace(/\s+/g, " ");
+            ta.value = (base + inserted).slice(0, FLEET_MAX);
+            inserted = ta.value.slice(base.length);
             ta.dispatchEvent(new Event("input", { bubbles: true }));
           };
           rec.onerror = (e) => {

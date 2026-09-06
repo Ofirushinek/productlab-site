@@ -58,3 +58,25 @@ export const Skeleton = () => `
     Sizes: line 0.9em · --skel--tag height --space-5 · --skel--h height --text-h3 (canonical; the first
     build shipped 1.4rem / 1.25rem raw, PD fix pending). Wrap in role="status" aria-live="polite" aria-busy="true".
   </p>`;
+
+const MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8"/></svg>';
+export const ChipToggle = () => `
+  <div class="field" style="max-width:34rem" dir="rtl">
+    <div class="field__head">
+      <label class="field__label" for="sb-q">התשובה שלכם</label>
+      <button type="button" class="chip chip--toggle" aria-pressed="false" aria-label="לדבר במקום להקליד"><span class="dot"></span>${MIC}<span>או פשוט לדבר</span></button>
+    </div>
+    <textarea class="reg__note" id="sb-q" rows="3" placeholder="…"></textarea>
+  </div>
+  <div class="field" style="max-width:34rem;margin-top:var(--space-5)" dir="rtl">
+    <div class="field__head">
+      <label class="field__label" for="sb-q2">התשובה שלכם</label>
+      <button type="button" class="chip chip--toggle" aria-pressed="true" aria-label="לדבר במקום להקליד"><span class="dot"></span>${MIC}<span>מקשיבים. לעצור</span></button>
+    </div>
+    <textarea class="reg__note" id="sb-q2" rows="3">אפליקציה לניהול תורים לקליניקות</textarea>
+  </div>
+  <p class="ss-note" style="margin-top:var(--space-5);text-align:start;max-width:34rem">
+    .chip--toggle = aria-pressed (a pressable chip); .chip--choice = radio/aria-checked. Same interactive base by selector.
+    Pressed = accent 12% tint, accent border + text; the .dot is the live signal (skel opacity pulse, none under reduced motion).
+    .field__head = label row with one end-aligned action, the action is a sibling of the label. Icon 18px, stroke 2. Voice input on #/fleet questions.
+  </p>`;

@@ -780,7 +780,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    after a THIRD near-duplicate of this recipe showed up on `#/kit`'s first
    direction (a boxed card) — .login stays separate (it's a form container
    with different composition), .noacct builds on this. `#/kit` itself later
-   moved to a full-bleed direction with no card (see .kit-page/.kitfull
+   moved to a full-bleed direction with no card (see .moment-page/.kitfull
    below) and dropped off this base, but the extraction is still correct:
    .noacct alone was still a near-duplicate of .login's card recipe, drifted
    off the 8px grid at 28-40px padding vs. this class's grid-aligned
@@ -834,7 +834,20 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    height authority: #app already sizes itself once, and `#app > main {
    flex: 1 0 auto }` (above) already grows any <main> - this one included -
    to fill whatever's left. Nothing here needs its own height math. */
-.kit-page { display: flex; flex-direction: column; }
+/* ---- .moment-page — ONE VIEWPORT, NO SCROLL pattern (DSL promotion, 2026-09-06)
+   Shared by #/kit and #/fleet's single-card steps. #app is the one height
+   authority, <main> grows to fill, the section centers its card in what is
+   left. Section padding is a card rhythm, never the marketing rhythm.
+   (max-height: 780px) is the system's one short-viewport breakpoint.      */
+.moment-page { display: flex; flex-direction: column; }
+.moment-page > .section {
+  flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center;
+  padding-block: clamp(1.25rem, 3vw, 2.5rem);
+}
+@media (max-height: 780px) {
+  .moment-page > .section { padding-block: var(--space-4); }
+  .moment-page .moment-card { padding-block: clamp(1.5rem, 3vh, 2rem); }
+}
 
 /* ---- The final #/kit direction Ofir picked: character + text + button sit
    directly on the page's own cream background (var(--pl-intro-cream) — same
@@ -1501,7 +1514,6 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   position: relative; flex: none; width: var(--ctl-sm); height: var(--ctl-sm);
   padding: 0; border: 2px solid var(--pl-surface); border-radius: 999px;
   background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border);
-  cursor: pointer;
   transition: transform 0.15s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
 .avatar-stack__item + .avatar-stack__item { margin-inline-start: calc(-1 * var(--space-3)); }
@@ -2364,7 +2376,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    accent-tint pill recipe already used by .pcrumb__chip--target and
    .agentcard__tag; focus ring = .input's. */
 .chip--choice, .chip--toggle {
-  cursor: pointer; font-family: inherit; height: var(--ctl-sm); min-width: var(--ctl-sm);
+  font-family: inherit; height: var(--ctl-sm); min-width: var(--ctl-sm);
   padding-inline: var(--space-4);
   transition: border-color 0.2s var(--ease-pl), background-color 0.2s var(--ease-pl), color 0.2s var(--ease-pl);
 }
@@ -2405,41 +2417,10 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .fleet-done-cohort .eyebrow { justify-content: center; }
 [dir] .fleet-done-cohort .section-title { text-align: center; max-width: none; margin-inline: auto; }
 
-/* ---- #/fleet single-moment steps — ONE VIEWPORT, NO SCROLL (Ofir, 2026-09-06,
-   second time: "there is a scrolling in the page which doesn't make sense
-   since there's only one card"). FLEET-WIDE RULE from today: a screen whose
-   content fits the viewport shows NO scrollbar. Same mechanism as #/kit
-   (above): #app is the ONE height authority, main grows to fill, the card
-   centers in what is left. What produced the scroll: .section's marketing-
-   page padding (up to 104px top AND bottom) plus the full footer pushed a
-   ~570px card past a 900-940px viewport by a few dozen px. Fixes, scoped to
-   the single-card steps only (S7 result + S9 done are real long pages and
-   keep the normal rhythm):
-   1. .section padding shrinks to a card-page rhythm, the card centers.
-   2. S0 keeps the footer (public landing, legal links) but compact.
-   3. Mid-task steps (questions, loading, gate, error, limited) drop the
-      footer, exactly as #/kit does: a task in progress, nav is still there.
-   4. Short viewports (<= 780px tall, a 13" laptop) tighten padding once more.
-   Verified with the rig at 2000x1090 / 1440x900 / 1280x720 / 390x844, HE+EN,
-   real Heebo/Inter: documentElement.scrollHeight === clientHeight on every
-   single-card step (numbers in the render report next to this change). */
-main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) {
-  display: flex; flex-direction: column;
-}
-main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) > .section {
-  flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center;
-  padding-block: clamp(1.25rem, 3vw, 2.5rem);
-}
-#app:has(main.fleet[data-fleet-step="entry"]) .footer { padding-block: 1.25rem; margin-top: 0; }
-#app:has(main.fleet[data-fleet-step="q"]) .footer,
-#app:has(main.fleet[data-fleet-step="loading"]) .footer,
-#app:has(main.fleet[data-fleet-step="gate"]) .footer,
-#app:has(main.fleet[data-fleet-step="error"]) .footer,
-#app:has(main.fleet[data-fleet-step="limited"]) .footer { display: none; }
-@media (max-height: 780px) {
-  main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) > .section { padding-block: 1rem; }
-  main.fleet .fleet-card { padding-block: clamp(1.5rem, 3vh, 2rem); }
-}
+/* #/fleet single-card steps use .moment-page (above). The footer is decided at
+   render: compact on S0 (public landing, legal links), absent mid-task, full
+   on S7/S9 (same mechanism as #/kit, which renders none). */
+.footer--compact { padding-block: var(--space-5); margin-top: 0; }
 
 /* EXTEND .field — label row with one action at the inline-end (DSL, 2026-09-06).
    The action is a sibling of the label, never nested inside it. First use:
@@ -2449,15 +2430,13 @@ main.fleet:not([data-fleet-step="result"]):not([data-fleet-step="done"]) > .sect
 /* EXTEND .chip — a pressable chip (aria-pressed), e.g. voice input. State model
    is split on purpose: .chip--choice = radio/aria-checked, .chip--toggle =
    aria-pressed. Pressed = the accent-tint pill; the .dot is the live signal. */
-.chip--toggle { cursor: pointer; }
 .chip--toggle svg { width: 18px; height: 18px; flex: none; }
 .chip--toggle .dot { display: none; }
 .chip--toggle[aria-pressed="true"] {
   background: color-mix(in srgb, var(--pl-accent) 12%, var(--pl-surface));
   border-color: var(--pl-accent); color: var(--pl-accent);
 }
-.chip--toggle[aria-pressed="true"] .dot { display: block; animation: chip-live 1.2s var(--ease-pl) infinite; }
-@keyframes chip-live { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.8); } }
+.chip--toggle[aria-pressed="true"] .dot { display: block; animation: skel 1.4s var(--ease-pl) infinite; }
 @media (prefers-reduced-motion: reduce) { .chip--toggle[aria-pressed="true"] .dot { animation: none; } }
 
 /* #/fleet S0 "what you get" block under the intro line (Ofir, 2026-09-06: the

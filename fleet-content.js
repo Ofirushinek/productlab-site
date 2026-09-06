@@ -17,6 +17,10 @@
    v2 round 3 (Ofir): q1-q4 rewritten as questions a person asks someone
    sharing a project. Placeholders are ONE example written like a real answer,
    no "למשל:", no "או:", no colon anywhere on the question screens.
+   v2 rounds 5-6 (Ofir): q2-q4 hold for idea-stage readers (future tense);
+   SCREEN ORDER is q1, q5, q2, q3, q4 (array order = screen order, keys and
+   chip values unchanged, the backend reads by key). q5 asks which tool is in
+   their hands so q3 ("what you explain to it again and again") has context.
    Written against the UR brief (shared/research/briefs/fleet-blueprint-
    2026-09-05.md §2 to §4), curriculum-truth.md §14.5 (the page describes a PLAN;
    the working team appears only in the workshop CTA) and the CMO ban list
@@ -43,7 +47,7 @@ window.FLEET_CONTENT = {
     entry_title: "איזה צוות סוכנים אתם צריכים?",
     entry_sub: "5 שאלות על מה אתם מנסים לבנות, מה נתקע אצלכם, ומה כבר הוחלט.",
     entry_outcome_label: "מה תקבלו",
-    entry_outcome_line: "הסוכנים שיבנו איתכם, מה כל אחד עושה, ומה הוא לא סוגר בלעדיכם.",
+    entry_outcome_line: "שלושה אלה בכל הרכב, המומחים לפי מה שתספרו, ומה כל אחד לא סוגר בלעדיכם.",
     entry_crew_aria: "שלושת הסוכנים שבכל הרכב",
     entry_cta: "להתחיל",
     entry_meta: "5 שאלות. 3 דקות.",
@@ -68,16 +72,16 @@ window.FLEET_CONTENT = {
     mic_aria_stop: "להפסיק להקשיב",
     mic_denied: "המיקרופון חסום בדפדפן. אפשר לאשר אותו, או להמשיך להקליד.",
     questions: [
-      { key: "q1", title: "מה אתם בונים שלא נותן לכם לישון?", hint: "מה זה ולמי זה. משפט אחד, במילים שלכם.", ph: "אפליקציה לניהול תורים לקליניקות קטנות. אני לבד על המוצר, העיצוב וההשקה, ורוב הזמן גם על התמיכה." },
-      { key: "q2", title: "מה נתקע אצלכם, או עוד ייתקע?", hint: "כל מה שיחכה לכם עד שתתפנו. מזה נבנה הצוות.", ph: "בינתיים הכול, כי אני לבד. בעיקר המסכים לפני פיתוח, וכל טקסט שיוצא למשתמשים." },
-      { key: "q3", title: "מה כבר סגור, ולא פתוח לדיון?", hint: "מה שכבר החלטתם, גם אם רק בראש. זה נכנס לזיכרון.", ph: "קהל היעד הוא מנהלי קליניקות ולא רופאים, הפלטה סגורה, ואפליקציה לאנדרואיד לא השנה. על זה לא חוזרים." },
-      { key: "q4", title: "מה אף אחד לא יסגור בלעדיכם?", hint: "גם לא סוכן. זה מה שנשאר אצלכם.", ph: "מסירה לפיתוח, שינוי מחיר, וכל הודעה שיוצאת ללקוח. בלי העין שלי זה לא יזוז." },
-      { key: "q5", title: "ניסיתם כבר?", hint: "לתת חלק מהעבודה לסוכן. מה יצא מזה?", ph: "",
+      { key: "q1", title: "מה אתם בונים שלא נותן לכם לישון?", hint: "מה זה ולמי זה. משפט או שניים, במילים שלכם.", ph: "אפליקציה לניהול תורים לקליניקות קטנות. אני לבד על המוצר, העיצוב וההשקה, ורוב הזמן גם על התמיכה." },
+      { key: "q5", title: "עם מה אתם עובדים היום?", hint: "הכלי שכבר פתוח אצלכם. משם ממשיכים.", ph: "",
         choices: [
-          { v: "none", l: "לא" },
-          { v: "chat", l: "צ'אט" },
-          { v: "claude_code_broke", l: "Claude Code, ולא זכר אותי" },
+          { v: "none", l: "עדיין כלום" },
+          { v: "chat", l: "צ'אט, ChatGPT או Claude" },
+          { v: "claude_code_broke", l: "Claude Code, Cursor, Lovable" },
         ] },
+      { key: "q2", title: "מה נתקע אצלכם, או עוד ייתקע?", hint: "כל מה שיחכה לכם עד שתתפנו. מזה נבנה הצוות.", ph: "בינתיים הכול, כי אני לבד. בעיקר המסכים לפני פיתוח, וכל טקסט שיוצא למשתמשים." },
+      { key: "q3", title: "מה אתם מסבירים לו שוב ושוב?", hint: "כל מה שחוזרים עליו בכל שיחה חדשה. זה נכנס לזיכרון.", ph: "שהלקוח הוא מנהל הקליניקה ולא הרופא, שהפלטה סגורה, ושאנדרואיד לא השנה. כל שיחה חדשה מתחילה מאפס." },
+      { key: "q4", title: "מה לא קורה בלי האישור שלכם?", hint: "במוצר או בשירות שלכם. זה הקו שהצוות לא חוצה לבד.", ph: "כל הודעה ללקוח, אימייל לכל הרשימה, שינוי מחיר, ועדכון שעולה לאוויר. בלי האישור שלי זה לא זז." },
     ],
 
     /* ---- S6 loading ---- */
@@ -170,7 +174,7 @@ window.FLEET_CONTENT = {
     entry_title: "Which agent team do you need?",
     entry_sub: "5 questions about what you are trying to build, what gets stuck with you, and what is already decided.",
     entry_outcome_label: "What you get",
-    entry_outcome_line: "The agents that will build with you, what each one does, and what it never closes without you.",
+    entry_outcome_line: "These three in every lineup, the specialists from what you tell us, and what each one never closes without you.",
     entry_crew_aria: "The three agents in every lineup",
     entry_cta: "Start",
     entry_meta: "5 questions. 3 minutes.",
@@ -193,16 +197,16 @@ window.FLEET_CONTENT = {
     mic_aria_stop: "Stop listening",
     mic_denied: "The browser blocked the microphone. Allow it, or keep typing.",
     questions: [
-      { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. One sentence, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too." },
-      { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users." },
-      { key: "q3", title: "What is already settled, and not up for debate?", hint: "Already decided, even if only in your head. This goes into memory.", ph: "The audience is clinic managers, not doctors, the palette is locked, and no Android app this year. Not revisiting any of it." },
-      { key: "q4", title: "What will nobody close without you?", hint: "Not even an agent. This stays with you.", ph: "The handoff to dev, a price change, and any message that goes out to a customer. Nothing will move without my eyes on it." },
-      { key: "q5", title: "Tried it already?", hint: "Handing part of the work to an agent. What came of it?", ph: "",
+      { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. A sentence or two, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too." },
+      { key: "q5", title: "What do you work with today?", hint: "The tool already open on your screen. We go on from there.", ph: "",
         choices: [
-          { v: "none", l: "No" },
-          { v: "chat", l: "Chat" },
-          { v: "claude_code_broke", l: "Claude Code, and it forgot me" },
+          { v: "none", l: "Nothing yet" },
+          { v: "chat", l: "Chat, ChatGPT or Claude" },
+          { v: "claude_code_broke", l: "Claude Code, Cursor, Lovable" },
         ] },
+      { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users." },
+      { key: "q3", title: "What do you explain to it again and again?", hint: "Everything you repeat in every new chat. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero." },
+      { key: "q4", title: "What does not happen without your approval?", hint: "In your product or service. The line the team never crosses alone.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move." },
     ],
 
     loading_line: "Reading what you wrote.",

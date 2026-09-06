@@ -57,3 +57,20 @@ export const AlwaysOpenPreview = {
     return wrap;
   },
 };
+
+/* Light theme (EXTEND, DSL 2026-09-06): white bubble for CONTENT tooltips (who /
+   what a thing is), not icon labels. Multi-line via a real newline (&#10;) in
+   data-tooltip. Pinned = data-tip-open (touch), never aria-expanded. */
+export const Light = {
+  name: "Light theme (content, 2 lines)",
+  render: () => `<div class="sb-pad" style="padding-top:72px">
+    <button type="button" class="btn btn--ghost" data-tooltip="המעצב&#10;מעצב המוצר" data-tip-theme="light" data-tip-pos="top">hover me</button>
+  </div>`,
+};
+
+export const LightPinned = {
+  name: "Light theme, pinned (data-tip-open)",
+  render: () => `<div class="sb-pad" style="padding-top:72px">
+    <button type="button" class="btn btn--ghost" data-tooltip="המעצב&#10;מעצב המוצר" data-tip-theme="light" data-tip-pos="top" data-tip-open>pinned</button>
+  </div>`,
+};
