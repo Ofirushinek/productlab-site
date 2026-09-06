@@ -1543,7 +1543,7 @@ function renderPrep(lang) {
         <h2 class="section-title">${C.kit.title}</h2>
         <p class="section-lead">${C.kit.subtitle}</p>
       </div>
-      <div class="grid grid--2" style="margin-top:2rem">
+      <div class="grid grid--3" style="margin-top:2rem">
         ${C.kit.items.map((k) => `
           <div class="card card--anchored ${k.featured ? "card--feature" : ""} reveal">
             <div class="card__ico">${I[k.icon] || I.box}</div>
