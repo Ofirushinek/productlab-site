@@ -2568,7 +2568,7 @@ const FLEET_LOGOS = {
   replit: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 1.5A1.5 1.5 0 0 1 3.5 0h7A1.5 1.5 0 0 1 12 1.5V8H3.5A1.5 1.5 0 0 1 2 6.5ZM12 8h8.5A1.5 1.5 0 0 1 22 9.5v5a1.5 1.5 0 0 1-1.5 1.5H12ZM2 17.5A1.5 1.5 0 0 1 3.5 16H12v6.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 2 22.5Z"/></svg>',
   none: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>',
 };
-let FLEET = { step: "entry", qi: 0, answers: {}, result: null, blueprintId: null, gateMode: "normal", failures: 0, busy: false };
+let FLEET = { step: "entry", qi: 0, answers: {}, result: null, blueprintId: null, gateMode: "normal", busy: false };
 
 /* Mock responses — one per language, shaped EXACTLY like the CTO's §6 mock in
    `fleet-blueprint-api-2026-09-05.md` (the full `POST /` 200 body: ok,
@@ -2695,7 +2695,7 @@ function fleetTurnstile() {
                                 -> 200 { ok, blueprint_id, lang, blueprint, roster, meta }
                                 -> 429 { ok:false, error:"rate_limited" }   → limited state
                                 -> 503 { ok:false, error:"capped"|"not_configured" } → manual gate
-                                -> 4xx/5xx anything else                    → error (retry once)
+                                -> 4xx/5xx anything else                    → manual gate (no retry)
      POST fleet-blueprint/lead  { name, email, lang, status, blueprint_id, source:{channel,
                                   referrer, handoff_text, lang}, answers, blueprint, note }
                                 -> 200 { ok, lead_id, duplicate } */
@@ -3034,17 +3034,6 @@ function fleetDone(f, t) {
   </div></section>`;
 }
 
-function fleetError(f) {
-  return fleetCard(`
-    <div class="noacct__ico noacct__ico--danger">${I.info}</div>
-    <h1 class="login__title">${f.error_title}</h1>
-    <p class="login__sub">${f.error_sub}</p>
-    <div class="cta-row">
-      <button class="btn btn--primary" type="button" data-fleet="retry">${f.error_retry}</button>
-      <button class="btn btn--ghost" type="button" data-fleet="manual">${f.error_manual}</button>
-    </div>`);
-}
-
 function fleetLimited(f) {
   return fleetCard(`
     <div class="login__ico">${I.clock}</div>
@@ -3070,7 +3059,6 @@ function renderFleet(lang) {
     case "result": body = fleetResult(f, FLEET.result); break;
     case "gate": body = fleetGate(f); break;
     case "done": body = fleetDone(f, t); break;
-    case "error": body = fleetError(f); break;
     case "limited": body = fleetLimited(f); break;
     default: body = fleetEntry(f, saved);
   }
@@ -3106,20 +3094,17 @@ async function fleetSubmit(lang) {
     if (!fleetValid(res.blueprint)) { const e = new Error("invalid blueprint"); e.code = "error"; throw e; }
     FLEET.result = res.blueprint;
     FLEET.blueprintId = res.id;
-    FLEET.failures = 0;
     fleetSaveResult(res.id, res.blueprint, lang);
     FLEET.step = "result";
   } catch (err) {
     console.warn("fleet-blueprint failed:", err && err.message);
     if (err && err.code === "rate_limited") {
       FLEET.step = "limited";
-    } else if (err && err.code === "capped") {
-      FLEET.gateMode = "manual"; FLEET.step = "gate";   // hard stop → manual fallback (spec §7)
     } else {
-      FLEET.failures += 1;
-      // spec: one retry; second fail → email-gate-only fallback, row tagged manual
-      if (FLEET.failures >= 2) { FLEET.gateMode = "manual"; FLEET.step = "gate"; }
-      else FLEET.step = "error";
+      // Ofir 2026-09-06: no retry, ever, once all 5 are answered — any other
+      // failure (capped, network, invalid blueprint) goes straight to the
+      // manual email gate, one hop, row tagged manual.
+      FLEET.gateMode = "manual"; FLEET.step = "gate";
     }
   } finally {
     FLEET.busy = false;
@@ -3144,8 +3129,6 @@ function wireFleet(lang, f) {
     }
     else if (act === "reset") { fleetReset(); go("entry"); }
     else if (act === "gate") { FLEET.gateMode = "normal"; go("gate"); }
-    else if (act === "retry") { fleetSubmit(lang); }
-    else if (act === "manual") { FLEET.gateMode = "manual"; go("gate"); }
     else if (act === "limited-gate") { FLEET.gateMode = "limited"; go("gate"); }
   }));
 

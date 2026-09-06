@@ -17,6 +17,7 @@
    v2 round 3 (Ofir): q1-q4 rewritten as questions a person asks someone
    sharing a project. Placeholders are ONE example written like a real answer,
    no "למשל:", no "או:", no colon anywhere on the question screens.
+
    v2 rounds 5-6 (Ofir): q2-q4 hold for idea-stage readers (future tense);
    SCREEN ORDER is q1, q5, q2, q3, q4 (array order = screen order, keys and
    chip values unchanged, the backend reads by key). q5 asks which tool is in
@@ -44,6 +45,25 @@
    The specialist library keys (lib) are the CLOSED set of 6 from the spec;
    the key itself is shown as a small tag, the label is the human name.
    The crew block is STATIC copy (never LLM output) per spec §2/S7.
+
+   ✅ v3 (Copywriter, 2026-09-06) - Ofir's post-survey-failure redo.
+   Two changes: (1) tone on ANY failure screen is now warm/funny/human, never
+   a cold "error" register - the reader just poured their answers into 5
+   questions, the LAST thing they should meet is a corporate error message.
+   (2) NO RETRY after the survey is complete. `error_title`/`error_sub`/
+   `error_retry`/`error_manual` are DELETED - the whole `fleetError()` screen
+   (retry once, then fall to the manual gate) is gone. `gate_manual_title`/
+   `gate_manual_sub` now carry the ENTIRE failure message and ARE the only
+   screen a post-survey failure ever shows: playful headline, then a body that
+   says plainly (a) everything they wrote is saved and (b) we'll happily email
+   the lineup once it's ready. ⚠️ PD ACTION OWED: in app.js, `fleetSubmit`'s
+   catch block (~line 3049) must route EVERY non-rate-limited failure straight
+   to `FLEET.gateMode="manual"; FLEET.step="gate"` - delete the `failures`
+   counter's retry branch (`else FLEET.step="error"`), delete `case "error"`
+   from `renderFleet`'s switch, and delete the now-dead `fleetError()`
+   function + its `data-fleet="retry"` handler. `limited_*` (the rate-limit
+   state) is UNCHANGED and untouched by this - different situation, different
+   screen, not in scope.
    ========================================================================== */
 
 window.FLEET_CONTENT = {
@@ -187,8 +207,8 @@ window.FLEET_CONTENT = {
     /* ---- S8 email gate (after the full result, never before) ---- */
     gate_title: "לאן לשלוח את ההרכב?",
     gate_sub: "באימייל: ההרכב הזה כמו שהוא, בקובץ שנשאר אצלכם, ומה הסדנה עושה איתו. אופיר קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
-    gate_manual_title: "נכין לכם אותו בעצמנו.",
-    gate_manual_sub: "משהו לא עבד אצלנו. התשובות שלכם שמורות. תשאירו אימייל, אופיר קורא אותן ושולח את ההרכב בעצמו.",
+    gate_manual_title: "פדיחה קטנה מהצד שלנו.",
+    gate_manual_sub: "ההרכב לא יצא הפעם, אבל כל מה שכתבתם שמור אצלנו מילה במילה. תשאירו אימייל, ונשמח לשלוח לכם אותו ברגע שהוא מוכן.",
     gate_limited_title: "יותר מדי בקשות היום מהרשת הזאת.",
     gate_limited_sub: "תשאירו אימייל, ונשלח לכם את ההרכב.",
     gate_name_label: "שם",
@@ -197,19 +217,15 @@ window.FLEET_CONTENT = {
     gate_note_label: "משהו להוסיף? (לא חובה)",
     gate_note_ph: "שורה אחת. מה הייתם רוצים שהצוות הזה יוריד מכם קודם.",
     gate_submit: "לשלוח לי",
-    gate_error: "משהו לא נשלח. אפשר לנסות שוב, או לכתוב לאופיר בוואטסאפ.",
+    gate_error: "משהו לא נשלח. אפשר לנסות שוב, או לכתוב לנו בוואטסאפ.",
 
     /* ---- S9 confirmation + cohort #2 ---- */
     done_title: "ההרכב בדרך אליכם.",
-    done_sub: "אופיר קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
+    done_sub: "הצוות של Product Lab קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
     done_cohort_eyebrow: "הצעד הבא",
     done_cohort_title: "הצוות הזה קם בסדנה.",
 
-    /* ---- error / rate-limited ---- */
-    error_title: "משהו השתבש אצלנו.",
-    error_sub: "התשובות שלכם שמורות. אפשר לנסות עוד פעם אחת.",
-    error_retry: "לנסות שוב",
-    error_manual: "לקבל אותו באימייל",
+    /* ---- rate-limited (the OTHER failure state - unrelated, unchanged) ---- */
     limited_title: "יותר מדי בקשות היום מהרשת הזאת.",
     limited_sub: "התשובות שלכם שמורות. תשאירו אימייל ונשלח לכם את ההרכב.",
     limited_cta: "להשאיר אימייל",
@@ -349,8 +365,8 @@ window.FLEET_CONTENT = {
 
     gate_title: "Where should the lineup go?",
     gate_sub: "By email: this lineup as it is, in a file you keep, and what the workshop does with it. Ofir reads what you wrote and replies personally within 24 hours.",
-    gate_manual_title: "We will put it together ourselves.",
-    gate_manual_sub: "Something failed on our side. Your answers are saved. Leave an email, and Ofir reads them and sends the lineup himself.",
+    gate_manual_title: "A little blooper on our end.",
+    gate_manual_sub: "Your lineup did not make it out this time, but every word you wrote is saved. Leave an email, and we will happily send it over the moment it is ready.",
     gate_limited_title: "Too many requests today from this network.",
     gate_limited_sub: "Leave an email and we will send you the lineup.",
     gate_name_label: "Name",
@@ -359,10 +375,10 @@ window.FLEET_CONTENT = {
     gate_note_label: "Anything to add? (optional)",
     gate_note_ph: "One line. What you would want this team to take off your plate first.",
     gate_submit: "Send it to me",
-    gate_error: "That did not go through. Try again, or write to Ofir on WhatsApp.",
+    gate_error: "That did not go through. Try again, or write to us on WhatsApp.",
 
     done_title: "Your lineup is on its way.",
-    done_sub: "Ofir reads what you wrote and replies personally within 24 hours.",
+    done_sub: "The Product Lab team reads what you wrote and replies personally within 24 hours.",
     done_cohort_eyebrow: "The next step",
     done_cohort_title: "The workshop is where this team gets built.",
 
