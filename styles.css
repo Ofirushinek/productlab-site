@@ -233,6 +233,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   margin-top: 1rem; font-size: var(--text-body-lg);
   color: var(--pl-fg-body); max-width: 60ch; font-weight: 500;
 }
+.section-lead q { quotes: "\201C" "\201D"; font-weight: 600; color: var(--pl-fg); }
 
 /* ---- Buttons ------------------------------------------------------------- */
 /* SYSTEM RULE: a button is NEVER narrower than its height (min-width = height).
@@ -2273,3 +2274,76 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   html { scroll-behavior: auto; }
 }
 
+
+/* ---- #/fleet — the Fleet Blueprint page (2026-09-05) ------------------------
+   Composed of existing parts, on purpose: .moment-card + the .login__* header
+   + the register modal's form recipe inline (.reg__form/.field/.input/
+   .reg__note/.reg__error/.reg__submit), the home crew band (.team__crew +
+   .agentcard), .card/.grid, .pchecklist, .pnote, .prep-note, .deliv, .ctaband
+   and the cohort #2 .session-strip. Below: scoping rules (no new visual
+   language), two EXTENDS (.field__hint, .chip--choice) and one NEW primitive
+   (.skel). DSL ruled 2026-09-05: all three ENTERED the system (story:
+   stories/components/FleetControls.stories.js); the .fleet-* glue below stays
+   product code. DSL consistency fixes applied same day (aria-checked only,
+   dead .fleet-nav/.fleet-choices rules removed, .skel on tokens, .ss-badge
+   for both pills in .fleet-spec__head, .section-lead q made global). */
+.fleet-card .eyebrow { justify-content: center; }
+.fleet-card .cta-row { justify-content: center; margin-top: var(--space-5); }
+.fleet-card .login__note { margin-top: var(--space-4); }
+.fleet-card .ss-note { margin-top: var(--space-3); }
+/* Question / gate forms inside the card: same start-aligned form rhythm as
+   the register modal; the step buttons sit back-at-start, next-at-end. */
+.fleet-card .reg__form { margin-top: var(--space-5); }
+.fleet-card .reg__form .cta-row { margin-top: var(--space-2); }
+.fleet-nav { flex-wrap: wrap-reverse; } /* at 390 Next stacks ABOVE Back; centered like .noacct */
+
+/* EXTEND .field — a quiet meta line under a control (the 0/300 counter).
+   Caption size, secondary ink, sits at the reading-end edge. */
+.field__hint { font-size: var(--text-caption); font-weight: 500; color: var(--pl-fg-secondary); text-align: end; }
+.field__hint.is-max { color: var(--pl-stage-dropped); }
+
+/* EXTEND .chip — a selectable choice (single-select radio, aria-checked).
+   Sits on the control ladder (sm = 40px). Selected state = the system's
+   accent-tint pill recipe already used by .pcrumb__chip--target and
+   .agentcard__tag; focus ring = .input's. */
+.chip--choice {
+  cursor: pointer; font-family: inherit; height: var(--ctl-sm); min-width: var(--ctl-sm);
+  padding-inline: var(--space-4);
+  transition: border-color 0.2s var(--ease-pl), background-color 0.2s var(--ease-pl), color 0.2s var(--ease-pl);
+}
+.chip--choice:hover { border-color: var(--pl-fg); }
+.chip--choice:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent); }
+.chip--choice[aria-checked="true"] {
+  background: color-mix(in srgb, var(--pl-accent) 12%, var(--pl-surface));
+  border-color: var(--pl-accent); color: var(--pl-accent);
+}
+
+/* NEW .skel — a loading skeleton line, shaped like the content it waits for.
+   The site had no loading primitive besides the roster's dashed text box.
+   Opacity pulse only (no gradient shimmer), reduced-motion aware. */
+.skel {
+  display: block; height: 0.9em; margin-bottom: var(--space-3);
+  border-radius: var(--radius-sm); background: var(--pl-bg-alt);
+  animation: skel 1.4s var(--ease-pl) infinite;
+}
+.skel--tag { width: 30%; height: var(--space-5); border-radius: 999px; margin-bottom: var(--space-4); }
+.skel--h { width: 60%; height: var(--text-h3); margin-bottom: var(--space-4); }
+.skel--short { width: 45%; margin-bottom: 0; }
+@keyframes skel { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+.fleet-loading__line { text-align: center; margin-bottom: var(--space-6); }
+
+/* Result page scoping: spacing between reused blocks, nothing else.
+   2026-09-06 (UR fix #2): the crew band now sits in its own section below her
+   specialists, so it no longer needs a top margin off the h1 block. */
+.fleet-crew .team__agents { margin-bottom: 0; }
+.fleet-specs, .fleet-brain, .fleet-leave { margin-top: var(--space-6); }
+.fleet-spec__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.fleet-spec .pchecklist { margin-top: var(--space-4); }
+.fleet-spec .pnote, .fleet-brain .pnote { margin-top: var(--space-4); }
+.fleet-broke { margin-top: var(--space-5); }
+.fleet-broke strong { color: var(--pl-fg); }
+.fleet-restart { justify-content: center; margin-top: var(--space-5); }
+.fleet-done-cohort { text-align: center; padding-bottom: var(--space-6); }
+.fleet-done-cohort .eyebrow { justify-content: center; }
+[dir] .fleet-done-cohort .section-title { text-align: center; max-width: none; margin-inline: auto; }

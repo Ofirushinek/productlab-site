@@ -2480,6 +2480,666 @@ function wireKitAutoDownload() {
   }, delay);
 }
 
+/* ---- #/fleet — the Fleet Blueprint page (S0–S9) ---------------------------
+   Spec: projects/product-lab/site/fleet-blueprint-spec-2026-09-05.md (CPO).
+   Brief: shared/research/briefs/fleet-blueprint-2026-09-05.md (UR).
+   Public, unlisted: no nav entry anywhere, and the whole site already ships
+   <meta name="robots" content="noindex, nofollow"> so this route inherits it.
+   HE default + EN toggle, hash route exactly like #/kit. Every visible string
+   lives in fleet-content.js (window.FLEET_CONTENT[lang]) — PLACEHOLDER copy,
+   marked there for the Copywriter; nothing visible is hard-coded here.
+
+   REUSE LADDER (Product Designer, 2026-09-05 — Design System Lead ruling
+   still owed, Task was unavailable this session):
+     RUNG 1 (whole page/pattern): #/kit + legal shell (navHeader + main.page +
+       .section > .wrap + studentModal + siteFooter). The home crew band
+       (.team > .team__crew > .team__agents > .agentcard) reused whole for
+       the fixed build crew. The register modal's form composition
+       (.login__ico/.login__title/.login__sub + .reg__form/.field/.input/
+       .reg__note/.reg__error/.reg__submit spinner) reused inline for the
+       email gate and for every question screen. The cohort #2 session strip
+       (sessionStripHtml + .session-strip-band, data-register-open → the
+       existing register modal) reused whole on the confirmation.
+     RUNG 2 (compose): .moment-card (every single-moment screen), .grid--2 +
+       .card + .card__ico (specialists, shared brain, memory), .pchecklist
+       (the three lines per specialist), .pnote (why / not-in-brain), .prep-note
+       (why-it-broke), .deliv (what you leave with), .ctaband (result CTA),
+       .ss-badge (start-with), .agentcard__tag (library key), .ss-note (meta).
+     RUNG 3 (extend): .field__hint (char counter under a field),
+       .chip--choice (a selectable .chip, role=radio + aria-checked). See styles.css.
+     RUNG 4 (new): .skel — a loading skeleton line. The site had no loading
+       primitive except the roster's dashed text box. Six lines, tokens only.
+
+   STATE MACHINE (client only, no login):
+     entry -> q (qi 0..4) -> loading -> result -> gate -> done
+                               |-> error   (retry once) -> gate (manual)
+                               |-> limited              -> gate (limited)
+   Answers persist in sessionStorage (survive a reload mid-questionnaire).
+   The finished blueprint persists in localStorage, so a returning visitor
+   gets S0's "your blueprint / start over" variant without a network call.
+
+   TRANSPORT: everything that touches the backend is inside FLEET_API — the
+   CTO owns the edge function (`projects/product-lab/site/fleet-blueprint-api-
+   2026-09-05.md`, pending); swap the transport THERE only. Until it lands,
+   localhost and `#/fleet?mock=ok|error|limited|broke` return FLEET_MOCK,
+   the CTO's §6 mock, byte-shape identical to the live 200 body. */
+const FLEET_STORE = { answers: "pl_fleet_answers", result: "pl_fleet_blueprint" };
+const FLEET_LIB = ["user-researcher", "copywriter", "design-system-lead", "reviewer", "chief-of-staff", "marketing-designer"];
+const FLEET_MAX = 300;      // spec §2: text ≤ 300 chars
+const FLEET_MIN = 10;       // spec §2: < 10 chars on Q1–Q2 → inline nudge
+const FLEET_Q5 = ["none", "chat", "claude_code_broke"];
+let FLEET = { step: "entry", qi: 0, answers: {}, result: null, blueprintId: null, gateMode: "normal", failures: 0, busy: false };
+
+/* Mock responses — one per language, shaped EXACTLY like the CTO's §6 mock in
+   `fleet-blueprint-api-2026-09-05.md` (the full `POST /` 200 body: ok,
+   blueprint_id, lang, roster, blueprint, meta). HE is the CTO's object verbatim
+   (cohort-#1 case 1: `product_line` is a VERBATIM excerpt of that q1, typos
+   included); EN is the same object with English strings + EN roster labels.
+   Register: plural reader, masculine agent verbs (Copywriter ruling 2026-09-05). */
+const FLEET_MOCK = {
+  he: {
+    ok: true,
+    blueprint_id: "00000000-0000-4000-8000-0000000000aa",
+    lang: "he",
+    roster: {
+      keys: ["chief-of-staff", "copywriter"],
+      labels: ["ראש/ת מטה", "קופירייטר/ית"],
+      start_with: "chief-of-staff",
+      crew: ["product-manager", "product-designer", "technical-lead"],
+    },
+    blueprint: {
+      product_line: "כלי מקיף למשפיעניות שבאמצעותו הן יכולות לעשות הרבה משימות ודברים שלוקחים מהן כיום זמן ואנרגיה",
+      specialists: [
+        { key: "chief-of-staff",
+          does: "אוסף את הרעיונות והטיוטות שהתחלתם בצ'אטים, בנוטס ובנושן, מסדר אותם לפי נושא ומחזיר לכם רשימה קצרה של מה שדורש אתכם",
+          reads_vs_changes: "קורא את כל הפתקים והטיוטות שלכם ואת המוח המשותף. משנה רק את סדר העדיפויות במוח המשותף",
+          never_closes_alone: "לא מוחק טיוטה ולא מחליט מה נגנז — מסדר, אתם מחליטים",
+          why_from_her_words: "כתבתם \"יש לי המון רעיונות שהתחלתי לעבוד עליהם בצ'אטים שונים\"" },
+        { key: "copywriter",
+          does: "כותב את הפוסטים והתסריטים לסרטונים של המשפיעניות מתוך ספריית הוויז'ואלס הקיימת, בקול של כל אחת",
+          reads_vs_changes: "קורא את ספריית הוויז'ואלס והגאנט החודשי. משנה רק קבצי טקסט וטיוטות",
+          never_closes_alone: "לא מפרסם פוסט בשם אף משפיענית — כל טקסט עובר אצלכם קודם",
+          why_from_her_words: "כתבתם \"יצירת תוכן ותסריטים לסרטונים\"" },
+      ],
+      start_with: "chief-of-staff",
+      shared_brain_line: "ראש המטה כותב לשם איזה רעיון מהצ'אטים כבר סודר ומה נגנז, והקופירייטר קורא את זה לפני שהוא נוגע בתסריט — אף רעיון לא מתחיל מאפס פעם שנייה",
+      not_in_brain: "טיוטה שעוד לא הסתכלתם עליה לא נכנסת לשם — רק מה שהוחלט",
+      broke_because: null,
+    },
+    meta: { model: "claude-sonnet-5", attempts: 1, input_tokens: 3000, output_tokens: 600, cost_usd: 0.012 },
+  },
+  en: {
+    ok: true,
+    blueprint_id: "00000000-0000-4000-8000-0000000000ab",
+    lang: "en",
+    roster: {
+      keys: ["chief-of-staff", "copywriter"],
+      labels: ["Chief of staff", "Copywriter"],
+      start_with: "chief-of-staff",
+      crew: ["product-manager", "product-designer", "technical-lead"],
+    },
+    blueprint: {
+      product_line: "a tool for influencers that takes on the tasks that eat their time and energy",
+      specialists: [
+        { key: "chief-of-staff",
+          does: "Gathers the ideas and drafts you started across chats, Notes and Notion, sorts them by topic and hands you back a short list of what needs you",
+          reads_vs_changes: "Reads all your notes and drafts and the shared brain. Changes only the priority order in the shared brain",
+          never_closes_alone: "Never deletes a draft and never decides what gets shelved. It sorts, you decide",
+          why_from_her_words: "You wrote \"so many ideas I started working on in different chats\"" },
+        { key: "copywriter",
+          does: "Writes the posts and video scripts for the influencers out of the existing visuals library, in each one's own voice",
+          reads_vs_changes: "Reads the visuals library and the monthly plan. Changes only text files and drafts",
+          never_closes_alone: "Never publishes a post in any influencer's name. Every text passes through you first",
+          why_from_her_words: "You wrote \"content and scripts for their videos\"" },
+      ],
+      start_with: "chief-of-staff",
+      shared_brain_line: "The chief of staff writes there which idea from the chats is already sorted and which is shelved, and the copywriter reads it before touching a script. No idea starts from zero a second time",
+      not_in_brain: "A draft you have not looked at yet does not go in. Only what was decided",
+      broke_because: null,
+    },
+    meta: { model: "claude-sonnet-5", attempts: 1, input_tokens: 3000, output_tokens: 600, cost_usd: 0.012 },
+  },
+};
+const FLEET_BROKE = {
+  he: "לא היה לו זיכרון בין שיחות, ולא היה כתוב לו מה אסור לו לשנות. בפעם השלישית הוא החליט לבד.",
+  en: "It had no memory between sessions, and nothing told it what it may not change. The third time, it decided alone.",
+};
+
+function fleetQuery() {
+  // Query params can sit before the hash (?src=li) or inside it (#/fleet?mock=error).
+  const q = new URLSearchParams(location.search);
+  const i = location.hash.indexOf("?");
+  if (i !== -1) new URLSearchParams(location.hash.slice(i + 1)).forEach((v, k) => q.set(k, v));
+  return q;
+}
+function fleetMockMode() {
+  const m = fleetQuery().get("mock");
+  if (m) return m;
+  return IS_LOCAL ? "ok" : null;
+}
+function fleetMock(mode, lang, answers) {
+  const base = FLEET_MOCK[lang] || FLEET_MOCK.he;
+  return new Promise((resolve, reject) => setTimeout(() => {
+    if (mode === "error") { const e = new Error("mock error"); e.code = "error"; return reject(e); }
+    if (mode === "limited") { const e = new Error("mock limited"); e.code = "rate_limited"; return reject(e); }
+    const res = JSON.parse(JSON.stringify(base));
+    const b = res.blueprint;
+    // Contract: product_line is a VERBATIM excerpt of q1 (≤ 160 chars, may be all of it).
+    const q1 = answers && typeof answers.q1 === "string" ? answers.q1.trim() : "";
+    if (q1.length >= FLEET_MIN) b.product_line = q1.length <= 160 ? q1 : (q1.indexOf(b.product_line) !== -1 ? b.product_line : q1.slice(0, 160).trim());
+    if (mode === "broke" || (answers && answers.q5 === "claude_code_broke")) b.broke_because = FLEET_BROKE[lang] || FLEET_BROKE.he;
+    resolve({ id: res.blueprint_id, blueprint: b });
+  }, 1400));
+}
+/* Turnstile runs invisibly on submit (spec §2/S6). The CTO adds the Cloudflare
+   script + `window.FLEET_TURNSTILE_SITEKEY` in index.html; until then this
+   resolves null and the edge function decides what to do with a missing token. */
+function fleetTurnstile() {
+  const key = window.FLEET_TURNSTILE_SITEKEY;
+  if (!key || !window.turnstile) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = (tok) => { if (done) return; done = true; if (el.parentNode) el.parentNode.removeChild(el); resolve(tok || null); };
+    const el = document.createElement("div");
+    el.setAttribute("aria-hidden", "true");
+    document.body.appendChild(el);
+    try {
+      window.turnstile.render(el, { sitekey: key, callback: finish, "error-callback": () => finish(null), "expired-callback": () => finish(null) });
+    } catch (e) { finish(null); }
+    setTimeout(() => finish(null), 8000);
+  });
+}
+/* Contract = the CTO's edge function (projects/product-lab/crm/supabase/
+   functions/fleet-blueprint/index.ts):
+     POST fleet-blueprint       { lang, answers, turnstile_token, source }
+                                -> 200 { ok, blueprint_id, lang, blueprint, roster, meta }
+                                -> 429 { ok:false, error:"rate_limited" }   → limited state
+                                -> 503 { ok:false, error:"capped"|"not_configured" } → manual gate
+                                -> 4xx/5xx anything else                    → error (retry once)
+     POST fleet-blueprint/lead  { name, email, lang, status, blueprint_id, source:{channel,
+                                  referrer, handoff_text, lang}, answers, blueprint, note }
+                                -> 200 { ok, lead_id, duplicate } */
+async function fleetErrorCode(error) {
+  const status = error && error.context && error.context.status;
+  let code = null;
+  try { const j = await error.context.json(); code = j && j.error; } catch (e) {}
+  if (status === 429 || code === "rate_limited") return "rate_limited";
+  if (code === "capped" || code === "not_configured") return "capped";
+  return "error";
+}
+const FLEET_API = {
+  async blueprint(payload) {
+    const mock = fleetMockMode();
+    if (mock) return fleetMock(mock, payload.lang, payload.answers);
+    const { data, error } = await sb.functions.invoke("fleet-blueprint", { body: payload });
+    if (error) { const e = new Error(error.message || "fleet-blueprint failed"); e.code = await fleetErrorCode(error); throw e; }
+    if (!data || data.ok === false) { const e = new Error((data && data.error) || "fleet-blueprint failed"); e.code = data && data.error === "rate_limited" ? "rate_limited" : "error"; throw e; }
+    return { id: data.blueprint_id || null, blueprint: data.blueprint };
+  },
+  async lead(body) {
+    if (fleetMockMode()) { await new Promise((r) => setTimeout(r, 600)); return; }
+    const { data, error } = await sb.functions.invoke("fleet-blueprint/lead", { body });
+    if (error) throw error;
+    if (!data || data.ok === false) throw new Error((data && data.error) || "lead failed");
+  },
+};
+/* Server validates enum + count (spec §3); this is the client's own guard so a
+   malformed body can never paint half a result. */
+function fleetValid(b) {
+  if (!b || typeof b !== "object") return false;
+  if (typeof b.product_line !== "string") return false;
+  if (!Array.isArray(b.specialists) || b.specialists.length < 1 || b.specialists.length > 2) return false;
+  for (const s of b.specialists) {
+    if (!s || FLEET_LIB.indexOf(s.key) === -1) return false;
+    if (["does", "reads_vs_changes", "never_closes_alone", "why_from_her_words"].some((k) => typeof s[k] !== "string")) return false;
+  }
+  if (typeof b.shared_brain_line !== "string" || typeof b.not_in_brain !== "string") return false;
+  return true;
+}
+
+function fleetRestore() {
+  if (!Object.keys(FLEET.answers).length) {
+    try { FLEET.answers = JSON.parse(sessionStorage.getItem(FLEET_STORE.answers) || "{}") || {}; } catch (e) { FLEET.answers = {}; }
+  }
+}
+function fleetSaveAnswers() {
+  try { sessionStorage.setItem(FLEET_STORE.answers, JSON.stringify(FLEET.answers)); } catch (e) {}
+}
+function fleetSaved() {
+  try { const s = JSON.parse(localStorage.getItem(FLEET_STORE.result) || "null"); return s && fleetValid(s.blueprint) ? s : null; } catch (e) { return null; }
+}
+function fleetSaveResult(id, blueprint, lang) {
+  try { localStorage.setItem(FLEET_STORE.result, JSON.stringify({ id, blueprint, lang, answers: FLEET.answers, at: Date.now() })); } catch (e) {}
+}
+function fleetReset() {
+  FLEET = { step: "entry", qi: 0, answers: {}, result: null, blueprintId: null, gateMode: "normal", failures: 0, busy: false };
+  try { sessionStorage.removeItem(FLEET_STORE.answers); localStorage.removeItem(FLEET_STORE.result); } catch (e) {}
+}
+function fleetSource(lang) {
+  const q = fleetQuery();
+  return {
+    channel: q.get("src") || q.get("utm_source") || q.get("ref") || "direct",
+    referrer: document.referrer || null,
+    handoff_text: null,
+    lang,
+  };
+}
+const fleetFmt = (s, vars) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+
+/* ---- screens ---- */
+const fleetCard = (inner, mod = "") => `
+  <section class="section"><div class="wrap narrow">
+    <div class="moment-card fleet-card${mod ? " " + mod : ""}">${inner}</div>
+  </div></section>`;
+
+function fleetEntry(f, saved) {
+  const actions = saved
+    ? `<button class="btn btn--accent" type="button" data-fleet="open">${f.return_open}</button>
+       <button class="btn btn--ghost" type="button" data-fleet="reset">${f.return_reset}</button>`
+    : `<button class="btn btn--accent btn--lg" type="button" data-fleet="start">${f.entry_cta}</button>`;
+  return fleetCard(`
+    <div class="login__ico">${I.users}</div>
+    <span class="eyebrow">${f.entry_eyebrow}</span>
+    <h1 class="login__title">${f.entry_title}</h1>
+    <p class="login__sub">${f.entry_sub}</p>
+    ${saved ? `<p class="login__note">${I.info}<span>${f.return_note}</span></p>` : ""}
+    <div class="cta-row">${actions}</div>
+    ${saved ? "" : `<p class="ss-note">${f.entry_meta}</p>`}`);
+}
+
+function fleetQuestion(f) {
+  const q = f.questions[FLEET.qi];
+  const last = FLEET.qi === f.questions.length - 1;
+  const val = FLEET.answers[q.key] || "";
+  const control = q.choices
+    ? `<div class="cta-row fleet-choices" role="radiogroup" aria-label="${escapeAttr(q.title)}">
+        ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="radio" data-fleet-choice="${c.v}" aria-checked="${val === c.v}">${c.l}</button>`).join("")}
+       </div>`
+    : `<div class="field">
+        <label class="field__label" for="fleet-q">${f.q_answer_label}</label>
+        <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="auto" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" data-fleet-answer>${escapeHtml(val)}</textarea>
+        <div class="field__hint"><span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: val.length, max: FLEET_MAX })}</span></div>
+       </div>`;
+  return fleetCard(`
+    <span class="eyebrow">${fleetFmt(f.q_counter, { n: FLEET.qi + 1 })}</span>
+    <h1 class="login__title">${q.title}</h1>
+    ${q.hint ? `<p class="login__sub">${q.hint}</p>` : ""}
+    <form class="reg__form" data-fleet-form novalidate>
+      ${control}
+      <p class="reg__error" data-fleet-error hidden>${I.info}<span>${q.choices ? f.q_choose : f.q_short}</span></p>
+      <div class="cta-row fleet-nav">
+        ${FLEET.qi > 0 ? `<button type="button" class="btn btn--ghost" data-fleet="back">${f.q_back}</button>` : ""}
+        <button type="submit" class="btn btn--accent">${last ? f.q_submit : f.q_next}</button>
+      </div>
+    </form>`);
+}
+
+function fleetLoading(f) {
+  const skelCard = `
+    <div class="card" aria-hidden="true">
+      <span class="skel skel--tag"></span><span class="skel skel--h"></span>
+      <span class="skel"></span><span class="skel"></span><span class="skel skel--short"></span>
+    </div>`;
+  return `
+  <section class="section"><div class="wrap">
+    <div class="fleet-loading" role="status" aria-live="polite" aria-busy="true">
+      <p class="login__sub fleet-loading__line">${f.loading_line}</p>
+      <div class="grid grid--3">${skelCard}${skelCard}${skelCard}</div>
+    </div>
+  </div></section>`;
+}
+
+function fleetResult(f, b) {
+  const line = (label, text) => `
+    <li class="pchecklist__item">
+      <span class="pchecklist__dot" aria-hidden="true"></span>
+      <div class="pchecklist__body">
+        <div class="pchecklist__top"><span class="pchecklist__name">${label}</span></div>
+        <p class="pchecklist__note">${escapeHtml(text)}</p>
+      </div>
+    </li>`;
+  /* Order (UR finding 2026-09-05 #2, CSO call): HER specialists first, the fixed
+     crew below with its "included with every team" framing intact. #7: the
+     broke_because recognition line sits right under the product line. #6: the
+     specialist pill carries the closed-library nickname (crew-tag register),
+     never the kebab key. */
+  return `
+  <section class="section"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${f.result_eyebrow}</span>
+      <h1 class="section-title">${f.result_title}</h1>
+      <p class="section-lead">${f.result_lead} <q>${escapeHtml(b.product_line)}</q></p>
+      ${b.broke_because ? `
+      <div class="prep-note fleet-broke">${I.info}<div><strong>${f.broke_title}</strong><br />${escapeHtml(b.broke_because)}</div></div>` : ""}
+    </div>
+  </div></section>
+
+  <section class="section section--alt"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${f.spec_eyebrow}</span>
+      <h2 class="section-title">${f.spec_title}</h2>
+      <p class="section-lead">${f.spec_sub}</p>
+    </div>
+    <div class="grid grid--2 fleet-specs reveal">
+      ${b.specialists.map((s) => `
+        <article class="card fleet-spec">
+          <div class="fleet-spec__head">
+            <span class="ss-badge">${f.lib[s.key] || s.key}</span>
+            ${b.start_with === s.key ? `<span class="ss-badge">${I.spark} ${f.spec_start}</span>` : ""}
+          </div>
+          <ul class="pchecklist">
+            ${line(f.spec_lines.does, s.does)}
+            ${line(f.spec_lines.reads, s.reads_vs_changes)}
+            ${line(f.spec_lines.never, s.never_closes_alone)}
+          </ul>
+          <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p><strong>${f.spec_why}</strong> ${escapeHtml(s.why_from_her_words)}</p></div>
+        </article>`).join("")}
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="team reveal fleet-crew">
+      <div class="team__crew">
+        <span class="eyebrow">${f.crew_eyebrow}</span>
+        <div class="team__name">${f.crew_title}</div>
+        <div class="team__agents">
+          ${f.crew.map((a) => `
+            <div class="agentcard">
+              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=2" alt="" loading="lazy" /></div>
+              <div class="agentcard__body">
+                <span class="agentcard__tag">${a.tag}</span>
+                <div class="agentcard__role">${a.role}</div>
+                <p>${a.line}</p>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <section class="section section--alt"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${f.brain_eyebrow}</span>
+      <h2 class="section-title">${f.brain_title}</h2>
+    </div>
+    <div class="grid grid--2 reveal fleet-brain">
+      <div class="card">
+        <div class="card__ico">${I.brain}</div>
+        <h3>${f.brain_card_title}</h3>
+        <p>${escapeHtml(b.shared_brain_line)}</p>
+        <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p><strong>${f.brain_not_label}</strong> ${escapeHtml(b.not_in_brain)}</p></div>
+      </div>
+      <div class="card">
+        <div class="card__ico">${I.doc}</div>
+        <h3>${f.memory_title}</h3>
+        <p>${f.memory_line}</p>
+      </div>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${f.leave_eyebrow}</span>
+      <h2 class="section-title">${f.leave_title}</h2>
+    </div>
+    <div class="deliv reveal fleet-leave">
+      ${f.leave.map((d, i) => `
+        <div class="deliv__item">
+          <div class="deliv__num">${i + 1}</div>
+          <div><h3>${d.t}</h3><p>${d.b}</p></div>
+        </div>`).join("")}
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="ctaband reveal">
+      <h2>${f.result_cta_title}</h2>
+      <p>${f.result_cta_sub}</p>
+      <div class="cta-row"><button class="btn btn--primary btn--lg" type="button" data-fleet="gate">${f.result_cta}</button></div>
+    </div>
+    <div class="cta-row fleet-restart"><button class="btn btn--ghost btn--sm" type="button" data-fleet="reset">${f.result_restart}</button></div>
+  </div></section>`;
+}
+
+function fleetGate(f) {
+  const m = FLEET.gateMode;
+  const title = m === "manual" ? f.gate_manual_title : m === "limited" ? f.gate_limited_title : f.gate_title;
+  const sub = m === "manual" ? f.gate_manual_sub : m === "limited" ? f.gate_limited_sub : f.gate_sub;
+  return fleetCard(`
+    <div class="login__ico">${I.spark}</div>
+    <h1 class="login__title">${title}</h1>
+    <p class="login__sub">${sub}</p>
+    <form class="reg__form" data-fleet-gate novalidate>
+      <div class="field">
+        <label class="field__label" for="fleet-name">${f.gate_name_label}</label>
+        <input class="input" id="fleet-name" name="name" type="text" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label class="field__label" for="fleet-email">${f.gate_email_label}</label>
+        <input class="input ltr-iso" id="fleet-email" name="email" type="email" inputmode="email" dir="ltr" autocomplete="email" placeholder="${f.gate_email_ph}" required />
+      </div>
+      <div class="field">
+        <label class="field__label" for="fleet-note">${f.gate_note_label}</label>
+        <textarea class="reg__note" id="fleet-note" name="note" rows="2" dir="auto" placeholder="${escapeAttr(f.gate_note_ph)}"></textarea>
+      </div>
+      <p class="reg__error" data-fleet-gate-error hidden>${I.info}<span>${f.gate_error}</span></p>
+      <button class="btn btn--primary login__submit reg__submit" type="submit" data-fleet-gate-submit>
+        <span class="reg__submit-spinner" aria-hidden="true"></span>
+        <span class="reg__submit-label">${f.gate_submit}</span>
+      </button>
+    </form>`);
+}
+
+function fleetDone(f, t) {
+  return fleetCard(`
+    <div class="noacct__ico reg__success-ico">${I.check}</div>
+    <h1 class="login__title">${f.done_title}</h1>
+    <p class="login__sub">${f.done_sub}</p>`) + `
+  <div class="wrap fleet-done-cohort reveal">
+    <span class="eyebrow">${f.done_cohort_eyebrow}</span>
+    <h2 class="section-title">${f.done_cohort_title}</h2>
+  </div>
+  <section class="session-strip-band"><div class="wrap">
+    ${sessionStripHtml(t.session2, { price: true })}
+  </div></section>`;
+}
+
+function fleetError(f) {
+  return fleetCard(`
+    <div class="noacct__ico noacct__ico--danger">${I.info}</div>
+    <h1 class="login__title">${f.error_title}</h1>
+    <p class="login__sub">${f.error_sub}</p>
+    <div class="cta-row">
+      <button class="btn btn--primary" type="button" data-fleet="retry">${f.error_retry}</button>
+      <button class="btn btn--ghost" type="button" data-fleet="manual">${f.error_manual}</button>
+    </div>`);
+}
+
+function fleetLimited(f) {
+  return fleetCard(`
+    <div class="login__ico">${I.clock}</div>
+    <h1 class="login__title">${f.limited_title}</h1>
+    <p class="login__sub">${f.limited_sub}</p>
+    <div class="cta-row">
+      <button class="btn btn--primary" type="button" data-fleet="limited-gate">${f.limited_cta}</button>
+    </div>`);
+}
+
+function renderFleet(lang) {
+  const t = I18N[lang];
+  const FC = window.FLEET_CONTENT || {};
+  const f = FC[lang] || FC.he;
+  if (!f) { render(lang); return; }   // strings failed to load: fall back to home, never a blank page
+  fleetRestore();
+  const saved = fleetSaved();
+  if (FLEET.step === "result" && !FLEET.result) { FLEET.step = "entry"; }
+  let body = "";
+  switch (FLEET.step) {
+    case "q": body = fleetQuestion(f); break;
+    case "loading": body = fleetLoading(f); break;
+    case "result": body = fleetResult(f, FLEET.result); break;
+    case "gate": body = fleetGate(f); break;
+    case "done": body = fleetDone(f, t); break;
+    case "error": body = fleetError(f); break;
+    case "limited": body = fleetLimited(f); break;
+    default: body = fleetEntry(f, saved);
+  }
+  document.title = f.page_title;
+  document.getElementById("app").innerHTML = `
+  ${navHeader(t, lang)}
+
+  <main id="top" class="page fleet" data-fleet-step="${FLEET.step}">${body}</main>
+
+  ${studentModal(t)}
+  ${siteFooter(t)}`;
+
+  afterRender();
+  wireFleet(lang, f);
+  window.scrollTo(0, 0);
+}
+
+async function fleetSubmit(lang) {
+  if (FLEET.busy) return;
+  FLEET.busy = true;
+  FLEET.step = "loading";
+  renderFleet(lang);
+  try {
+    const turnstile_token = await fleetTurnstile();
+    const a = FLEET.answers;
+    const res = await FLEET_API.blueprint({
+      lang,
+      answers: { q1: a.q1 || "", q2: a.q2 || "", q3: a.q3 || "", q4: a.q4 || "", q5: FLEET_Q5.indexOf(a.q5) === -1 ? "none" : a.q5 },
+      turnstile_token,
+      source: fleetSource(lang),
+    });
+    if (!fleetValid(res.blueprint)) { const e = new Error("invalid blueprint"); e.code = "error"; throw e; }
+    FLEET.result = res.blueprint;
+    FLEET.blueprintId = res.id;
+    FLEET.failures = 0;
+    fleetSaveResult(res.id, res.blueprint, lang);
+    FLEET.step = "result";
+  } catch (err) {
+    console.warn("fleet-blueprint failed:", err && err.message);
+    if (err && err.code === "rate_limited") {
+      FLEET.step = "limited";
+    } else if (err && err.code === "capped") {
+      FLEET.gateMode = "manual"; FLEET.step = "gate";   // hard stop → manual fallback (spec §7)
+    } else {
+      FLEET.failures += 1;
+      // spec: one retry; second fail → email-gate-only fallback, row tagged manual
+      if (FLEET.failures >= 2) { FLEET.gateMode = "manual"; FLEET.step = "gate"; }
+      else FLEET.step = "error";
+    }
+  } finally {
+    FLEET.busy = false;
+  }
+  renderFleet(lang);
+}
+
+function wireFleet(lang, f) {
+  const root = document.querySelector("main.fleet");
+  if (!root) return;
+  const go = (step) => { FLEET.step = step; renderFleet(lang); };
+
+  root.querySelectorAll("[data-fleet]").forEach((b) => b.addEventListener("click", () => {
+    const act = b.getAttribute("data-fleet");
+    if (act === "start") { FLEET.qi = 0; go("q"); }
+    else if (act === "back") { FLEET.qi = Math.max(0, FLEET.qi - 1); go("q"); }
+    else if (act === "open") {
+      const s = fleetSaved();
+      if (!s) { fleetReset(); go("entry"); return; }
+      FLEET.result = s.blueprint; FLEET.blueprintId = s.id; FLEET.answers = s.answers || FLEET.answers;
+      go("result");
+    }
+    else if (act === "reset") { fleetReset(); go("entry"); }
+    else if (act === "gate") { FLEET.gateMode = "normal"; go("gate"); }
+    else if (act === "retry") { fleetSubmit(lang); }
+    else if (act === "manual") { FLEET.gateMode = "manual"; go("gate"); }
+    else if (act === "limited-gate") { FLEET.gateMode = "limited"; go("gate"); }
+  }));
+
+  // Question screen: live counter, chips, validate, next / submit.
+  const form = root.querySelector("[data-fleet-form]");
+  if (form) {
+    const q = f.questions[FLEET.qi];
+    const ta = form.querySelector("[data-fleet-answer]");
+    const count = form.querySelector("[data-fleet-count]");
+    const err = form.querySelector("[data-fleet-error]");
+    if (ta) {
+      ta.addEventListener("input", () => {
+        if (count) {
+          count.textContent = fleetFmt(f.q_chars, { n: ta.value.length, max: FLEET_MAX });
+          count.parentNode.classList.toggle("is-max", ta.value.length >= FLEET_MAX);
+        }
+        if (err && !err.hidden && ta.value.trim().length >= FLEET_MIN) err.hidden = true;
+      });
+      setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 50);
+    }
+    form.querySelectorAll("[data-fleet-choice]").forEach((c) => c.addEventListener("click", () => {
+      const v = c.getAttribute("data-fleet-choice");
+      FLEET.answers[q.key] = v;
+      fleetSaveAnswers();
+      form.querySelectorAll("[data-fleet-choice]").forEach((o) => {
+        const on = o === c;
+        o.setAttribute("aria-checked", on ? "true" : "false");
+      });
+      if (err) err.hidden = true;
+    }));
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (q.choices) {
+        if (FLEET_Q5.indexOf(FLEET.answers[q.key]) === -1) { if (err) err.hidden = false; return; }
+      } else {
+        const v = (ta.value || "").trim().slice(0, FLEET_MAX);
+        const needs = q.key === "q1" || q.key === "q2" ? FLEET_MIN : 1;
+        if (v.length < needs) { if (err) err.hidden = false; ta.focus(); return; }
+        FLEET.answers[q.key] = v;
+        fleetSaveAnswers();
+      }
+      if (FLEET.qi < f.questions.length - 1) { FLEET.qi += 1; go("q"); }
+      else fleetSubmit(lang);
+    });
+  }
+
+  // Email gate: name + email required, note optional → one `leads` row.
+  const gate = root.querySelector("[data-fleet-gate]");
+  if (gate) {
+    const errorEl = root.querySelector("[data-fleet-gate-error]");
+    const submitBtn = root.querySelector("[data-fleet-gate-submit]");
+    let submitting = false;
+    const setLoading = (on) => { submitting = on; submitBtn.disabled = on; submitBtn.classList.toggle("is-loading", on); };
+    gate.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (submitting) return;
+      if (errorEl) errorEl.hidden = true;
+      const name = gate.name.value.trim();
+      const email = gate.email.value.trim();
+      const note = gate.note.value.trim();
+      if (!name || !EMAIL_RE.test(email)) { (!name ? gate.name : gate.email).focus(); return; }
+      setLoading(true);
+      try {
+        const src = fleetSource(lang);
+        src.handoff_text = note || null;
+        await FLEET_API.lead({
+          name, email, lang,
+          status: FLEET.gateMode === "normal" ? "new" : "manual",
+          blueprint_id: FLEET.blueprintId,
+          source: src,
+          answers: FLEET.answers,
+          blueprint: FLEET.result,
+          note: note || null,
+        });
+        go("done");
+      } catch (err) {
+        console.warn("fleet lead failed:", err && err.message);
+        if (errorEl) errorEl.hidden = false;
+      } finally {
+        setLoading(false);
+      }
+    });
+  }
+}
+
 /* ---- Mobile nav tray (hamburger) ---------------------------------------- */
 function wireNav() {
   const burger = document.querySelector("[data-nav-toggle]");
@@ -2603,12 +3263,13 @@ function afterRender() {
   wireWhyCursors();
 }
 
-/* ---- Router — hash routes: #/prep, #/kit, #/privacy, #/terms, else home --- */
+/* ---- Router — hash routes: #/prep, #/kit, #/fleet, #/privacy, #/terms, else home --- */
 function currentRoute() {
   // Strip any query suffix (e.g. #/prep?lang=en) before matching the route.
   const h = (location.hash || "").replace(/^#\/?/, "").split("?")[0];
   if (h === "prep") return "prep";
   if (h === "kit") return "kit";
+  if (h === "fleet") return "fleet";
   if (h === "privacy") return "privacy";
   if (h === "terms") return "terms";
   return "home";
@@ -2619,6 +3280,9 @@ function currentRoute() {
    off the students tab, closed every expanded row and discarded anything typed
    but not saved. This gates the REPAINT only - loadAuth(), the my_access() call,
    the sign-out-on-denied path and RLS are untouched. */
+/* The site title as shipped in index.html. #/fleet sets its own page title;
+   every route entry restores this one so a sub-page title never leaks home. */
+const SITE_TITLE = document.title;
 let PAINTED_AUTH = null;
 function authFingerprint() {
   return [AUTH.user ? AUTH.user.id : "", AUTH.tier || "", AUTH.denied ? "1" : "0"].join("|");
@@ -2642,9 +3306,11 @@ function route(lang) {
      left. Any render that legitimately needs the lock re-opens it itself
      (afterRender() -> wireStudent()'s pendingStudentOpen, etc.), same as always. */
   document.body.classList.remove("modal-open");
+  document.title = SITE_TITLE;
   const r = currentRoute();
   if (r === "prep") renderPrep(lang);
   else if (r === "kit") renderKit(lang);
+  else if (r === "fleet") renderFleet(lang);
   else if (r === "privacy") renderLegal(lang, "privacy");
   else if (r === "terms") renderLegal(lang, "terms");
   else render(lang);
