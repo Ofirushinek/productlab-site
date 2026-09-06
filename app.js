@@ -2869,7 +2869,7 @@ function fleetLoading(f) {
     return `
       <li class="reader" style="--i:${i}">
         <span class="reader__bubble" data-fleet-bubble data-lines="${escapeAttr(JSON.stringify(ls))}" aria-live="off">${escapeHtml(ls[0])}</span>
-        <span class="reader__av"><img src="assets/${c.img}.webp?v=2" alt="" /></span>
+        <span class="reader__av"><img src="assets/${c.img}-reading.webp?v=1" alt="" /></span>
         <span class="reader__name">${c.tag}</span>
       </li>`;
   }).join("");
