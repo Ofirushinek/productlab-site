@@ -2830,12 +2830,11 @@ function fleetQuestion(f) {
         ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="radio" data-fleet-choice="${c.v}" aria-checked="${val === c.v}">${c.l}</button>`).join("")}
        </div>`
     : `<div class="field">
-        <div class="field__head">
-          <label class="field__label" for="fleet-q">${f.q_answer_label}</label>
-          ${FLEET_SR ? `<button type="button" class="chip chip--toggle" data-fleet-mic aria-pressed="false" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}<span data-fleet-mic-label>${f.mic_start || ""}</span></button>` : ""}
+        <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fleet-answer>${escapeHtml(val)}</textarea>
+        <div class="field__hint field__hint--mic">
+          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" data-tooltip="${escapeAttr(f.mic_start || "")}" data-tip-theme="light" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}</button>` : ""}
+          <span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: val.length, max: FLEET_MAX })}</span>
         </div>
-        <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" data-fleet-answer>${escapeHtml(val)}</textarea>
-        <div class="field__hint"><span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: val.length, max: FLEET_MAX })}</span></div>
         ${FLEET_SR ? `<p class="reg__error" data-fleet-mic-error hidden>${I.info}<span>${f.mic_denied || ""}</span></p>` : ""}
        </div>`;
   return fleetCard(`
@@ -3180,7 +3179,7 @@ function wireFleet(lang, f) {
       ta.addEventListener("input", () => {
         if (count) {
           count.textContent = fleetFmt(f.q_chars, { n: ta.value.length, max: FLEET_MAX });
-          count.parentNode.classList.toggle("is-max", ta.value.length >= FLEET_MAX);
+          count.classList.toggle("is-max", ta.value.length >= FLEET_MAX);
         }
         if (err && !err.hidden && ta.value.trim().length >= FLEET_MIN) err.hidden = true;
       });
@@ -3190,12 +3189,11 @@ function wireFleet(lang, f) {
     // already typed; the counter and the max follow the same input event.
     const mic = form.querySelector("[data-fleet-mic]");
     if (mic && ta && FLEET_SR) {
-      const micLabel = mic.querySelector("[data-fleet-mic-label]");
       const micErr = form.querySelector("[data-fleet-mic-error]");
       let rec = null;
       const setState = (on) => {
         mic.setAttribute("aria-pressed", on ? "true" : "false");
-        if (micLabel) micLabel.textContent = on ? (f.mic_stop || "") : (f.mic_start || "");
+        mic.setAttribute("data-tooltip", on ? (f.mic_stop || "") : (f.mic_start || ""));
       };
       const stop = () => { if (rec) { try { rec.stop(); } catch (e) {} } };
       FLEET.stopMic = stop;

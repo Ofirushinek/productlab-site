@@ -2366,7 +2366,30 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 /* EXTEND .field — a quiet meta line under a control (the 0/300 counter).
    Caption size, secondary ink, sits at the reading-end edge. */
 .field__hint { font-size: var(--text-caption); font-weight: 500; color: var(--pl-fg-secondary); text-align: end; }
-.field__hint.is-max { color: var(--pl-stage-dropped); }
+[data-fleet-count].is-max { color: var(--pl-stage-dropped); }
+
+/* #/fleet question field, mic redesign (Ofir, 2026-09-06 - live): the standalone
+   labeled chip ABOVE the textarea ("blunt, big, redundant") is gone. The mic now
+   lives in the SAME row as the character counter, below the field, sized up one
+   notch from the counter's caption size so it reads as a control, not a label.
+   Discoverability moves from a permanent text label to the light tooltip
+   (already established today) - hover/focus/tap-and-hold reveals what it does. */
+.field__hint--mic { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-2); font-size: var(--text-sm); }
+.mic-btn {
+  position: relative; display: grid; place-items: center; flex: none;
+  width: 28px; height: 28px; padding: 0; border: 0; border-radius: 999px;
+  color: var(--pl-fg-secondary); background: transparent;
+  transition: background-color 0.15s var(--ease-pl), color 0.15s var(--ease-pl);
+}
+.mic-btn svg { width: 20px; height: 20px; }
+.mic-btn:hover, .mic-btn:focus-visible { background: var(--pl-bg-alt); color: var(--pl-fg); }
+.mic-btn[aria-pressed="true"] { color: var(--pl-accent); }
+.mic-btn .dot {
+  position: absolute; top: 2px; inset-inline-end: 2px; width: 7px; height: 7px;
+  border-radius: 999px; background: var(--pl-accent); display: none;
+}
+.mic-btn[aria-pressed="true"] .dot { display: block; animation: skel 1.4s var(--ease-pl) infinite; }
+@media (prefers-reduced-motion: reduce) { .mic-btn[aria-pressed="true"] .dot { animation: none; } }
 
 /* EXTEND .chip — a selectable choice (single-select radio, aria-checked).
    Sits on the control ladder (sm = 40px). Selected state = the system's
