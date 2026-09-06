@@ -2246,7 +2246,7 @@ async function renderRoster(lang) {
             <div class="roster__field roster__field--wide rnotes">
               <span class="roster__fieldlbl">${t.roster_col_notes}</span>
               <div class="rnotes__add">
-                <textarea class="roster__ta rnotes__new" data-note-new="${i}" data-grow rows="1" dir="${lang === "he" ? "rtl" : "ltr"}" placeholder="${escapeAttr(t.roster_notes_ph)}"></textarea>
+                <textarea class="roster__ta rnotes__new" data-note-new="${i}" data-grow rows="1" dir="auto" placeholder="${escapeAttr(t.roster_notes_ph)}"></textarea>
                 <button type="button" class="btn btn--ghost btn--sm rnotes__addbtn" data-note-add="${i}">${I.check}<span>${t.roster_note_add}</span></button>
               </div>
               <div class="rnotes__list" data-note-list="${i}">${notesListHtml(notes, lang, t)}</div>
@@ -3049,7 +3049,7 @@ function fleetGate(f) {
       </div>
       <div class="field">
         <label class="field__label" for="fleet-note">${f.gate_note_label}</label>
-        <textarea class="reg__note" id="fleet-note" name="note" rows="2" dir="${document.documentElement.dir || "rtl"}" placeholder="${escapeAttr(f.gate_note_ph)}"></textarea>
+        <textarea class="reg__note" id="fleet-note" name="note" rows="2" dir="auto" placeholder="${escapeAttr(f.gate_note_ph)}"></textarea>
       </div>
       <p class="reg__error" data-fleet-gate-error hidden>${I.info}<span>${f.gate_error}</span></p>
       <button class="btn btn--primary login__submit reg__submit" type="submit" data-fleet-gate-submit>
