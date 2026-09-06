@@ -206,7 +206,7 @@ window.FLEET_CONTENT = {
 
     /* ---- S8 email gate (after the full result, never before) ---- */
     gate_title: "לאן לשלוח את ההרכב?",
-    gate_sub: "באימייל: ההרכב הזה כמו שהוא, בקובץ שנשאר אצלכם, ומה הסדנה עושה איתו. אופיר קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
+    gate_sub: "באימייל: ההרכב הזה כמו שהוא, בקובץ שנשאר אצלכם, ומה הסדנה עושה איתו. הצוות של Product Lab קורא מה שכתבתם ועונה אישית תוך 24 שעות.",
     gate_manual_title: "פדיחה קטנה מהצד שלנו.",
     gate_manual_sub: "ההרכב לא יצא הפעם, אבל כל מה שכתבתם שמור אצלנו מילה במילה. תשאירו אימייל, ונשמח לשלוח לכם אותו ברגע שהוא מוכן.",
     gate_limited_title: "יותר מדי בקשות היום מהרשת הזאת.",
@@ -364,7 +364,7 @@ window.FLEET_CONTENT = {
     result_restart: "Start over",
 
     gate_title: "Where should the lineup go?",
-    gate_sub: "By email: this lineup as it is, in a file you keep, and what the workshop does with it. Ofir reads what you wrote and replies personally within 24 hours.",
+    gate_sub: "By email: this lineup as it is, in a file you keep, and what the workshop does with it. The Product Lab team reads what you wrote and replies personally within 24 hours.",
     gate_manual_title: "A little blooper on our end.",
     gate_manual_sub: "Your lineup did not make it out this time, but every word you wrote is saved. Leave an email, and we will happily send it over the moment it is ready.",
     gate_limited_title: "Too many requests today from this network.",
@@ -382,10 +382,6 @@ window.FLEET_CONTENT = {
     done_cohort_eyebrow: "The next step",
     done_cohort_title: "The workshop is where this team gets built.",
 
-    error_title: "Something went wrong on our side.",
-    error_sub: "Your answers are saved. You can try once more.",
-    error_retry: "Try again",
-    error_manual: "Email it to me instead",
     limited_title: "Too many requests today from this network.",
     limited_sub: "Your answers are saved. Leave an email and we will send you the lineup.",
     limited_cta: "Leave an email",
