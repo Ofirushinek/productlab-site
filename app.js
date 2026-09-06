@@ -2514,8 +2514,11 @@ function wireKitAutoDownload() {
 
    STATE MACHINE (client only, no login):
      entry -> q (qi 0..4) -> loading -> result -> gate -> done
-                               |-> error   (retry once) -> gate (manual)
                                |-> limited              -> gate (limited)
+   Ofir's ruling 2026-09-06: once all 5 questions are answered, ANY generation
+   failure (except rate_limited) goes straight to gate(manual) — no retry, no
+   separate error screen. The old "error" step (retry once, then fall to the
+   manual email gate) is gone; failures land on the manual gate in one hop.
    Answers persist in sessionStorage (survive a reload mid-questionnaire).
    The finished blueprint persists in localStorage, so a returning visitor
    gets S0's "your blueprint / start over" variant without a network call.
