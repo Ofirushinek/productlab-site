@@ -88,6 +88,7 @@ window.WORKSHOP_CONTENT = (function () {
         {
           icon: "box", featured: true,
           kicker: "Download",
+          poster: true, posterIcon: "box",
           title: "The Product Lab kit",
           body: "Your three teammates, the shared brain they write to, and the skills they work from. Unzip it into your Documents folder and point Claude at it. It is the same file you got before the session.",
           href: "assets/product-lab.zip", download: true,
@@ -95,7 +96,7 @@ window.WORKSHOP_CONTENT = (function () {
           note: "One exception: if your Documents folder sits inside OneDrive or iCloud, put the kit in your home folder instead.",
         },
         {
-          icon: "video",
+          icon: "slides",
           kicker: "Slide by slide",
           title: "The session deck",
           body: "Every slide from the workshop, in order. Open it when you want the shape of the day back, or the one line you half remember.",
@@ -113,6 +114,7 @@ window.WORKSHOP_CONTENT = (function () {
           kicker: "Watch it back",
           title: "The session recording",
           body: "All three hours, start to finish. Watch it when you want a part again, or to catch what you missed live.",
+          poster: true, posterIcon: "play",
           href: "https://youtu.be/nrICIktkTO8",
           cta: "Watch the recording",
           note: "It's a private video. Open it signed in to the Google account we shared it with.",
@@ -361,6 +363,7 @@ window.WORKSHOP_CONTENT = (function () {
         {
           icon: "box", featured: true,
           kicker: "הורדה",
+          poster: true, posterIcon: "box",
           title: "ערכת Product Lab",
           body: "שלושת חברי הצוות שלכם, המוח המשותף שהם כותבים אליו, והכישורים שהם עובדים לפיהם. פורסים את הקובץ לתיקיית Documents ומכוונים לשם את Claude. זה אותו קובץ שקיבלתם לפני המפגש.",
           href: "assets/product-lab.zip", download: true,
@@ -368,7 +371,7 @@ window.WORKSHOP_CONTENT = (function () {
           note: "חריג אחד: אם תיקיית Documents שלכם יושבת בתוך OneDrive או iCloud, שימו את הערכה בתיקיית הבית במקום.",
         },
         {
-          icon: "video",
+          icon: "slides",
           kicker: "שקופית אחרי שקופית",
           title: "מצגת הסדנה",
           body: "כל השקופיות מהמפגש, לפי הסדר. פותחים אותה כשרוצים להיזכר במבנה של היום, או במשפט ההוא שנשאר לכם חצי בראש.",
@@ -382,6 +385,7 @@ window.WORKSHOP_CONTENT = (function () {
           kicker: "צפייה חוזרת",
           title: "הקלטת הסדנה",
           body: "שלוש השעות המלאות, מההתחלה ועד הסוף. צופים בה כשרוצים לראות חלק שוב, או לתפוס את מה שפספסתם בזמן אמת.",
+          poster: true, posterIcon: "play",
           href: "https://youtu.be/nrICIktkTO8",
           cta: "צפייה בהקלטה",
           note: "זה סרטון פרטי. פותחים אותו כשמחוברים לחשבון Google שאיתו שיתפנו אותו.",

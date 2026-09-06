@@ -116,6 +116,8 @@ const I = {
   login: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>',
   mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8"/></svg>',
   plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z"/></svg>',
+  slides: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
   info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>',
   // Google "G" - brand colors are intentional (not tokenized: this is a third-party logo).
@@ -1446,19 +1448,18 @@ function kitMedia(k) {
         <img src="${k.image}" alt="${k.title}" loading="lazy" width="1440" height="810" />
       </div>`;
   }
-  if (!k.download) return "";
-  return `
-    <div class="card__media card__media--figure">
-      <div class="kitfile">
-        <div class="kitfile__hd">
-          <span class="card__ico" aria-hidden="true">${I.box}</span>
-          <span class="kitfile__name" dir="ltr">product-lab</span>
-        </div>
-        <div class="kitfile__paths">
-          ${KIT_ENTRIES.map((e) => `<span class="pcrumb__chip" dir="ltr">${e}</span>`).join("")}
-        </div>
-      </div>
-    </div>`;
+  /* One consistent poster treatment for any card with no real photo/screenshot:
+     a large icon centered on --pl-illo-bg, 16:9, same box the recording uses.
+     Replaced the six-pill "file tree" mock (Ofir, 2026-09-06: "embarrassing,
+     not professional, replace this imagery, a nice icon or image of a file
+     or kit") — .kitfile/.kitfile__paths retired, nothing else referenced them. */
+  if (k.poster) {
+    return `
+      <div class="card__media card__media--poster">
+        <span class="card__media-play" aria-hidden="true">${I[k.posterIcon] || I.play}</span>
+      </div>`;
+  }
+  return "";
 }
 
 /* The shared-brain map: one shared-brain node (with the learning log as its
@@ -1549,10 +1550,12 @@ function renderPrep(lang) {
         ${C.kit.items.map((k) => `
           <div class="card card--anchored ${k.featured ? "card--feature" : ""} reveal">
             <div class="card__ico">${I[k.icon] || I.box}</div>
-            <span class="card__kicker">${k.kicker}</span>
+            <div class="card__kicker-row">
+              <span class="card__kicker">${k.kicker}</span>
+              ${k.note ? `<button type="button" class="card__note-btn" data-tooltip="${escapeAttr(k.note)}" data-tip-theme="light" aria-label="${escapeAttr(k.note)}">${I.info}</button>` : ""}
+            </div>
             <h3>${k.title}</h3>
             <p>${k.body}</p>
-            ${k.note ? `<p class="pchecklist__note" style="margin-top:.75rem">${k.note}</p>` : ""}
             <div class="card__foot">
               ${kitMedia(k)}
               <div class="cta-row">
