@@ -2482,41 +2482,51 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 .fleet-loading__line { text-align: center; margin-bottom: var(--space-6); }
 
-/* ---- Result page v6 (Ofir, 2026-09-07, fourth-pass redesign): section 1
-   rebuilt as compact HORIZONTAL tiles (avatar + role + one sentence) so the
-   whole team reads in seconds - the previous tall vertical .card stack is
-   gone from this screen. New .fleet-agent-tile is a small, deliberate
-   primitive (flagged for DSL review): same surface/border/radius/shadow
-   tokens as .card, but a row layout .card was never built for. Avatar disc
-   reuses .reader__av's exact recipe (S6 loading already established this
-   circular-crop language) for both the real crew photos and the generic
-   .fleet-agent-tile__av--silhouette (I.user icon, accent-on-tint) used for
-   personalized agents that have no specific character. */
-.fleet-team-group { margin-top: var(--space-6); }
+/* ---- Result page v7 (Ofir, 2026-09-07, fifth pass, section 1 only - full
+   delete + rebuild, sections 2/3 untouched): ONE team board, not two
+   sub-sections - a single flex row on desktop (personalized cluster, a
+   thin divider, base cluster), wrapping to a stacked layout with a
+   horizontal divider on mobile, still one container. No group description
+   text (label only) - the previous .fleet-team-sub line and the
+   .fleet-team-group's large top margin are both gone; density is the
+   point this pass. .fleet-agent-tile unchanged from v4 (same surface/
+   border/radius/shadow tokens as .card, row layout), avatar tightened to
+   --ctl-md (48px) and the tile's own padding trimmed for a denser board.
+   RTL: every text node here is a plain block/inline element with no
+   text-align override, so it inherits right-aligned from the page's own
+   dir="rtl" - the .fleet-team-row/.fleet-team-board flex containers only
+   center the TILES as a group (explicitly allowed - Ofir: "the container
+   itself can be centered on the page"), never the text inside a tile. */
+.fleet-team-board {
+  display: flex; flex-wrap: wrap; align-items: flex-start;
+  justify-content: center; gap: var(--space-5); margin-top: var(--space-5);
+}
+.fleet-team-cluster { flex: 1 1 320px; }
 .fleet-team-label {
   font-size: var(--text-caption); font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.08em; color: var(--pl-fg-secondary); margin-bottom: var(--space-2);
 }
-.fleet-team-sub { font-size: var(--text-sm); color: var(--pl-fg-secondary); margin-bottom: var(--space-4); max-width: 60ch; }
-.fleet-team-row {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3);
+.fleet-team-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.fleet-team-divider { width: 1px; align-self: stretch; background: var(--pl-border); flex: none; }
+@media (max-width: 719.98px) {
+  .fleet-team-divider { width: 100%; height: 1px; align-self: auto; }
 }
 .fleet-agent-tile {
-  display: flex; align-items: center; gap: var(--space-3);
-  flex: 1 1 300px; max-width: 380px;
+  display: flex; align-items: center; gap: var(--space-2);
+  flex: 1 1 260px; max-width: 320px;
   background: var(--pl-surface); border: 1px solid var(--pl-border);
-  border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md); padding: var(--space-2) var(--space-3);
   box-shadow: var(--shadow-pl-sm);
 }
 .fleet-agent-tile__av {
-  flex: none; width: var(--ctl-lg, 56px); height: var(--ctl-lg, 56px);
+  flex: none; width: var(--ctl-md, 48px); height: var(--ctl-md, 48px);
   border-radius: 999px; overflow: hidden; background: var(--pl-illo-bg);
   box-shadow: 0 0 0 1px var(--pl-border);
 }
 .fleet-agent-tile__av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 .fleet-agent-tile__av--silhouette { display: grid; place-items: center; color: var(--pl-accent); }
 .fleet-agent-tile__av--silhouette svg { width: 55%; height: 55%; }
-.fleet-agent-tile__body { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.fleet-agent-tile__body { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
 .fleet-agent-tile__body strong { font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); }
 .fleet-agent-tile__body span { font-size: var(--text-caption); color: var(--pl-fg-secondary); line-height: 1.35; }
 .fleet-broke { margin-top: var(--space-5); }

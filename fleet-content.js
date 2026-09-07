@@ -203,24 +203,28 @@ window.FLEET_CONTENT = {
     },
     loading_note: "עוד רגע. ההמלצה כבר מתגבשת.",
 
-    /* ---- S7 result (v6, 2026-09-07, fourth pass: Ofir supplied exact copy
-       as source of truth). Section 1 rebuilt as compact horizontal tiles
-       (avatar/silhouette + role + ONE sentence), no verbatim quote, no
-       broke-notice, no connector line — "וזהו, לא יותר טקסט מזה." Real crew
-       photos now (reversal of the earlier no-puppets rule, Ofir's explicit
-       call this round); personalized tiles get a generic branded silhouette,
-       never a specific/identified character. ---- */
+    /* ---- S7 result (v7, 2026-09-07, fifth pass: FULL DELETE + rebuild of
+       section 1 only - sections 2/3/footer untouched). ONE team board, not
+       two disconnected sub-sections: a single container, a thin divider
+       between the personalized cluster and the base cluster, no group
+       description lines (label only), no connector, no quote, no notice.
+       Index 0 of *_by_count is unused (1-based, matches MIN/MAX_SPECIALISTS
+       1-3) - keeps the subtitle grammatically correct at any count instead
+       of hardcoding "two." ---- */
     result_eyebrow: "הצוות שלכם",
-    team_title: "אלה הסוכנים שילוו אתכם בבניית המוצר",
-    team_sub: "הצוות מורכב מסוכנים ייחודיים לפי מה שסיפרתם, ובנוסף שלושה סוכני בסיס שאנחנו בונים בכל סדנה.",
-    personal_label: "סוכנים ייחודיים לצרכים שלכם",
-    personal_sub: "אלה התפקידים שנוספו לצוות לפי סוג המוצר, האתגרים ודרך העבודה שלכם.",
-    crew_label: "צוות הבסיס של כל מוצר",
-    crew_sub: "את שלושת אלה אנחנו בונים בכל סדנה, כי כל מוצר צריך כיוון, חוויה ויכולת ביצוע.",
+    team_title: "זה הצוות שילך איתכם לבנות",
+    team_sub_by_count: [
+      "",
+      "סוכן אחד נבחר לפי מה שסיפרתם לנו. שלושה נוספים הם צוות הבסיס שאנחנו בונים בכל סדנת מוצר.",
+      "שני סוכנים נבחרו לפי מה שסיפרתם לנו. שלושה נוספים הם צוות הבסיס שאנחנו בונים בכל סדנת מוצר.",
+      "שלושה סוכנים נבחרו לפי מה שסיפרתם לנו. שלושה נוספים הם צוות הבסיס שאנחנו בונים בכל סדנת מוצר.",
+    ],
+    personal_label: "נבחרו בשבילכם",
+    crew_label: "צוות הבסיס",
     crew: [
-      { img: "crew-strategist", role: "מנהל מוצר", line: "עוזר לחדד מה בונים, למה זה חשוב, ומה נכון לעשות קודם." },
+      { img: "crew-strategist", role: "מנהל מוצר", line: "מחדד מה בונים, למה זה חשוב ומה נכון לעשות קודם." },
       { img: "crew-designer", role: "מעצב מוצר", line: "הופך רעיונות לחוויות וממשקים ברורים, שימושיים וקונסיסטנטיים." },
-      { img: "crew-architect", role: "מוביל טכני", line: "מתרגם את מה שרוצים לבנות להחלטות טכניות ולדרך ביצוע שאפשר באמת להתקדם איתה." },
+      { img: "crew-architect", role: "מוביל טכני", line: "מתרגם את מה שרוצים לבנות להחלטות טכניות ולדרך ביצוע שאפשר להתקדם איתה." },
     ],
     lib: {
       "user-researcher": "חוקר משתמשים",
@@ -250,10 +254,10 @@ window.FLEET_CONTENT = {
        PLACEHOLDER pending Copywriter's official pass. */
     spec_lines: {
       "user-researcher": "עוזר להבין צרכים, לזהות דפוסים ולבדוק החלטות לפני שמתקדמים רחוק מדי.",
-      "copywriter": "מנסח מסכים, פעולות ומסרים כך שהחוויה תהיה ברורה, טבעית וקלה להבנה.",
+      "copywriter": "מחדד מסרים וכותב חוויות מוצר כך שהמשתמש יבין מהר יותר מה קורה ומה לעשות.",
       "design-system-lead": "שומר על עקביות בממשק ועוזר להרחיב את המוצר בלי שכל מסך יתחיל מאפס.",
       "reviewer": "עובר על מה שנבנה ומוודא שהוא תואם למה שסוכם לפני שהוא ממשיך הלאה.",
-      "chief-of-staff": "מסדר את מה שנכנס ומחזיר תמונה ברורה של מה דורש תשומת לב עכשיו.",
+      "chief-of-staff": "עוזר לעשות סדר, לרכז החלטות ולשמור שהעבודה מתקדמת בכיוון הנכון.",
       "marketing-designer": "מתרגם את המוצר לוויזואלים — לפוסט, למצגת, לעמוד — מתוך המותג שכבר יש לכם.",
       "product-analyst": "מחבר בין שימוש והתנהגות משתמשים לבין החלטות מוצר, כדי להבין מה עובד ומה כדאי לשפר.",
       "content-curator": "עוזר לארגן, לסווג ולנהל את התוכן שחי בתוך המוצר כך שיישאר שימושי ומסודר.",
@@ -405,16 +409,19 @@ window.FLEET_CONTENT = {
     loading_note: "One more moment. The recommendation is coming together.",
 
     result_eyebrow: "Your team",
-    team_title: "The agents who'll join you in building the product",
-    team_sub: "Your team is made of agents matched to what you told us, plus three base agents we build into every workshop.",
-    personal_label: "Agents matched to your needs",
-    personal_sub: "These are the roles added to your team based on your product, its challenges, and the way you work.",
-    crew_label: "The base crew of every product",
-    crew_sub: "We build these three in every workshop, because every product needs direction, experience, and the ability to execute.",
+    team_title: "This is the team that'll go build with you",
+    team_sub_by_count: [
+      "",
+      "One agent was picked based on what you told us. Three more are the base crew we build into every product workshop.",
+      "Two agents were picked based on what you told us. Three more are the base crew we build into every product workshop.",
+      "Three agents were picked based on what you told us. Three more are the base crew we build into every product workshop.",
+    ],
+    personal_label: "Picked for you",
+    crew_label: "The base crew",
     crew: [
-      { img: "crew-strategist", role: "Product manager", line: "Helps sharpen what gets built, why it matters, and what's right to do first." },
+      { img: "crew-strategist", role: "Product manager", line: "Sharpens what gets built, why it matters, and what's right to do first." },
       { img: "crew-designer", role: "Product designer", line: "Turns ideas into clear, usable, consistent experiences and interfaces." },
-      { img: "crew-architect", role: "Lead engineer", line: "Translates what you want to build into technical decisions and a way to actually make progress." },
+      { img: "crew-architect", role: "Lead engineer", line: "Translates what you want to build into technical decisions and a way to make progress." },
     ],
     lib: {
       "user-researcher": "User researcher",
@@ -442,10 +449,10 @@ window.FLEET_CONTENT = {
        Still PLACEHOLDER pending Copywriter's official pass. */
     spec_lines: {
       "user-researcher": "Helps understand needs, spot patterns, and test decisions before you go too far.",
-      "copywriter": "Writes screens, actions and messages so the experience is clear, natural, and easy to understand.",
+      "copywriter": "Sharpens messages and writes the product experience so users understand faster what's happening and what to do.",
       "design-system-lead": "Keeps the interface consistent and helps the product grow without every screen starting from zero.",
       "reviewer": "Goes over what was built and makes sure it matches what was agreed before it moves on.",
-      "chief-of-staff": "Sorts what comes in and hands you a clear picture of what needs attention now.",
+      "chief-of-staff": "Helps bring order, centers decisions, and keeps the work moving in the right direction.",
       "marketing-designer": "Turns the product into visuals — for the post, the deck, the page — from the brand you already have.",
       "product-analyst": "Connects usage and user behavior to product decisions, to understand what's working and what's worth improving.",
       "content-curator": "Helps organize, classify and manage the content living inside the product so it stays useful and tidy.",

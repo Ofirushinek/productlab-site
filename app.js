@@ -2941,18 +2941,18 @@ function fleetLoading(f) {
 }
 
 function fleetResult(f, b) {
-  /* v6 (Ofir, 2026-09-07, fourth-pass redesign): section 1 rebuilt as
-     compact HORIZONTAL tiles (avatar/silhouette + role + one sentence),
-     hero cut to eyebrow + title + one description line only — "וזהו, לא
-     יותר טקסט מזה" — no verbatim quote, no broke-notice, no connector line.
-     ⚠️ Real crew photos are back on this screen (Ofir's explicit call this
-     round, reversing the earlier no-puppets rule for the base 3 only);
-     personalized tiles get a generic silhouette (I.user), never a specific
-     character - never fully "identified." `text` is ALWAYS fixed
-     template-bank copy, keyed by specialist enum — never model output. */
+  /* v7 (Ofir, 2026-09-07, fifth pass): FULL delete + rebuild of section 1
+     ONLY - sections 2/3 below are untouched. ONE team board (not two
+     disconnected sub-sections): a single container, personalized cluster +
+     a thin divider + base cluster, label-only (no group description text).
+     Hero is eyebrow + title + one dynamic subtitle line, nothing else.
+     Real crew photos (Ofir's explicit call); personalized tiles get a
+     generic silhouette (I.user), never a specific character. `text` is
+     ALWAYS fixed template-bank copy, keyed by specialist enum — never
+     model output. */
   const readingOnly = { "crew-strategist": 1, "crew-designer": 1, "crew-architect": 1 };
   const crewAvatar = (img) => `<img src="assets/${img}${readingOnly[img] ? "-reading" : ""}.webp?v=2" alt="" loading="lazy" />`;
-  const specialistCard = (key) => `
+  const specialistTile = (key) => `
       <article class="fleet-agent-tile">
         <span class="fleet-agent-tile__av fleet-agent-tile__av--silhouette">${I.user}</span>
         <span class="fleet-agent-tile__body">
@@ -2968,27 +2968,28 @@ function fleetResult(f, b) {
           <span>${a.line}</span>
         </span>
       </article>`;
+  const teamSub = (f.team_sub_by_count && f.team_sub_by_count[b.specialists.length]) || "";
   return `
   <section class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${f.result_eyebrow}</span>
       <h1 class="section-title">${f.team_title}</h1>
-      <p class="section-lead">${f.team_sub}</p>
+      ${teamSub ? `<p class="section-lead">${teamSub}</p>` : ""}
     </div>
 
-    <div class="fleet-team-group reveal">
-      <p class="fleet-team-label">${f.personal_label}</p>
-      ${f.personal_sub ? `<p class="fleet-team-sub">${f.personal_sub}</p>` : ""}
-      <div class="fleet-team-row fleet-team-row--personal">
-        ${b.specialists.map(specialistCard).join("")}
+    <div class="fleet-team-board reveal">
+      <div class="fleet-team-cluster">
+        <p class="fleet-team-label">${f.personal_label}</p>
+        <div class="fleet-team-row">
+          ${b.specialists.map(specialistTile).join("")}
+        </div>
       </div>
-    </div>
-
-    <div class="fleet-team-group reveal">
-      <p class="fleet-team-label">${f.crew_label}</p>
-      ${f.crew_sub ? `<p class="fleet-team-sub">${f.crew_sub}</p>` : ""}
-      <div class="fleet-team-row fleet-team-row--crew">
-        ${f.crew.map(crewTile).join("")}
+      <div class="fleet-team-divider" aria-hidden="true"></div>
+      <div class="fleet-team-cluster">
+        <p class="fleet-team-label">${f.crew_label}</p>
+        <div class="fleet-team-row">
+          ${f.crew.map(crewTile).join("")}
+        </div>
       </div>
     </div>
   </div></section>
