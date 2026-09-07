@@ -1448,6 +1448,21 @@ function planStep(step, open) {
 const KIT_ENTRIES = ["START-HERE.md", "agents/", "soul/", "memory/", "skills/", "shared/"];
 
 function kitMedia(k) {
+  /* A real photo/screenshot behind a play badge (the recording tile): same
+     16:9 box as a plain poster, but with the actual frame as the background
+     instead of the flat --pl-illo-bg fill. .card__media--photo-poster only
+     re-centers the play badge (top/left/transform) — the generic
+     `.card__media > *{inset:0}` rule would otherwise pin it top-left next to
+     an explicit width/height, so it needs its own override, not just reuse
+     of .card__media--poster's place-items:center (which only positions a
+     child with no image sibling stretching the box). */
+  if (k.image && k.poster) {
+    return `
+      <div class="card__media card__media--photo-poster">
+        <img src="${k.image}" alt="${k.title}" loading="lazy" width="1440" height="810" />
+        <span class="card__media-play" aria-hidden="true">${I[k.posterIcon] || I.play}</span>
+      </div>`;
+  }
   if (k.image) {
     return `
       <div class="card__media">
