@@ -2538,10 +2538,3 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 }
 @media (prefers-reduced-motion: reduce) { .reader, .reader__bar span { animation: none; } .reader__bar span { width: 100%; opacity: 0.4; } }
 
-/* #/fleet confirm/recap screen (Ofir, 2026-09-06, live): reuses .field__label
-   (bold caption) + .login__sub (body) per row — no new component. Card is a
-   touch wider than the question card since it now holds five short Q&A pairs. */
-.fleet-card--confirm { max-width: 38rem; }
-.fleet-confirm { display: grid; gap: var(--space-4); margin: var(--space-5) 0; text-align: start; }
-.fleet-confirm__row .field__label { display: block; margin-bottom: var(--space-1); }
-.fleet-confirm__row .login__sub { margin: 0; }

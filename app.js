@@ -2844,43 +2844,6 @@ function fleetQuestion(f) {
     </form>`);
 }
 
-function fleetConfirm(f) {
-  /* Ofir, 2026-09-06, live: "instead of next going straight to generating, a
-     screen in between that shows we understand what they wrote, then a big
-     formal button that starts the analysis." Read-only recap of all 5
-     answers in screen order (f.questions), reusing existing type roles only
-     (.field__label + .login__sub) — no new component. */
-  const rows = f.questions.map((q) => {
-    let val;
-    if (q.tools) {
-      const picked = Array.isArray(FLEET.answers.tools) ? FLEET.answers.tools : [];
-      const labels = picked.map((v) => {
-        if (v === "none") return f.tools_none || "";
-        if (v === "other") return (FLEET.answers.tools_other || "").trim() || f.tools_other || "";
-        const t = (q.tools || []).find((x) => x.v === v);
-        return t ? t.l : v;
-      }).filter(Boolean);
-      val = labels.join(", ");
-    } else {
-      val = FLEET.answers[q.key] || "";
-    }
-    return `
-      <div class="fleet-confirm__row">
-        <span class="field__label">${q.title}</span>
-        <p class="login__sub">${escapeHtml(val)}</p>
-      </div>`;
-  }).join("");
-  return fleetCard(`
-    <span class="eyebrow">${f.confirm_eyebrow || ""}</span>
-    <h1 class="login__title">${f.confirm_title || ""}</h1>
-    ${f.confirm_lead ? `<p class="login__sub">${f.confirm_lead}</p>` : ""}
-    <div class="fleet-confirm">${rows}</div>
-    <div class="cta-row fleet-nav">
-      <button type="button" class="btn btn--accent btn--lg" data-fleet="confirm-submit">${f.confirm_cta || f.q_submit}</button>
-    </div>
-    ${f.confirm_back ? `<div class="cta-row"><button type="button" class="btn btn--ghost btn--sm" data-fleet="confirm-edit">${f.confirm_back}</button></div>` : ""}`, "fleet-card--confirm");
-}
-
 function fleetLoading(f) {
   /* S6 (Ofir, 2026-09-06: "make me want to wait, make me excited, my replies
      getting examined with the utmost interest, something fun with our
@@ -3087,7 +3050,6 @@ function renderFleet(lang) {
   let body = "";
   switch (FLEET.step) {
     case "q": body = fleetQuestion(f); break;
-    case "confirm": body = fleetConfirm(f); break;
     case "loading": body = fleetLoading(f); break;
     case "result": body = fleetResult(f, FLEET.result); break;
     case "gate": body = fleetGate(f); break;
@@ -3163,8 +3125,6 @@ function wireFleet(lang, f) {
     else if (act === "reset") { fleetReset(); go("entry"); }
     else if (act === "gate") { FLEET.gateMode = "normal"; go("gate"); }
     else if (act === "limited-gate") { FLEET.gateMode = "limited"; go("gate"); }
-    else if (act === "confirm-submit") { fleetSubmit(lang); }
-    else if (act === "confirm-edit") { FLEET.qi = f.questions.length - 1; go("q"); }
   }));
 
   // S6 readers: each bubble cycles its own lines, staggered so the three never
@@ -3311,7 +3271,7 @@ function wireFleet(lang, f) {
         fleetSaveAnswers();
       }
       if (FLEET.qi < f.questions.length - 1) { FLEET.qi += 1; go("q"); }
-      else { if (FLEET.stopMic) { FLEET.stopMic(); FLEET.stopMic = null; } go("confirm"); }
+      else { if (FLEET.stopMic) { FLEET.stopMic(); FLEET.stopMic = null; } fleetSubmit(lang); }
     });
   }
 

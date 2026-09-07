@@ -46,17 +46,11 @@
    the key itself is shown as a small tag, the label is the human name.
    The crew block is STATIC copy (never LLM output) per spec §2/S7.
 
-   ✅ v4 (Copywriter, 2026-09-06) - Ofir's confirm-before-generating screen.
-   New read-only recap screen (S5.5) between the last question and S6 loading:
-   confirm_eyebrow/confirm_title/confirm_lead + confirm_cta (the button that
-   actually triggers generation) + confirm_back (small edit-answer link under
-   the recap). PD renders the 5 question titles + the reader's own answers
-   (tool question shows the picked tool names) - no new content keys needed
-   for the recap rows themselves. Formal register per Ofir's own words
-   ("I need it more formal"): no cute/childish phrasing, "we" (the system)
-   speaks in confirm_title/lead the same way result_cta_sub does. confirm_cta
-   does NOT promise a working team, same honesty rule as q_submit - it says
-   we analyze and assemble the lineup (הרכב), never "your team is ready".
+   ⛔ v5 (Ofir, 2026-09-07) - the v4 confirm/recap screen (S5.5) is REMOVED.
+   Redundant: after the last question, the flow now goes straight to S6
+   loading (fleetSubmit called directly from the last question submit).
+   confirm_* keys deleted, fleetConfirm()/case "confirm"/confirm-submit/
+   confirm-edit deleted from app.js, .fleet-confirm* CSS deleted.
 
    ✅ v3 (Copywriter, 2026-09-06) - Ofir's post-survey-failure redo.
    Two changes: (1) tone on ANY failure screen is now warm/funny/human, never
@@ -141,13 +135,6 @@ window.FLEET_CONTENT = {
       { key: "q3", title: "מה אתם מוצאים את עצמכם מסבירים שוב ושוב?", hint: "כללים, החלטות, העדפות או הקשר שהייתם רוצים שהצוות כבר יזכור לבד.", ph: "מי קהל היעד, איך אנחנו כותבים, אילו רכיבים כבר קיימים ומה החלטנו לא לבנות." },
       { key: "q4", title: "איפה הצוות חייב לעצור ולשאול אתכם?", hint: "אילו החלטות או פעולות אתם לא רוצים שסוכן יבצע לבד?", ph: "לפרסם משהו ללקוחות, לשנות מחיר, למחוק מידע או לשנות החלטה שכבר אושרה." },
     ],
-
-    /* ---- S5.5 confirm (read-only recap before generating) ---- */
-    confirm_eyebrow: "לפני שממשיכים",
-    confirm_title: "קיבלנו את כל מה שצריך.",
-    confirm_lead: "אלה התשובות שלכם. אפשר לתקן לפני שממשיכים.",
-    confirm_cta: "לנתח את הצורך ולהרכיב את ההרכב",
-    confirm_back: "לתקן תשובה",
 
     /* ---- S6 loading ---- */
     loading_line: "קוראים מה שכתבתם.",
@@ -309,13 +296,6 @@ window.FLEET_CONTENT = {
       { key: "q3", title: "What do you keep explaining in every chat?", hint: "What gets forgotten between one chat and the next. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero." },
       { key: "q4", title: "What does not happen without your approval?", hint: "In your product or service. The line the team never crosses alone.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move." },
     ],
-
-    /* ---- S5.5 confirm (read-only recap before generating) ---- */
-    confirm_eyebrow: "Before we continue",
-    confirm_title: "We have everything we need.",
-    confirm_lead: "These are your answers. You can edit before we continue.",
-    confirm_cta: "Analyze the need and build the lineup",
-    confirm_back: "Edit an answer",
 
     /* ---- S6 loading ---- */
     loading_line: "Reading what you wrote.",
