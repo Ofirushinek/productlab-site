@@ -2047,6 +2047,31 @@ function fleetRoleTitle(role) {
   return String(role || "").replace(/^(the|a|an)\s+/i, "").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+// Clamps a .avatar-tip so it never runs off either side of the viewport -
+// it's centered on its avatar by default (CSS left:50% + transform), which
+// goes off-screen for any avatar near the edge of the (wrapping) row. Shifts
+// the bubble sideways and keeps the arrow (--tip-arrow-x) pointed at the
+// avatar's own center, same technique any real popover library uses.
+function fleetPositionTip(btn) {
+  const tip = btn.querySelector(".avatar-tip");
+  if (!tip) return;
+  tip.style.left = "";
+  tip.style.removeProperty("--tip-arrow-x");
+  const margin = 12;
+  const btnRect = btn.getBoundingClientRect();
+  const tipRect = tip.getBoundingClientRect();
+  const btnCenterX = btnRect.left + btnRect.width / 2;
+  const naturalLeft = btnCenterX - tipRect.width / 2;
+  const naturalRight = btnCenterX + tipRect.width / 2;
+  let shift = 0;
+  if (naturalLeft < margin) shift = margin - naturalLeft;
+  else if (naturalRight > window.innerWidth - margin) shift = (window.innerWidth - margin) - naturalRight;
+  if (shift) {
+    tip.style.left = (btnRect.width / 2 + shift) + "px";
+    tip.style.setProperty("--tip-arrow-x", (tipRect.width / 2 - shift) + "px");
+  }
+}
+
 // Bind the "Add user" form once per render (outside the re-fetched table body so
 // listeners never stack). A lead can be added with a NAME ONLY (email is optional)
 // (the migrated allowlist is id-keyed with nullable email). Adds confirmed=false.
@@ -3223,14 +3248,25 @@ function wireFleet(lang, f) {
   // elsewhere clears it. Never aria-expanded (global rule hides tooltips on
   // expanded controls). Reinstated 2026-09-07 - v2 made these decorative,
   // Ofir's v3 wants them interactive again, just moved below the CTA.
+  // v5, same day: a centered tooltip near either edge of the row was going
+  // off-screen - clamp its position (and keep the arrow pointed at the
+  // avatar) instead of clipping it, which is what an overflow:hidden patch
+  // did in the previous push and Ofir caught live (real content cut off).
+  // Positioned for EVERY avatar up front, not only on hover: even at
+  // opacity:0 an absolutely-positioned tooltip sitting at its unclamped
+  // default still counts toward the page's real scrollWidth, so the page
+  // was horizontally scrollable before anyone had hovered anything.
   const avatars = root.querySelectorAll("[data-fleet-avatar]");
   if (avatars.length) {
+    avatars.forEach((a) => fleetPositionTip(a));
+    avatars.forEach((a) => a.addEventListener("mouseenter", () => fleetPositionTip(a)));
+    avatars.forEach((a) => a.addEventListener("focus", () => fleetPositionTip(a)));
     const clear = () => avatars.forEach((a) => a.removeAttribute("data-tip-open"));
     avatars.forEach((a) => a.addEventListener("click", (e) => {
       e.stopPropagation();
       const on = a.hasAttribute("data-tip-open");
       clear();
-      if (!on) a.setAttribute("data-tip-open", "");
+      if (!on) { fleetPositionTip(a); a.setAttribute("data-tip-open", ""); }
     }));
     document.addEventListener("click", clear, { once: false });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") clear(); });

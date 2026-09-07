@@ -1549,7 +1549,13 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    above the row, not enough clearance for a 2-line bubble to pop up without
    overlapping the title text (found by hovering the live render - real
    collision, not a hypothetical). Below has the card's own bottom padding
-   to open into. */
+   to open into.
+   ⛔ v5 (Ofir, 2026-09-07, same day): a centered bubble near either end of
+   the row went off-screen; clipping it with overflow-x:hidden (the fix
+   shipped one round ago) just cut its own content off mid-sentence - wrong
+   fix, caught live. Real fix is JS (fleetPositionTip in app.js): shifts
+   `left` away from 50% only when the bubble would overflow the viewport,
+   and moves the arrow via --tip-arrow-x so it still points at the avatar. */
 .avatar-tip {
   position: absolute; left: 50%; top: calc(100% + 8px); transform: translateX(-50%) translateY(4px);
   background: var(--pl-surface); color: var(--pl-fg);
@@ -1559,7 +1565,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   transition: opacity 0.12s var(--ease-pl), transform 0.12s var(--ease-pl);
 }
 .avatar-tip::after {
-  content: ""; position: absolute; left: 50%; bottom: 100%; width: 10px; height: 10px; margin-bottom: -5px;
+  content: ""; position: absolute; left: var(--tip-arrow-x, 50%); bottom: 100%; width: 10px; height: 10px; margin-bottom: -5px;
   background: var(--pl-surface); border-left: 1px solid var(--pl-border); border-top: 1px solid var(--pl-border);
   transform: translateX(-50%) rotate(45deg);
 }
@@ -1572,7 +1578,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    Supporting content, not a second hero: .field__label (one merged title,
    v4 - a separate .ss-note sub-line was redundant, Ofir cut it), spaced off
    the CTA with margin only - a divider/border here is explicitly unwanted. */
-.fleet-agents { margin-top: var(--space-7); overflow-x: hidden; }
+.fleet-agents { margin-top: var(--space-7); }
 .fleet-agents .field__label { margin-bottom: var(--space-4); }
 
 /* ===== Student sign-in MODAL (opens from the header button) ===== */
