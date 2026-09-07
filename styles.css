@@ -2482,38 +2482,29 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 .fleet-loading__line { text-align: center; margin-bottom: var(--space-6); }
 
-/* ---- Result page v7 (Ofir, 2026-09-07, fifth pass, section 1 only - full
-   delete + rebuild, sections 2/3 untouched): ONE team board, not two
-   sub-sections - a single flex row on desktop (personalized cluster, a
-   thin divider, base cluster), wrapping to a stacked layout with a
-   horizontal divider on mobile, still one container. No group description
-   text (label only) - the previous .fleet-team-sub line and the
-   .fleet-team-group's large top margin are both gone; density is the
-   point this pass. .fleet-agent-tile unchanged from v4 (same surface/
-   border/radius/shadow tokens as .card, row layout), avatar tightened to
-   --ctl-md (48px) and the tile's own padding trimmed for a denser board.
+/* ---- Result page v8 (Ofir, 2026-09-07, sixth pass, section 1 only - the
+   two clusters were side-by-side columns on desktop, unbalanced with a
+   2-vs-3 tile count; now ALWAYS stacked, same hierarchy as mobile at every
+   width): personalized cluster row, a thin horizontal divider, base
+   cluster row. No more row/column breakpoint switch - one layout. Tiles
+   within a cluster still wrap into a row on wide screens, one-per-row on
+   narrow ones (.fleet-agent-tile's own flex-basis handles that, unchanged).
    RTL: every text node here is a plain block/inline element with no
    text-align override, so it inherits right-aligned from the page's own
-   dir="rtl" - the .fleet-team-row/.fleet-team-board flex containers only
-   center the TILES as a group (explicitly allowed - Ofir: "the container
-   itself can be centered on the page"), never the text inside a tile. */
+   dir="rtl" - the .fleet-team-row's flex-wrap only wraps the TILES as a
+   group, never centers or reflows the text inside one. */
 .fleet-team-board {
-  display: flex; flex-wrap: wrap; align-items: flex-start;
-  justify-content: center; gap: var(--space-5); margin-top: var(--space-5);
+  display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-4);
 }
-.fleet-team-cluster { flex: 1 1 320px; }
 .fleet-team-label {
   font-size: var(--text-caption); font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.08em; color: var(--pl-fg-secondary); margin-bottom: var(--space-2);
 }
 .fleet-team-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.fleet-team-divider { width: 1px; align-self: stretch; background: var(--pl-border); flex: none; }
-@media (max-width: 719.98px) {
-  .fleet-team-divider { width: 100%; height: 1px; align-self: auto; }
-}
+.fleet-team-divider { width: 100%; height: 1px; background: var(--pl-border); }
 .fleet-agent-tile {
   display: flex; align-items: center; gap: var(--space-2);
-  flex: 1 1 260px; max-width: 320px;
+  flex: 1 1 260px; max-width: 340px;
   background: var(--pl-surface); border: 1px solid var(--pl-border);
   border-radius: var(--radius-md); padding: var(--space-2) var(--space-3);
   box-shadow: var(--shadow-pl-sm);
