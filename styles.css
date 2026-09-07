@@ -2457,23 +2457,6 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    on S7/S9 (same mechanism as #/kit, which renders none). */
 .footer--compact { padding-block: var(--space-5); margin-top: 0; }
 
-/* EXTEND .field — label row with one action at the inline-end (DSL, 2026-09-06).
-   The action is a sibling of the label, never nested inside it. First use:
-   the #/fleet question screens' voice button. */
-.field__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-
-/* EXTEND .chip — a pressable chip (aria-pressed), e.g. voice input. State model
-   is split on purpose: .chip--choice = radio/aria-checked, .chip--toggle =
-   aria-pressed. Pressed = the accent-tint pill; the .dot is the live signal. */
-.chip--toggle svg { width: 18px; height: 18px; flex: none; }
-.chip--toggle .dot { display: none; }
-.chip--toggle[aria-pressed="true"] {
-  background: color-mix(in srgb, var(--pl-accent) 12%, var(--pl-surface));
-  border-color: var(--pl-accent); color: var(--pl-accent);
-}
-.chip--toggle[aria-pressed="true"] .dot { display: block; animation: skel 1.4s var(--ease-pl) infinite; }
-@media (prefers-reduced-motion: reduce) { .chip--toggle[aria-pressed="true"] .dot { animation: none; } }
-
 /* Question / entry titles: never a one-word orphan on the second line (Ofir,
    2026-09-06: "why does the title drop a line when only one word is beneath?
    make the two rows almost equal"). `text-wrap: balance` is exactly that rule

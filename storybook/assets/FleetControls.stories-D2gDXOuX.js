@@ -47,25 +47,27 @@ import{t as e}from"./rolldown-runtime-Dh6celcD.js";var t,n,r,i,a,o,s,c;function 
   <p class="ss-note" style="margin-top:var(--space-5);text-align:start;max-width:34rem">
     18px, flex:none, currentColor only - brand colors never enter the palette. No mark exists for most
     tools yet, so .chip__logo--initial (the .quote__av recipe at chip scale) stands in: a disc with the
-    tool's first letter, --pl-bg-alt at rest, accent-tint when the chip is selected. Same 18px as the mic
-    icon in .chip--toggle. This is q5's multi-select group - role="checkbox" in a role="group", not radio.
+    tool's first letter, --pl-bg-alt at rest, accent-tint when the chip is selected. Same 18px as .mic-btn's
+    icon. This is q5's multi-select group - role="checkbox" in a role="group", not radio.
   </p>`,o=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8"/></svg>`,s=()=>`
   <div class="field" style="max-width:34rem" dir="rtl">
-    <div class="field__head">
-      <label class="field__label" for="sb-q">התשובה שלכם</label>
-      <button type="button" class="chip chip--toggle" aria-pressed="false" aria-label="לדבר במקום להקליד"><span class="dot"></span>${o}<span>או פשוט לדבר</span></button>
+    <textarea class="reg__note" id="mic-q" rows="4" placeholder="…">אפליקציה לניהול תורים לקליניקות</textarea>
+    <div class="field__hint field__hint--mic">
+      <span class="ltr-iso" dir="ltr">37/300</span>
+      <button type="button" class="mic-btn" aria-pressed="false" aria-label="לדבר במקום להקליד"><span class="dot"></span>${o}</button>
     </div>
-    <textarea class="reg__note" id="sb-q" rows="3" placeholder="…"></textarea>
   </div>
   <div class="field" style="max-width:34rem;margin-top:var(--space-5)" dir="rtl">
-    <div class="field__head">
-      <label class="field__label" for="sb-q2">התשובה שלכם</label>
-      <button type="button" class="chip chip--toggle" aria-pressed="true" aria-label="לדבר במקום להקליד"><span class="dot"></span>${o}<span>מקשיבים. לעצור</span></button>
+    <textarea class="reg__note" id="mic-q2" rows="4" placeholder="…"></textarea>
+    <div class="field__hint field__hint--mic">
+      <span class="ltr-iso" dir="ltr">0/300</span>
+      <button type="button" class="mic-btn" aria-pressed="true" aria-label="לדבר במקום להקליד"><span class="dot"></span>${o}</button>
     </div>
-    <textarea class="reg__note" id="sb-q2" rows="3">אפליקציה לניהול תורים לקליניקות</textarea>
   </div>
   <p class="ss-note" style="margin-top:var(--space-5);text-align:start;max-width:34rem">
-    .chip--toggle = aria-pressed (a pressable chip); .chip--choice = radio/aria-checked. Same interactive base by selector.
-    Pressed = accent 12% tint, accent border + text; the .dot is the live signal (skel opacity pulse, none under reduced motion).
-    .field__head = label row with one end-aligned action, the action is a sibling of the label. Icon 18px, stroke 2. Voice input on #/fleet questions.
-  </p>`,c=[`FieldHint`,`ChipChoice`,`Skeleton`,`ChipLogo`,`ChipToggle`]})))()}l();export{r as ChipChoice,a as ChipLogo,s as ChipToggle,n as FieldHint,i as Skeleton,c as __namedExportsOrder,t as default};
+    Voice input on every #/fleet question. Same row as the character counter, below the field - not a
+    label-row control (that was an earlier design, since retired). .field__hint--mic forces
+    direction:ltr so the counter sits at the physical bottom-left and the mic at the physical
+    bottom-right in EITHER language. 28px round, --pl-fg-secondary at rest, accent when
+    aria-pressed="true" - the .dot (accent, skel pulse, none under reduced-motion) is the live signal.
+  </p>`,c=[`FieldHint`,`ChipChoice`,`Skeleton`,`ChipLogo`,`MicButton`]})))()}l();export{r as ChipChoice,a as ChipLogo,n as FieldHint,s as MicButton,i as Skeleton,c as __namedExportsOrder,t as default};
