@@ -27,9 +27,18 @@
   --pl-grid-dot: rgb(10 10 10 / 0.05);
   --pl-illo-bg: #ece8f5;
 
+  /* Brand cream — the logo spec's brand ground. Was defined only in the intro
+     overlay's own stylesheet (assets/intro.css); promoted into the core
+     palette (Ofir, 2026-09-07) since it's also the full background of a real
+     page (#/kit). intro.css now points its own --pl-intro-cream at this. */
+  --pl-brand-cream: #FBEAD9;
+
   /* tooltip — dark bubble for icon-only controls (design-system token) */
   --pl-tooltip-bg: #1a1a1a;
   --pl-tooltip-fg: #ffffff;
+
+  /* modal/overlay scrim — was a raw rgb() literal with no token (DSL, 2026-09-07) */
+  --pl-scrim: rgb(10 8 6 / 0.55);
 
   /* crew palette — the felt-puppet character colors, for playful accents */
   --pl-crew-orange: #e0763c;
@@ -281,13 +290,6 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .btn--primary { background: var(--pl-fg); color: var(--pl-bg); box-shadow: var(--shadow-pl-md); }
 .btn--primary:hover { opacity: 0.9; }
 
-.btn--wa {
-  background: var(--pl-surface); color: var(--pl-fg);
-  border-color: var(--pl-border-strong); box-shadow: var(--shadow-pl-sm);
-}
-.btn--wa:hover { background: var(--pl-elevated); border-color: var(--pl-fg); }
-.btn--wa svg { color: #25D366; }
-
 .btn--sm { height: var(--ctl-sm); min-width: var(--ctl-sm); padding-inline: var(--space-4); font-size: var(--text-sm); }
 .btn--sm svg { width: var(--icon-sm); height: var(--icon-sm); }
 .btn--lg { height: var(--ctl-lg); min-width: var(--ctl-lg); padding-inline: var(--space-6); font-size: var(--text-body-lg); }
@@ -308,7 +310,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    control (roster row delete), or use it alone for a solid destructive CTA
    (the delete-confirm dialog's "Delete" button). DSL-confirmed, 2026-09-03 -
    reuses the existing --pl-stage-dropped red token, no new color. */
-.btn--danger { background: var(--pl-stage-dropped); color: #fff; box-shadow: var(--shadow-pl-md); }
+.btn--danger { background: var(--pl-stage-dropped); color: var(--pl-accent-fg); box-shadow: var(--shadow-pl-md); }
 .btn--danger:hover { opacity: 0.9; }
 .btn--ghost.btn--danger { background: transparent; color: var(--pl-stage-dropped); border-color: var(--pl-stage-dropped); }
 .btn--ghost.btn--danger:hover { background: color-mix(in srgb, var(--pl-stage-dropped) 12%, transparent); border-color: var(--pl-stage-dropped); }
@@ -602,7 +604,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
   transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl); }
 .tilecard:hover { border-color: var(--pl-border-strong); box-shadow: var(--shadow-pl-md); }
-.tilecard__illo { height: 13.5rem; overflow: hidden; background: #eac49a; }
+.tilecard__illo { height: 13.5rem; overflow: hidden; background: var(--pl-illo-bg); }
 .tilecard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .tilecard__body { padding: 1.6rem; flex: 1; }
 .tilecard__body h3 { font-size: var(--text-h3); margin-bottom: 0.5rem; }
@@ -680,17 +682,24 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .faq details[open] summary .chevron { transform: rotate(180deg); }
 .faq__a { padding: 0 1.4rem 1.25rem; color: var(--pl-fg-body); font-weight: 500; }
 
-/* CTA band */
-.ctaband { background: var(--pl-fg); color: var(--pl-bg); border-radius: var(--radius-2xl);
+/* CTA band — the one place the system inverts to an ink surface. DSL, 2026-09-07:
+   was 8 raw white/opacity literals with no token anywhere; named as a local
+   on-ink scope instead of 8 separate global tokens (this inversion has exactly
+   one caller). Same values, now documented — any future inverted surface reuses
+   these four instead of re-deriving white/opacity by hand. */
+.ctaband {
+  --on-ink-fg: #ffffff;
+  --on-ink-fg-muted: rgb(255 255 255 / 0.78);
+  --on-ink-chip-bg: rgb(255 255 255 / 0.10);
+  --on-ink-chip-border: rgb(255 255 255 / 0.24);
+  background: var(--pl-fg); color: var(--pl-bg); border-radius: var(--radius-2xl);
   padding: clamp(2rem, 5vw, 3.25rem); text-align: center;
   box-shadow: var(--shadow-pl-lg); position: relative; overflow: hidden; }
-.ctaband h2 { color: #ffffff; font-size: var(--text-h1); max-width: 22ch; margin-inline: auto; }
-.ctaband p { color: rgb(255 255 255 / 0.78); margin-top: 0.85rem; font-weight: 500; max-width: 52ch; margin-inline: auto; }
+.ctaband h2 { color: var(--on-ink-fg); font-size: var(--text-h1); max-width: 22ch; margin-inline: auto; }
+.ctaband p { color: var(--on-ink-fg-muted); margin-top: 0.85rem; font-weight: 500; max-width: 52ch; margin-inline: auto; }
 .ctaband .cta-row { justify-content: center; margin-top: 1.75rem; }
-.ctaband .btn--primary { background: #ffffff; color: var(--pl-fg); }
-.ctaband .btn--wa { background: transparent; color: #ffffff; border-color: rgb(255 255 255 / 0.4); }
-.ctaband .btn--wa:hover { background: rgb(255 255 255 / 0.08); border-color: #ffffff; }
-.ctaband .chip { background: rgb(255 255 255 / 0.10); border-color: rgb(255 255 255 / 0.24); color: #ffffff; }
+.ctaband .btn--primary { background: var(--on-ink-fg); color: var(--pl-fg); }
+.ctaband .chip { background: var(--on-ink-chip-bg); border-color: var(--on-ink-chip-border); color: var(--on-ink-fg); }
 
 .ctaband--final { }
 
@@ -850,14 +859,14 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 
 /* ---- The final #/kit direction Ofir picked: character + text + button sit
-   directly on the page's own cream background (var(--pl-intro-cream) — same
+   directly on the page's own cream background (var(--pl-brand-cream) — same
    one the loader curtain uses), no card, no boundary, edge to edge.
    The illustration itself (kit-hero-dean.webp/.png) now carries a real alpha
    channel — no fill color of its own at all (Marketing Designer's matte
    pass, 2026-08-31) — so there is nothing left to color-match; it sits on
    whatever this page's background is. */
 .kitfull {
-  background: var(--pl-intro-cream, #FBEAD9);
+  background: var(--pl-brand-cream);
   padding-block: clamp(0.75rem, 3vw, 1.5rem);
   text-align: center;
   justify-content: center;
@@ -1487,7 +1496,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 @media (min-width: 720px) { .team__agents { grid-template-columns: repeat(3, 1fr); } }
 .agentcard { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm); }
-.agentcard__illo { height: 13rem; overflow: hidden; background: #eac49a; }
+.agentcard__illo { height: 13rem; overflow: hidden; background: var(--pl-illo-bg); }
 .agentcard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 /* mobile: cards go full-width, so the fixed 10rem strip crops the character to
    just the face. Give the illo more height to reveal the hands/props it's holding. */
@@ -1595,7 +1604,7 @@ body.modal-open { overflow: hidden; }
   display: grid; grid-template-rows: minmax(1.25rem, 1fr) auto minmax(1.25rem, 1fr);
   justify-items: center; padding-inline: 1.25rem; }
 .modal[hidden] { display: none; }
-.modal__overlay { position: fixed; inset: 0; background: rgb(10 8 6 / 0.55); backdrop-filter: blur(2px); }
+.modal__overlay { position: fixed; inset: 0; background: var(--pl-scrim); backdrop-filter: blur(2px); }
 .modal__card { grid-row: 2; position: relative; z-index: 1; width: 100%; max-width: 27rem; text-align: center;
   background: var(--pl-surface); border: 1px solid var(--pl-border); border-radius: var(--radius-xl);
   box-shadow: var(--shadow-pl-lg); padding: clamp(1.75rem, 5vw, 2.5rem);
@@ -1740,9 +1749,9 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 @media (min-width:761px){
   .hero__cta .btn{ height:clamp(2rem, 5.4cqh, 3.5rem); font-size:clamp(0.75rem, 2.2cqh, 1.125rem); }
 }
-.btn--accent{ background:var(--pl-accent); color:#fff; border-color:transparent; box-shadow:var(--shadow-pl-md); }
+.btn--accent{ background:var(--pl-accent); color:var(--pl-accent-fg); border-color:transparent; box-shadow:var(--shadow-pl-md); }
 .btn--accent:hover{ background:var(--pl-accent-hover); }
-.btn--accent svg{ color:#fff; width:1em; height:1em; }
+.btn--accent svg{ color:var(--pl-accent-fg); width:1em; height:1em; }
 
 /* Sold-out/closed CTA — visually present, never clickable. Used on a past
    cohort's strip once registration is closed (2026-08-31). */
@@ -2506,23 +2515,6 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    render: compact on S0 (public landing, legal links), absent mid-task, full
    on S7/S9 (same mechanism as #/kit, which renders none). */
 .footer--compact { padding-block: var(--space-5); margin-top: 0; }
-
-/* EXTEND .field — label row with one action at the inline-end (DSL, 2026-09-06).
-   The action is a sibling of the label, never nested inside it. First use:
-   the #/fleet question screens' voice button. */
-.field__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-
-/* EXTEND .chip — a pressable chip (aria-pressed), e.g. voice input. State model
-   is split on purpose: .chip--choice = radio/aria-checked, .chip--toggle =
-   aria-pressed. Pressed = the accent-tint pill; the .dot is the live signal. */
-.chip--toggle svg { width: 18px; height: 18px; flex: none; }
-.chip--toggle .dot { display: none; }
-.chip--toggle[aria-pressed="true"] {
-  background: color-mix(in srgb, var(--pl-accent) 12%, var(--pl-surface));
-  border-color: var(--pl-accent); color: var(--pl-accent);
-}
-.chip--toggle[aria-pressed="true"] .dot { display: block; animation: skel 1.4s var(--ease-pl) infinite; }
-@media (prefers-reduced-motion: reduce) { .chip--toggle[aria-pressed="true"] .dot { animation: none; } }
 
 /* Question / entry titles: never a one-word orphan on the second line (Ofir,
    2026-09-06: "why does the title drop a line when only one word is beneath?
