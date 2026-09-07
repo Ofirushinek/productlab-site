@@ -4,13 +4,6 @@
  * BADGE (tinted-purple pill, reuses the system accent-12% recipe), the role
  * TITLE beneath it, and the description. The badge/title split replaced the old
  * single "Archetype - Role" line (which wrapped inconsistently). 2026-08-12.
- *
- * DSL, 2026-09-07 (per Marketing Designer, consulted after Ofir flagged stale
- * Storybook visuals): this story pointed at agent-pd.png/agent-cpo.png/
- * agent-cto.png, the cast from before the 2026-08-22 redesign. Zero references
- * left in app.js or content.js; deleted the orphaned files from assets/. Live
- * markup uses crew-designer/crew-strategist/crew-architect.webp - swapped in,
- * copy refreshed to the live full bios (app.js's own were trimmed here before).
  */
 export default {
   title: "Components/AgentCard",
@@ -18,7 +11,7 @@ export default {
 
 const card = ({ img, tag, role, b }) =>
   `<div class="agentcard">
-     <div class="agentcard__illo"><img src="assets/${img}.webp?v=2" alt="" /></div>
+     <div class="agentcard__illo"><img src="assets/${img}.png?v=3" alt="" /></div>
      <div class="agentcard__body">
        <span class="agentcard__tag">${tag}</span>
        <div class="agentcard__role">${role}</div>
@@ -27,15 +20,15 @@ const card = ({ img, tag, role, b }) =>
    </div>`;
 
 const HE = [
-  { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
-  { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
-  { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
+  { img: "agent-pd", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System ושומר על עקביות." },
+  { img: "agent-cpo", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף ולאתגר הנחות יסוד." },
+  { img: "agent-cto", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה ולוודא שכל פתרון ניתן למימוש." },
 ];
 
 const EN = [
-  { img: "crew-designer", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
-  { img: "crew-strategist", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
-  { img: "crew-architect", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
+  { img: "agent-pd", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System and keeps things consistent." },
+  { img: "agent-cpo", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He sharpens ideas, prioritizes, and challenges assumptions." },
+  { img: "agent-cto", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach and keep every solution buildable." },
 ];
 
 const grid = (items, dir) =>

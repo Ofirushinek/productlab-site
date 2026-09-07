@@ -232,13 +232,59 @@ window.FLEET_CONTENT = {
       "chief-of-staff": "ראש המטה",
       "marketing-designer": "מעצב השיווק",
     },
+    /* ---- v2 (2026-09-07): fixed template bank, keyed by specialist enum. ----
+       PLACEHOLDER pending Copywriter's official v2 pass - built from core.ts's
+       own canonical LIBRARY does/reads/changes/never text (already closed-set,
+       already-reviewed archetype copy, never composed per-visitor), NOT lorem.
+       Every visitor who gets a given key sees the SAME text - acceptance §6. */
+    spec_quote_lead: "ובזה שכתבתם:",
+    spec_bank: {
+      "user-researcher": {
+        does: "מקשיב למה שהמשתמשים אמרו ומחזיר לכם ממצאים עם ציטוטים, לא דעות",
+        reads_vs_changes: "קורא הקלטות, תשובות לשאלונים, המוח המשותף. משנה רק את קובץ הממצאים והדמויות",
+        never_closes_alone: "לא מחליט מה לבנות ולא משנה עיצוב — מביא ראיות, אתם מכריעים",
+      },
+      "copywriter": {
+        does: "כותב את המילים — פוסטים, עמודים, הודעות — בקול שלכם ולא בקול של הכלי",
+        reads_vs_changes: "קורא את המותג, הדוגמאות שלכם, המוח המשותף. משנה רק קבצי טקסט וטיוטות",
+        never_closes_alone: "לא מפרסם בשמכם ולא משנה עיצוב — כל מילה עוברת אצלכם לפני שהיא יוצאת",
+      },
+      "design-system-lead": {
+        does: "שומר על ספריית הקומפוננטות והטוקנים תקינה ומייצר קומפוננטות חדשות לפי הכללים הקיימים",
+        reads_vs_changes: "קורא את הספרייה, הפיגמה, המסכים שפותחו. משנה רק את קבצי הספרייה והטוקנים",
+        never_closes_alone: "לא מוציא מסך לפיתוח ולא מאשר הנדאוף בלי האישור שלכם",
+      },
+      "reviewer": {
+        does: "עובר על מה שאחרים בנו לפני שזה מגיע אליכם ומדווח מה חסר, מה סוטה ומה מוכן",
+        reads_vs_changes: "קורא כל מה שהצוות הפיק, המוח המשותף. משנה רק את דוח הבדיקה",
+        never_closes_alone: "לא מתקן בעצמו ולא מחליט — מסמן, אתם מכריעים",
+      },
+      "chief-of-staff": {
+        does: "ממיין את מה שנכנס, מסדר לפי מה שהוחלט, ומחזיר לכם רשימה קצרה של מה שדורש אתכם",
+        reads_vs_changes: "קורא הכול — הודעות, פתקים, המוח המשותף, הזיכרון של כל הצוות. משנה רק את סדר העדיפויות במוח המשותף",
+        never_closes_alone: "לא עונה בשמכם ולא מקבל החלטה — מכין, אתם מחליטים",
+      },
+      "marketing-designer": {
+        does: "מפיק את הוויזואל — לפוסט, למצגת, לעמוד — מתוך המותג שכבר יש לכם",
+        reads_vs_changes: "קורא את המותג, ספריית התמונות שלכם, המוח המשותף. משנה רק קבצי תמונה ומצגת",
+        never_closes_alone: "לא מפרסם ולא משנה את המותג עצמו — כל ויזואל עובר אצלכם",
+      },
+    },
     brain_eyebrow: "איך הם זוכרים",
     brain_title: "קובץ אחד שכולם קוראים לפני שהם מתחילים.",
     brain_card_title: "המוח המשותף",
     brain_not_label: "מה לא נכנס לשם:",
+    /* v2: shared_brain_line + not_in_brain are now FIXED copy, not model output. */
+    brain_line: "כל סוכן שמצטרף כותב למוח המשותף מה הוחלט ומה נגנז, והבא בתור קורא את זה לפני שהוא נוגע במשהו — אף החלטה לא מתקבלת פעמיים.",
+    brain_not: "טיוטה שעוד לא הסתכלתם עליה לא נכנסת לשם — רק מה שהוחלט.",
     memory_title: "זיכרון לכל סוכן",
     memory_line: "קובץ טקסט אחד לכל סוכן, עם מה שהוא כבר יודע עליכם. הוא קורא אותו כשהוא מתחיל, וכותב אליו כשהוא מסיים. ככה ביום שני הוא זוכר מה הוחלט ביום חמישי.",
     broke_title: "למה זה נשבר בפעם הקודמת",
+    /* v2: broke_because is now an enum (no_memory|no_boundary), fixed 2 lines. */
+    broke_bank: {
+      no_memory: "לא היה לו זיכרון בין שיחות. בכל צ'אט חדש הוא התחיל מאפס.",
+      no_boundary: "לא היה כתוב לו מה אסור לו לשנות בלי האישור שלכם. בפעם השלישית הוא החליט לבד.",
+    },
     leave_eyebrow: "מה יוצאים איתו מהסדנה",
     leave_title: "סדנה של ערב אחד, יום חמישי 15 באוקטובר, ₪600. בסוף הערב, זה מה שיש לכם.",
     leave: [
@@ -392,13 +438,57 @@ window.FLEET_CONTENT = {
       "chief-of-staff": "The chief of staff",
       "marketing-designer": "The marketing designer",
     },
+    /* ---- v2 (2026-09-07): fixed template bank, keyed by specialist enum. ----
+       PLACEHOLDER pending Copywriter's official v2 pass - see the HE block's
+       comment. */
+    spec_quote_lead: "And in your own words:",
+    spec_bank: {
+      "user-researcher": {
+        does: "Listens to what users actually said and hands you findings with quotes, not opinions",
+        reads_vs_changes: "Reads recordings, survey answers, the shared brain. Changes only the findings and persona files",
+        never_closes_alone: "Never decides what to build and never touches design — brings evidence, you rule",
+      },
+      "copywriter": {
+        does: "Writes the words — posts, pages, messages — in your voice, not the tool's",
+        reads_vs_changes: "Reads the brand, your own examples, the shared brain. Changes only text files and drafts",
+        never_closes_alone: "Never publishes in your name and never changes design — every word passes you first",
+      },
+      "design-system-lead": {
+        does: "Keeps the component library and tokens sound and builds new components by the existing rules",
+        reads_vs_changes: "Reads the library, Figma, the screens that were built. Changes only the library and token files",
+        never_closes_alone: "Never ships a screen to dev and never signs off a handoff without your approval",
+      },
+      "reviewer": {
+        does: "Checks what others built before it reaches you and reports what is missing, off, or ready",
+        reads_vs_changes: "Reads everything the team produced, the shared brain. Changes only the review report",
+        never_closes_alone: "Never fixes and never decides — flags, you rule",
+      },
+      "chief-of-staff": {
+        does: "Triages what comes in, orders it by what was decided, and hands you a short list of what needs you",
+        reads_vs_changes: "Reads everything — messages, notes, the shared brain, every teammate's memory. Changes only the priorities in the shared brain",
+        never_closes_alone: "Never answers in your name and never makes the call — prepares, you decide",
+      },
+      "marketing-designer": {
+        does: "Produces the visuals — for the post, the deck, the page — from the brand you already have",
+        reads_vs_changes: "Reads the brand, your image library, the shared brain. Changes only image and deck files",
+        never_closes_alone: "Never publishes and never changes the brand itself — every visual passes you",
+      },
+    },
     brain_eyebrow: "How they remember",
     brain_title: "One file everyone reads before they start.",
     brain_card_title: "The shared brain",
     brain_not_label: "What does not go in:",
+    /* v2: shared_brain_line + not_in_brain are now FIXED copy, not model output. */
+    brain_line: "Every agent that joins writes to the shared brain what was decided and what was shelved, and the next one reads it before touching anything — no decision gets made twice.",
+    brain_not: "A draft you have not looked at yet does not go in. Only what was decided.",
     memory_title: "A memory for each agent",
     memory_line: "One text file per agent, holding what it already knows about you. It reads it when it starts, and writes to it when it finishes. That is how Monday remembers what was decided on Thursday.",
     broke_title: "Why it broke last time",
+    /* v2: broke_because is now an enum (no_memory|no_boundary), fixed 2 lines. */
+    broke_bank: {
+      no_memory: "It had no memory between chats. Every new one started from zero.",
+      no_boundary: "Nothing told it what it may not change without your approval. The third time, it decided alone.",
+    },
     leave_eyebrow: "What you leave the workshop with",
     leave_title: "A one-evening workshop, Thursday 15 October, ₪600. By the end of the evening, this is what you have.",
     leave: [

@@ -2542,13 +2542,28 @@ function wireKitAutoDownload() {
        existing register modal) reused whole on the confirmation.
      RUNG 2 (compose): .moment-card (every single-moment screen), .grid--2 +
        .card + .card__ico (specialists, shared brain, memory), .pchecklist
-       (the three lines per specialist), .pnote (why / not-in-brain), .prep-note
+       (the three lines per specialist), .pnote (not-in-brain), .prep-note
        (why-it-broke), .deliv (what you leave with), .ctaband (result CTA),
        .ss-badge (start-with), .agentcard__tag (library key), .ss-note (meta).
      RUNG 3 (extend): .field__hint (char counter under a field),
        .chip--choice (a selectable .chip, role=radio + aria-checked). See styles.css.
      RUNG 4 (new): .skel — a loading skeleton line. The site had no loading
        primitive except the roster's dashed text box. Six lines, tokens only.
+
+   v2 (2026-09-07, spec fleet-blueprint-spec-2026-09-07-v2.md): the model's
+   output shrank to a pure classifier (specialists[]/start_with/broke_because
+   enums, zero free text). ZERO new components for this change — same
+   .pchecklist/.card/.pnote/.section-lead-q shapes, just re-sourced: the three
+   specialist lines now read fleet-content.js's fixed `spec_bank[key]`
+   (Copywriter template bank, placeholder pending their pass) instead of the
+   model response; the per-specialist "why" .pnote is retired (that field left
+   the schema); shared_brain_line/not_in_brain are now fixed `brain_line`/
+   `brain_not`; broke_because is an enum resolved via `broke_bank`. The ONLY
+   free text left on the screen is two verbatim quotes pulled straight from
+   FLEET.answers (q1, and q2/q3/q4 fallback) — see fleetExcerpt/
+   fleetQuoteSource. Design System Lead consult attempted, Task disabled this
+   session — self-audited against component-log.md's own CONFIRMED entries
+   for every class reused here; flag for their real sign-off next session.
 
    STATE MACHINE (client only, no login):
      entry -> q (qi 0..4) -> loading -> result -> gate -> done
@@ -2608,12 +2623,14 @@ const FLEET_LOGOS = {
 };
 let FLEET = { step: "entry", qi: 0, answers: {}, result: null, blueprintId: null, gateMode: "normal", busy: false };
 
-/* Mock responses — one per language, shaped EXACTLY like the CTO's §6 mock in
-   `fleet-blueprint-api-2026-09-05.md` (the full `POST /` 200 body: ok,
-   blueprint_id, lang, roster, blueprint, meta). HE is the CTO's object verbatim
-   (cohort-#1 case 1: `product_line` is a VERBATIM excerpt of that q1, typos
-   included); EN is the same object with English strings + EN roster labels.
-   Register: plural reader, masculine agent verbs (Copywriter ruling 2026-09-05). */
+/* Mock responses — one per language. v2 (spec fleet-blueprint-spec-2026-09-07-
+   v2.md §3): the model's ONLY job is classification, so `blueprint` is now
+   just `{ specialists:[{key}], start_with, broke_because }` — no product_line,
+   no why_from_her_words, no shared_brain_line, no not_in_brain, no per-
+   specialist prose. All display text for those now comes from fleet-
+   content.js's fixed template bank (spec_bank/brain_line/brain_not/
+   broke_bank) or straight from her own typed answers (the two verbatim
+   quotes) — see fleetResult(). */
 const FLEET_MOCK = {
   he: {
     ok: true,
@@ -2626,25 +2643,11 @@ const FLEET_MOCK = {
       crew: ["product-manager", "product-designer", "technical-lead"],
     },
     blueprint: {
-      product_line: "כלי מקיף למשפיעניות שבאמצעותו הן יכולות לעשות הרבה משימות ודברים שלוקחים מהן כיום זמן ואנרגיה",
-      specialists: [
-        { key: "chief-of-staff",
-          does: "אוסף את הרעיונות והטיוטות שהתחלתם בצ'אטים, בנוטס ובנושן, מסדר אותם לפי נושא ומחזיר לכם רשימה קצרה של מה שדורש אתכם",
-          reads_vs_changes: "קורא את כל הפתקים והטיוטות שלכם ואת המוח המשותף. משנה רק את סדר העדיפויות במוח המשותף",
-          never_closes_alone: "לא מוחק טיוטה ולא מחליט מה נגנז — מסדר, אתם מחליטים",
-          why_from_her_words: "כתבתם \"יש לי המון רעיונות שהתחלתי לעבוד עליהם בצ'אטים שונים\"" },
-        { key: "copywriter",
-          does: "כותב את הפוסטים והתסריטים לסרטונים של המשפיעניות מתוך ספריית הוויז'ואלס הקיימת, בקול של כל אחת",
-          reads_vs_changes: "קורא את ספריית הוויז'ואלס והגאנט החודשי. משנה רק קבצי טקסט וטיוטות",
-          never_closes_alone: "לא מפרסם פוסט בשם אף משפיענית — כל טקסט עובר אצלכם קודם",
-          why_from_her_words: "כתבתם \"יצירת תוכן ותסריטים לסרטונים\"" },
-      ],
+      specialists: ["chief-of-staff", "copywriter"],
       start_with: "chief-of-staff",
-      shared_brain_line: "ראש המטה כותב לשם איזה רעיון מהצ'אטים כבר סודר ומה נגנז, והקופירייטר קורא את זה לפני שהוא נוגע בתסריט — אף רעיון לא מתחיל מאפס פעם שנייה",
-      not_in_brain: "טיוטה שעוד לא הסתכלתם עליה לא נכנסת לשם — רק מה שהוחלט",
       broke_because: null,
     },
-    meta: { model: "claude-sonnet-5", attempts: 1, input_tokens: 3000, output_tokens: 600, cost_usd: 0.012 },
+    meta: { model: "claude-sonnet-5", attempts: 1, input_tokens: 800, output_tokens: 60, cost_usd: 0.003 },
   },
   en: {
     ok: true,
@@ -2657,30 +2660,12 @@ const FLEET_MOCK = {
       crew: ["product-manager", "product-designer", "technical-lead"],
     },
     blueprint: {
-      product_line: "a tool for influencers that takes on the tasks that eat their time and energy",
-      specialists: [
-        { key: "chief-of-staff",
-          does: "Gathers the ideas and drafts you started across chats, Notes and Notion, sorts them by topic and hands you back a short list of what needs you",
-          reads_vs_changes: "Reads all your notes and drafts and the shared brain. Changes only the priority order in the shared brain",
-          never_closes_alone: "Never deletes a draft and never decides what gets shelved. It sorts, you decide",
-          why_from_her_words: "You wrote \"so many ideas I started working on in different chats\"" },
-        { key: "copywriter",
-          does: "Writes the posts and video scripts for the influencers out of the existing visuals library, in each one's own voice",
-          reads_vs_changes: "Reads the visuals library and the monthly plan. Changes only text files and drafts",
-          never_closes_alone: "Never publishes a post in any influencer's name. Every text passes through you first",
-          why_from_her_words: "You wrote \"content and scripts for their videos\"" },
-      ],
+      specialists: ["chief-of-staff", "copywriter"],
       start_with: "chief-of-staff",
-      shared_brain_line: "The chief of staff writes there which idea from the chats is already sorted and which is shelved, and the copywriter reads it before touching a script. No idea starts from zero a second time",
-      not_in_brain: "A draft you have not looked at yet does not go in. Only what was decided",
       broke_because: null,
     },
-    meta: { model: "claude-sonnet-5", attempts: 1, input_tokens: 3000, output_tokens: 600, cost_usd: 0.012 },
+    meta: { model: "claude-sonnet-5", attempts: 1, input_tokens: 800, output_tokens: 60, cost_usd: 0.003 },
   },
-};
-const FLEET_BROKE = {
-  he: "לא היה לו זיכרון בין שיחות, ולא היה כתוב לו מה אסור לו לשנות. בפעם השלישית הוא החליט לבד.",
-  en: "It had no memory between sessions, and nothing told it what it may not change. The third time, it decided alone.",
 };
 
 function fleetQuery() {
@@ -2702,10 +2687,9 @@ function fleetMock(mode, lang, answers) {
     if (mode === "limited") { const e = new Error("mock limited"); e.code = "rate_limited"; return reject(e); }
     const res = JSON.parse(JSON.stringify(base));
     const b = res.blueprint;
-    // Contract: product_line is a VERBATIM excerpt of q1 (≤ 160 chars, may be all of it).
-    const q1 = answers && typeof answers.q1 === "string" ? answers.q1.trim() : "";
-    if (q1.length >= FLEET_MIN) b.product_line = q1.length <= 160 ? q1 : (q1.indexOf(b.product_line) !== -1 ? b.product_line : q1.slice(0, 160).trim());
-    if (mode === "broke" || (answers && answers.q5 === "claude_code_broke")) b.broke_because = FLEET_BROKE[lang] || FLEET_BROKE.he;
+    // v2: broke_because is an enum, not a composed sentence — the render layer
+    // looks it up in fleet-content.js's broke_bank.
+    if (mode === "broke" || (answers && answers.q5 === "claude_code_broke")) b.broke_because = "no_memory";
     resolve({ id: res.blueprint_id, blueprint: b });
   }, 1400));
 }
@@ -2752,7 +2736,11 @@ const FLEET_API = {
     const { data, error } = await sb.functions.invoke("fleet-blueprint", { body: payload });
     if (error) { const e = new Error(error.message || "fleet-blueprint failed"); e.code = await fleetErrorCode(error); throw e; }
     if (!data || data.ok === false) { const e = new Error((data && data.error) || "fleet-blueprint failed"); e.code = data && data.error === "rate_limited" ? "rate_limited" : "error"; throw e; }
-    return { id: data.blueprint_id || null, blueprint: data.blueprint };
+    // CTO's live wire field is `classification` (index.ts 2026-09-07), not
+    // `blueprint` — the model's output is a pure classification now. Kept as
+    // `blueprint` in our own client-side state, matching every other var name
+    // in this state machine (FLEET.result, FLEET_STORE, fleetSaveResult, ...).
+    return { id: data.blueprint_id || null, blueprint: data.classification };
   },
   async lead(body) {
     if (fleetMockMode()) { await new Promise((r) => setTimeout(r, 600)); return; }
@@ -2761,18 +2749,43 @@ const FLEET_API = {
     if (!data || data.ok === false) throw new Error((data && data.error) || "lead failed");
   },
 };
+/* v2 (spec fleet-blueprint-spec-2026-09-07-v2.md §3): the model is a
+   CLASSIFIER only - its entire output is `{ specialists:[{key}], start_with,
+   broke_because }`, zero free-text fields. product_line/why_from_her_words/
+   shared_brain_line/not_in_brain no longer exist on the model response at
+   all - they render from fleet-content.js's fixed template bank (spec_bank/
+   brain_line/brain_not/broke_bank) keyed by enum, or straight from her own
+   answers (the two verbatim quote blocks), never from `b`. */
+const FLEET_BROKE_KEYS = ["no_memory", "no_boundary"];
 /* Server validates enum + count (spec §3); this is the client's own guard so a
    malformed body can never paint half a result. */
 function fleetValid(b) {
   if (!b || typeof b !== "object") return false;
-  if (typeof b.product_line !== "string") return false;
   if (!Array.isArray(b.specialists) || b.specialists.length < 1 || b.specialists.length > 2) return false;
+  // CTO's live schema (core.ts, CLASSIFICATION_SCHEMA): specialists is a plain
+  // string[] of enum keys, not an array of {key} objects.
   for (const s of b.specialists) {
-    if (!s || FLEET_LIB.indexOf(s.key) === -1) return false;
-    if (["does", "reads_vs_changes", "never_closes_alone", "why_from_her_words"].some((k) => typeof s[k] !== "string")) return false;
+    if (typeof s !== "string" || FLEET_LIB.indexOf(s) === -1) return false;
   }
-  if (typeof b.shared_brain_line !== "string" || typeof b.not_in_brain !== "string") return false;
+  if (typeof b.start_with !== "string" || FLEET_LIB.indexOf(b.start_with) === -1) return false;
+  if (b.broke_because !== null && FLEET_BROKE_KEYS.indexOf(b.broke_because) === -1) return false;
   return true;
+}
+/* Two verbatim quote blocks on the result screen (spec §3) - both pulled
+   straight from her own typed answers (sessionStorage), NEVER from the model
+   response and NEVER rephrased. This is the only free text on the screen. */
+function fleetExcerpt(text, max) {
+  const t = typeof text === "string" ? text.trim() : "";
+  if (!t) return "";
+  return t.length <= max ? t : t.slice(0, max).trim();
+}
+function fleetQuoteSource(answers) {
+  const a = answers || {};
+  for (const k of ["q2", "q3", "q4"]) {
+    const v = typeof a[k] === "string" ? a[k].trim() : "";
+    if (v.length >= FLEET_MIN) return v;
+  }
+  return "";
 }
 
 function fleetRestore() {
@@ -2931,14 +2944,24 @@ function fleetLoading(f) {
 }
 
 function fleetResult(f, b) {
+  /* v2 (spec fleet-blueprint-spec-2026-09-07-v2.md §3): `text` here is ALWAYS
+     fixed template-bank copy (fleet-content.js), keyed by specialist enum —
+     never a value from `b`, never model output. The model no longer writes
+     any of these three lines. */
   const line = (label, text) => `
     <li class="pchecklist__item">
       <span class="pchecklist__dot" aria-hidden="true"></span>
       <div class="pchecklist__body">
         <div class="pchecklist__top"><span class="pchecklist__name">${label}</span></div>
-        <p class="pchecklist__note">${escapeHtml(text)}</p>
+        <p class="pchecklist__note">${text}</p>
       </div>
     </li>`;
+  /* The two verbatim quotes — the ONLY free text on this screen (acceptance
+     §6). Both pulled straight from her own sessionStorage answers, both
+     truncated the same way, NEVER touched by the model. */
+  const q1Quote = fleetExcerpt(FLEET.answers.q1, 160);
+  const q2Quote = fleetExcerpt(fleetQuoteSource(FLEET.answers), 160);
+  const brokeLine = b.broke_because && f.broke_bank ? f.broke_bank[b.broke_because] : null;
   /* Order (UR finding 2026-09-05 #2, CSO call): HER specialists first, the fixed
      crew below with its "included with every team" framing intact. #7: the
      broke_because recognition line sits right under the product line. #6: the
@@ -2949,9 +2972,9 @@ function fleetResult(f, b) {
     <div class="reveal">
       <span class="eyebrow">${f.result_eyebrow}</span>
       <h1 class="section-title">${f.result_title}</h1>
-      <p class="section-lead">${f.result_lead} <q>${escapeHtml(b.product_line)}</q></p>
-      ${b.broke_because ? `
-      <div class="prep-note fleet-broke">${I.info}<div><strong>${f.broke_title}</strong><br />${escapeHtml(b.broke_because)}</div></div>` : ""}
+      ${q1Quote ? `<p class="section-lead">${f.result_lead} <q>${escapeHtml(q1Quote)}</q></p>` : ""}
+      ${brokeLine ? `
+      <div class="prep-note fleet-broke">${I.info}<div><strong>${f.broke_title}</strong><br />${escapeHtml(brokeLine)}</div></div>` : ""}
     </div>
   </div></section>
 
@@ -2960,21 +2983,25 @@ function fleetResult(f, b) {
       <span class="eyebrow">${f.spec_eyebrow}</span>
       <h2 class="section-title">${f.spec_title}</h2>
       <p class="section-lead">${f.spec_sub}</p>
+      ${q2Quote ? `<p class="section-lead">${f.spec_quote_lead || ""} <q>${escapeHtml(q2Quote)}</q></p>` : ""}
     </div>
     <div class="grid grid--2 fleet-specs reveal">
-      ${b.specialists.map((s) => `
+      ${b.specialists.map((key) => {
+        // specialists is a plain string[] of enum keys (core.ts CLASSIFICATION_SCHEMA).
+        const tpl = (f.spec_bank && f.spec_bank[key]) || { does: "", reads_vs_changes: "", never_closes_alone: "" };
+        return `
         <article class="card fleet-spec">
           <div class="fleet-spec__head">
-            <span class="ss-badge">${f.lib[s.key] || s.key}</span>
-            ${b.start_with === s.key ? `<span class="ss-badge">${I.spark} ${f.spec_start}</span>` : ""}
+            <span class="ss-badge">${f.lib[key] || key}</span>
+            ${b.start_with === key ? `<span class="ss-badge">${I.spark} ${f.spec_start}</span>` : ""}
           </div>
           <ul class="pchecklist">
-            ${line(f.spec_lines.does, s.does)}
-            ${line(f.spec_lines.reads, s.reads_vs_changes)}
-            ${line(f.spec_lines.never, s.never_closes_alone)}
+            ${line(f.spec_lines.does, escapeHtml(tpl.does))}
+            ${line(f.spec_lines.reads, escapeHtml(tpl.reads_vs_changes))}
+            ${line(f.spec_lines.never, escapeHtml(tpl.never_closes_alone))}
           </ul>
-          <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p><strong>${f.spec_why}</strong> ${escapeHtml(s.why_from_her_words)}</p></div>
-        </article>`).join("")}
+        </article>`;
+      }).join("")}
     </div>
   </div></section>
 
@@ -3007,8 +3034,8 @@ function fleetResult(f, b) {
       <div class="card">
         <div class="card__ico">${I.brain}</div>
         <h3>${f.brain_card_title}</h3>
-        <p>${escapeHtml(b.shared_brain_line)}</p>
-        <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p><strong>${f.brain_not_label}</strong> ${escapeHtml(b.not_in_brain)}</p></div>
+        <p>${f.brain_line || ""}</p>
+        <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p><strong>${f.brain_not_label}</strong> ${f.brain_not || ""}</p></div>
       </div>
       <div class="card">
         <div class="card__ico">${I.doc}</div>
