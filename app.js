@@ -3124,12 +3124,40 @@ function fleetLimited(f) {
     </div>`);
 }
 
+// DEV/TESTING ONLY (Ofir, 2026-09-07): #/fleet?view=entry|q|loading|result|
+// gate|done|limited jumps straight to that screen without walking the real
+// flow - this is a client-side wizard, so there is no other way to link to a
+// mid-flow screen. &qi=N picks the question for view=q (default 0). &gate=
+// normal|manual|limited picks the gate variant for view=gate. view=result
+// fills FLEET.result from the same FLEET_MOCK the site's own mock=ok mode
+// uses, so the screen has real content. Not gated to localhost on purpose -
+// Ofir needs to use it on the live site.
+function fleetApplyView(lang, f) {
+  const view = fleetQuery().get("view");
+  if (!view) return;
+  if (view === "q") {
+    const qi = parseInt(fleetQuery().get("qi") || "0", 10);
+    FLEET.qi = Math.max(0, Math.min(f.questions.length - 1, isNaN(qi) ? 0 : qi));
+    FLEET.step = "q";
+  } else if (view === "result") {
+    const base = FLEET_MOCK[lang] || FLEET_MOCK.he;
+    FLEET.result = JSON.parse(JSON.stringify(base.blueprint));
+    FLEET.step = "result";
+  } else if (view === "gate") {
+    const g = fleetQuery().get("gate");
+    FLEET.gateMode = g === "manual" || g === "limited" ? g : "normal";
+    FLEET.step = "gate";
+  } else if (["entry", "loading", "done", "limited"].indexOf(view) !== -1) {
+    FLEET.step = view;
+  }
+}
 function renderFleet(lang) {
   const t = I18N[lang];
   const FC = window.FLEET_CONTENT || {};
   const f = FC[lang] || FC.he;
   if (!f) { render(lang); return; }   // strings failed to load: fall back to home, never a blank page
   fleetRestore();
+  fleetApplyView(lang, f);
   const saved = fleetSaved();
   if (FLEET.step === "result" && !FLEET.result) { FLEET.step = "entry"; }
   let body = "";
