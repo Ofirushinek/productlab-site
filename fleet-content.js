@@ -105,13 +105,13 @@ window.FLEET_CONTENT = {
 
     /* ---- S0 entry ---- */
     entry_eyebrow: "בונים את הצוות שמתאים לכם",
-    entry_title: "איזה צוות סוכני AI באמת יעזור לכם?",
+    entry_title: "איזה צוות סוכנים באמת יעזור לכם?",
     entry_sub: "5 שאלות קצרות על העבודה שלכם. בסוף נמליץ עם מי כדאי להתחיל.",
     entry_cta: "להתחיל",
 
     /* ---- S0 "examples" block, below the CTA (2026-09-07, v8: one merged
        title instead of title+sub - Ofir: the two lines were redundant) ---- */
-    agents_title: "דוגמאות לסוכני AI שיכולים להצטרף לצוות שלכם.",
+    agents_title: "דוגמאות לסוכנים שיכולים להצטרף לצוות שלכם.",
     agents_aria: "דוגמאות לסוכנים אפשריים",
     /* Full real-portrait roster (Marketing Designer inventory, 2026-09-07):
        10 characters with a real image today. `role` is the REAL professional
@@ -157,7 +157,7 @@ window.FLEET_CONTENT = {
     mic_denied: "המיקרופון חסום בדפדפן. אפשר לאשר אותו, או להמשיך להקליד.",
     questions: [
       { key: "q1", title: "מה אתם בונים עכשיו?", hint: "ספרו בקצרה מה המוצר או הפרויקט, למי הוא מיועד ומה אתם רוצים להשיג.", ph: "כלי שעוזר לצוותי מוצר לרכז פידבק מלקוחות ולהחליט מה כדאי לבנות קודם." },
-      { key: "q5", title: "עם אילו כלי AI כבר עבדתם?", hint: "סמנו כל מה שניסיתם - גם אם השתמשתם בו רק פעם או פעמיים.", ph: "",
+      { key: "q5", title: "עם אילו כלים כבר עבדתם?", hint: "סמנו כל מה שניסיתם - גם אם השתמשתם בו רק פעם או פעמיים.", ph: "",
         tools: [
           { v: "chatgpt", l: "ChatGPT" },
           { v: "claude", l: "Claude" },
@@ -178,8 +178,8 @@ window.FLEET_CONTENT = {
           { v: "claude_code_broke", l: "Claude Code, Cursor, Lovable" },
         ] },
       { key: "q2", title: "איפה העבודה שלכם נתקעת?", hint: "מה לוקח יותר מדי זמן, נדחה שוב ושוב או תלוי בכם כדי להתקדם?", ph: "כל מסך חדש מתחיל כמעט מאפס, ואני חוזר שוב ושוב על החלטות שכבר קיבלתי." },
-      { key: "q3", title: "מה אתם מוצאים את עצמכם מסבירים שוב ושוב?", hint: "כללים, החלטות, העדפות או הקשר שהייתם רוצים שהצוות כבר יזכור לבד.", ph: "מי קהל היעד, איך אנחנו כותבים, אילו רכיבים כבר קיימים ומה החלטנו לא לבנות." },
-      { key: "q4", title: "איפה הצוות חייב לעצור ולשאול אתכם?", hint: "אילו החלטות או פעולות אתם לא רוצים שסוכן יבצע לבד?", ph: "לפרסם משהו ללקוחות, לשנות מחיר, למחוק מידע או לשנות החלטה שכבר אושרה." },
+      { key: "q3", title: "מה אתם מוצאים את עצמכם מסבירים לו שוב ושוב?", hint: "כללים, החלטות והעדפות שהייתם רוצים שהכלי שלכם כבר יזכור לבד.", ph: "מי קהל היעד, איך אנחנו כותבים, אילו רכיבים כבר קיימים ומה החלטנו לא לבנות." },
+      { key: "q4", title: "מה לא קורה בלי האישור שלכם?", hint: "אילו החלטות או פעולות אתם לא רוצים שהכלי יבצע לבד?", ph: "לפרסם משהו ללקוחות, לשנות מחיר, למחוק מידע או לשנות החלטה שכבר אושרה." },
     ],
 
     /* ---- S6 loading ---- */
@@ -385,7 +385,7 @@ window.FLEET_CONTENT = {
         ] },
       { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users." },
       { key: "q3", title: "What do you keep explaining in every chat?", hint: "What gets forgotten between one chat and the next. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero." },
-      { key: "q4", title: "What does not happen without your approval?", hint: "In your product or service. The line the team never crosses alone.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move." },
+      { key: "q4", title: "What does not happen without your approval?", hint: "Which decisions or actions you don't want the tool making without you.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move." },
     ],
 
     /* ---- S6 loading ---- */
