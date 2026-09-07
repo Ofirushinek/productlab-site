@@ -2995,7 +2995,6 @@ function fleetResult(f, b) {
           ${b.specialists.map(specialistTile).join("")}
         </div>
       </div>
-      <div class="fleet-team-divider" aria-hidden="true"></div>
       <div class="fleet-team-cluster">
         <p class="fleet-team-label">${f.crew_label}</p>
         <div class="fleet-team-row">
