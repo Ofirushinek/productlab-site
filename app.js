@@ -273,6 +273,10 @@ const I18N = {
     quotes: [
       { q: "יצאתי מצוידת עם אנשי צוות (agents) מקצועיים ברמה הכי גבוהה, הצלחתי ליצור תוצרים משלי ישר אחרי המפגש ולקבל אינפוט שלא הצלחתי לקבל לפני. ממליצה בחום.", n: "Ella Cohen", m: "Lead Product Designer", img: "testimonial-ella", li: "https://www.linkedin.com/in/ella-cohen-736698a8/" },
       { q: "אופיר לימד אותי לבנות ולנהל צוות של סוכני בינה מלאכותית (AI Agents) אוטונומיים, ללא צורך בכתיבת קוד. בעבודה משותפת הוא עזר לי לבנות בסיס עבודה מוצק לרעיון שליווה אותי הרבה זמן ולא הצלחתי להוציא לפועל, ומשם כבר יצאתי לדרך. ממליצה בחום למי שרוצה ללמוד איך באמת להשתמש ב-AI כדי לבנות דברים, לא רק לדבר עליהם.", n: "Rona Galezer", m: "Venture Builder & Impact Investor", img: "testimonial-rona", li: "https://www.linkedin.com/in/ronabenziongalezer/" },
+      // Cohort #1 graduate, sent to Ofir via WhatsApp verbatim — do not reword.
+      // Role/title TODO (CSO asked Ofir, pending); no img/li yet — Ofir adding
+      // a LinkedIn link + photo LATER, component already supports both as optional.
+      { q: "הסדנה הייתה מעולה בגלל החיבור בין Product, Design ו-AI. עזרה לי להבין בצורה פרקטית איך אפשר להשתמש בסוכני AI כדי לייעל תהליכים, לחלק משימות בין סוכנים עם התמחויות שונות, ולבנות תהליך עבודה שמאפשר להתקדם מפיצוח רעיון ועד בניית מוצר בצורה הרבה יותר מהירה ואפקטיבית.", n: "דקל הלל", m: "[תפקיד: יתעדכן]" },
     ],
 
     // "יום בחייו של בוגר Product Lab" — copy v5 (Copywriter, 2026-08-21).
