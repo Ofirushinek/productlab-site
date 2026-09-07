@@ -213,13 +213,8 @@ window.FLEET_CONTENT = {
        of hardcoding "two." ---- */
     result_eyebrow: "הצוות שלכם",
     team_title: "זה הצוות שילך איתכם לבנות",
-    team_sub_by_count: [
-      "",
-      "סוכן אחד נבחר לפי מה שסיפרתם לנו. שלושת האחרים הם צוות הבסיס שאנחנו בונים בכל סדנת מוצר.",
-      "שני סוכנים נבחרו לפי מה שסיפרתם לנו. שלושת האחרים הם צוות הבסיס שאנחנו בונים בכל סדנת מוצר.",
-      "שלושה סוכנים נבחרו לפי מה שסיפרתם לנו. שלושת האחרים הם צוות הבסיס שאנחנו בונים בכל סדנת מוצר.",
-    ],
-    personal_label: "נבחרו בשבילכם",
+    team_sub: "אלה הסוכנים שהרכבנו עבורכם לפי מה שסיפרתם לנו — סוכנים ייחודיים לצרכים שלכם, יחד עם צוות הבסיס של כל סדנת מוצר.",
+    personal_label: "הסוכנים הייחודיים שלכם",
     crew_label: "צוות הבסיס",
     crew: [
       { img: "crew-strategist", role: "מנהל מוצר", line: "מחדד מה בונים, למה זה חשוב ומה נכון לעשות קודם." },
@@ -410,13 +405,8 @@ window.FLEET_CONTENT = {
 
     result_eyebrow: "Your team",
     team_title: "This is the team that'll go build with you",
-    team_sub_by_count: [
-      "",
-      "One agent was picked based on what you told us. Three more are the base crew we build into every product workshop.",
-      "Two agents were picked based on what you told us. Three more are the base crew we build into every product workshop.",
-      "Three agents were picked based on what you told us. Three more are the base crew we build into every product workshop.",
-    ],
-    personal_label: "Picked for you",
+    team_sub: "These are the agents we put together for you based on what you told us — specialists matched to your needs, alongside the base crew of every product workshop.",
+    personal_label: "Your unique specialists",
     crew_label: "The base crew",
     crew: [
       { img: "crew-strategist", role: "Product manager", line: "Sharpens what gets built, why it matters, and what's right to do first." },

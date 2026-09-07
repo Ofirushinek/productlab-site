@@ -2953,11 +2953,15 @@ function fleetResult(f, b) {
      ONLY - sections 2/3 below are untouched. ONE team board (not two
      disconnected sub-sections): a single container, personalized cluster +
      a thin divider + base cluster, label-only (no group description text).
-     Hero is eyebrow + title + one dynamic subtitle line, nothing else.
-     Real crew photos (Ofir's explicit call); personalized tiles get a
-     generic silhouette (I.user), never a specific character. `text` is
-     ALWAYS fixed template-bank copy, keyed by specialist enum — never
-     model output. */
+     Hero is eyebrow + title + one fixed subtitle line, nothing else.
+     v9 (seventh pass): every card is now a full-width row, stacked one
+     under another within its cluster (never side-by-side, at any width) —
+     Ofir: "big, symmetric, ordered," not small scattered tiles. Real crew
+     photos (Ofir's explicit call); personalized tiles get a generic
+     silhouette (I.user, same icon the nav/quote-card fallback already
+     uses elsewhere on the site — not a new character), sized up so it
+     reads as deliberate, not a small placeholder. `text` is ALWAYS fixed
+     template-bank copy, keyed by specialist enum — never model output. */
   const readingOnly = { "crew-strategist": 1, "crew-designer": 1, "crew-architect": 1 };
   const crewAvatar = (img) => `<img src="assets/${img}${readingOnly[img] ? "-reading" : ""}.webp?v=2" alt="" loading="lazy" />`;
   const specialistTile = (key) => `
@@ -2976,13 +2980,12 @@ function fleetResult(f, b) {
           <span>${a.line}</span>
         </span>
       </article>`;
-  const teamSub = (f.team_sub_by_count && f.team_sub_by_count[b.specialists.length]) || "";
   return `
   <section class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${f.result_eyebrow}</span>
       <h1 class="section-title">${f.team_title}</h1>
-      ${teamSub ? `<p class="section-lead">${teamSub}</p>` : ""}
+      ${f.team_sub ? `<p class="section-lead">${f.team_sub}</p>` : ""}
     </div>
 
     <div class="fleet-team-board reveal">
