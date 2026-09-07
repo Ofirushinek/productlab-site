@@ -2795,30 +2795,30 @@ function fleetEntry(f, saved) {
     ? `<button class="btn btn--accent" type="button" data-fleet="open">${f.return_open}</button>
        <button class="btn btn--ghost" type="button" data-fleet="reset">${f.return_reset}</button>`
     : `<button class="btn btn--accent btn--lg" type="button" data-fleet="start">${f.entry_cta}</button>`;
-  /* Ofir, 2026-09-07: the avatars are a "world of possible agents", not the
-     fixed crew trio - decorative, non-interactive, no tooltip, no names on
-     this screen. The 3 real crew photos (the only portraits we have) plus
-     initial-in-a-disc marks for 4 library specialists (.avatar-initial,
-     reused from .quote__av / .chip__logo--initial) plus a "+" disc to hint
-     there are more than what's shown. Reuses .avatar-stack as-is; items are
-     <span>, nothing here is clickable. */
-  const libKeys = Object.keys(f.lib || {}).slice(0, 4);
-  const initialItem = (label) => `<span class="avatar-stack__item"><span class="avatar-initial">${escapeHtml(fleetInitial(label))}</span></span>`;
-  const stack = `
-    <div class="avatar-stack" aria-hidden="true">
-      ${f.crew.map((c) => `<span class="avatar-stack__item"><img src="assets/${c.img}.webp?v=2" alt="" loading="lazy" /></span>`).join("")}
-      ${libKeys.map((k) => initialItem(f.lib[k])).join("")}
-      <span class="avatar-stack__item"><span class="avatar-initial">${I.plus}</span></span>
+  /* Ofir, 2026-09-07 (v3, reverting v2's top-of-card cluster): back to a
+     plain eyebrow/title/description/CTA hero, nothing above or between it.
+     The avatars move BELOW the CTA as a small supporting "examples" block -
+     real crew photos only (the only portraits we have), interactive again
+     (hover/tap tooltip: name + the crew's own existing `line` copy, reused
+     verbatim from the S7 crew section - no new copy). No initials, no "+"
+     mark this time - an avatar with no real photo is dropped, not faked. */
+  const agents = saved ? "" : `
+    <div class="fleet-agents">
+      <p class="field__label">${f.agents_title || ""}</p>
+      <p class="ss-note">${f.agents_sub || ""}</p>
+      <div class="avatar-stack" role="group" aria-label="${escapeAttr(f.agents_aria || "")}">
+        ${f.crew.map((c) => `<button type="button" class="avatar-stack__item" data-tooltip="${escapeAttr(c.tag + "\n" + c.line)}" data-tip-theme="light" data-tip-pos="top" aria-label="${escapeAttr(c.tag + ", " + c.line)}" data-fleet-avatar>
+          <img src="assets/${c.img}.webp?v=2" alt="" loading="lazy" />
+        </button>`).join("")}
+      </div>
     </div>`;
   return fleetCard(`
-    ${stack}
     <span class="eyebrow">${f.entry_eyebrow}</span>
     <h1 class="login__title">${f.entry_title}</h1>
     <p class="login__sub">${f.entry_sub}</p>
-    ${f.entry_hint ? `<p class="ss-note">${f.entry_hint}</p>` : ""}
     ${saved ? `<p class="login__note">${I.info}<span>${f.return_note}</span></p>` : ""}
     <div class="cta-row">${actions}</div>
-    ${saved ? "" : `<p class="ss-note">${f.entry_meta}</p>`}`);
+    ${agents}`);
 }
 
 function fleetQuestion(f) {
@@ -3203,6 +3203,24 @@ function wireFleet(lang, f) {
       }, 1800);
     }
   } else if (FLEET.bubbleTimer) { clearInterval(FLEET.bubbleTimer); FLEET.bubbleTimer = null; }
+
+  // S0 "examples" avatars: hover/focus show the tooltip via CSS; touch has
+  // neither, so a tap pins it (data-tip-open), a second tap or a tap
+  // elsewhere clears it. Never aria-expanded (global rule hides tooltips on
+  // expanded controls). Reinstated 2026-09-07 - v2 made these decorative,
+  // Ofir's v3 wants them interactive again, just moved below the CTA.
+  const avatars = root.querySelectorAll("[data-fleet-avatar]");
+  if (avatars.length) {
+    const clear = () => avatars.forEach((a) => a.removeAttribute("data-tip-open"));
+    avatars.forEach((a) => a.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const on = a.hasAttribute("data-tip-open");
+      clear();
+      if (!on) a.setAttribute("data-tip-open", "");
+    }));
+    document.addEventListener("click", clear, { once: false });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") clear(); });
+  }
 
   // Question screen: live counter, chips, validate, next / submit.
   const form = root.querySelector("[data-fleet-form]");

@@ -55,20 +55,29 @@
    ⛔ v6 (Ofir, 2026-09-07) - S0 + S6 UX pass: the product must never look
    like "three specific agents sit behind the scenes and read your answers"
    when that is not what happens.
-   S0: the avatar-stack is no longer "the crew" - it is a decorative,
-   non-interactive cluster hinting at a wider agent library (3 crew photos +
-   4 library-specialist initial marks + a "+" mark). entry_outcome_label/
-   entry_outcome_line/entry_crew_aria removed (dead since the outcome block
-   itself was cut 2026-09-07 earlier the same day); entry_sub rewritten
-   (generic, no longer promising specific findings); NEW entry_hint, one
-   small reassuring line under the description.
-   S6: no longer "three crew reading your answers". One reader shown at a
-   time, cycling through a pool that alternates a crew member (loading_lines,
-   now 2 short generic-process lines each, not 4) with a library specialist
-   (NEW loading_roles, one hedged "maybe/perhaps" hypothesis line per key in
-   `lib`, initial-in-a-disc avatar since no portrait exists for them - never
-   claims a real action happened, e.g. never "read your screens" if no
-   screens were uploaded). loading_title + loading_note rewritten to match.
+   S0: [SUPERSEDED by v7 below, same day - the top-of-card cluster this
+   round introduced is reverted; entry_outcome_label/entry_outcome_line/
+   entry_crew_aria/entry_hint/entry_meta no longer exist.]
+   S6 (still current, untouched by v7): no longer "three crew reading your
+   answers". One reader shown at a time, cycling through a pool that
+   alternates a crew member (loading_lines, now 2 short generic-process
+   lines each, not 4) with a library specialist (NEW loading_roles, one
+   hedged "maybe/perhaps" hypothesis line per key in `lib`, initial-in-a-
+   disc avatar since no portrait exists for them - never claims a real
+   action happened, e.g. never "read your screens" if no screens were
+   uploaded). loading_title + loading_note rewritten to match.
+
+   ⛔ v7 (Ofir, 2026-09-07, same day) - S0 ONLY: reverted to a plain hero,
+   avatars moved below the CTA. Ofir's read on v6: too far from the simple
+   original. Top of card is eyebrow/title/description/CTA and NOTHING else
+   (entry_meta line removed outright, not replaced). Below the CTA, a small
+   supporting block: agents_title/agents_sub (NEW) + the avatar-stack again
+   - but real crew photos ONLY, no initials, no "+" hint mark ("don't fake
+   an avatar that has no real photo" - Ofir's words). Interactive again:
+   hover/tap tooltip = crew[n].tag + crew[n].line, reused verbatim from the
+   S7 crew section, no new copy for the tooltips themselves. S6 is untouched
+   - still v6's one-reader-at-a-time pool, initials included there since
+   that's the only place a library role (no portrait) still appears.
 
    ✅ v3 (Copywriter, 2026-09-06) - Ofir's post-survey-failure redo.
    Two changes: (1) tone on ANY failure screen is now warm/funny/human, never
@@ -98,9 +107,12 @@ window.FLEET_CONTENT = {
     entry_eyebrow: "בונים את הצוות שמתאים לכם",
     entry_title: "איזה צוות סוכני AI באמת יעזור לכם?",
     entry_sub: "5 שאלות קצרות על העבודה שלכם. בסוף נמליץ עם מי כדאי להתחיל.",
-    entry_hint: "יש הרבה סוגים של סוכנים. אתם כנראה צריכים רק כמה מהם.",
     entry_cta: "להתחיל",
-    entry_meta: "5 שאלות · כ־3 דקות",
+
+    /* ---- S0 "examples" block, below the CTA (2026-09-07) ---- */
+    agents_title: "יש הרבה סוגים של סוכנים. אתם כנראה צריכים רק כמה מהם.",
+    agents_sub: "הנה כמה דוגמאות לסוכנים שיכולים להצטרף לצוות שלכם.",
+    agents_aria: "דוגמאות לסוכנים אפשריים",
 
     /* ---- S0, returning visitor ---- */
     return_note: "כבר יש לכם הרכב צוות מהפעם הקודמת.",
@@ -267,9 +279,11 @@ window.FLEET_CONTENT = {
     entry_eyebrow: "Who will help you build",
     entry_title: "Which agent team do you need?",
     entry_sub: "5 short questions about your work. At the end, we recommend who to start with.",
-    entry_hint: "There are many kinds of agents. You probably need only a few.",
     entry_cta: "Start",
-    entry_meta: "5 questions. 3 minutes.",
+
+    agents_title: "There are many kinds of agents. You probably need only a few.",
+    agents_sub: "Here are a few examples of agents that could join your team.",
+    agents_aria: "Examples of possible agents",
 
     return_note: "You already have a team lineup from last time.",
     return_open: "Show me my team",
