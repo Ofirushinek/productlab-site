@@ -40,16 +40,11 @@
   /* modal/overlay scrim — was a raw rgb() literal with no token (DSL, 2026-09-07) */
   --pl-scrim: rgb(10 8 6 / 0.55);
 
-  /* crew palette — the felt-puppet character colors, for playful accents.
-     Corrected 2026-09-07 (Ofir) to match the logo's own source of truth
-     (stories/brand/spec.json, character.body) exactly — these had drifted
-     from the logo's real hex since whenever they were first eyeballed.
-     Old values, for the record: orange #e0763c, teal #3f9a97,
-     purple #8b6fc0, yellow #d99b33. */
-  --pl-crew-orange: #D15C05;
-  --pl-crew-teal: #4D8F8F;
-  --pl-crew-purple: #78618A;
-  --pl-crew-yellow: #E79B27;
+  /* crew palette — the felt-puppet character colors, for playful accents */
+  --pl-crew-orange: #e0763c;
+  --pl-crew-teal: #3f9a97;
+  --pl-crew-purple: #8b6fc0;
+  --pl-crew-yellow: #d99b33;
 
   /* CRM funnel-stage colors (admin students table). Semantic status tokens, not
      brand colors: purple/teal/gray reuse the existing palette; blue/green/red are
@@ -113,22 +108,6 @@
   --space-6: 32px;
   --space-7: 48px;
 
-  /* Fine adjustments — real values already in use sitewide (2+ occurrences
-     each), off the 4px grid. Documented as their own step rather than
-     silently forced onto the nearest --space-N (Ofir, 2026-09-07: name
-     what's real, don't snap it). Never introduce a new one for a single
-     use — that's a one-off, leave it raw. */
-  --space-1a: 0.35rem;  /* 5.6px */
-  --space-1b: 0.4rem;   /* 6.4px */
-  --space-1c: 0.3rem;   /* 4.8px */
-  --space-2a: 0.6rem;   /* 9.6px */
-  --space-2b: 0.7rem;   /* 11.2px */
-  --space-2c: 0.85rem;  /* 13.6px */
-  --space-3a: 1.1rem;   /* 17.6px */
-  --space-4a: 1.25rem;  /* 20px */
-  --space-4b: 1.6rem;   /* 25.6px */
-  --space-5a: 1.75rem;  /* 28px */
-
   /* icon sizes, paired to the control ladder */
   --icon-sm: 16px;
   --icon-md: 20px;
@@ -146,30 +125,6 @@
   --nav-h: 64px;
   --nav-h-mobile: 56px;
 }
-
-/* ---- BREAKPOINT MAP — 11 real width breakpoints in the sheet, named here
-   since @media conditions can't reference a custom property (Ofir, 2026-09-07:
-   name what's real, don't consolidate blind). Each pair below (620/621,
-   760/761, 1023/1024) is intentional, not a duplicate — max-width N and
-   min-width N+1 avoid the two rules double-firing at the exact boundary.
-   Keep this list in sync if a breakpoint number changes; don't add a new
-   raw width without a line here.
-
-     560          .facts__row single-column (deprecated content, kept for Storybook)
-     620 / 621    mobile nav bar height swap · single-card grid ceiling
-     700          quote-grid collapses to one column
-     720          team crew band goes 3-column · student-workspace tables
-     760 / 761    --maxw-narrow ceiling · the system's general "2-up" rung
-                  (proof cards, deliv grid, bio, quotes, incl, phase/aphase,
-                  hero media, kit steps)
-     780          (max-HEIGHT, not width — the short-viewport rung, already
-                  named in its own comment above .moment-page)
-     820          roster admin table collapses
-     860          tech section goes 2-column
-     900          proof-of-craft cards go 2-column
-     1023 / 1024  roster detail panel goes 3-column
-     1180         --maxw-wide rung (.grad-wrap, roster-wrap)
-   ---------------------------------------------------------------------- */
 
 /* ---- Reset / base -------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -440,7 +395,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   position: absolute; top: calc(100% + 8px); inset-inline-end: 0; min-width: 160px;
   background: var(--pl-surface); border: 1px solid var(--pl-border);
   border-radius: var(--radius-md); box-shadow: var(--shadow-pl-md);
-  padding: var(--space-1a); z-index: 60;
+  padding: 0.35rem; z-index: 60;
 }
 .langswitch__menu[hidden] { display: none; }
 .langswitch__item {
@@ -467,7 +422,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   position: absolute; top: calc(100% + 8px); inset-inline-end: 0; min-width: 168px;
   background: var(--pl-surface); border: 1px solid var(--pl-border);
   border-radius: var(--radius-md); box-shadow: var(--shadow-pl-md);
-  padding: var(--space-1a); z-index: 60;
+  padding: 0.35rem; z-index: 60;
 }
 .nav__accmenu[hidden] { display: none; }
 .nav__accmenu-item {
@@ -494,7 +449,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .hero__meta { margin-top: var(--space-5); display: flex; flex-wrap: wrap; gap: 0.6rem 1.25rem; align-items: center; }
 
 /* ---- Generic content grids ---------------------------------------------- */
-.grid { display: grid; gap: var(--space-4a); }
+.grid { display: grid; gap: 1.25rem; }
 .grid--3 { grid-template-columns: 1fr; }
 .grid--2 { grid-template-columns: 1fr; }
 @media (min-width: 760px) {
@@ -504,7 +459,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 .card {
   background: var(--pl-surface); border: 1px solid var(--pl-border);
-  border-radius: var(--radius-lg); padding: var(--space-4b);
+  border-radius: var(--radius-lg); padding: 1.6rem;
   box-shadow: var(--shadow-pl-sm);
   transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl), transform 0.2s var(--ease-pl);
 }
@@ -532,13 +487,13 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   display: grid; place-items: center; font-weight: 700; color: var(--pl-accent-fg);
   background: var(--pl-accent);
 }
-.deliv__item h3 { font-size: var(--text-h3); margin-bottom: var(--space-1c); }
+.deliv__item h3 { font-size: var(--text-h3); margin-bottom: 0.3rem; }
 .deliv__item p { color: var(--pl-fg-body); font-size: var(--text-sm); font-weight: 500; }
 
 /* agenda — 3 phases */
-.agenda { display: grid; gap: var(--space-3a); }
+.agenda { display: grid; gap: 1.1rem; }
 .phase {
-  display: grid; grid-template-columns: auto 1fr; gap: var(--space-4a); align-items: start;
+  display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;
   background: var(--pl-surface); border: 1px solid var(--pl-border);
   border-radius: var(--radius-lg); padding: 1.6rem 1.75rem; box-shadow: var(--shadow-pl-sm);
 }
@@ -548,7 +503,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   color: var(--pl-accent); border-radius: var(--radius-full); padding: 0.35rem 0.9rem; white-space: nowrap;
   align-self: start;
 }
-.phase h3 { font-size: var(--text-h3); margin-bottom: var(--space-1a); }
+.phase h3 { font-size: var(--text-h3); margin-bottom: 0.35rem; }
 .phase p { color: var(--pl-fg-body); font-weight: 500; }
 
 /* agenda — expandable phase (collapsible at the phase level, open by default) */
@@ -559,14 +514,14 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .aphase[open] { border-color: var(--pl-border-strong); }
 .aphase__head {
   list-style: none; cursor: pointer;
-  display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-4a); align-items: start;
+  display: grid; grid-template-columns: auto 1fr auto; gap: 1.25rem; align-items: start;
   padding: 1.6rem 1.75rem;
 }
 .aphase__head::-webkit-details-marker { display: none; }
-.aphase h3 { font-size: var(--text-h3); margin-bottom: var(--space-1a); }
+.aphase h3 { font-size: var(--text-h3); margin-bottom: 0.35rem; }
 .aphase__intro p { color: var(--pl-fg-body); font-weight: 500; }
 .aphase__toggle {
-  display: inline-flex; align-items: center; gap: var(--space-1b); align-self: center;
+  display: inline-flex; align-items: center; gap: 0.4rem; align-self: center;
   font-size: var(--text-caption); font-weight: 700; letter-spacing: 0.01em;
   color: var(--pl-fg-secondary); white-space: nowrap;
 }
@@ -579,7 +534,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   .aphase__head {
     grid-template-columns: 1fr auto;
     grid-template-areas: "title time" "desc toggle";
-    column-gap: var(--space-4a); row-gap: var(--space-2);
+    column-gap: 1.25rem; row-gap: var(--space-2);
   }
   /* let the h3 + p become direct grid items so each aligns with its opposite */
   .aphase__head .aphase__intro { display: contents; }
@@ -590,7 +545,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   /* row 2: toggle top-aligned with the description (which may wrap) */
   .aphase__head .aphase__toggle { grid-area: toggle; justify-self: end; align-self: start; }
 }
-.aphase__items { display: grid; gap: var(--space-2a); padding: 0 1.75rem 1.6rem; }
+.aphase__items { display: grid; gap: 0.6rem; padding: 0 1.75rem 1.6rem; }
 .aphase__item {
   background: color-mix(in srgb, var(--pl-accent) 5%, var(--pl-surface));
   border: 1px solid var(--pl-border); border-radius: var(--radius-md);
@@ -607,8 +562,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   background: var(--pl-surface); box-shadow: var(--shadow-pl-md); overflow: hidden;
   display: flex; flex-direction: column;
 }
-.proof__body { padding: var(--space-5a); flex: 1; }   /* flex:1 -> both cards' text areas equalize */
-.proof__block h3 { font-size: var(--text-h2); margin-bottom: var(--space-2a); }
+.proof__body { padding: 1.75rem; flex: 1; }   /* flex:1 -> both cards' text areas equalize */
+.proof__block h3 { font-size: var(--text-h2); margin-bottom: 0.6rem; }
 .proof__block p { color: var(--pl-fg-body); font-weight: 500; }
 /* equal-height media band on top of both proof cards (screenshots) */
 .proof__shot { height: 15rem; background: var(--pl-illo-bg); border-bottom: 1px solid var(--pl-border); overflow: hidden; }
@@ -621,12 +576,12 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .tilecard:hover { border-color: var(--pl-border-strong); box-shadow: var(--shadow-pl-md); }
 .tilecard__illo { height: 13.5rem; overflow: hidden; background: var(--pl-illo-bg); }
 .tilecard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-.tilecard__body { padding: var(--space-4b); flex: 1; }
+.tilecard__body { padding: 1.6rem; flex: 1; }
 .tilecard__body h3 { font-size: var(--text-h3); margin-bottom: var(--space-2); }
 .tilecard__body p { color: var(--pl-fg-body); font-weight: 500; }
 
 .linkline {
-  display: inline-flex; align-items: center; gap: var(--space-1b); margin-top: var(--space-4);
+  display: inline-flex; align-items: center; gap: 0.4rem; margin-top: var(--space-4);
   color: var(--pl-fg); font-weight: 700; text-decoration: none; font-size: var(--text-sm);
 }
 .linkline:hover { color: var(--pl-accent); }
@@ -673,7 +628,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   box-shadow: var(--shadow-pl-lg); position: relative; overflow: hidden; }
 .ctaband h2 { color: var(--on-ink-fg); font-size: var(--text-h1); max-width: 22ch; margin-inline: auto; }
 .ctaband p { color: var(--on-ink-fg-muted); margin-top: 0.85rem; font-weight: 500; max-width: 52ch; margin-inline: auto; }
-.ctaband .cta-row { justify-content: center; margin-top: var(--space-5a); }
+.ctaband .cta-row { justify-content: center; margin-top: 1.75rem; }
 .ctaband .btn--primary { background: var(--on-ink-fg); color: var(--pl-fg); }
 .ctaband .chip { background: var(--on-ink-chip-bg); border-color: var(--on-ink-chip-border); color: var(--on-ink-fg); }
 
@@ -681,7 +636,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* footer */
 .footer { border-top: 1px solid var(--pl-border); padding-block: 2.5rem; margin-top: var(--space-4); }
 .footer__in { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; justify-content: space-between; }
-.footer__brand { display: flex; align-items: center; gap: var(--space-2a); }
+.footer__brand { display: flex; align-items: center; gap: 0.6rem; }
 .footer__brand img { height: 26px; }
 .footer__brand span { font-weight: 700; color: var(--pl-accent); }
 .footer__meta { color: var(--pl-fg-secondary); font-size: var(--text-sm); font-weight: 500; }
@@ -694,7 +649,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    ring. The .login card is a placeholder student sign-in: submit is wired to a
    gentle "coming soon" note (data-student-form / data-student-note in app.js),
    no auth, no validation. Real logic lands later. */
-.field { display: grid; gap: var(--space-1b); text-align: start; }
+.field { display: grid; gap: 0.4rem; text-align: start; }
 .field__label { font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); line-height: 1.3; }
 
 .input {
@@ -728,8 +683,19 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .login__ico svg { width: 24px; height: 24px; }
 .login .eyebrow { justify-content: center; }
 .login__title { font-size: var(--text-h2); letter-spacing: -0.02em; }
-.login__sub { margin-top: var(--space-2a); color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body); }
-.login__form { display: grid; gap: var(--space-4); margin-top: var(--space-5a); text-align: start; }
+/* Entry screen only (2026-09-07, Ofir): --text-h2 scales with viewport width
+   (2.4vw), but this card is capped at 440px - on a WIDE window the vw term
+   pushed the font past what the fixed-width card could hold on one line,
+   wrapping to two; on a narrower window the smaller vw font fit on one line.
+   More real estate produced a worse result. A flat size decouples it from
+   viewport width - verified 1-line up to ~360px of content width (the card's
+   steady-state desktop width); only wraps where the card itself is narrower
+   than that (real mobile, already fine there). Scoped to .fleet-card--entry
+   so every OTHER screen sharing .login__title (questions, loading, done,
+   the site's login/registration modals) is untouched. */
+.fleet-card--entry .login__title { font-size: 1.375rem; }
+.login__sub { margin-top: 0.6rem; color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body); }
+.login__form { display: grid; gap: var(--space-4); margin-top: 1.75rem; text-align: start; }
 .login__submit { width: 100%; margin-top: var(--space-1); }
 .login__note {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
@@ -743,7 +709,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* Continue-with-Google button: neutral surface so the multicolor logo reads
    (Google brand guidance). Token-based, no hardcoded values. */
 .login__google {
-  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2a);
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
   background: var(--pl-surface); color: var(--pl-fg);
   border: 1px solid var(--pl-border-strong); box-shadow: var(--shadow-pl-sm);
 }
@@ -792,7 +758,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   background: color-mix(in srgb, var(--pl-stage-dropped) 12%, transparent);
   color: var(--pl-stage-dropped);
 }
-.noacct__title { font-size: var(--text-h2); font-weight: 700; color: var(--pl-fg); margin-bottom: var(--space-2a); }
+.noacct__title { font-size: var(--text-h2); font-weight: 700; color: var(--pl-fg); margin-bottom: 0.6rem; }
 .noacct__body { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body-lg); line-height: 1.6; }
 .noacct .cta-row { justify-content: center; }
 
@@ -856,14 +822,14 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 [dir] .kitfull .eyebrow { justify-content: center; }
 [dir] .kitfull .section-title { text-align: center; max-width: none; margin-top: var(--space-2); }
 [dir] .kitfull .login__sub { text-align: center; margin-top: var(--space-2); }
-.kitfull__cta { justify-content: center; margin-top: var(--space-4a); }
+.kitfull__cta { justify-content: center; margin-top: 1.25rem; }
 
 /* ---- Register-your-interest FORM (inside the shared .modal__card) ----------
    Reuses .field/.input + the login card's centered header. The wider card fits
    four fields comfortably; fields are reading-start aligned (RTL-correct via the
    .field's text-align: start). Submit shows a spinner while the lead is written. */
 .modal__card--form { max-width: 30rem; }
-.reg__form { display: grid; gap: var(--space-4); margin-top: var(--space-4b); text-align: start; }
+.reg__form { display: grid; gap: var(--space-4); margin-top: 1.6rem; text-align: start; }
 .reg__note {
   width: 100%; min-height: 4.75rem; resize: vertical;
   padding: 0.7rem 0.95rem; border: 1px solid var(--pl-border-strong);
@@ -924,7 +890,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* ---- Admin roster (Registered students) - admin-only, DS tokens only ------ */
 .roster__loading, .roster__empty {
   color: var(--pl-fg-secondary); font-size: var(--text-sm); font-weight: 500;
-  padding: var(--space-4a); border: 1px dashed var(--pl-border-strong);
+  padding: 1.25rem; border: 1px dashed var(--pl-border-strong);
   border-radius: var(--radius-lg); background: var(--pl-surface); text-align: start;
 }
 /* NOTHING IN THIS PANEL EVER SCROLLS SIDEWAYS (Ofir 2026-08-23: "look at the
@@ -1006,7 +972,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* Add-user form (admin CRM). DS tokens only; dir-aware via logical properties. */
 /* Capped so the two short inputs do not stretch across the wide container the
    table now uses - a name field is not a 600px field. */
-.roster__add { display: flex; gap: var(--space-2a); align-items: center; flex-wrap: wrap; max-width: 52rem; }
+.roster__add { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; max-width: 52rem; }
 .roster__input {
   flex: 1 1 16rem; min-width: 12rem; height: var(--ctl-md);
   padding: 0 0.9rem; border: 1px solid var(--pl-border-strong);
@@ -1023,7 +989,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .roster__addbtn { flex: none; gap: var(--space-2); }
 .roster__addbtn svg { width: 18px; height: 18px; }
 .roster__hint {
-  margin-top: var(--space-2a); color: var(--pl-fg-secondary);
+  margin-top: 0.6rem; color: var(--pl-fg-secondary);
   font-size: var(--text-sm); font-weight: 500;
 }
 
@@ -1233,7 +1199,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
     display: block;
     border: 1px solid var(--pl-border); border-radius: var(--radius-lg);
     background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
-    padding: 0.4rem 1rem; margin-bottom: var(--space-2c);
+    padding: 0.4rem 1rem; margin-bottom: 0.85rem;
   }
   .roster__table tr.roster__row > td {
     display: flex; align-items: center; justify-content: space-between;
@@ -1378,7 +1344,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .footer__wordmark { font-weight: 700; color: var(--pl-accent); font-size: 1.35rem; letter-spacing: -0.03em; }
 
 /* icon on every accordion row in the unified Details section */
-.faq__q { display: inline-flex; align-items: center; gap: var(--space-2b); }
+.faq__q { display: inline-flex; align-items: center; gap: 0.7rem; }
 .faq__q svg { flex: none; width: 20px; height: 20px; color: var(--pl-accent); }
 .faq details[open] > summary .faq__q svg { color: var(--pl-accent); }
 
@@ -1407,7 +1373,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   /* language + student collapse into a dropdown TRAY under the header */
   .nav__menu {
     position: absolute; top: 100%; left: 0; right: 0;
-    flex-direction: column; gap: var(--space-2a); padding: 0.85rem var(--pad-x) 1.1rem;
+    flex-direction: column; gap: 0.6rem; padding: 0.85rem var(--pad-x) 1.1rem;
     background: var(--pl-bg); border-bottom: 1px solid var(--pl-border); box-shadow: var(--shadow-pl-md);
     display: none; z-index: 40;
   }
@@ -1473,8 +1439,8 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .agentcard__tag { display: inline-block; font-weight: 700; font-size: var(--text-caption);
   letter-spacing: 0.03em; color: var(--pl-accent);
   background: color-mix(in srgb, var(--pl-accent) 12%, transparent);
-  border-radius: var(--radius-full); padding: 0.25rem 0.75rem; margin-bottom: var(--space-2a); }
-.agentcard__role { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); margin-bottom: var(--space-1a); }
+  border-radius: var(--radius-full); padding: 0.25rem 0.75rem; margin-bottom: 0.6rem; }
+.agentcard__role { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); margin-bottom: 0.35rem; }
 .agentcard__body p { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
 
 /* ---- .avatar-stack — avatar circle row (molecule, 2026-09-06) -------------
@@ -1568,7 +1534,7 @@ body.modal-open { overflow: hidden; }
    card (submit included) with nothing clipped off the top. */
 .modal { position: fixed; inset: 0; z-index: 100; overflow-y: auto; -webkit-overflow-scrolling: touch;
   display: grid; grid-template-rows: minmax(1.25rem, 1fr) auto minmax(1.25rem, 1fr);
-  justify-items: center; padding-inline: var(--space-4a); }
+  justify-items: center; padding-inline: 1.25rem; }
 .modal[hidden] { display: none; }
 .modal__overlay { position: fixed; inset: 0; background: var(--pl-scrim); backdrop-filter: blur(2px); }
 .modal__card { grid-row: 2; position: relative; z-index: 1; width: 100%; max-width: 27rem; text-align: center;
@@ -1748,20 +1714,28 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   padding-block: clamp(1.35rem, 2.6vw, 1.85rem);
 }
 .ss-badge {
-  flex: none; display: inline-flex; align-items: center; gap: var(--space-1b);
+  flex: none; width: 210px; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
   background: color-mix(in srgb, var(--pl-accent) 13%, transparent);
   color: var(--pl-accent); font-weight: 700; font-size: var(--text-sm);
   padding: 0.3rem 0.85rem; border-radius: var(--radius-full); white-space: nowrap;
 }
 .ss-badge svg { width: 15px; height: 15px; }
 
-.ss-col { flex: none; display: flex; flex-direction: column; gap: var(--space-1a); }
+/* Fixed per-column widths (2026-09-07, Ofir): each .ss-col/.ss-badge used to
+   hug its own row's content, so the two stacked strips - different badge
+   text, different dates - never lined up column-to-column; it read as two
+   unrelated rows, not a table. Every cell in the same column is now the
+   same width regardless of its own text, so both rows' badge/when/where/cta
+   boundaries land at the same x position - table behavior without table
+   markup. Reset to auto on the <820px stack (below), where rows go vertical
+   and a fixed width would just overflow a narrow phone. */
+.ss-col { flex: none; width: 200px; display: flex; flex-direction: column; gap: 0.35rem; }
 .ss-label { font-size: var(--text-sm); font-weight: 600; color: var(--pl-fg-secondary); }
 .ss-val { display: flex; flex-direction: column; gap: 0.12rem; line-height: 1.3; }
 .ss-val strong { font-weight: 700; font-size: var(--text-body-lg); color: var(--pl-fg); white-space: nowrap; }
 .ss-val span { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-body); white-space: nowrap; }
 .ss-div { width: 1px; background: var(--pl-border); align-self: stretch; flex: none; transform: translateZ(0); }
-.ss-price { display: flex; align-items: baseline; gap: var(--space-1c); }
+.ss-price { display: flex; align-items: baseline; gap: 0.3rem; }
 .ss-price strong { font-weight: 700; font-size: var(--text-body-lg); color: var(--pl-fg); }
 .ss-price span { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-body); }
 
@@ -1774,9 +1748,9 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .session-strip--closed { opacity: 0.82; }
 
 @media (max-width: 820px) {
-  .session-strip { flex-direction: column; align-items: center; gap: var(--space-3a); text-align: center; }
-  .ss-badge { align-self: center; }
-  .ss-col { align-items: center; }
+  .session-strip { flex-direction: column; align-items: center; gap: 1.1rem; text-align: center; }
+  .ss-badge { align-self: center; width: auto; }
+  .ss-col { align-items: center; width: auto; }
   .ss-val { align-items: center; }
   .ss-div { align-self: center; width: 33%; height: 1px; transform: none; }
   .ss-col--cta { align-items: center; }
@@ -1796,7 +1770,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 /* ---- TESTIMONIALS — clean, premium cards: big photo + bold high-contrast quote
    Grid spans the full section width so the cards' outer edges line up with the
    section title/eyebrow above (no inset). */
-.quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4a); }
+.quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .quote-card {
   margin: 0;                              /* reset default <figure> 40px side margin */
   background: var(--pl-surface); border: 1px solid var(--pl-border);
@@ -1807,7 +1781,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .quote-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-pl-lg); }
 
 /* attribution header: big prominent photo + name/role */
-.quote-card__head { display: flex; align-items: center; gap: var(--space-3a); }
+.quote-card__head { display: flex; align-items: center; gap: 1.1rem; }
 /* wrapper holds the (overflow-clipped) avatar + the corner LinkedIn badge,
    which must sit OUTSIDE the avatar's clip so it isn't cut off. */
 .quote-card__avatarwrap { position: relative; width: 88px; height: 88px; flex: none; }
@@ -1821,8 +1795,8 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .quote-card__who { display: flex; flex-direction: column; gap: var(--space-1); }
 .quote-card__who strong { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); line-height: 1.2; }
 .quote-card__who span { font-size: var(--text-sm); font-weight: 600; color: var(--pl-accent); }
-.quote-card__name { display: inline-flex; align-items: center; gap: var(--space-1b); }
-.quote-card__role { display: inline-flex; align-items: center; gap: var(--space-1b); }
+.quote-card__name { display: inline-flex; align-items: center; gap: 0.4rem; }
+.quote-card__role { display: inline-flex; align-items: center; gap: 0.4rem; }
 /* LinkedIn = corner badge on the avatar. Solid brand-blue disc, no border ring,
    sits on the lower-inline-end arc so it reads as part of the photo. */
 .quote-card__li {
@@ -1878,7 +1852,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .grad { display: grid; gap: clamp(2rem, 5vw, 3rem); align-items: center; }
 .grad__text { max-width: 62ch; }
 .grad__title { max-width: 18ch; }
-.grad__paras { margin-top: var(--space-4a); display: grid; gap: 0.9rem; }   /* tight paragraph rhythm, not spaced standalone lines */
+.grad__paras { margin-top: 1.25rem; display: grid; gap: 0.9rem; }   /* tight paragraph rhythm, not spaced standalone lines */
 .grad__paras p { font-size: var(--text-body-lg); line-height: 1.65; color: var(--pl-fg-body); font-weight: 500; }
 
 /* the polaroid — a real object on the page: white stock, deep bottom strip, a
@@ -1924,16 +1898,16 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 @media (prefers-reduced-motion: reduce) { .grad__frame { transform: none; } }
 
 /* "who it's not for" quiet line under the three tiles */
-.who__not { margin-top: var(--space-5a); text-align: center; max-width: 62ch; margin-inline: auto;
+.who__not { margin-top: 1.75rem; text-align: center; max-width: 62ch; margin-inline: auto;
   color: var(--pl-fg-secondary); font-weight: 500; font-size: var(--text-sm); }
 
 /* ---- Footer links (Privacy / Terms / Contact) ---------------------------- */
-.footer__links { display: flex; flex-wrap: wrap; gap: var(--space-4a); align-items: center; }
+.footer__links { display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: center; }
 .footer__links a { color: var(--pl-fg); font-weight: 600; text-decoration: none; font-size: var(--text-sm); }
 .footer__links a:hover { color: var(--pl-accent); }
 /* MOBILE: stack the footer blocks one above the other, centered. */
 @media (max-width: 620px) {
-  .footer__in { flex-direction: column; align-items: center; text-align: center; gap: var(--space-4a); }
+  .footer__in { flex-direction: column; align-items: center; text-align: center; gap: 1.25rem; }
   .footer__links { justify-content: center; }
 }
 
@@ -1982,18 +1956,18 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .prep-step__num { flex: none; width: 2rem; height: 2rem; border-radius: var(--radius-full);
   display: grid; place-items: center; font-weight: 700; font-size: var(--text-sm);
   background: var(--pl-illo-bg); color: var(--pl-accent); }
-.prep-step h3 { font-size: var(--text-h3); margin-bottom: var(--space-1c); }
+.prep-step h3 { font-size: var(--text-h3); margin-bottom: 0.3rem; }
 .prep-step p { color: var(--pl-fg-body); font-weight: 500; }
 
 /* Note callout (echoes the login note styling) */
-.prep-note { display: flex; gap: var(--space-2b); align-items: flex-start;
+.prep-note { display: flex; gap: 0.7rem; align-items: flex-start;
   background: var(--pl-bg-alt); border: 1px solid var(--pl-border);
   border-radius: var(--radius-lg); padding: 1.1rem 1.3rem;
   color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
 .prep-note svg { flex: none; width: 20px; height: 20px; color: var(--pl-accent); margin-top: 1px; }
 
 /* Legal pages (Privacy / Terms) */
-.legal { margin-top: 2.25rem; display: grid; gap: var(--space-5a); }
+.legal { margin-top: 2.25rem; display: grid; gap: 1.75rem; }
 .legal__item h2 { font-size: var(--text-h3); margin-bottom: var(--space-2); }
 .legal__item p { color: var(--pl-fg-body); font-weight: 500; }
 .legal__updated { margin-top: 2.5rem; color: var(--pl-fg-muted); font-weight: 500; font-size: var(--text-sm); }
@@ -2014,13 +1988,13 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .card__kicker {
   display: block; font-size: var(--text-caption); font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.14em; color: var(--pl-accent);
-  margin-bottom: var(--space-1b);
+  margin-bottom: 0.4rem;
 }
 /* Kicker + an optional info trigger for a short caveat (Ofir, 2026-09-06: the
    kit/recording disclaimer text made the cards too tall and "not interesting").
    Reuses the light tooltip (DSL, 2026-09-06) instead of a visible paragraph —
    RUNG 1 reuse, no new component. */
-.card__kicker-row { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1b); }
+.card__kicker-row { display: flex; align-items: center; gap: var(--space-2); margin-bottom: 0.4rem; }
 .card__kicker-row .card__kicker { margin-bottom: 0; }
 .card__note-btn { display: inline-flex; padding: 0; border: 0; background: none; width: 16px; height: 16px; color: var(--pl-fg-muted); }
 .card__note-btn svg { width: 100%; height: 100%; }
@@ -2094,6 +2068,11 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    six-pill "file tree" mock) in favor of this — same box for kit and
    recording now, only the icon glyph differs (k.posterIcon). */
 .card__media--poster { aspect-ratio: 16 / 9; display: grid; place-items: center; background: var(--pl-illo-bg); }
+/* A real photo behind the play badge (recording tile): the badge needs its
+   own centering here, since the generic `.card__media > *{inset:0}` rule
+   would otherwise pin its fixed 56x56 box to the top-left corner once an
+   <img> sibling is also stretching the same box. */
+.card__media--photo-poster .card__media-play { inset: auto; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .card__media-play {
   width: 56px; height: 56px; border-radius: var(--radius-full); display: grid; place-items: center;
   background: var(--pl-surface); box-shadow: var(--shadow-pl-md); color: var(--pl-accent);
@@ -2104,7 +2083,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .card__media > * { position: absolute; inset: 0; }
 .card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 /* Teammates list inside the "build the team" card */
-.teammates { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2c); }
+.teammates { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
 .teammates__name { font-weight: 700; color: var(--pl-fg); }
 .teammates__charter { font-size: var(--text-sm); font-weight: 700; color: var(--pl-accent); }
 .teammates li p { margin-top: 0.1rem; font-size: var(--text-sm); color: var(--pl-fg-body); font-weight: 500; }
@@ -2119,7 +2098,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    headings on one baseline. Only align-items changes - same grid, same tokens. */
 .tech--groups { align-items: start; }
 .tech__group { display: grid; }
-.stage-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-5a); }
+.stage-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.75rem; }
 .stage { display: flex; gap: var(--space-4); align-items: flex-start; }
 .stage__num {
   flex: none; width: 2rem; height: 2rem; border-radius: var(--radius-full); display: grid; place-items: center;
@@ -2154,7 +2133,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    same style/height as the hub, line touching it with nothing between. */
 .brainmap__hd {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-  gap: var(--space-2a);
+  gap: 0.6rem;
   padding-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
   position: relative;
 }
@@ -2251,7 +2230,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .pstep[open] { border-color: var(--pl-border-strong); }
 .pstep__head {
   list-style: none; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto;
-  align-items: center; gap: var(--space-4a); padding: 1.5rem 1.75rem;
+  align-items: center; gap: 1.25rem; padding: 1.5rem 1.75rem;
 }
 .pstep__head::-webkit-details-marker { display: none; }
 .pstep__num { font-size: var(--text-h1); font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--pl-accent); min-width: 2.25rem; }
@@ -2269,19 +2248,19 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 
 /* Optional aside inside a step */
 .pnote {
-  display: flex; gap: var(--space-2b); align-items: flex-start; margin-top: var(--space-4);
+  display: flex; gap: 0.7rem; align-items: flex-start; margin-top: var(--space-4);
   border: 1px solid var(--pl-border); border-radius: var(--radius-md); padding: 0.9rem 1.05rem;
 }
 .pnote__dot { flex: none; width: 6px; height: 6px; margin-top: 0.55rem; border-radius: var(--radius-full); background: var(--pl-accent); }
 .pnote p { font-size: var(--text-sm); color: var(--pl-fg-body); font-weight: 500; line-height: 1.5; }
 
 /* Setup checklist inside a step */
-.pchecklist { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: var(--space-2b); }
+.pchecklist { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.7rem; }
 .pchecklist__item {
-  display: flex; gap: var(--space-2c); align-items: flex-start;
+  display: flex; gap: 0.85rem; align-items: flex-start;
   border: 1px solid var(--pl-border); border-radius: var(--radius-md); padding: 0.9rem 1.05rem;
 }
-.pchecklist__dot { flex: none; width: 6px; height: 6px; margin-top: var(--space-2a); border-radius: var(--radius-full); background: var(--pl-accent); }
+.pchecklist__dot { flex: none; width: 6px; height: 6px; margin-top: 0.6rem; border-radius: var(--radius-full); background: var(--pl-accent); }
 .pchecklist__top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-bottom: 0.15rem; }
 .pchecklist__name { font-weight: 700; color: var(--pl-fg); }
 .pchecklist__tag {
@@ -2293,13 +2272,13 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 /* Nested sub-steps inside a grouped checklist row (e.g. the Windows-only item) */
 .psub { list-style: none; margin: 0.85rem 0 0; padding: 0; display: grid; gap: var(--space-3);
   border-inline-start: 2px solid color-mix(in srgb, var(--pl-accent) 22%, transparent); padding-inline-start: 0.9rem; }
-.psub__item { display: grid; gap: var(--space-1b); }
+.psub__item { display: grid; gap: 0.4rem; }
 .psub__name { font-weight: 700; color: var(--pl-fg); font-size: var(--text-sm); }
 .psub__note { font-size: var(--text-sm); color: var(--pl-fg-body); font-weight: 500; line-height: 1.5; }
 
 /* Fixed left-to-right breadcrumb of chips (Windows Settings path). dir="ltr" in
    markup keeps the order stable regardless of surrounding Hebrew RTL. */
-.pcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1b); margin: 0.15rem 0; }
+.pcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0.15rem 0; }
 .pcrumb__chip {
   padding: 0.2rem 0.55rem; border-radius: var(--radius-sm);
   border: 1px solid var(--pl-border); background: var(--pl-surface);
@@ -2312,7 +2291,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .pcrumb__arrow { color: var(--pl-accent); font-weight: 700; }
 
 /* Copyable prompt cards */
-.prompts { display: grid; gap: var(--space-4); margin-top: var(--space-4a); }
+.prompts { display: grid; gap: var(--space-4); margin-top: 1.25rem; }
 .prompt {
   border: 1px solid var(--pl-border); border-radius: var(--radius-md);
   background: var(--pl-surface); overflow: hidden;
@@ -2358,7 +2337,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 
 /* Mobile: relax the plan-step header so the big number never crowds the title */
 @media (max-width: 560px) {
-  .pstep__head { gap: var(--space-2c); padding: 1.25rem 1.25rem; }
+  .pstep__head { gap: 0.85rem; padding: 1.25rem 1.25rem; }
   .pstep__num { font-size: var(--text-h2); min-width: 1.75rem; }
   .pstep__body { padding: 0 1.25rem 1.25rem; }
 }
@@ -2463,14 +2442,47 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 .fleet-loading__line { text-align: center; margin-bottom: var(--space-6); }
 
-/* Result page scoping: spacing between reused blocks, nothing else.
-   2026-09-06 (UR fix #2): the crew band now sits in its own section below her
-   specialists, so it no longer needs a top margin off the h1 block. */
-.fleet-crew .team__agents { margin-bottom: 0; }
-.fleet-specs, .fleet-brain, .fleet-leave { margin-top: var(--space-6); }
-.fleet-spec__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
-.fleet-spec .pchecklist { margin-top: var(--space-4); }
-.fleet-spec .pnote, .fleet-brain .pnote { margin-top: var(--space-4); }
+/* ---- Result page v9 (Ofir, 2026-09-07, seventh pass, section 1 only):
+   every agent card is now a full-width row, stacked one under another
+   within its cluster - NEVER side-by-side, at any width, mobile or
+   desktop. The previous wrap-into-a-row tile grid is gone; this is a
+   plain vertical list of big, symmetric rows (Ofir: "not small scattered
+   tiles"). Card padding/avatar/type sized up for a premium feel, while
+   the gaps BETWEEN rows/clusters are tight, so density comes from less
+   whitespace, not smaller cards. RTL: every text node here is a plain
+   block/inline element with no text-align override, so it inherits
+   right-aligned from the page's own dir="rtl". */
+.fleet-team-board {
+  display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-4);
+}
+.fleet-team-label {
+  font-size: var(--text-caption); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--pl-fg-secondary); margin-bottom: var(--space-2);
+}
+.fleet-team-row { display: flex; flex-direction: column; gap: var(--space-2); }
+.fleet-agent-tile {
+  display: flex; align-items: center; gap: var(--space-3); width: 100%;
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-pl-sm);
+}
+.fleet-agent-tile__av {
+  flex: none; width: var(--ctl-lg, 56px); height: var(--ctl-lg, 56px);
+  border-radius: 999px; overflow: hidden; background: var(--pl-illo-bg);
+  box-shadow: 0 0 0 1px var(--pl-border);
+}
+.fleet-agent-tile__av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.fleet-agent-tile__av--silhouette { display: grid; place-items: center; color: var(--pl-accent); }
+/* Fixed px, not a percentage (2026-09-07 live bug: an unsized SVG - viewBox
+   only, no width/height attributes - sized by % inside a grid container
+   rendered correctly in headless Chromium but ballooned to fill the page
+   in real desktop Chrome, confirmed in an incognito window so not a cache
+   issue. Every other icon in this file sizes its svg in fixed px - this
+   was the one exception; matching the established pattern fixes it). */
+.fleet-agent-tile__av--silhouette svg { width: 31px; height: 31px; flex: none; }
+.fleet-agent-tile__body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.fleet-agent-tile__body strong { font-size: var(--text-body); font-weight: 700; color: var(--pl-fg); }
+.fleet-agent-tile__body span { font-size: var(--text-sm); color: var(--pl-fg-secondary); line-height: 1.4; }
 .fleet-broke { margin-top: var(--space-5); }
 .fleet-broke strong { color: var(--pl-fg); }
 .fleet-restart { justify-content: center; margin-top: var(--space-5); }
