@@ -1,4 +1,15 @@
-import{t as e}from"./rolldown-runtime-Dh6celcD.js";var t,n,r,i,a,o,s,c,l,u,d,f,p;function m(){return(m=e((()=>{t={title:`Components/AgentCard`},n=({img:e,tag:t,role:n,b:r})=>`<div class="agentcard">
+import{t as e}from"./rolldown-runtime-Dh6celcD.js";var t,n,r,i,a,o,s,c,l,u,d,f,p;function m(){return(m=e((()=>{t={title:`Components/AgentCard`,parameters:{docs:{description:{component:`Components / AgentCard — a crew member card from the "meet the team" section.
+Structure: character illustration on top, then the body with the archetype
+BADGE (tinted-purple pill, reuses the system accent-12% recipe), the role
+TITLE beneath it, and the description. The badge/title split replaced the old
+single "Archetype - Role" line (which wrapped inconsistently). 2026-08-12.
+
+DSL, 2026-09-07 (per Marketing Designer, consulted after Ofir flagged stale
+Storybook visuals): this story pointed at agent-pd.png/agent-cpo.png/
+agent-cto.png, the cast from before the 2026-08-22 redesign. Zero references
+left in app.js or content.js; deleted the orphaned files from assets/. Live
+markup uses crew-designer/crew-strategist/crew-architect.webp - swapped in,
+copy refreshed to the live full bios (app.js's own were trimmed here before).`}}}},n=({img:e,tag:t,role:n,b:r})=>`<div class="agentcard">
      <div class="agentcard__illo"><img src="assets/${e}.webp?v=2" alt="" /></div>
      <div class="agentcard__body">
        <span class="agentcard__tag">${t}</span>
@@ -9,4 +20,16 @@ import{t as e}from"./rolldown-runtime-Dh6celcD.js";var t,n,r,i,a,o,s,c,l,u,d,f,p
      <div class="avatar-stack" role="group" aria-label="שלושת הסוכנים שבכל הרכב">
        ${e.map(e=>`<button type="button" class="avatar-stack__item" data-tooltip="${e.tag}&#10;${e.role}" data-tip-theme="light" data-tip-pos="top" aria-label="${e.tag}, ${e.role}"><img src="assets/${e.img}.webp?v=2" alt="" /></button>`).join(``)}
      </div>
-   </div>`,d={name:`Avatar stack — Hebrew (RTL)`,render:()=>u(l,`rtl`)},f={name:`Avatar stack — pinned (touch)`,render:()=>u(l,`rtl`).replace(`data-tip-pos="top" aria-label="המעצב`,`data-tip-pos="top" data-tip-open aria-label="המעצב`)},p=[`Single`,`CrewEN`,`CrewHE`,`AvatarStackHE`,`AvatarStackPinned`]})))()}m();export{d as AvatarStackHE,f as AvatarStackPinned,s as CrewEN,c as CrewHE,o as Single,p as __namedExportsOrder,t as default};
+   </div>`,d={name:`Avatar stack — Hebrew (RTL)`,render:()=>u(l,`rtl`)},f={name:`Avatar stack — pinned (touch)`,render:()=>u(l,`rtl`).replace(`data-tip-pos="top" aria-label="המעצב`,`data-tip-pos="top" data-tip-open aria-label="המעצב`)},o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:'{\n  render: () => `<div class="sb-pad" style="max-width:320px;margin:auto">${card(EN[2])}</div>`\n}',...o.parameters?.docs?.source}}},s.parameters={...s.parameters,docs:{...s.parameters?.docs,source:{originalSource:`{
+  name: "Crew — English",
+  render: () => grid(EN, "ltr")
+}`,...s.parameters?.docs?.source}}},c.parameters={...c.parameters,docs:{...c.parameters?.docs,source:{originalSource:`{
+  name: "Crew — Hebrew (RTL)",
+  render: () => grid(HE, "rtl")
+}`,...c.parameters?.docs?.source}}},d.parameters={...d.parameters,docs:{...d.parameters?.docs,source:{originalSource:`{
+  name: "Avatar stack — Hebrew (RTL)",
+  render: () => stack(CREW, "rtl")
+}`,...d.parameters?.docs?.source}}},f.parameters={...f.parameters,docs:{...f.parameters?.docs,source:{originalSource:`{
+  name: "Avatar stack — pinned (touch)",
+  render: () => stack(CREW, "rtl").replace('data-tip-pos="top" aria-label="המעצב', 'data-tip-pos="top" data-tip-open aria-label="המעצב')
+}`,...f.parameters?.docs?.source}}},p=[`Single`,`CrewEN`,`CrewHE`,`AvatarStackHE`,`AvatarStackPinned`]})))()}m();export{d as AvatarStackHE,f as AvatarStackPinned,s as CrewEN,c as CrewHE,o as Single,p as __namedExportsOrder,t as default};

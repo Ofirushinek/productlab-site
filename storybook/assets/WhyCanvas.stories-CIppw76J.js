@@ -1,4 +1,9 @@
-import{t as e}from"./rolldown-runtime-Dh6celcD.js";var t,n,r,i,a,o,s;function c(){return(c=e((()=>{t={title:`Components/WorkingCanvas`},n={figma:`<svg viewBox="0 0 38 57" aria-hidden="true">
+import{t as e}from"./rolldown-runtime-Dh6celcD.js";var t,n,r,i,a,o,s;function c(){return(c=e((()=>{t={title:`Components/WorkingCanvas`,parameters:{docs:{description:{component:`Components / Working-canvas cursors: the colorful tool-tagged collaborator
+cursors that wander the WHY NOW section like a live multiplayer file — the
+visual story of one person with a whole team's output. Each cursor = a
+brand-colored arrow + a white chip carrying a real tool logo. On the live
+site they drift on curved, hand-held paths (see app.js wireWhyCursors); this
+story documents the static component + the five tools. DS tokens only.`}}}},n={figma:`<svg viewBox="0 0 38 57" aria-hidden="true">
       <path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/>
       <path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/>
       <path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/>
@@ -12,4 +17,4 @@ import{t as e}from"./rolldown-runtime-Dh6celcD.js";var t,n,r,i,a,o,s;function c(
      ${i}<span class="pcursor__tag">${n[e]}</span>
    </span>`,o={name:`All five tool-cursors`,render:()=>`<div class="sb-pad sb-row" style="gap:52px;background:var(--pl-bg-alt)">
        ${Object.keys(n).map(e=>`<span style="display:inline-block;width:48px;height:44px">${a(e)}</span>`).join(``)}
-     </div>`},s=[`AllCursors`]})))()}c();export{o as AllCursors,s as __namedExportsOrder,t as default};
+     </div>`},o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:'{\n  name: "All five tool-cursors",\n  render: () => `<div class="sb-pad sb-row" style="gap:52px;background:var(--pl-bg-alt)">\n       ${Object.keys(LOGOS).map(id => `<span style="display:inline-block;width:48px;height:44px">${cursor(id)}</span>`).join("")}\n     </div>`\n}',...o.parameters?.docs?.source}}},s=[`AllCursors`]})))()}c();export{o as AllCursors,s as __namedExportsOrder,t as default};
