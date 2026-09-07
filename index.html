@@ -19,6 +19,24 @@
   <!-- noindex until launch -->
   <meta name="robots" content="noindex, nofollow" />
 
+  <!-- Google Analytics (GA4) — CTO, 2026-09-07. Measurement ID below is a
+       PLACEHOLDER (G-XXXXXXXXXX) until Ofir creates the GA4 property and
+       sends the real one — swap both occurrences the moment it exists, no
+       other change needed. gtag.js loads async and is safe if blocked (ad
+       blocker / offline): app.js's ga()/gaPageview() helpers no-op silently
+       when `gtag` isn't a function, so a missing/blocked script never breaks
+       the page. send_page_view is OFF on purpose — this is a single-page app
+       (hash routing), so the automatic pageview would fire once on first
+       load and never again; app.js's route() fires page_view manually on
+       every real route change instead (home/#/prep/#/kit/#/fleet/...). -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-XXXXXXXXXX", { send_page_view: false });
+  </script>
+
   <!-- Open Graph / social link preview (copy reused from the hero: hero_title + hero_sub) -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://productlab.studio/" />

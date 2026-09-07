@@ -42,6 +42,24 @@ const ADMIN_EMAILS = ["ofr.rsnk@gmail.com"];
 const IS_LOCAL = location.hostname === "localhost" || location.hostname === "127.0.0.1";
 const LOCAL_TIER_KEY = "pl_local_tier";
 
+/* ---- Analytics (GA4) ------------------------------------------------------
+   Thin wrapper so every call site is one line and NOTHING here can ever throw
+   or block the page: gtag may be undefined (blocked/failed to load) and
+   IS_LOCAL traffic (dev/testing) is always skipped so it never pollutes real
+   numbers. ga() is the generic event sender; gaPageview() is SPA-aware (see
+   route() below) and dedupes so a re-render of the SAME route (auth refresh,
+   a modal close) never double-counts a pageview. */
+function ga(name, params) {
+  if (IS_LOCAL) return;
+  try { if (typeof gtag === "function") gtag("event", name, params || {}); } catch (e) {}
+}
+let GA_LAST_PATH = null;
+function gaPageview(path, title) {
+  if (GA_LAST_PATH === path) return;
+  GA_LAST_PATH = path;
+  ga("page_view", { page_path: path, page_title: title || document.title });
+}
+
 /* AUTH is the single source of truth for "who am I" this render.
    Access is INVITE-ONLY. After sign-in the DB function my_access() returns the
    tier; the client never computes it. AUTH.tier is one of:
@@ -3176,12 +3194,25 @@ function renderFleet(lang) {
   afterRender();
   wireFleet(lang, f);
   window.scrollTo(0, 0);
+  // Funnel step view — deduped so an unrelated re-render (auth refresh, lang
+  // toggle) on the SAME step/question never double-counts. Real "completion"
+  // of the questionnaire itself is fired separately in fleetSubmit() below
+  // (the moment all 5 are answered), not here — reaching "result"/"gate" is
+  // an OUTCOME of that submission, tracked with its own event there.
+  const fleetSig = FLEET.step + (FLEET.step === "q" ? ":" + FLEET.qi : "");
+  if (GA_LAST_FLEET_SIG !== fleetSig) { GA_LAST_FLEET_SIG = fleetSig; ga("fleet_step_view", { step: FLEET.step, qi: FLEET.step === "q" ? FLEET.qi + 1 : undefined }); }
 }
+let GA_LAST_FLEET_SIG = null;
 
 async function fleetSubmit(lang) {
   if (FLEET.busy) return;
   FLEET.busy = true;
   FLEET.step = "loading";
+  // THE completion signal Ofir asked for: all 5 questions answered and the
+  // submit actually fired — independent of what happens next (AI success,
+  // rate limit, or the manual fallback below all still count as "went
+  // through the questionnaire"). Outcome is tracked separately per branch.
+  ga("fleet_questionnaire_complete");
   renderFleet(lang);
   try {
     const turnstile_token = await fleetTurnstile();
@@ -3198,15 +3229,18 @@ async function fleetSubmit(lang) {
     FLEET.blueprintId = res.id;
     fleetSaveResult(res.id, res.blueprint, lang);
     FLEET.step = "result";
+    ga("fleet_result", { outcome: "ai_success" });
   } catch (err) {
     console.warn("fleet-blueprint failed:", err && err.message);
     if (err && err.code === "rate_limited") {
       FLEET.step = "limited";
+      ga("fleet_result", { outcome: "rate_limited" });
     } else {
       // Ofir 2026-09-06: no retry, ever, once all 5 are answered — any other
       // failure (capped, network, invalid blueprint) goes straight to the
       // manual email gate, one hop, row tagged manual.
       FLEET.gateMode = "manual"; FLEET.step = "gate";
+      ga("fleet_result", { outcome: "manual_gate" });
     }
   } finally {
     FLEET.busy = false;
@@ -3221,7 +3255,7 @@ function wireFleet(lang, f) {
 
   root.querySelectorAll("[data-fleet]").forEach((b) => b.addEventListener("click", () => {
     const act = b.getAttribute("data-fleet");
-    if (act === "start") { FLEET.qi = 0; go("q"); }
+    if (act === "start") { ga("fleet_start"); FLEET.qi = 0; go("q"); }
     else if (act === "back") { FLEET.qi = Math.max(0, FLEET.qi - 1); go("q"); }
     else if (act === "open") {
       const s = fleetSaved();
@@ -3437,6 +3471,7 @@ function wireFleet(lang, f) {
           blueprint: FLEET.result,
           note: note || null,
         });
+        ga("fleet_lead_submitted", { mode: FLEET.gateMode });
         go("done");
       } catch (err) {
         console.warn("fleet lead failed:", err && err.message);
@@ -3622,6 +3657,7 @@ function route(lang) {
   else if (r === "privacy") renderLegal(lang, "privacy");
   else if (r === "terms") renderLegal(lang, "terms");
   else render(lang);
+  gaPageview(r === "home" ? "/" : "/" + r, document.title);
 }
 
 /* ---- Student sign-in (real Google OAuth via Supabase) -------------------- */
