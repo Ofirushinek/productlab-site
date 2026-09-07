@@ -276,7 +276,7 @@ const I18N = {
       // Cohort #1 graduate, sent to Ofir via WhatsApp verbatim — do not reword.
       // Role/title TODO (CSO asked Ofir, pending); no img/li yet — Ofir adding
       // a LinkedIn link + photo LATER, component already supports both as optional.
-      { q: "הסדנה הייתה מעולה בגלל החיבור בין Product, Design ו-AI. עזרה לי להבין בצורה פרקטית איך אפשר להשתמש בסוכני AI כדי לייעל תהליכים, לחלק משימות בין סוכנים עם התמחויות שונות, ולבנות תהליך עבודה שמאפשר להתקדם מפיצוח רעיון ועד בניית מוצר בצורה הרבה יותר מהירה ואפקטיבית.", n: "דקל הלל", m: "[תפקיד: יתעדכן]", li: "https://www.linkedin.com/in/dekelhillel/" },
+      { q: "הסדנה הייתה מעולה בגלל החיבור בין Product, Design ו-AI. עזרה לי להבין בצורה פרקטית איך אפשר להשתמש בסוכני AI כדי לייעל תהליכים, לחלק משימות בין סוכנים עם התמחויות שונות, ולבנות תהליך עבודה שמאפשר להתקדם מפיצוח רעיון ועד בניית מוצר בצורה הרבה יותר מהירה ואפקטיבית.", n: "דקל הלל", m: "Product Designer", li: "https://www.linkedin.com/in/dekelhillel/" },
     ],
 
     // "יום בחייו של בוגר Product Lab" — copy v5 (Copywriter, 2026-08-21).
