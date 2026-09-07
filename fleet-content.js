@@ -11,9 +11,10 @@
    v2 rule: no abstract nouns for the deliverable. "תוכנית" is gone everywhere;
    the thing the reader gets is "הרכב הצוות" / "the lineup", and S0 says in
    plain words what it contains. Questions name the product, never "what you do".
-   v2 round 2 (Ofir): entry_sub is ONE sentence, no colon; the outcome is its
-   own mini block (entry_outcome_label + entry_outcome_line) above the three
-   crew avatars (entry_crew_aria; the tooltip reuses crew[n].role + crew[n].line).
+   v2 round 2 (Ofir): entry_sub is ONE sentence, no colon.
+   [SUPERSEDED 2026-09-07, see v6 below - the outcome mini block/crew-avatar
+   tooltips this round introduced are gone; entry_outcome_label/line/
+   entry_crew_aria no longer exist.]
    v2 round 3 (Ofir): q1-q4 rewritten as questions a person asks someone
    sharing a project. Placeholders are ONE example written like a real answer,
    no "למשל:", no "או:", no colon anywhere on the question screens.
@@ -27,9 +28,8 @@
    stays as fallback. q_submit is a question, on purpose: the reader gets a
    lineup, not a working team, so the button asks instead of promising.
    v2 round 9 (Ofir): S6 loading is the three crew characters reading the
-   answers (loading_title + loading_lines keyed by crew img suffix, 4 lines
-   each, + loading_note). loading_line stays as fallback. Lines are what each
-   one is doing NOW; none says the result is ready.
+   answers. [SUPERSEDED 2026-09-07, see v6 below - S6 no longer shows three
+   fixed characters; loading_lines is now 2 lines each, not 4.]
    Written against the UR brief (shared/research/briefs/fleet-blueprint-
    2026-09-05.md §2 to §4), curriculum-truth.md §14.5 (the page describes a PLAN;
    the working team appears only in the workshop CTA) and the CMO ban list
@@ -51,6 +51,24 @@
    loading (fleetSubmit called directly from the last question submit).
    confirm_* keys deleted, fleetConfirm()/case "confirm"/confirm-submit/
    confirm-edit deleted from app.js, .fleet-confirm* CSS deleted.
+
+   ⛔ v6 (Ofir, 2026-09-07) - S0 + S6 UX pass: the product must never look
+   like "three specific agents sit behind the scenes and read your answers"
+   when that is not what happens.
+   S0: the avatar-stack is no longer "the crew" - it is a decorative,
+   non-interactive cluster hinting at a wider agent library (3 crew photos +
+   4 library-specialist initial marks + a "+" mark). entry_outcome_label/
+   entry_outcome_line/entry_crew_aria removed (dead since the outcome block
+   itself was cut 2026-09-07 earlier the same day); entry_sub rewritten
+   (generic, no longer promising specific findings); NEW entry_hint, one
+   small reassuring line under the description.
+   S6: no longer "three crew reading your answers". One reader shown at a
+   time, cycling through a pool that alternates a crew member (loading_lines,
+   now 2 short generic-process lines each, not 4) with a library specialist
+   (NEW loading_roles, one hedged "maybe/perhaps" hypothesis line per key in
+   `lib`, initial-in-a-disc avatar since no portrait exists for them - never
+   claims a real action happened, e.g. never "read your screens" if no
+   screens were uploaded). loading_title + loading_note rewritten to match.
 
    ✅ v3 (Copywriter, 2026-09-06) - Ofir's post-survey-failure redo.
    Two changes: (1) tone on ANY failure screen is now warm/funny/human, never
@@ -79,10 +97,8 @@ window.FLEET_CONTENT = {
     /* ---- S0 entry ---- */
     entry_eyebrow: "בונים את הצוות שמתאים לכם",
     entry_title: "איזה צוות סוכני AI באמת יעזור לכם?",
-    entry_sub: "5 שאלות קצרות על מה שאתם בונים, איפה העבודה נתקעת ואיפה אתם רוצים להישאר בשליטה.",
-    entry_outcome_label: "מה תקבלו",
-    entry_outcome_line: "שלושה אלה בכל הרכב, המומחים לפי מה שתספרו, ומה כל אחד לא סוגר בלעדיכם.",
-    entry_crew_aria: "שלושת הסוכנים שבכל הרכב",
+    entry_sub: "5 שאלות קצרות על העבודה שלכם. בסוף נמליץ עם מי כדאי להתחיל.",
+    entry_hint: "יש הרבה סוגים של סוכנים. אתם כנראה צריכים רק כמה מהם.",
     entry_cta: "להתחיל",
     entry_meta: "5 שאלות · כ־3 דקות",
 
@@ -138,28 +154,36 @@ window.FLEET_CONTENT = {
 
     /* ---- S6 loading ---- */
     loading_line: "קוראים מה שכתבתם.",
-    loading_title: "שלושה סוכנים קוראים את מה שכתבתם.",
+    loading_title: "מרכיבים לכם צוות.",
     loading_lines: {
       strategist: [
-        "קורא שוב את השורה על המוצר.",
-        "מסמן מה כבר סגור אצלכם.",
-        "שואל את עצמו מה בונים קודם.",
-        "מחפש את המילה שחזרה פעמיים.",
+        "מבינים מה אתם בונים.",
+        "מסמנים איפה אתם רוצים להישאר בשליטה.",
       ],
       designer: [
-        "מסתכל על מה שנתקע אצלכם.",
-        "סופר כמה מסכים עוברים דרככם.",
-        "מסמן מה אפשר להוריד מכם.",
-        "מצייר משהו בצד. עוד לא מראה.",
+        "מזהים איפה העבודה נתקעת.",
+        "משווים בין תפקידים שיכולים להתאים.",
       ],
       architect: [
-        "בודק עם אילו כלים כבר עבדתם.",
-        "רושם מה לא עולה בלי אישור.",
-        "קורא את הרשימה של מה שנשאר אצלכם.",
-        "שותק. זה סימן טוב.",
+        "בודקים מה אפשר להעביר לסוכנים.",
+        "בוחרים עם מי כדאי להתחיל.",
       ],
     },
-    loading_note: "עוד כמה שניות. הם קוראים לאט בכוונה.",
+    /* Hypothesis lines for the specialist library (keyed like `lib` below) -
+       "maybe"-phrased, never claims a real action happened. Rendered with an
+       initial-in-disc avatar (no portrait exists for these), same recipe as
+       .avatar-initial on S0. Ofir, 2026-09-07: the loading screen should read
+       as the system comparing role TYPES, not three fixed characters reading
+       a form. */
+    loading_roles: {
+      "user-researcher": "אולי צריך מישהו שיבדוק הנחות לפני שבונים.",
+      "copywriter": "אולי חסר מישהו שמנסח את מה שיוצא ללקוחות.",
+      "design-system-lead": "אולי הבעיה היא לא לבנות מהר, אלא לשמור על עקביות.",
+      "reviewer": "אולי צריך מישהו שיעבור על החומרים לפני שהם ממשיכים הלאה.",
+      "chief-of-staff": "אולי חסר מישהו שיעזור להחליט מה לא נכנס עכשיו.",
+      "marketing-designer": "אולי יש עבודה שכדאי להראות החוצה בצורה ברורה יותר.",
+    },
+    loading_note: "עוד רגע. ההמלצה כבר מתגבשת.",
 
     /* ---- S7 result ---- */
     result_eyebrow: "הרכב הצוות שלכם",
@@ -242,10 +266,8 @@ window.FLEET_CONTENT = {
 
     entry_eyebrow: "Who will help you build",
     entry_title: "Which agent team do you need?",
-    entry_sub: "5 questions about what you are trying to build, what gets stuck with you, and what is already decided.",
-    entry_outcome_label: "What you get",
-    entry_outcome_line: "These three in every lineup, the specialists from what you tell us, and what each one never closes without you.",
-    entry_crew_aria: "The three agents in every lineup",
+    entry_sub: "5 short questions about your work. At the end, we recommend who to start with.",
+    entry_hint: "There are many kinds of agents. You probably need only a few.",
     entry_cta: "Start",
     entry_meta: "5 questions. 3 minutes.",
 
@@ -299,28 +321,30 @@ window.FLEET_CONTENT = {
 
     /* ---- S6 loading ---- */
     loading_line: "Reading what you wrote.",
-    loading_title: "Three agents are reading what you wrote.",
+    loading_title: "Putting your team together.",
     loading_lines: {
       strategist: [
-        "Reading the product line again.",
-        "Marking what is already settled.",
-        "Asking himself what gets built first.",
-        "Looking for the word you used twice.",
+        "Understanding what you are building.",
+        "Marking where you want to stay in control.",
       ],
       designer: [
-        "Looking at what gets stuck with you.",
-        "Counting how many screens go through you.",
-        "Marking what could come off your plate.",
-        "Sketching something on the side. Not showing yet.",
+        "Spotting where the work gets stuck.",
+        "Comparing roles that could fit.",
       ],
       architect: [
-        "Checking which tools you have worked with.",
-        "Noting what does not go live without approval.",
-        "Reading the list of what stays with you.",
-        "Quiet. That is a good sign.",
+        "Checking what can move to an agent.",
+        "Choosing who to start with.",
       ],
     },
-    loading_note: "A few more seconds. They read slowly on purpose.",
+    loading_roles: {
+      "user-researcher": "Maybe someone should test assumptions before you build.",
+      "copywriter": "Maybe something needs the right words before it goes out.",
+      "design-system-lead": "Maybe the issue is not speed, it is staying consistent.",
+      "reviewer": "Maybe someone should check things before they move on.",
+      "chief-of-staff": "Maybe someone should help decide what waits for now.",
+      "marketing-designer": "Maybe there is work worth showing off more clearly.",
+    },
+    loading_note: "One more moment. The recommendation is coming together.",
 
     result_eyebrow: "Your team lineup",
     result_title: "The team you need.",

@@ -1502,34 +1502,31 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .agentcard__role { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); margin-bottom: 0.35rem; }
 .agentcard__body p { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
 
-/* ---- .avatar-stack — overlapping crew circles (molecule, 2026-09-06) -------
-   Items are buttons on the control ladder (--ctl-sm). DOM order = reading order
-   = paint order; margin-inline-start mirrors in RTL. Radius/overflow live on
-   the img, never on the button, so the tooltip pseudo is not clipped.
-   First use: #/fleet S0 (Ofir: "avatar images of the crew, circles overlapping,
-   hover shows a white tooltip with each one's role, so you understand what you
-   get at the end of the questionnaire"). DSL ruling 2026-09-06, canonical.  */
+/* ---- .avatar-stack — overlapping avatar circles (molecule, 2026-09-06) ----
+   Items on the control ladder (--ctl-sm). DOM order = reading order = paint
+   order; margin-inline-start mirrors in RTL. Radius/overflow live on the
+   img/.avatar-initial, never on the item, so nothing gets clipped.
+   ⛔ v2 (Ofir, 2026-09-07): S0 no longer shows "the crew" - it shows a
+   decorative cluster hinting at a wider agent library (photos + initial
+   marks). Items are plain <span>, not <button>: not interactive, no
+   tooltip, no hover/focus lift. DSL ruling 2026-09-06 on the base shape
+   stays canonical; the interactive variant is retired, not replaced. */
 .avatar-stack { display: flex; justify-content: center; margin: 0 auto var(--space-4); }
 .avatar-stack__item {
   position: relative; flex: none; width: var(--ctl-sm); height: var(--ctl-sm);
   padding: 0; border: 2px solid var(--pl-surface); border-radius: 999px;
   background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border);
-  transition: transform 0.15s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
 .avatar-stack__item + .avatar-stack__item { margin-inline-start: calc(-1 * var(--space-3)); }
 .avatar-stack__item img {
   width: 100%; height: 100%; border-radius: 999px; display: block;
   object-fit: cover; object-position: center top;
 }
-.avatar-stack__item:hover, .avatar-stack__item:focus-visible, .avatar-stack__item[data-tip-open] {
-  z-index: 1; transform: translateY(-2px);
-  box-shadow: 0 0 0 1px var(--pl-border), var(--shadow-pl-md);
-}
-.avatar-stack__item:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent), var(--shadow-pl-md);
-}
-@media (prefers-reduced-motion: reduce) { .avatar-stack__item { transition: none; } }
+/* Initial-in-a-disc mark, generalized from .quote__av / .chip__logo--initial
+   to avatar-stack / reader__av scale (S0 cluster + S6 loading rotator).
+   The parent circle already supplies background/border - no new tokens. */
+.avatar-initial { width: 100%; height: 100%; display: grid; place-items: center; font-weight: 700; color: var(--pl-accent); }
+.avatar-initial svg { width: 44%; height: 44%; }
 
 /* ===== Student sign-in MODAL (opens from the header button) ===== */
 body.modal-open { overflow: hidden; }
@@ -2496,16 +2493,22 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .fleet-other { max-width: 16rem; margin: var(--space-4) auto 0; }
 .fleet-other[hidden] { display: none; }
 
-/* ---- #/fleet S6 readers — the crew reading your answers (2026-09-06) --------
-   Page composition from existing parts: .moment-card, the crew portraits at
-   reading size (--ctl-lg = 56px disc, same crop as .team__photo img), a light
-   speech bubble on the .nav__accmenu floating-surface recipe, the crew-tag
-   register under each, and .skel's opacity language for the bar. The bob is
-   the only new motion: 2.4s, 3px, staggered by --i, off under reduced-motion. */
+/* ---- #/fleet S6 readers — role types being compared (2026-09-06, v2 2026-09-07)
+   Page composition from existing parts: .moment-card, an avatar at reading
+   size (--ctl-lg = 56px disc, same crop as .team__photo img — or
+   .avatar-initial when the pool entry is a library role with no portrait),
+   a light speech bubble on the .nav__accmenu floating-surface recipe, and
+   .skel's opacity language for the bar. The bob is the only new motion:
+   2.4s, 3px, off under reduced-motion.
+   ⛔ v2 (Ofir, 2026-09-07): ONE reader at a time now, not three side by side
+   (wireFleet swaps which pool entry - crew or library role - is rendered).
+   grid-template-columns/max-width sized for a single centered item; every
+   other rule (bubble shape, bar, bob) is unchanged from the original. */
 .fleet-card--loading { max-width: 40rem; }
 .fleet-loading { margin-top: var(--space-5); }
-.readers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); align-items: start; }
-.reader { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); animation: reader-bob 2.4s var(--ease-pl) infinite; animation-delay: calc(var(--i, 0) * -0.8s); }
+.readers { list-style: none; margin: 0 auto; padding: 0; display: grid; grid-template-columns: 1fr; max-width: 22rem; gap: var(--space-4); align-items: start; }
+.reader { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); animation: reader-bob 2.4s var(--ease-pl) infinite; transition: opacity 0.18s var(--ease-pl), transform 0.18s var(--ease-pl); }
+.reader.is-swapping { opacity: 0; transform: translateY(2px); }
 .reader__av { width: var(--ctl-lg, 56px); height: var(--ctl-lg, 56px); border-radius: 999px; overflow: hidden; background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border); }
 .reader__av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 .reader__name { font-size: var(--text-caption); font-weight: 700; color: var(--pl-fg-secondary); }
@@ -2514,21 +2517,19 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
   background: var(--pl-surface); border: 1px solid var(--pl-border); box-shadow: var(--shadow-pl-md);
   font-size: var(--text-sm); font-weight: 600; color: var(--pl-fg); line-height: 1.35; text-align: center;
-  transition: opacity 0.18s var(--ease-pl), transform 0.18s var(--ease-pl);
 }
 .reader__bubble::after {
   content: ""; position: absolute; left: 50%; top: 100%; width: 10px; height: 10px; margin-top: -5px;
   background: var(--pl-surface); border-right: 1px solid var(--pl-border); border-bottom: 1px solid var(--pl-border);
   transform: translateX(-50%) rotate(45deg);
 }
-.reader__bubble.is-swapping { opacity: 0; transform: translateY(2px); }
 .reader__bar { position: relative; height: 4px; margin: var(--space-5) auto 0; max-width: 16rem; border-radius: 999px; background: var(--pl-bg-alt); overflow: hidden; }
 .reader__bar span { position: absolute; inset: 0 auto 0 0; width: 40%; border-radius: 999px; background: var(--pl-accent); animation: reader-bar 1.6s var(--ease-pl) infinite; }
 .fleet-loading .ss-note { margin-top: var(--space-4); }
 @keyframes reader-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes reader-bar { 0% { left: -40%; } 100% { left: 100%; } }
 @media (max-width: 620px) {
-  .readers { grid-template-columns: 1fr; gap: var(--space-3); }
+  .readers { gap: var(--space-3); }
   .reader { flex-direction: row-reverse; justify-content: flex-start; text-align: start; }
   [dir="ltr"] .reader { flex-direction: row; }
   .reader__bubble { min-height: 0; text-align: start; }

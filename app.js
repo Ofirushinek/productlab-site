@@ -2023,6 +2023,21 @@ function rowKey(r) { return r.email ? "e:" + r.email : "i:" + (r.id == null ? ""
 // Attribute-safe escape (escapeHtml does not touch quotes; input values need it).
 function escapeAttr(s) { return escapeHtml(s).replace(/"/g, "&quot;"); }
 
+// Initial letter for a role/avatar mark (#/fleet S0 cluster + S6 loading
+// rotator): skips a leading English article ("The copywriter"/"The
+// reviewer" would both collapse to "T") and a leading Hebrew definite-
+// article heh prefixed directly on the noun ("הכותב"/"הבודק" would both
+// collapse to "ה") - real collision, found by rendering the EN cluster and
+// seeing four identical "T" marks side by side.
+const FLEET_INITIAL_STOP = new Set(["the", "a", "an"]);
+function fleetInitial(label) {
+  const words = String(label || "").trim().split(/\s+/);
+  let w = words.length > 1 && FLEET_INITIAL_STOP.has(words[0].toLowerCase()) ? words[1] : words[0];
+  w = w || "";
+  if (w.charAt(0) === "ה" && w.length > 2) w = w.slice(1); // ה prefix
+  return (w.charAt(0) || "?").toUpperCase();
+}
+
 // Bind the "Add user" form once per render (outside the re-fetched table body so
 // listeners never stack). A lead can be added with a NAME ONLY (email is optional)
 // (the migrated allowlist is id-keyed with nullable email). Adds confirmed=false.
@@ -2780,21 +2795,27 @@ function fleetEntry(f, saved) {
     ? `<button class="btn btn--accent" type="button" data-fleet="open">${f.return_open}</button>
        <button class="btn btn--ghost" type="button" data-fleet="reset">${f.return_reset}</button>`
     : `<button class="btn btn--accent btn--lg" type="button" data-fleet="start">${f.entry_cta}</button>`;
-  /* The crew avatars take the .login__ico illustration slot (DSL ruling
-     2026-09-06): three overlapping circles, hover/focus/tap shows a light
-     tooltip "nickname / role" so the visitor sees WHO they get before they
-     answer anything (Ofir). Tap-to-pin for touch lives in the click handler. */
+  /* Ofir, 2026-09-07: the avatars are a "world of possible agents", not the
+     fixed crew trio - decorative, non-interactive, no tooltip, no names on
+     this screen. The 3 real crew photos (the only portraits we have) plus
+     initial-in-a-disc marks for 4 library specialists (.avatar-initial,
+     reused from .quote__av / .chip__logo--initial) plus a "+" disc to hint
+     there are more than what's shown. Reuses .avatar-stack as-is; items are
+     <span>, nothing here is clickable. */
+  const libKeys = Object.keys(f.lib || {}).slice(0, 4);
+  const initialItem = (label) => `<span class="avatar-stack__item"><span class="avatar-initial">${escapeHtml(fleetInitial(label))}</span></span>`;
   const stack = `
-    <div class="avatar-stack" role="group" aria-label="${escapeAttr(f.entry_crew_aria || "")}">
-      ${f.crew.map((c) => `<button type="button" class="avatar-stack__item" data-tooltip="${escapeAttr(c.tag + "\n" + c.role)}" data-tip-theme="light" data-tip-pos="top" aria-label="${escapeAttr(c.tag + ", " + c.role)}" data-fleet-avatar>
-        <img src="assets/${c.img}.webp?v=2" alt="" loading="lazy" />
-      </button>`).join("")}
+    <div class="avatar-stack" aria-hidden="true">
+      ${f.crew.map((c) => `<span class="avatar-stack__item"><img src="assets/${c.img}.webp?v=2" alt="" loading="lazy" /></span>`).join("")}
+      ${libKeys.map((k) => initialItem(f.lib[k])).join("")}
+      <span class="avatar-stack__item"><span class="avatar-initial">${I.plus}</span></span>
     </div>`;
   return fleetCard(`
     ${stack}
     <span class="eyebrow">${f.entry_eyebrow}</span>
     <h1 class="login__title">${f.entry_title}</h1>
     <p class="login__sub">${f.entry_sub}</p>
+    ${f.entry_hint ? `<p class="ss-note">${f.entry_hint}</p>` : ""}
     ${saved ? `<p class="login__note">${I.info}<span>${f.return_note}</span></p>` : ""}
     <div class="cta-row">${actions}</div>
     ${saved ? "" : `<p class="ss-note">${f.entry_meta}</p>`}`);
@@ -2844,31 +2865,56 @@ function fleetQuestion(f) {
     </form>`);
 }
 
-function fleetLoading(f) {
-  /* S6 (Ofir, 2026-09-06: "make me want to wait, make me excited, my replies
-     getting examined with the utmost interest, something fun with our
-     characters"). The three crew portraits sit at reading size, each with a
-     speech bubble that cycles through in-character lines (Copywriter,
-     loading_lines) while the model works; a thin indeterminate bar underneath
-     says "still going". Falls back to the single loading_line when the
-     per-character lines are not loaded. Motion respects reduced-motion. */
-  const crew = Array.isArray(f.crew) ? f.crew : [];
+/* S6 v2 (Ofir, 2026-09-07): the screen reads as the system COMPARING role
+   types, not three fixed characters reading a form. Builds one ordered pool,
+   alternating a crew member (their own 2 generic-process lines, f.crew +
+   f.loading_lines) with a library specialist (no portrait, so an
+   initial-in-a-disc mark; one hedged "maybe" line each, f.loading_roles -
+   never claims a real action happened). wireFleet shows ONE pool entry at a
+   time and swaps which one every tick, so the avatar itself changes each
+   time, not just the text. */
+function fleetLoadingPool(f) {
   const keys = { "crew-strategist": "strategist", "crew-designer": "designer", "crew-architect": "architect" };
+  const crew = Array.isArray(f.crew) ? f.crew : [];
   const lines = f.loading_lines || {};
-  const readers = crew.map((c, i) => {
+  const crewLineSets = crew.map((c) => {
     const k = keys[c.img] || c.img;
-    const ls = Array.isArray(lines[k]) && lines[k].length ? lines[k] : [f.loading_line || ""];
-    return `
-      <li class="reader" style="--i:${i}">
-        <span class="reader__bubble" data-fleet-bubble data-lines="${escapeAttr(JSON.stringify(ls))}" aria-live="off">${escapeHtml(ls[0])}</span>
-        <span class="reader__av"><img src="assets/${c.img}-reading.webp?v=1" alt="" /></span>
-        <span class="reader__name">${c.tag}</span>
-      </li>`;
-  }).join("");
+    return Array.isArray(lines[k]) && lines[k].length ? lines[k] : [f.loading_line || ""];
+  });
+  const maxCrewLines = crewLineSets.reduce((m, ls) => Math.max(m, ls.length), 1);
+  const crewSteps = [];
+  for (let li = 0; li < maxCrewLines; li++) {
+    crew.forEach((c, i) => crewSteps.push({ kind: "crew", img: c.img, name: c.tag, line: crewLineSets[i][li % crewLineSets[i].length] }));
+  }
+  const roles = f.loading_roles || {};
+  const roleSteps = Object.keys(roles).map((key) => ({ kind: "role", name: (f.lib && f.lib[key]) || key, line: roles[key] }));
+  const pool = [];
+  const max = Math.max(crewSteps.length, roleSteps.length);
+  for (let i = 0; i < max; i++) {
+    if (crewSteps[i]) pool.push(crewSteps[i]);
+    if (roleSteps[i]) pool.push(roleSteps[i]);
+  }
+  return pool.length ? pool : [{ kind: "crew", line: f.loading_line || "" }];
+}
+function fleetReaderAvatar(step) {
+  return step.kind === "crew" && step.img
+    ? `<img src="assets/${step.img}-reading.webp?v=1" alt="" />`
+    : `<span class="avatar-initial">${escapeHtml(fleetInitial(step.name))}</span>`;
+}
+function fleetReaderItem(step) {
+  return `
+    <li class="reader">
+      <span class="reader__bubble" aria-live="off">${escapeHtml(step.line || "")}</span>
+      <span class="reader__av">${fleetReaderAvatar(step)}</span>
+      <span class="reader__name">${escapeHtml(step.name || "")}</span>
+    </li>`;
+}
+function fleetLoading(f) {
+  const pool = fleetLoadingPool(f);
   return fleetCard(`
     <h1 class="login__title">${f.loading_title || f.loading_line || ""}</h1>
     <div class="fleet-loading" role="status" aria-live="polite" aria-busy="true">
-      <ul class="readers">${readers}</ul>
+      <ul class="readers" data-fleet-pool="${escapeAttr(JSON.stringify(pool))}">${fleetReaderItem(pool[0])}</ul>
       <div class="reader__bar" aria-hidden="true"><span></span></div>
       <p class="ss-note">${f.loading_note || ""}</p>
     </div>`, "fleet-card--loading");
@@ -3127,39 +3173,36 @@ function wireFleet(lang, f) {
     else if (act === "limited-gate") { FLEET.gateMode = "limited"; go("gate"); }
   }));
 
-  // S6 readers: each bubble cycles its own lines, staggered so the three never
-  // change at once. Cleared when the screen re-renders (interval is per render).
-  const bubbles = root.querySelectorAll("[data-fleet-bubble]");
-  if (bubbles.length) {
+  // S6 loading: one pool entry (crew member or library role) shown at a
+  // time; each tick swaps to the next one (avatar + name + line together),
+  // so it reads as the system comparing role types (Ofir, 2026-09-07). Same
+  // add-class / mutate-content-after-180ms / remove-class shape as the
+  // original per-bubble cycling, just mutating three fields instead of one.
+  const pool = root.querySelector("[data-fleet-pool]");
+  if (pool) {
     if (FLEET.bubbleTimer) clearInterval(FLEET.bubbleTimer);
-    const state = [...bubbles].map((b) => { let ls = []; try { ls = JSON.parse(b.getAttribute("data-lines") || "[]"); } catch (e) {} return { b, ls, i: 0 }; });
-    let tick = 0;
-    FLEET.bubbleTimer = setInterval(() => {
-      tick += 1;
-      const who = state[tick % state.length];
-      if (!who || who.ls.length < 2) return;
-      who.i = (who.i + 1) % who.ls.length;
-      who.b.classList.add("is-swapping");
-      setTimeout(() => { who.b.textContent = who.ls[who.i]; who.b.classList.remove("is-swapping"); }, 180);
-    }, 1400);
+    let steps = [];
+    try { steps = JSON.parse(pool.getAttribute("data-fleet-pool") || "[]"); } catch (e) {}
+    let idx = 0;
+    if (steps.length > 1) {
+      FLEET.bubbleTimer = setInterval(() => {
+        idx = (idx + 1) % steps.length;
+        const li = pool.querySelector(".reader");
+        const bubble = pool.querySelector(".reader__bubble");
+        const av = pool.querySelector(".reader__av");
+        const name = pool.querySelector(".reader__name");
+        if (!li || !bubble || !av || !name) return;
+        li.classList.add("is-swapping");
+        setTimeout(() => {
+          const step = steps[idx];
+          bubble.textContent = step.line || "";
+          av.innerHTML = fleetReaderAvatar(step);
+          name.textContent = step.name || "";
+          li.classList.remove("is-swapping");
+        }, 180);
+      }, 1800);
+    }
   } else if (FLEET.bubbleTimer) { clearInterval(FLEET.bubbleTimer); FLEET.bubbleTimer = null; }
-
-  // S0 crew avatars: hover/focus show the tooltip via CSS; touch has neither,
-  // so a tap pins it (data-tip-open, DSL ruling 2026-09-06), a second tap or
-  // a tap anywhere else clears it. Never aria-expanded (global rule hides
-  // tooltips on expanded controls).
-  const avatars = root.querySelectorAll("[data-fleet-avatar]");
-  if (avatars.length) {
-    const clear = () => avatars.forEach((a) => a.removeAttribute("data-tip-open"));
-    avatars.forEach((a) => a.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const on = a.hasAttribute("data-tip-open");
-      clear();
-      if (!on) a.setAttribute("data-tip-open", "");
-    }));
-    document.addEventListener("click", clear, { once: false });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") clear(); });
-  }
 
   // Question screen: live counter, chips, validate, next / submit.
   const form = root.querySelector("[data-fleet-form]");
