@@ -2882,7 +2882,7 @@ function fleetEntry(f, saved) {
     <p class="login__sub">${f.entry_sub}</p>
     ${saved ? `<p class="login__note">${I.info}<span>${f.return_note}</span></p>` : ""}
     <div class="cta-row">${actions}</div>
-    ${agents}`);
+    ${agents}`, "fleet-card--entry");
 }
 
 function fleetQuestion(f) {
