@@ -2538,7 +2538,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .readers { list-style: none; margin: 0 auto; padding: 0; display: grid; grid-template-columns: 1fr; max-width: 22rem; gap: var(--space-4); align-items: start; }
 .reader { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); animation: reader-bob 2.4s var(--ease-pl) infinite; transition: opacity 0.18s var(--ease-pl), transform 0.18s var(--ease-pl); }
 .reader.is-swapping { opacity: 0; transform: translateY(2px); }
-.reader__av { width: var(--ctl-lg, 56px); height: var(--ctl-lg, 56px); border-radius: var(--radius-full); overflow: hidden; background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border); }
+.reader__av { flex: none; width: var(--ctl-lg, 56px); height: var(--ctl-lg, 56px); border-radius: var(--radius-full); overflow: hidden; background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border); }
 .reader__av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 .reader__name { font-size: var(--text-caption); font-weight: 700; color: var(--pl-fg-secondary); }
 .reader__bubble {
@@ -2562,8 +2562,11 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   .reader { flex-direction: row-reverse; justify-content: flex-start; text-align: start; }
   [dir="ltr"] .reader { flex-direction: row; }
   .reader__bubble { min-height: 0; text-align: start; }
-  .reader__bubble::after { left: auto; inset-inline-end: -5px; top: 50%; margin-top: -5px; transform: translateY(-50%) rotate(-45deg); }
-  [dir="ltr"] .reader__bubble::after { transform: translateY(-50%) rotate(135deg); }
+  /* Physical, not logical: row-reverse (RTL) + row (LTR) above cancel out on
+     purpose so the avatar sits physically right in BOTH languages - the
+     arrow must match with a physical `right`, not `inset-inline-end` (which
+     flips with dir and put the arrow on the wrong edge, pointing at nothing). */
+  .reader__bubble::after { left: auto; right: -5px; top: 50%; margin-top: -5px; transform: translateY(-50%) rotate(-45deg); }
   .reader__name { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .reader, .reader__bar span { animation: none; } .reader__bar span { width: 100%; opacity: 0.4; } }
