@@ -2790,18 +2790,11 @@ function fleetEntry(f, saved) {
         <img src="assets/${c.img}.webp?v=2" alt="" loading="lazy" />
       </button>`).join("")}
     </div>`;
-  const outcome = f.entry_outcome_line
-    ? `<div class="fleet-outcome">
-        <span class="fleet-outcome__label">${f.entry_outcome_label || ""}</span>
-        <p class="login__sub fleet-outcome__line">${f.entry_outcome_line}</p>
-       </div>`
-    : "";
   return fleetCard(`
     ${stack}
     <span class="eyebrow">${f.entry_eyebrow}</span>
     <h1 class="login__title">${f.entry_title}</h1>
     <p class="login__sub">${f.entry_sub}</p>
-    ${outcome}
     ${saved ? `<p class="login__note">${I.info}<span>${f.return_note}</span></p>` : ""}
     <div class="cta-row">${actions}</div>
     ${saved ? "" : `<p class="ss-note">${f.entry_meta}</p>`}`);

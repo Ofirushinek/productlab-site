@@ -2469,14 +2469,6 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .chip--toggle[aria-pressed="true"] .dot { display: block; animation: skel 1.4s var(--ease-pl) infinite; }
 @media (prefers-reduced-motion: reduce) { .chip--toggle[aria-pressed="true"] .dot { animation: none; } }
 
-/* #/fleet S0 "what you get" block under the intro line (Ofir, 2026-09-06: the
-   outcome as its own small title, not folded into the paragraph). Composed
-   from existing type roles only: .field__label weight for the label, .login__sub
-   for the line. */
-.fleet-outcome { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--pl-border); }
-.fleet-outcome__label { display: block; font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); margin-bottom: var(--space-1); }
-.fleet-card .fleet-outcome__line { margin: 0; }
-
 /* Question / entry titles: never a one-word orphan on the second line (Ofir,
    2026-09-06: "why does the title drop a line when only one word is beneath?
    make the two rows almost equal"). `text-wrap: balance` is exactly that rule
