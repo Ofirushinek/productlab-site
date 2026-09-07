@@ -1516,20 +1516,19 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   position: relative; flex: none; width: var(--ctl-sm); height: var(--ctl-sm);
   padding: 0; border: 2px solid var(--pl-surface); border-radius: 999px;
   background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border);
-  transition: width 0.15s var(--ease-pl), height 0.15s var(--ease-pl),
-    transform 0.15s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+  transition: transform 0.15s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
 .avatar-stack__item img {
   width: 100%; height: 100%; border-radius: 999px; display: block;
   object-fit: cover; object-position: center top;
 }
-/* Ofir, 2026-09-07: grow the hovered avatar (reuses --ctl-lg, the next rung
-   up the SAME control ladder --ctl-sm already comes from - not a new size)
-   instead of only translating it, so neighbors actually make room rather
-   than the enlarged circle overlapping them. padding-top above + z-index
-   here keep it clear of the title text and its row siblings while it grows. */
+/* ⛔ v6 (Ofir, 2026-09-07, same day): tile size is FIXED - screen width is
+   the only thing allowed to change it, never hover state. The earlier v5
+   width/height grow is reverted; hover only lifts (transform), same as it
+   always did. padding-top on .avatar-stack above stays: real headroom for
+   the lift + tooltip regardless of viewport. */
 .avatar-stack__item:hover, .avatar-stack__item:focus-visible, .avatar-stack__item[data-tip-open] {
-  z-index: 2; width: var(--ctl-lg); height: var(--ctl-lg); transform: translateY(-2px);
+  z-index: 2; transform: translateY(-2px);
   box-shadow: 0 0 0 1px var(--pl-border), var(--shadow-pl-md);
 }
 .avatar-stack__item:focus-visible {

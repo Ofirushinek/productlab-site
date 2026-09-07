@@ -3248,40 +3248,28 @@ function wireFleet(lang, f) {
   // elsewhere clears it. Never aria-expanded (global rule hides tooltips on
   // expanded controls). Reinstated 2026-09-07 - v2 made these decorative,
   // Ofir's v3 wants them interactive again, just moved below the CTA.
-  // v5, same day: a centered tooltip near either edge of the row was going
-  // off-screen - clamp its position (and keep the arrow pointed at the
-  // avatar) instead of clipping it, which is what an overflow:hidden patch
-  // did in the previous push and Ofir caught live (real content cut off).
-  // Positioned for EVERY avatar up front, not only on hover: even at
-  // opacity:0 an absolutely-positioned tooltip sitting at its unclamped
-  // default still counts toward the page's real scrollWidth, so the page
-  // was horizontally scrollable before anyone had hovered anything.
-  // The hovered avatar also grows (width/height, not just transform - see
-  // styles.css) so its neighbors make room instead of it overlapping them -
-  // which means THEIR positions shift too, staling their own (invisible but
-  // still layout-affecting) tooltip offsets. Reposition every avatar's tip
-  // on any interaction, not just the one being hovered - found by hovering
-  // the FIRST avatar and seeing an unrelated sibling's tip push the page
-  // wide again, the exact bug this whole mechanism exists to prevent.
-  // Also reposition on "transitionend" (width/height), not just a guessed
-  // delay: a fixed setTimeout raced the real transition length and left the
-  // grown state briefly stale/overflowing again.
-  const repositionAll = () => avatars.forEach((a) => fleetPositionTip(a));
+  // v5: a centered tooltip near either edge of the row was going off-screen
+  // - clamp its position (and keep the arrow pointed at the avatar) instead
+  // of clipping it, which is what an overflow:hidden patch did in an
+  // earlier push and Ofir caught live (real content cut off). Positioned
+  // for EVERY avatar up front, not only on hover: even at opacity:0 an
+  // absolutely-positioned tooltip at its unclamped default still counts
+  // toward the page's real scrollWidth, so the page was horizontally
+  // scrollable before anyone had hovered anything.
+  // v6: hover only lifts the avatar (transform, styles.css) - tile size is
+  // fixed regardless of hover, so nothing reflows any more and each avatar
+  // only ever needs to reposition its own tooltip.
   const avatars = root.querySelectorAll("[data-fleet-avatar]");
   if (avatars.length) {
-    repositionAll();
-    avatars.forEach((a) => a.addEventListener("mouseenter", repositionAll));
-    avatars.forEach((a) => a.addEventListener("mouseleave", repositionAll));
-    avatars.forEach((a) => a.addEventListener("focus", repositionAll));
-    avatars.forEach((a) => a.addEventListener("transitionend", (e) => {
-      if (e.propertyName === "width" || e.propertyName === "height") repositionAll();
-    }));
-    const clear = () => { avatars.forEach((a) => a.removeAttribute("data-tip-open")); repositionAll(); };
+    avatars.forEach((a) => fleetPositionTip(a));
+    avatars.forEach((a) => a.addEventListener("mouseenter", () => fleetPositionTip(a)));
+    avatars.forEach((a) => a.addEventListener("focus", () => fleetPositionTip(a)));
+    const clear = () => avatars.forEach((a) => a.removeAttribute("data-tip-open"));
     avatars.forEach((a) => a.addEventListener("click", (e) => {
       e.stopPropagation();
       const on = a.hasAttribute("data-tip-open");
       clear();
-      if (!on) { repositionAll(); a.setAttribute("data-tip-open", ""); }
+      if (!on) { fleetPositionTip(a); a.setAttribute("data-tip-open", ""); }
     }));
     document.addEventListener("click", clear, { once: false });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") clear(); });
