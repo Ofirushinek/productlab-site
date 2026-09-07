@@ -3236,7 +3236,7 @@ function wireFleet(lang, f) {
           name.textContent = step.role || "";
           li.classList.remove("is-swapping");
         }, 180);
-      }, 1800);
+      }, 3400);
     }
   } else if (FLEET.bubbleTimer) { clearInterval(FLEET.bubbleTimer); FLEET.bubbleTimer = null; }
 
