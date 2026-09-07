@@ -2559,9 +2559,10 @@ function wireKitAutoDownload() {
    model response; the per-specialist "why" .pnote is retired (that field left
    the schema); shared_brain_line/not_in_brain are now fixed `brain_line`/
    `brain_not`; broke_because is an enum resolved via `broke_bank`. The ONLY
-   free text left on the screen is two verbatim quotes pulled straight from
-   FLEET.answers (q1, and q2/q3/q4 fallback) — see fleetExcerpt/
-   fleetQuoteSource. Design System Lead consult attempted, Task disabled this
+   free text left on the screen is one verbatim quote pulled straight from
+   FLEET.answers.q1 (v5, 2026-09-07: the second quote near the specialists
+   was cut for density) — see fleetExcerpt. Design System Lead consult
+   attempted, Task disabled this
    session — self-audited against component-log.md's own CONFIRMED entries
    for every class reused here; flag for their real sign-off next session.
 
@@ -2590,7 +2591,8 @@ const FLEET_STORE = { answers: "pl_fleet_answers", result: "pl_fleet_blueprint" 
 const FLEET_SR = typeof window !== "undefined" ? (window.SpeechRecognition || window.webkitSpeechRecognition || null) : null;
 const FLEET_LIB = ["user-researcher", "copywriter", "design-system-lead", "reviewer", "chief-of-staff", "marketing-designer",
   "product-analyst", "content-curator", "qa-specialist", "accessibility-specialist", "onboarding-specialist",
-  "technical-writer", "product-ops", "localization-specialist", "security-privacy-reviewer"];
+  "technical-writer", "product-ops", "localization-specialist", "security-privacy-reviewer",
+  "content-manager", "domain-expert", "product-growth-lead", "market-researcher", "content-strategist"];
 const FLEET_MAX = 300;      // spec §2: text ≤ 300 chars
 const FLEET_MIN = 10;       // spec §2: < 10 chars on Q1–Q2 → inline nudge
 const FLEET_Q5 = ["none", "chat", "claude_code_broke"];
@@ -2773,21 +2775,14 @@ function fleetValid(b) {
   if (b.broke_because !== null && FLEET_BROKE_KEYS.indexOf(b.broke_because) === -1) return false;
   return true;
 }
-/* Two verbatim quote blocks on the result screen (spec §3) - both pulled
-   straight from her own typed answers (sessionStorage), NEVER from the model
-   response and NEVER rephrased. This is the only free text on the screen. */
+/* The one verbatim quote block on the result screen (spec §3, narrowed
+   v5) - pulled straight from her own typed q1 (sessionStorage), NEVER from
+   the model response and NEVER rephrased. This is the only free text on
+   the screen. */
 function fleetExcerpt(text, max) {
   const t = typeof text === "string" ? text.trim() : "";
   if (!t) return "";
   return t.length <= max ? t : t.slice(0, max).trim();
-}
-function fleetQuoteSource(answers) {
-  const a = answers || {};
-  for (const k of ["q2", "q3", "q4"]) {
-    const v = typeof a[k] === "string" ? a[k].trim() : "";
-    if (v.length >= FLEET_MIN) return v;
-  }
-  return "";
 }
 
 function fleetRestore() {
@@ -2946,85 +2941,61 @@ function fleetLoading(f) {
 }
 
 function fleetResult(f, b) {
-  /* v3 (Ofir, 2026-09-07, full result-page rebuild): hero-first, no puppet
-     images anywhere on this screen, core trio reframed as "always included,
-     not a recommendation," brain+memory+leave consolidated into one short
-     benefits section, explicit Product Lab positioning line, real CTA
-     (workshop details / WhatsApp) reusing the existing email-gate flow.
-     `text` here is ALWAYS fixed template-bank copy (fleet-content.js), keyed
+  /* v5 (Ofir, 2026-09-07, third-pass redesign): ONE sentence per agent card
+     (title + value, no sub-headers, no permission/boundary language, no
+     start-with marker — flagged twice as clutter), ONE compact team section
+     holding both her personalized specialists and the always-included base
+     trio, one verbatim quote only (the second was cut for density), exact
+     section copy from Ofir (fleet-content.js is the source of truth, not
+     reworded here). `text` here is ALWAYS fixed template-bank copy, keyed
      by specialist enum — never a value from `b`, never model output. */
-  const line = (label, text) => `
-    <li class="pchecklist__item">
-      <span class="pchecklist__dot" aria-hidden="true"></span>
-      <div class="pchecklist__body">
-        <div class="pchecklist__top"><span class="pchecklist__name">${label}</span></div>
-        <p class="pchecklist__note">${text}</p>
-      </div>
-    </li>`;
-  /* The two verbatim quotes — the ONLY free text on this screen (acceptance
-     §6). Both pulled straight from her own sessionStorage answers, both
-     truncated the same way, NEVER touched by the model. */
   const q1Quote = fleetExcerpt(FLEET.answers.q1, 160);
-  const q2Quote = fleetExcerpt(fleetQuoteSource(FLEET.answers), 160);
   const brokeLine = b.broke_because && f.broke_bank ? f.broke_bank[b.broke_because] : null;
+  const specialistCard = (key) => `
+      <article class="card card--feature fleet-agent-card">
+        <h3>${f.lib[key] || key}</h3>
+        <p>${escapeHtml((f.spec_lines && f.spec_lines[key]) || "")}</p>
+      </article>`;
+  const crewCard = (a) => `
+      <article class="card fleet-agent-card">
+        <h3>${a.role}</h3>
+        <p>${a.line}</p>
+      </article>`;
   return `
   <section class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${f.result_eyebrow}</span>
-      <h1 class="section-title">${f.result_title}</h1>
-      ${f.result_sub ? `<p class="section-lead">${f.result_sub}</p>` : ""}
+      <h1 class="section-title">${f.team_title}</h1>
+      <p class="section-lead">${f.team_sub}</p>
       ${q1Quote ? `<p class="section-lead">${f.result_lead} <q>${escapeHtml(q1Quote)}</q></p>` : ""}
       ${brokeLine ? `
       <div class="prep-note fleet-broke">${I.info}<div><strong>${f.broke_title}</strong><br />${escapeHtml(brokeLine)}</div></div>` : ""}
     </div>
-  </div></section>
 
-  <section class="section section--alt"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${f.spec_eyebrow}</span>
-      <h2 class="section-title">${f.spec_title}</h2>
-      <p class="section-lead">${f.spec_sub}</p>
-      ${q2Quote ? `<p class="section-lead">${f.spec_quote_lead || ""} <q>${escapeHtml(q2Quote)}</q></p>` : ""}
+    <div class="fleet-team-group reveal">
+      <p class="fleet-team-label">${f.personal_label}</p>
+      ${f.personal_sub ? `<p class="fleet-team-sub">${f.personal_sub}</p>` : ""}
+      <div class="fleet-team-row fleet-team-row--personal">
+        ${b.specialists.map(specialistCard).join("")}
+      </div>
     </div>
-    <div class="grid grid--2 fleet-specs reveal">
-      ${b.specialists.map((key) => {
-        // specialists is a plain string[] of enum keys (core.ts CLASSIFICATION_SCHEMA).
-        const tpl = (f.spec_bank && f.spec_bank[key]) || { does: "", reads_vs_changes: "", never_closes_alone: "" };
-        return `
-        <article class="card fleet-spec">
-          <div class="fleet-spec__head">
-            <span class="ss-badge">${f.lib[key] || key}</span>
-            ${b.start_with === key ? `<span class="ss-badge">${I.spark} ${f.spec_start}</span>` : ""}
-          </div>
-          <ul class="pchecklist">
-            ${line(f.spec_lines.does, escapeHtml(tpl.does))}
-            ${line(f.spec_lines.reads, escapeHtml(tpl.reads_vs_changes))}
-            ${line(f.spec_lines.never, escapeHtml(tpl.never_closes_alone))}
-          </ul>
-        </article>`;
-      }).join("")}
-    </div>
-  </div></section>
 
-  <section class="section"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${f.crew_eyebrow}</span>
-      <h2 class="section-title">${f.crew_title}</h2>
-      ${f.crew_sub ? `<p class="section-lead">${f.crew_sub}</p>` : ""}
+    <div class="fleet-team-group reveal">
+      <p class="fleet-team-label">${f.crew_label}</p>
+      ${f.crew_sub ? `<p class="fleet-team-sub">${f.crew_sub}</p>` : ""}
+      <div class="grid grid--3 fleet-team-row--crew">
+        ${f.crew.map(crewCard).join("")}
+      </div>
     </div>
-    <div class="grid grid--3 reveal fleet-crew">
-      ${f.crew.map((a) => `
-        <div class="card">
-          <h3>${a.role}</h3>
-          <p>${a.line}</p>
-        </div>`).join("")}
-    </div>
+
+    <p class="fleet-team-connector reveal">${f.team_connector}</p>
   </div></section>
 
   <section class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${f.benefits_eyebrow}</span>
       <h2 class="section-title">${f.benefits_title}</h2>
+      ${f.benefits_sub ? `<p class="section-lead">${f.benefits_sub}</p>` : ""}
     </div>
     <div class="deliv reveal fleet-benefits">
       ${f.benefits.map((d, i) => `
@@ -3040,12 +3011,11 @@ function fleetResult(f, b) {
     <div class="ctaband reveal">
       <h2>${f.result_cta_title}</h2>
       <p>${f.result_cta_sub}</p>
-      <div class="cta-row">
-        <button class="btn btn--primary btn--lg" type="button" data-fleet="gate">${f.result_cta}</button>
+      <div class="cta-row fleet-cta-row">
         <a class="btn btn--wa-solid btn--lg" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${f.result_cta_wa}</a>
+        <button class="btn btn--primary btn--lg" type="button" data-fleet="gate">${f.result_cta}</button>
       </div>
     </div>
-    <div class="cta-row fleet-restart"><button class="btn btn--ghost btn--sm" type="button" data-fleet="reset">${f.result_restart}</button></div>
   </div></section>`;
 }
 
