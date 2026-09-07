@@ -183,35 +183,23 @@ window.FLEET_CONTENT = {
     ],
 
     /* ---- S6 loading ---- */
-    loading_line: "קוראים מה שכתבתם.",
     loading_title: "מרכיבים לכם צוות.",
-    loading_lines: {
-      strategist: [
-        "מבינים מה אתם בונים.",
-        "מסמנים איפה אתם רוצים להישאר בשליטה.",
-      ],
-      designer: [
-        "מזהים איפה העבודה נתקעת.",
-        "משווים בין תפקידים שיכולים להתאים.",
-      ],
-      architect: [
-        "בודקים מה אפשר להעביר לסוכנים.",
-        "בוחרים עם מי כדאי להתחיל.",
-      ],
-    },
-    /* Hypothesis lines for the specialist library (keyed like `lib` below) -
-       "maybe"-phrased, never claims a real action happened. Rendered with an
-       initial-in-disc avatar (no portrait exists for these), same recipe as
-       .avatar-initial on S0. Ofir, 2026-09-07: the loading screen should read
-       as the system comparing role TYPES, not three fixed characters reading
-       a form. */
-    loading_roles: {
-      "user-researcher": "אולי צריך מישהו שיבדוק הנחות לפני שבונים.",
-      "copywriter": "אולי חסר מישהו שמנסח את מה שיוצא ללקוחות.",
-      "design-system-lead": "אולי הבעיה היא לא לבנות מהר, אלא לשמור על עקביות.",
-      "reviewer": "אולי צריך מישהו שיעבור על החומרים לפני שהם ממשיכים הלאה.",
-      "chief-of-staff": "אולי חסר מישהו שיעזור להחליט מה לא נכנס עכשיו.",
-      "marketing-designer": "אולי יש עבודה שכדאי להראות החוצה בצורה ברורה יותר.",
+    /* One line per agent, keyed by img - the SAME img keys as `agents` above.
+       The pool is built from f.agents directly (fleetLoadingPool), so the
+       role label shown here is always byte-identical to S0's - one source
+       of truth, nothing to drift out of sync. Framing: each line is a lens
+       on the answers already given, never a claim of seeing screens, code
+       or research that was never provided (Ofir, 2026-09-07). */
+    loading_agent_lines: {
+      "crew-strategist": "מחדדים מה אתם מנסים לבנות ואיפה הכי נכון להתחיל.",
+      "crew-designer": "מזהים איפה חוויית המוצר יכולה להרוויח עוד זוג עיניים.",
+      "crew-architect": "מזהים איפה שותף טכני יכול להפוך רעיון למשהו שאפשר לבנות.",
+      "crew-cmo": "בודקים איך הערך של המוצר מתחבר לאנשים שאמורים להשתמש בו.",
+      "crew-cso": "בודקים איפה החלטות המוצר פוגשות את התמונה הגדולה.",
+      "crew-dslead": "מזהים איפה עקביות בין מסכים ופיצ'רים יכולה לחסוך עבודה בהמשך.",
+      "crew-copywriter": "בודקים איפה המילים במוצר יכולות להיות ברורות ומדויקות יותר.",
+      "crew-mdesigner": "מזהים איפה הסיפור של המוצר צריך לקבל ביטוי חזותי חזק יותר.",
+      "crew-userresearcher": "בודקים איפה חסר ידע על המשתמשים לפני שמקבלים החלטה.",
     },
     loading_note: "עוד רגע. ההמלצה כבר מתגבשת.",
 
@@ -362,29 +350,17 @@ window.FLEET_CONTENT = {
     ],
 
     /* ---- S6 loading ---- */
-    loading_line: "Reading what you wrote.",
     loading_title: "Putting your team together.",
-    loading_lines: {
-      strategist: [
-        "Understanding what you are building.",
-        "Marking where you want to stay in control.",
-      ],
-      designer: [
-        "Spotting where the work gets stuck.",
-        "Comparing roles that could fit.",
-      ],
-      architect: [
-        "Checking what can move to an agent.",
-        "Choosing who to start with.",
-      ],
-    },
-    loading_roles: {
-      "user-researcher": "Maybe someone should test assumptions before you build.",
-      "copywriter": "Maybe something needs the right words before it goes out.",
-      "design-system-lead": "Maybe the issue is not speed, it is staying consistent.",
-      "reviewer": "Maybe someone should check things before they move on.",
-      "chief-of-staff": "Maybe someone should help decide what waits for now.",
-      "marketing-designer": "Maybe there is work worth showing off more clearly.",
+    loading_agent_lines: {
+      "crew-strategist": "Sharpening what you're trying to build and where it makes sense to start.",
+      "crew-designer": "Spotting where the product experience could use another pair of eyes.",
+      "crew-architect": "Spotting where a technical partner could turn an idea into something buildable.",
+      "crew-cmo": "Checking how the product's value connects to the people meant to use it.",
+      "crew-cso": "Checking where product decisions meet the bigger picture.",
+      "crew-dslead": "Spotting where consistency across screens and features could save work later.",
+      "crew-copywriter": "Checking where the product's words could be clearer and more precise.",
+      "crew-mdesigner": "Spotting where the product's story needs a stronger visual voice.",
+      "crew-userresearcher": "Checking where there's a gap in user knowledge before a decision gets made.",
     },
     loading_note: "One more moment. The recommendation is coming together.",
 

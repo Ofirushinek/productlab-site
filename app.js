@@ -2023,20 +2023,6 @@ function rowKey(r) { return r.email ? "e:" + r.email : "i:" + (r.id == null ? ""
 // Attribute-safe escape (escapeHtml does not touch quotes; input values need it).
 function escapeAttr(s) { return escapeHtml(s).replace(/"/g, "&quot;"); }
 
-// Initial letter for a role/avatar mark (#/fleet S0 cluster + S6 loading
-// rotator): skips a leading English article ("The copywriter"/"The
-// reviewer" would both collapse to "T") and a leading Hebrew definite-
-// article heh prefixed directly on the noun ("הכותב"/"הבודק" would both
-// collapse to "ה") - real collision, found by rendering the EN cluster and
-// seeing four identical "T" marks side by side.
-const FLEET_INITIAL_STOP = new Set(["the", "a", "an"]);
-function fleetInitial(label) {
-  const words = String(label || "").trim().split(/\s+/);
-  let w = words.length > 1 && FLEET_INITIAL_STOP.has(words[0].toLowerCase()) ? words[1] : words[0];
-  w = w || "";
-  if (w.charAt(0) === "ה" && w.length > 2) w = w.slice(1); // ה prefix
-  return (w.charAt(0) || "?").toUpperCase();
-}
 
 // Clean standalone job-title label from a `role` field written for sentence
 // context ("The product manager", "מנהל המוצר"): strips a leading English
@@ -2904,48 +2890,33 @@ function fleetQuestion(f) {
     </form>`);
 }
 
-/* S6 v2 (Ofir, 2026-09-07): the screen reads as the system COMPARING role
-   types, not three fixed characters reading a form. Builds one ordered pool,
-   alternating a crew member (their own 2 generic-process lines, f.crew +
-   f.loading_lines) with a library specialist (no portrait, so an
-   initial-in-a-disc mark; one hedged "maybe" line each, f.loading_roles -
-   never claims a real action happened). wireFleet shows ONE pool entry at a
-   time and swaps which one every tick, so the avatar itself changes each
-   time, not just the text. */
+/* S6 v3 (Ofir, 2026-09-07): the rotation is built directly from f.agents -
+   S0's real roster - so the role label shown here is always identical to
+   S0's, and every entry always has a real photo (no initial-in-a-disc
+   fallback). Each agent's line comes from f.loading_agent_lines, keyed by
+   the same img id; an agent with no line is skipped rather than shown with
+   empty text. */
 function fleetLoadingPool(f) {
-  const keys = { "crew-strategist": "strategist", "crew-designer": "designer", "crew-architect": "architect" };
-  const crew = Array.isArray(f.crew) ? f.crew : [];
-  const lines = f.loading_lines || {};
-  const crewLineSets = crew.map((c) => {
-    const k = keys[c.img] || c.img;
-    return Array.isArray(lines[k]) && lines[k].length ? lines[k] : [f.loading_line || ""];
-  });
-  const maxCrewLines = crewLineSets.reduce((m, ls) => Math.max(m, ls.length), 1);
-  const crewSteps = [];
-  for (let li = 0; li < maxCrewLines; li++) {
-    crew.forEach((c, i) => crewSteps.push({ kind: "crew", img: c.img, name: c.tag, line: crewLineSets[i][li % crewLineSets[i].length] }));
-  }
-  const roles = f.loading_roles || {};
-  const roleSteps = Object.keys(roles).map((key) => ({ kind: "role", name: (f.lib && f.lib[key]) || key, line: roles[key] }));
-  const pool = [];
-  const max = Math.max(crewSteps.length, roleSteps.length);
-  for (let i = 0; i < max; i++) {
-    if (crewSteps[i]) pool.push(crewSteps[i]);
-    if (roleSteps[i]) pool.push(roleSteps[i]);
-  }
-  return pool.length ? pool : [{ kind: "crew", line: f.loading_line || "" }];
+  const lines = f.loading_agent_lines || {};
+  const pool = (f.agents || [])
+    .map((a) => ({ img: a.img, role: a.role, line: lines[a.img] || "" }))
+    .filter((s) => s.line);
+  return pool.length ? pool : [{ role: "", line: f.loading_title || "" }];
 }
+/* 3 of S0's 9 roles only have a "-reading" image file on disk (no base pose
+   was ever uploaded for them - a pre-existing S0 asset gap, out of this
+   task's scope to fix). Use the file that actually exists for each. */
+const FLEET_READING_ONLY = { "crew-strategist": 1, "crew-designer": 1, "crew-architect": 1 };
 function fleetReaderAvatar(step) {
-  return step.kind === "crew" && step.img
-    ? `<img src="assets/${step.img}-reading.webp?v=1" alt="" />`
-    : `<span class="avatar-initial">${escapeHtml(fleetInitial(step.name))}</span>`;
+  const suffix = FLEET_READING_ONLY[step.img] ? "-reading" : "";
+  return `<img src="assets/${step.img}${suffix}.webp?v=2" alt="" />`;
 }
 function fleetReaderItem(step) {
   return `
     <li class="reader">
       <span class="reader__bubble" aria-live="off">${escapeHtml(step.line || "")}</span>
       <span class="reader__av">${fleetReaderAvatar(step)}</span>
-      <span class="reader__name">${escapeHtml(step.name || "")}</span>
+      <span class="reader__name">${escapeHtml(step.role || "")}</span>
     </li>`;
 }
 function fleetLoading(f) {
@@ -3240,11 +3211,9 @@ function wireFleet(lang, f) {
     else if (act === "limited-gate") { FLEET.gateMode = "limited"; go("gate"); }
   }));
 
-  // S6 loading: one pool entry (crew member or library role) shown at a
-  // time; each tick swaps to the next one (avatar + name + line together),
-  // so it reads as the system comparing role types (Ofir, 2026-09-07). Same
-  // add-class / mutate-content-after-180ms / remove-class shape as the
-  // original per-bubble cycling, just mutating three fields instead of one.
+  // S6 loading: one real agent (S0's own roster) shown at a time; each tick
+  // swaps to the next one (avatar + role + line together), so it reads as
+  // the system looking at the answers through a different lens each time.
   const pool = root.querySelector("[data-fleet-pool]");
   if (pool) {
     if (FLEET.bubbleTimer) clearInterval(FLEET.bubbleTimer);
@@ -3264,7 +3233,7 @@ function wireFleet(lang, f) {
           const step = steps[idx];
           bubble.textContent = step.line || "";
           av.innerHTML = fleetReaderAvatar(step);
-          name.textContent = step.name || "";
+          name.textContent = step.role || "";
           li.classList.remove("is-swapping");
         }, 180);
       }, 1800);
