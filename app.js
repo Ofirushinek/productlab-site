@@ -2588,7 +2588,9 @@ const FLEET_STORE = { answers: "pl_fleet_answers", result: "pl_fleet_blueprint" 
    backend, nothing recorded or stored by us. Firefox has no SpeechRecognition,
    so there the button simply does not render. */
 const FLEET_SR = typeof window !== "undefined" ? (window.SpeechRecognition || window.webkitSpeechRecognition || null) : null;
-const FLEET_LIB = ["user-researcher", "copywriter", "design-system-lead", "reviewer", "chief-of-staff", "marketing-designer"];
+const FLEET_LIB = ["user-researcher", "copywriter", "design-system-lead", "reviewer", "chief-of-staff", "marketing-designer",
+  "product-analyst", "content-curator", "qa-specialist", "accessibility-specialist", "onboarding-specialist",
+  "technical-writer", "product-ops", "localization-specialist", "security-privacy-reviewer"];
 const FLEET_MAX = 300;      // spec §2: text ≤ 300 chars
 const FLEET_MIN = 10;       // spec §2: < 10 chars on Q1–Q2 → inline nudge
 const FLEET_Q5 = ["none", "chat", "claude_code_broke"];
@@ -2761,7 +2763,7 @@ const FLEET_BROKE_KEYS = ["no_memory", "no_boundary"];
    malformed body can never paint half a result. */
 function fleetValid(b) {
   if (!b || typeof b !== "object") return false;
-  if (!Array.isArray(b.specialists) || b.specialists.length < 1 || b.specialists.length > 2) return false;
+  if (!Array.isArray(b.specialists) || b.specialists.length < 1 || b.specialists.length > 3) return false;
   // CTO's live schema (core.ts, CLASSIFICATION_SCHEMA): specialists is a plain
   // string[] of enum keys, not an array of {key} objects.
   for (const s of b.specialists) {
@@ -2944,10 +2946,13 @@ function fleetLoading(f) {
 }
 
 function fleetResult(f, b) {
-  /* v2 (spec fleet-blueprint-spec-2026-09-07-v2.md §3): `text` here is ALWAYS
-     fixed template-bank copy (fleet-content.js), keyed by specialist enum —
-     never a value from `b`, never model output. The model no longer writes
-     any of these three lines. */
+  /* v3 (Ofir, 2026-09-07, full result-page rebuild): hero-first, no puppet
+     images anywhere on this screen, core trio reframed as "always included,
+     not a recommendation," brain+memory+leave consolidated into one short
+     benefits section, explicit Product Lab positioning line, real CTA
+     (workshop details / WhatsApp) reusing the existing email-gate flow.
+     `text` here is ALWAYS fixed template-bank copy (fleet-content.js), keyed
+     by specialist enum — never a value from `b`, never model output. */
   const line = (label, text) => `
     <li class="pchecklist__item">
       <span class="pchecklist__dot" aria-hidden="true"></span>
@@ -2962,16 +2967,12 @@ function fleetResult(f, b) {
   const q1Quote = fleetExcerpt(FLEET.answers.q1, 160);
   const q2Quote = fleetExcerpt(fleetQuoteSource(FLEET.answers), 160);
   const brokeLine = b.broke_because && f.broke_bank ? f.broke_bank[b.broke_because] : null;
-  /* Order (UR finding 2026-09-05 #2, CSO call): HER specialists first, the fixed
-     crew below with its "included with every team" framing intact. #7: the
-     broke_because recognition line sits right under the product line. #6: the
-     specialist pill carries the closed-library nickname (crew-tag register),
-     never the kebab key. */
   return `
   <section class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${f.result_eyebrow}</span>
       <h1 class="section-title">${f.result_title}</h1>
+      ${f.result_sub ? `<p class="section-lead">${f.result_sub}</p>` : ""}
       ${q1Quote ? `<p class="section-lead">${f.result_lead} <q>${escapeHtml(q1Quote)}</q></p>` : ""}
       ${brokeLine ? `
       <div class="prep-note fleet-broke">${I.info}<div><strong>${f.broke_title}</strong><br />${escapeHtml(brokeLine)}</div></div>` : ""}
@@ -3006,64 +3007,43 @@ function fleetResult(f, b) {
   </div></section>
 
   <section class="section"><div class="wrap">
-    <div class="team reveal fleet-crew">
-      <div class="team__crew">
-        <span class="eyebrow">${f.crew_eyebrow}</span>
-        <div class="team__name">${f.crew_title}</div>
-        <div class="team__agents">
-          ${f.crew.map((a) => `
-            <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=2" alt="" loading="lazy" /></div>
-              <div class="agentcard__body">
-                <span class="agentcard__tag">${a.tag}</span>
-                <div class="agentcard__role">${a.role}</div>
-                <p>${a.line}</p>
-              </div>
-            </div>`).join("")}
-        </div>
-      </div>
+    <div class="reveal">
+      <span class="eyebrow">${f.crew_eyebrow}</span>
+      <h2 class="section-title">${f.crew_title}</h2>
+      ${f.crew_sub ? `<p class="section-lead">${f.crew_sub}</p>` : ""}
+    </div>
+    <div class="grid grid--3 reveal fleet-crew">
+      ${f.crew.map((a) => `
+        <div class="card">
+          <h3>${a.role}</h3>
+          <p>${a.line}</p>
+        </div>`).join("")}
     </div>
   </div></section>
 
   <section class="section section--alt"><div class="wrap">
     <div class="reveal">
-      <span class="eyebrow">${f.brain_eyebrow}</span>
-      <h2 class="section-title">${f.brain_title}</h2>
+      <span class="eyebrow">${f.benefits_eyebrow}</span>
+      <h2 class="section-title">${f.benefits_title}</h2>
     </div>
-    <div class="grid grid--2 reveal fleet-brain">
-      <div class="card">
-        <div class="card__ico">${I.brain}</div>
-        <h3>${f.brain_card_title}</h3>
-        <p>${f.brain_line || ""}</p>
-        <div class="pnote"><span class="pnote__dot" aria-hidden="true"></span><p><strong>${f.brain_not_label}</strong> ${f.brain_not || ""}</p></div>
-      </div>
-      <div class="card">
-        <div class="card__ico">${I.doc}</div>
-        <h3>${f.memory_title}</h3>
-        <p>${f.memory_line}</p>
-      </div>
-    </div>
-  </div></section>
-
-  <section class="section"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${f.leave_eyebrow}</span>
-      <h2 class="section-title">${f.leave_title}</h2>
-    </div>
-    <div class="deliv reveal fleet-leave">
-      ${f.leave.map((d, i) => `
+    <div class="deliv reveal fleet-benefits">
+      ${f.benefits.map((d, i) => `
         <div class="deliv__item">
           <div class="deliv__num">${i + 1}</div>
           <div><h3>${d.t}</h3><p>${d.b}</p></div>
         </div>`).join("")}
     </div>
+    ${f.positioning_line ? `<p class="section-lead fleet-positioning reveal">${f.positioning_line}</p>` : ""}
   </div></section>
 
   <section class="section"><div class="wrap">
     <div class="ctaband reveal">
       <h2>${f.result_cta_title}</h2>
       <p>${f.result_cta_sub}</p>
-      <div class="cta-row"><button class="btn btn--primary btn--lg" type="button" data-fleet="gate">${f.result_cta}</button></div>
+      <div class="cta-row">
+        <button class="btn btn--primary btn--lg" type="button" data-fleet="gate">${f.result_cta}</button>
+        <a class="btn btn--wa-solid btn--lg" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${f.result_cta_wa}</a>
+      </div>
     </div>
     <div class="cta-row fleet-restart"><button class="btn btn--ghost btn--sm" type="button" data-fleet="reset">${f.result_restart}</button></div>
   </div></section>`;

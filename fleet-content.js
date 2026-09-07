@@ -203,20 +203,24 @@ window.FLEET_CONTENT = {
     },
     loading_note: "עוד רגע. ההמלצה כבר מתגבשת.",
 
-    /* ---- S7 result ---- */
+    /* ---- S7 result (v3, 2026-09-07: Ofir's full rebuild — hero-first, no
+       puppets, core trio reframed as always-included, brain+memory+leave
+       consolidated into one short benefits section, real CTA) ---- */
     result_eyebrow: "הרכב הצוות שלכם",
-    result_title: "הצוות שאתם צריכים.",
+    result_title: "הצוות שמתאים למה שאתם בונים.",
+    result_sub: "לפי מה שסיפרתם, אלה הסוכנים שהכי יעזרו לכם סביב המוצר.",
     result_lead: "בשביל",
-    crew_eyebrow: "מגיע עם כל צוות",
-    crew_title: "צוות הבנייה. אותם שלושה, תמיד.",
+    crew_eyebrow: "צוות הבסיס",
+    crew_title: "ועם כל מוצר מגיע צוות הבסיס.",
+    crew_sub: "שלושה תפקידים שלא ממליצים עליהם — הם הבסיס לכל מוצר דיגיטלי.",
     crew: [
-      { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", line: "מחדד מה בונים קודם. לא סוגר לבד מה נכנס לגרסה." },
-      { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", line: "בונה מסכים מתוך מערכת העיצוב. לא מוסר לפיתוח בלעדיכם." },
-      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", line: "בונה מה שסוכם. לא מעלה לאוויר בלי שראיתם." },
+      { role: "מנהל מוצר", line: "מחדד את הבעיה, סדר העדיפויות והחלטות המוצר לאורך הדרך." },
+      { role: "מעצב מוצר", line: "מתרגם רעיונות לזרימות, ממשקים וחוויית מוצר שאפשר להשתמש בה." },
+      { role: "מוביל טכני", line: "מפרק את המימוש הטכני, עוזר לבחור גישה ומלווה את הבנייה." },
     ],
     spec_eyebrow: "המומחים שלכם",
     spec_title: "מי שמצטרף בגלל מה שכתבתם.",
-    spec_sub: "אחד או שניים, לא שמונה. מי שמתחילים ממנו מסומן.",
+    spec_sub: "אחד עד שלושה, לא שמונה. מי שמתחילים ממנו מסומן.",
     spec_lines: {
       does: "מה הוא עושה",
       reads: "מה הוא קורא, ומה מותר לו לשנות",
@@ -231,6 +235,15 @@ window.FLEET_CONTENT = {
       "reviewer": "הבודק",
       "chief-of-staff": "ראש המטה",
       "marketing-designer": "מעצב השיווק",
+      "product-analyst": "אנליסט המוצר",
+      "content-curator": "אוצר התוכן",
+      "qa-specialist": "בודק ה-QA",
+      "accessibility-specialist": "מומחה הנגישות",
+      "onboarding-specialist": "מומחה ה-Onboarding",
+      "technical-writer": "כותב התיעוד",
+      "product-ops": "Product Ops",
+      "localization-specialist": "מומחה הלוקליזציה",
+      "security-privacy-reviewer": "בודק האבטחה",
     },
     /* ---- v2 (2026-09-07): fixed template bank, keyed by specialist enum. ----
        PLACEHOLDER pending Copywriter's official v2 pass - built from core.ts's
@@ -269,33 +282,73 @@ window.FLEET_CONTENT = {
         reads_vs_changes: "קורא את המותג, ספריית התמונות שלכם, המוח המשותף. משנה רק קבצי תמונה ומצגת",
         never_closes_alone: "לא מפרסם ולא משנה את המותג עצמו — כל ויזואל עובר אצלכם",
       },
+      "product-analyst": {
+        does: "עוקב אחרי המספרים של המוצר ומחזיר לכם מה קורה בפועל — לא ניחוש, נתונים",
+        reads_vs_changes: "קורא הנתונים, דשבורדים, המוח המשותף. משנה רק את דוחות המדדים והתרשימים",
+        never_closes_alone: "לא מחליט מה לבנות ולא משנה שום דבר במוצר — מראה מספרים, אתם מכריעים",
+      },
+      "content-curator": {
+        does: "עובר על ספריית התוכן או המסכים, מסמן מה מיושן ומה חסר, ומחזיר לכם רשימה מסודרת",
+        reads_vs_changes: "קורא ספריית התוכן, המסכים הקיימים, המוח המשותף. משנה רק את קטלוג התוכן והתיוג שלו",
+        never_closes_alone: "לא מוחק ולא מפרסם תוכן — מסמן, אתם מכריעים",
+      },
+      "qa-specialist": {
+        does: "עובר על מה שנבנה לפני שזה יוצא לאוויר ומוצא באגים לפני שהמשתמשים מוצאים אותם",
+        reads_vs_changes: "קורא המסכים שנבנו, המפרט, המוח המשותף. משנה רק את דוח הבאגים",
+        never_closes_alone: "לא מתקן בעצמו ולא מאשר שחרור — מדווח, אתם מכריעים",
+      },
+      "accessibility-specialist": {
+        does: "עובר על המוצר מול תקן נגישות ומחזיר רשימה של מה חוסם משתמשים עם מוגבלות",
+        reads_vs_changes: "קורא המסכים, הקוד, תקני הנגישות. משנה רק את דוח הנגישות",
+        never_closes_alone: "לא מתקן בעצמו ולא קובע עדיפויות — מדווח, אתם מכריעים",
+      },
+      "onboarding-specialist": {
+        does: "עובר על החוויה הראשונה של משתמש חדש ומסמן איפה אנשים נתקעים או נוטשים",
+        reads_vs_changes: "קורא מסכי ההרשמה וההפעלה הראשונה, המוח המשותף. משנה רק את דוח החוויה הראשונה",
+        never_closes_alone: "לא משנה מסך בעצמו — מסמן, אתם מכריעים",
+      },
+      "technical-writer": {
+        does: "כותב את מסכי העזרה, ההנחיות בתוך המוצר ותיעוד למשתמש — לא שיווק, הסבר",
+        reads_vs_changes: "קורא המוצר, המסכים הקיימים, המוח המשותף. משנה רק קבצי תיעוד ועזרה",
+        never_closes_alone: "לא כותב תוכן שיווקי ולא משנה עיצוב — כל טקסט עובר אצלכם",
+      },
+      "product-ops": {
+        does: "שומר על התהליך והכלים של הצוות עצמו — לא של המוצר — כך שאף אחד לא בונה בכפילות",
+        reads_vs_changes: "קורא המוח המשותף, הכלים והתהליכים של הצוות. משנה רק את קבצי התהליך והתיעוד הפנימי",
+        never_closes_alone: "לא בונה פיצ'רים ולא מחליט מה נכנס — מסדר את איך עובדים, אתם מכריעים",
+      },
+      "localization-specialist": {
+        does: "עובר על המוצר לשפה או שוק חדש ומסמן מה לא מתורגם, לא מתאים תרבותית או שבור",
+        reads_vs_changes: "קורא המסכים, קבצי התרגום, המוח המשותף. משנה רק את קבצי התרגום",
+        never_closes_alone: "לא מפרסם גרסה חדשה בעצמו — מסמן, אתם מכריעים",
+      },
+      "security-privacy-reviewer": {
+        does: "עובר על המוצר ומסמן איפה מידע רגיש נחשף או נשמר בלי הגנה מספקת",
+        reads_vs_changes: "קורא הקוד, מסכי המוצר, איך מידע זורם בין חלקים. משנה רק את דוח החשיפות",
+        never_closes_alone: "לא מתקן בעצמו ולא קובע מה דחוף — מדווח, אתם מכריעים",
+      },
     },
-    brain_eyebrow: "איך הם זוכרים",
-    brain_title: "קובץ אחד שכולם קוראים לפני שהם מתחילים.",
-    brain_card_title: "המוח המשותף",
-    brain_not_label: "מה לא נכנס לשם:",
-    /* v2: shared_brain_line + not_in_brain are now FIXED copy, not model output. */
-    brain_line: "כל סוכן שמצטרף כותב למוח המשותף מה הוחלט ומה נגנז, והבא בתור קורא את זה לפני שהוא נוגע במשהו — אף החלטה לא מתקבלת פעמיים.",
-    brain_not: "טיוטה שעוד לא הסתכלתם עליה לא נכנסת לשם — רק מה שהוחלט.",
-    memory_title: "זיכרון לכל סוכן",
-    memory_line: "קובץ טקסט אחד לכל סוכן, עם מה שהוא כבר יודע עליכם. הוא קורא אותו כשהוא מתחיל, וכותב אליו כשהוא מסיים. ככה ביום שני הוא זוכר מה הוחלט ביום חמישי.",
     broke_title: "למה זה נשבר בפעם הקודמת",
     /* v2: broke_because is now an enum (no_memory|no_boundary), fixed 2 lines. */
     broke_bank: {
       no_memory: "לא היה לו זיכרון בין שיחות. בכל צ'אט חדש הוא התחיל מאפס.",
       no_boundary: "לא היה כתוב לו מה אסור לו לשנות בלי האישור שלכם. בפעם השלישית הוא החליט לבד.",
     },
-    leave_eyebrow: "מה יוצאים איתו מהסדנה",
-    leave_title: "סדנה של ערב אחד, יום חמישי 15 באוקטובר, ₪600. בסוף הערב, זה מה שיש לכם.",
-    leave: [
-      { t: "הסוכן הראשון שלכם רץ", b: "אחד מהצוות שלמעלה, מופעל איתכם בחדר, וכבר יודע מה כתבתם כאן." },
-      { t: "השאר מגיעים בנויים", b: "צוות הבנייה והמומחים שלכם מגיעים בקובץ אחד לפני הערב. כל אחד מופעל בפקודה אחת, והזיכרון שלו כבר מכיר אתכם." },
-      { t: "דף אחד שנבנה עם צוות הבנייה", b: "דף רשימת המתנה אמיתי למוצר שכתבתם בשאלה הראשונה. שלושה סוכנים בונים אותו לפי סדר, והמומחים שלכם אומרים עליו את דעתם." },
-      { t: "מוח משותף אמיתי", b: "קובץ אחד עם ההחלטות מהערב הזה. כל סוכן קורא אותו לפני שהוא מתחיל, וזה מחזיק גם ביום שלישי." },
+    /* v3 (2026-09-07): brain+memory (2 cards) + leave (4 items) consolidated
+       into ONE short section, 3 benefits — Ofir: "not a long report, very
+       concise." */
+    benefits_eyebrow: "מה זה אומר בפועל",
+    benefits_title: "זה לא רק רעיון לצוות. בסדנה אתם מקימים אותו.",
+    benefits: [
+      { t: "הצוות קם בסדנה", b: "את צוות הבסיס ואת הסוכנים שמתאימים לכם מקימים כחלק מהסדנה — לא רק מדברים עליהם." },
+      { t: "זיכרון משותף שנשאר", b: "הסוכנים עובדים עם מוח משותף אחד: מה שהוחלט ונלמד ממשיך איתכם גם לעבודה הבאה." },
+      { t: "אתם לא תלויים בי אחר כך", b: "בסוף הערב נשאר לכם שותף טכני שאפשר להתייעץ איתו — להוסיף סוכן, לשנות תהליך, להרחיב את הצוות." },
     ],
-    result_cta_title: "רוצים את ההרכב הזה באימייל?",
-    result_cta_sub: "שולחים אותו כמו שהוא, ומוסיפים מה הסדנה עושה איתו.",
-    result_cta: "לשלוח לי את ההרכב",
+    positioning_line: "Product Lab מלמדת איך לבנות ולעבוד עם צוותי AI סביב מוצרים, פיצ'רים ותהליכי מוצר.",
+    result_cta_title: "רוצים לצאת עם הצוות הזה מוכן לעבודה?",
+    result_cta_sub: "בסדנה מקימים את הצוות, מחברים לו זיכרון משותף ומתחילים לעבוד איתו על משהו אמיתי שלכם.",
+    result_cta: "לפרטי הסדנה",
+    result_cta_wa: "דברו איתי בוואטסאפ",
     result_restart: "להתחיל מחדש",
 
     /* ---- S8 email gate (after the full result, never before) ---- */
@@ -411,18 +464,20 @@ window.FLEET_CONTENT = {
     loading_note: "One more moment. The recommendation is coming together.",
 
     result_eyebrow: "Your team lineup",
-    result_title: "The team you need.",
+    result_title: "The team that matches what you're building.",
+    result_sub: "Based on what you told us, these are the agents that will help you most around the product.",
     result_lead: "For",
-    crew_eyebrow: "Included with every team",
-    crew_title: "The build crew. The same three, always.",
+    crew_eyebrow: "The build crew",
+    crew_title: "And every product ships with the build crew.",
+    crew_sub: "Three roles we don't 'recommend' — they're the foundation of every digital product.",
     crew: [
-      { img: "crew-strategist", tag: "The Strategist", role: "The product manager", line: "Sharpens what gets built first. Never closes alone what makes the release." },
-      { img: "crew-designer", tag: "The Designer", role: "The product designer", line: "Builds screens from the design system. Never hands off to dev without you." },
-      { img: "crew-architect", tag: "The Architect", role: "The lead engineer", line: "Builds what was agreed. Never ships without you seeing it." },
+      { role: "Product manager", line: "Sharpens the problem, the priorities, and the product decisions along the way." },
+      { role: "Product designer", line: "Turns ideas into flows, interfaces, and a product experience people can use." },
+      { role: "Lead engineer", line: "Breaks down the technical build, helps choose an approach, and sees it through." },
     ],
     spec_eyebrow: "Your specialists",
     spec_title: "Who joins because of what you wrote.",
-    spec_sub: "One or two, not eight. The one you start with is marked.",
+    spec_sub: "One to three, not eight. The one you start with is marked.",
     spec_lines: {
       does: "What it does",
       reads: "What it reads, and what it may change",
@@ -437,6 +492,15 @@ window.FLEET_CONTENT = {
       "reviewer": "The reviewer",
       "chief-of-staff": "The chief of staff",
       "marketing-designer": "The marketing designer",
+      "product-analyst": "The product analyst",
+      "content-curator": "The content curator",
+      "qa-specialist": "The QA specialist",
+      "accessibility-specialist": "The accessibility specialist",
+      "onboarding-specialist": "The onboarding specialist",
+      "technical-writer": "The technical writer",
+      "product-ops": "Product ops",
+      "localization-specialist": "The localization specialist",
+      "security-privacy-reviewer": "The security & privacy reviewer",
     },
     /* ---- v2 (2026-09-07): fixed template bank, keyed by specialist enum. ----
        PLACEHOLDER pending Copywriter's official v2 pass - see the HE block's
@@ -473,33 +537,72 @@ window.FLEET_CONTENT = {
         reads_vs_changes: "Reads the brand, your image library, the shared brain. Changes only image and deck files",
         never_closes_alone: "Never publishes and never changes the brand itself — every visual passes you",
       },
+      "product-analyst": {
+        does: "Tracks the product's numbers and hands you what's actually happening — not a guess, data",
+        reads_vs_changes: "Reads the data, dashboards, the shared brain. Changes only metric reports and charts",
+        never_closes_alone: "Never decides what to build and never changes anything in the product — shows numbers, you rule",
+      },
+      "content-curator": {
+        does: "Goes over the content or screen library, flags what's stale or missing, and hands you an organized list",
+        reads_vs_changes: "Reads the content library, the existing screens, the shared brain. Changes only the content catalog and its tagging",
+        never_closes_alone: "Never deletes and never publishes content — flags, you rule",
+      },
+      "qa-specialist": {
+        does: "Goes over what was built before it ships and finds the bugs before your users do",
+        reads_vs_changes: "Reads the built screens, the spec, the shared brain. Changes only the bug report",
+        never_closes_alone: "Never fixes on its own and never approves a release — reports, you rule",
+      },
+      "accessibility-specialist": {
+        does: "Goes over the product against an accessibility standard and hands you what blocks users with disabilities",
+        reads_vs_changes: "Reads the screens, the code, accessibility standards. Changes only the accessibility report",
+        never_closes_alone: "Never fixes on its own and never sets priority — reports, you rule",
+      },
+      "onboarding-specialist": {
+        does: "Goes over a new user's first experience and flags where people get stuck or drop off",
+        reads_vs_changes: "Reads the sign-up and first-run screens, the shared brain. Changes only the first-run report",
+        never_closes_alone: "Never changes a screen on its own — flags, you rule",
+      },
+      "technical-writer": {
+        does: "Writes the help screens, in-product guidance and user docs — not marketing, explanation",
+        reads_vs_changes: "Reads the product, the existing screens, the shared brain. Changes only documentation and help files",
+        never_closes_alone: "Never writes marketing copy and never changes design — every text passes you",
+      },
+      "product-ops": {
+        does: "Keeps the team's own process and tools sound — not the product's — so no one duplicates work",
+        reads_vs_changes: "Reads the shared brain, the team's tools and process. Changes only process files and internal docs",
+        never_closes_alone: "Never builds features and never decides what ships — orders how you work, you rule",
+      },
+      "localization-specialist": {
+        does: "Goes over the product for a new language or market and flags what's untranslated, culturally off, or broken",
+        reads_vs_changes: "Reads the screens, translation files, the shared brain. Changes only the translation files",
+        never_closes_alone: "Never publishes a new version on its own — flags, you rule",
+      },
+      "security-privacy-reviewer": {
+        does: "Goes over the product and flags where sensitive data is exposed or stored without enough protection",
+        reads_vs_changes: "Reads the code, the product screens, how data flows between parts. Changes only the exposure report",
+        never_closes_alone: "Never fixes on its own and never sets urgency — reports, you rule",
+      },
     },
-    brain_eyebrow: "How they remember",
-    brain_title: "One file everyone reads before they start.",
-    brain_card_title: "The shared brain",
-    brain_not_label: "What does not go in:",
-    /* v2: shared_brain_line + not_in_brain are now FIXED copy, not model output. */
-    brain_line: "Every agent that joins writes to the shared brain what was decided and what was shelved, and the next one reads it before touching anything — no decision gets made twice.",
-    brain_not: "A draft you have not looked at yet does not go in. Only what was decided.",
-    memory_title: "A memory for each agent",
-    memory_line: "One text file per agent, holding what it already knows about you. It reads it when it starts, and writes to it when it finishes. That is how Monday remembers what was decided on Thursday.",
     broke_title: "Why it broke last time",
     /* v2: broke_because is now an enum (no_memory|no_boundary), fixed 2 lines. */
     broke_bank: {
       no_memory: "It had no memory between chats. Every new one started from zero.",
       no_boundary: "Nothing told it what it may not change without your approval. The third time, it decided alone.",
     },
-    leave_eyebrow: "What you leave the workshop with",
-    leave_title: "A one-evening workshop, Thursday 15 October, ₪600. By the end of the evening, this is what you have.",
-    leave: [
-      { t: "Your first agent running", b: "One of the team above, started with you in the room, already knowing what you wrote here." },
-      { t: "The rest arrive built", b: "The build crew and your specialists, in one file before the evening. Each one starts with a single command, and its memory already knows you." },
-      { t: "One page built with the build crew", b: "A real waiting-list page for the product from your first answer. Three agents build it in order, and your specialists weigh in on it." },
-      { t: "A real shared brain", b: "One file with the decisions from that evening. Every agent reads it before it starts, and it still holds on Tuesday." },
+    /* v3 (2026-09-07): brain+memory (2 cards) + leave (4 items) consolidated
+       into ONE short section, 3 benefits. */
+    benefits_eyebrow: "What this actually means",
+    benefits_title: "It's not just a team idea. You set it up in the workshop.",
+    benefits: [
+      { t: "The team gets built in the workshop", b: "The build crew and the agents that fit you get set up as part of the workshop — not just talked about." },
+      { t: "A shared memory that stays", b: "The agents work off one shared brain: what got decided and learned carries into your next session too." },
+      { t: "You're not dependent on me afterward", b: "By the end of the evening you have a technical partner to consult — add an agent, change a process, grow the team." },
     ],
-    result_cta_title: "Want this lineup in your inbox?",
-    result_cta_sub: "We send it as it is, plus what the workshop does with it.",
-    result_cta: "Send me the lineup",
+    positioning_line: "Product Lab teaches how to build and work with AI agent teams around products, features and product workflows.",
+    result_cta_title: "Want to leave with this team ready to work?",
+    result_cta_sub: "In the workshop we set up the team, connect it to shared memory, and start working with it on something real of yours.",
+    result_cta: "Workshop details",
+    result_cta_wa: "Talk to me on WhatsApp",
     result_restart: "Start over",
 
     gate_title: "Where should the lineup go?",
