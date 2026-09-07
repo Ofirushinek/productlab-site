@@ -130,7 +130,6 @@ window.FLEET_CONTENT = {
       { img: "crew-copywriter", role: "קופירייטר", line: "כותב את הטקסטים במוצר ובתקשורת סביבו כך שיהיו ברורים, מדויקים ונעימים לקריאה." },
       { img: "crew-mdesigner", role: "מעצב שיווק", line: "מתרגם את הסיפור של המוצר לשפה חזותית עבור השקה, עמודים וחומרים שמציגים אותו." },
       { img: "crew-userresearcher", role: "חוקר משתמשים", line: "בודק איך אנשים משתמשים במוצר, מזהה צרכים וחיכוכים ומביא תובנות שמחדדות החלטות." },
-      { img: "crew-dean", role: "דיקן", line: "קובע מה מלמדים ובאיזה סדר, ומוודא שהתוכן מדויק והתרגילים ניתנים לביצוע בפועל." },
     ],
 
     /* ---- S0, returning visitor ---- */
@@ -201,7 +200,6 @@ window.FLEET_CONTENT = {
       "crew-copywriter": "בודקים איפה המילים במוצר יכולות להיות ברורות ומדויקות יותר.",
       "crew-mdesigner": "מזהים איפה הסיפור של המוצר צריך לקבל ביטוי חזותי חזק יותר.",
       "crew-userresearcher": "בודקים איפה חסר ידע על המשתמשים לפני שמקבלים החלטה.",
-      "crew-dean": "בודקים אם תוכן הסדנה מדויק, עקבי וניתן לביצוע בפועל.",
     },
     loading_note: "עוד רגע. ההמלצה כבר מתגבשת.",
 
@@ -340,7 +338,6 @@ window.FLEET_CONTENT = {
       { img: "crew-copywriter", role: "Copywriter", line: "Writes the product's words and the communication around it so they're clear, precise, and pleasant to read." },
       { img: "crew-mdesigner", role: "Marketing Designer", line: "Turns the product's story into visuals for launches, pages, and materials that present it." },
       { img: "crew-userresearcher", role: "User Researcher", line: "Studies how people use the product, spots needs and friction, and brings insights that sharpen decisions." },
-      { img: "crew-dean", role: "Dean", line: "Decides what's taught and in what order, and makes sure the content is accurate and the exercises are doable." },
     ],
 
     return_note: "You already have a team lineup from last time.",
@@ -403,7 +400,6 @@ window.FLEET_CONTENT = {
       "crew-copywriter": "Checking where the product's words could be clearer and more precise.",
       "crew-mdesigner": "Spotting where the product's story needs a stronger visual voice.",
       "crew-userresearcher": "Checking where there's a gap in user knowledge before a decision gets made.",
-      "crew-dean": "Checking whether the workshop content is accurate, consistent, and doable in practice.",
     },
     loading_note: "One more moment. The recommendation is coming together.",
 
