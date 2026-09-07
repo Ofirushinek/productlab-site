@@ -154,6 +154,10 @@ const I18N = {
     hero_t2a: "עולם חדש של עבודה עם ",
     hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI משלכם,", "ותתחילו לבנות איתו את המוצר הראשון שלכם.", "בזמן אמת."],
     hero_cta: "הרשמה למחזור הבא",
+    /* secondary hero CTA → #/fleet, 2026-09-07 ask via CSO: no direct /fleet link in
+       the launch post, discovery happens by browsing the page instead. DRAFT copy,
+       not Copywriter-final — flag at Wed checkpoint. */
+    hero_cta2: "לגלות אילו סוכנים מתאימים לכם",
     session: {
       badge: "המפגש הנוכחי",
       when_label: "מתי?",
@@ -449,6 +453,7 @@ const I18N = {
     hero_t2a: "A new world of working with ",
     hero_sub_lines: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
     hero_cta: "Register for the next cohort",
+    hero_cta2: "See which agents fit you",
     session: {
       badge: "Current session",
       when_label: "When?",
@@ -1111,7 +1116,10 @@ function render(lang) {
     <div class="hero__content">
       <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
       <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
-      <div class="hero__cta"><button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button></div>
+      <div class="hero__cta cta-row">
+        <button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button>
+        <a class="btn btn--ghost" href="#/fleet">${t.hero_cta2}</a>
+      </div>
     </div>
     <picture class="hero__bg">
       <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=1" />
