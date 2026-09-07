@@ -178,8 +178,8 @@ window.FLEET_CONTENT = {
           { v: "claude_code_broke", l: "Claude Code, Cursor, Lovable" },
         ] },
       { key: "q2", title: "איפה העבודה שלכם נתקעת?", hint: "מה לוקח יותר מדי זמן, נדחה שוב ושוב או תלוי בכם כדי להתקדם?", ph: "כל מסך חדש מתחיל כמעט מאפס, ואני חוזר שוב ושוב על החלטות שכבר קיבלתי." },
-      { key: "q3", title: "מה אתם מוצאים את עצמכם מסבירים לו שוב ושוב?", hint: "כללים, החלטות והעדפות שהייתם רוצים שכלי ה-AI שלכם כבר יזכור לבד.", ph: "מי קהל היעד, איך אנחנו כותבים, אילו רכיבים כבר קיימים ומה החלטנו לא לבנות." },
-      { key: "q4", title: "מה לא קורה בלי האישור שלכם?", hint: "אילו החלטות או פעולות אתם לא רוצים שכלי ה-AI יבצע לבד?", ph: "לפרסם משהו ללקוחות, לשנות מחיר, למחוק מידע או לשנות החלטה שכבר אושרה." },
+      { key: "q3", title: "מה אתם מוצאים את עצמכם מסבירים שוב ושוב לכלי ה-AI שאתם בונים או עובדים איתו?", hint: "כללים, החלטות והעדפות שהייתם רוצים שכלי ה-AI שאתם בונים או עובדים איתו כבר יזכור לבד.", ph: "מי קהל היעד, איך אנחנו כותבים, אילו רכיבים כבר קיימים ומה החלטנו לא לבנות." },
+      { key: "q4", title: "מה לא צריך לקרות בלי האישור שלכם?", hint: "אילו החלטות או פעולות אתם לא רוצים שכלי ה-AI יבצע לבד?", ph: "לפרסם משהו ללקוחות, לשנות מחיר, למחוק מידע או לשנות החלטה שכבר אושרה." },
     ],
 
     /* ---- S6 loading ---- */
@@ -385,7 +385,7 @@ window.FLEET_CONTENT = {
         ] },
       { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users." },
       { key: "q3", title: "What do you keep explaining in every chat?", hint: "What gets forgotten between one chat and the next. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero." },
-      { key: "q4", title: "What does not happen without your approval?", hint: "Which decisions or actions you don't want the tool making without you.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move." },
+      { key: "q4", title: "What shouldn't happen without your approval?", hint: "Which decisions or actions you don't want the AI tool making without you.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move." },
     ],
 
     /* ---- S6 loading ---- */
