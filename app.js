@@ -175,7 +175,7 @@ const I18N = {
     /* secondary hero CTA → #/fleet, 2026-09-07 ask via CSO: no direct /fleet link in
        the launch post, discovery happens by browsing the page instead. DRAFT copy,
        not Copywriter-final — flag at Wed checkpoint. */
-    hero_cta2: "לגלות אילו סוכנים מתאימים לכם",
+    hero_cta2: "איזה סוכנים מתאימים לי?",
     session: {
       badge: "המפגש הנוכחי",
       when_label: "מתי?",

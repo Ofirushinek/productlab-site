@@ -1708,14 +1708,23 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   .sd{ font-size:clamp(0.75rem, 2.2cqh, 1.375rem); }
 }
 
-.hero__cta{ margin-top:1.8cqh; display:flex; justify-content:center; }
+/* Both hero buttons equal width (Ofir, 2026-09-07): flex:1 1 0 on each splits
+   the row exactly evenly regardless of label length, on every viewport - the
+   row itself reuses .hero__sub's own max-width cap (min(60ch, 92%)) so it
+   doesn't stretch edge-to-edge on wide desktop. white-space:normal + a
+   min-height (not a fixed height) instead of the base .btn's nowrap/fixed
+   height so a longer label can wrap to a 2nd line instead of overflowing its
+   half of the row - the base .btn rule (nowrap, fixed height) stays
+   untouched for every other button on the site. */
+.hero__cta{ margin-top:1.8cqh; display:flex; justify-content:center; max-width:min(60ch, 92%); margin-inline:auto; width:100%; }
 .hero__cta .btn{
-  height:clamp(2rem, 6cqh, 3.5rem); min-width:0;
+  flex:1 1 0; min-width:0; white-space:normal; text-align:center;
+  min-height:clamp(2rem, 6cqh, 3.5rem); height:auto;
   padding-inline:clamp(0.9rem, 3.4cqh, 2rem);
   font-size:clamp(0.75rem, 2.6cqh, 1.125rem);
 }
 @media (min-width:761px){
-  .hero__cta .btn{ height:clamp(2rem, 5.4cqh, 3.5rem); font-size:clamp(0.75rem, 2.2cqh, 1.125rem); }
+  .hero__cta .btn{ min-height:clamp(2rem, 5.4cqh, 3.5rem); font-size:clamp(0.75rem, 2.2cqh, 1.125rem); }
 }
 .btn--accent{ background:var(--pl-accent); color:var(--pl-accent-fg); border-color:transparent; box-shadow:var(--shadow-pl-md); }
 .btn--accent:hover{ background:var(--pl-accent-hover); }
