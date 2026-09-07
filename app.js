@@ -3256,17 +3256,32 @@ function wireFleet(lang, f) {
   // opacity:0 an absolutely-positioned tooltip sitting at its unclamped
   // default still counts toward the page's real scrollWidth, so the page
   // was horizontally scrollable before anyone had hovered anything.
+  // The hovered avatar also grows (width/height, not just transform - see
+  // styles.css) so its neighbors make room instead of it overlapping them -
+  // which means THEIR positions shift too, staling their own (invisible but
+  // still layout-affecting) tooltip offsets. Reposition every avatar's tip
+  // on any interaction, not just the one being hovered - found by hovering
+  // the FIRST avatar and seeing an unrelated sibling's tip push the page
+  // wide again, the exact bug this whole mechanism exists to prevent.
+  // Also reposition on "transitionend" (width/height), not just a guessed
+  // delay: a fixed setTimeout raced the real transition length and left the
+  // grown state briefly stale/overflowing again.
+  const repositionAll = () => avatars.forEach((a) => fleetPositionTip(a));
   const avatars = root.querySelectorAll("[data-fleet-avatar]");
   if (avatars.length) {
-    avatars.forEach((a) => fleetPositionTip(a));
-    avatars.forEach((a) => a.addEventListener("mouseenter", () => fleetPositionTip(a)));
-    avatars.forEach((a) => a.addEventListener("focus", () => fleetPositionTip(a)));
-    const clear = () => avatars.forEach((a) => a.removeAttribute("data-tip-open"));
+    repositionAll();
+    avatars.forEach((a) => a.addEventListener("mouseenter", repositionAll));
+    avatars.forEach((a) => a.addEventListener("mouseleave", repositionAll));
+    avatars.forEach((a) => a.addEventListener("focus", repositionAll));
+    avatars.forEach((a) => a.addEventListener("transitionend", (e) => {
+      if (e.propertyName === "width" || e.propertyName === "height") repositionAll();
+    }));
+    const clear = () => { avatars.forEach((a) => a.removeAttribute("data-tip-open")); repositionAll(); };
     avatars.forEach((a) => a.addEventListener("click", (e) => {
       e.stopPropagation();
       const on = a.hasAttribute("data-tip-open");
       clear();
-      if (!on) { fleetPositionTip(a); a.setAttribute("data-tip-open", ""); }
+      if (!on) { repositionAll(); a.setAttribute("data-tip-open", ""); }
     }));
     document.addEventListener("click", clear, { once: false });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") clear(); });
