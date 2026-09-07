@@ -26,12 +26,12 @@
 
   --pl-grid-dot: rgb(10 10 10 / 0.05);
   --pl-illo-bg: #ece8f5;
-  /* DSL, 2026-09-07: a second, warmer illustration ground — was two raw #eac49a
-     literals in .tilecard__illo/.agentcard__illo with no token at all. Named
-     distinctly rather than folded into --pl-illo-bg (a real color decision,
-     not mine to make silently) — flagged in the gap report for Ofir's call
-     on whether the system wants one illustration ground or two. */
-  --pl-photo-bg: #eac49a;
+
+  /* Brand cream — the logo spec's brand ground. Was defined only in the intro
+     overlay's own stylesheet (assets/intro.css); promoted into the core
+     palette (Ofir, 2026-09-07) since it's also the full background of a real
+     page (#/kit). intro.css now points its own --pl-intro-cream at this. */
+  --pl-brand-cream: #FBEAD9;
 
   /* tooltip — dark bubble for icon-only controls (design-system token) */
   --pl-tooltip-bg: #1a1a1a;
@@ -604,7 +604,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm);
   transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl); }
 .tilecard:hover { border-color: var(--pl-border-strong); box-shadow: var(--shadow-pl-md); }
-.tilecard__illo { height: 13.5rem; overflow: hidden; background: var(--pl-photo-bg); }
+.tilecard__illo { height: 13.5rem; overflow: hidden; background: var(--pl-illo-bg); }
 .tilecard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .tilecard__body { padding: 1.6rem; flex: 1; }
 .tilecard__body h3 { font-size: var(--text-h3); margin-bottom: 0.5rem; }
@@ -859,14 +859,14 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 
 /* ---- The final #/kit direction Ofir picked: character + text + button sit
-   directly on the page's own cream background (var(--pl-intro-cream) — same
+   directly on the page's own cream background (var(--pl-brand-cream) — same
    one the loader curtain uses), no card, no boundary, edge to edge.
    The illustration itself (kit-hero-dean.webp/.png) now carries a real alpha
    channel — no fill color of its own at all (Marketing Designer's matte
    pass, 2026-08-31) — so there is nothing left to color-match; it sits on
    whatever this page's background is. */
 .kitfull {
-  background: var(--pl-intro-cream, #FBEAD9);
+  background: var(--pl-brand-cream);
   padding-block: clamp(0.75rem, 3vw, 1.5rem);
   text-align: center;
   justify-content: center;
@@ -1496,7 +1496,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 @media (min-width: 720px) { .team__agents { grid-template-columns: repeat(3, 1fr); } }
 .agentcard { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm); }
-.agentcard__illo { height: 13rem; overflow: hidden; background: var(--pl-photo-bg); }
+.agentcard__illo { height: 13rem; overflow: hidden; background: var(--pl-illo-bg); }
 .agentcard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 /* mobile: cards go full-width, so the fixed 10rem strip crops the character to
    just the face. Give the illo more height to reveal the hands/props it's holding. */

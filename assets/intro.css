@@ -11,7 +11,11 @@
  * wholesale from the generator; never hand-edit its timings.
  *
  * Colours are the brand ground/ink from the logo spec.json, not site tokens —
- * the veil is brand surface, not product surface.
+ * the veil is brand surface, not product surface. Kept as its own literal
+ * value on purpose (see the file header above) rather than importing
+ * styles.css's --pl-brand-cream — but it's the same value, added there
+ * 2026-09-07 for the product-surface pages that also need it (#/kit). If this
+ * value ever changes, update both.
  */
 
 .intro-veil {
