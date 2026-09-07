@@ -1,7 +1,15 @@
 /**
- * Sections / Hero — the full-bleed cozy-cafe scene with the headline over it.
- * English (LTR) gets the smaller size + forced line break; switch the toolbar
- * "Direction" to RTL to preview the Hebrew hero.
+ * Sections / Hero — the current live homepage hero (.hero--oneview): a
+ * full-bleed room photo as the background, title/sub/CTA over it, no
+ * separate media column.
+ * DSL, 2026-09-07: replaces the old .hero--scene version (a two-column
+ * cozy-cafe layout on assets/hero-even-2.webp) — that structure and asset
+ * have zero references left in app.js/styles.css, superseded live. Markup
+ * lifted verbatim from app.js's render(), copy from its I18N block.
+ * ⚠️ Carried over from app.js's own comment, unchanged by this fix: the
+ * background photo is still flagged there as a PLACEHOLDER pending a
+ * generated image (blocked on an OpenAI billing gate) — ask Marketing
+ * Designer whether assets/hero-room.webp is meant to ship as final.
  */
 export default {
   title: "Sections/Hero",
@@ -9,33 +17,34 @@ export default {
 };
 
 const EN = {
-  a: "Build your first project with an ",
-  mark: "team of AI agents",
-  b: " you created yourself.",
-  sub: "In one hands-on workshop you'll create your own team of AI agents, learn to run it, and start working on your project during the workshop itself.",
-  points: ["A 3-hour workshop", "A team of AI agents", "Builder superpower"],
+  t1: "From idea to reality.",
+  t2a: "A new world of working with ",
+  mark: "AI agents",
+  b: ".",
+  sub: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
+  cta: "Register for the next cohort",
 };
 const HE = {
-  a: "לבנות את הפרויקט הראשון שלך עם ",
-  mark: "צוות סוכני AI",
-  b: " שיצרת בעצמך.",
-  sub: "בסדנה מעשית אחת תיצרו צוות סוכני AI אישי, תלמדו לנהל אותו, ותתחילו לעבוד על הפרויקט שלכם כבר במהלך הסדנה.",
-  points: ["מפגש בן שלוש שעות", "צוות סוכני AI", "כוח-על של בנייה"],
+  t1: "מרעיון למציאות.",
+  t2a: "עולם חדש של עבודה עם ",
+  mark: "סוכני AI",
+  b: ".",
+  sub: ["ב-3 שעות תקימו עם Claude צוות סוכני AI משלכם,", "ותתחילו לבנות איתו את המוצר הראשון שלכם.", "בזמן אמת."],
+  cta: "הרשמה למחזור הבא",
 };
 
 const hero = (t) => `
-  <section class="hero hero--scene">
-    <div class="wrap hero__inner">
-      <h1 class="hero__title">${t.a}<br class="hero__br"><span class="mark">${t.mark}</span>${t.b}</h1>
-      <p class="hero__sub">${t.sub}</p>
-      <ul class="hero__points">${t.points.map((p) => `<li>${p}</li>`).join("")}</ul>
+  <section class="hero hero--oneview">
+    <div class="hero__content">
+      <h1 class="hero__title"><span class="ht1">${t.t1}</span><span class="ht2">${t.t2a}<span class="mark">${t.mark}</span>${t.b}</span></h1>
+      <p class="hero__sub">${t.sub.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
+      <div class="hero__cta"><button class="btn btn--accent" type="button">${t.cta}</button></div>
     </div>
-    <div class="hero__media">
-      <picture>
-        <source type="image/webp" srcset="assets/hero-even-2.webp?v=1" />
-        <img class="hero__img is-loaded" src="assets/hero-even-2.webp?v=1" alt="" width="1536" height="1024" />
-      </picture>
-    </div>
+    <picture class="hero__bg">
+      <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=1" />
+      <source type="image/webp" srcset="assets/hero-room.webp?v=1" />
+      <img class="hero__img is-loaded" src="assets/hero-room.webp?v=1" alt="" width="2560" height="1440" />
+    </picture>
   </section>`;
 
 export const English = {
