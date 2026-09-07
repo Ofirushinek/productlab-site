@@ -2482,31 +2482,43 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
 .fleet-loading__line { text-align: center; margin-bottom: var(--space-6); }
 
-/* ---- Result page v5 (Ofir, 2026-09-07, third-pass redesign): ONE compact
-   team section instead of separate hero/specialists/crew sections, one
-   sentence per agent card. Reused primitives only (.card, .card--feature,
-   .grid--3, .deliv, .ctaband, .btn) plus a small number of new scoped rules
-   for the one genuinely new pattern this redesign needed: a CENTERED,
-   variable-count (1-3) row of personalized cards that a rigid .grid can't
-   do gracefully - flex + wrap + a max-width per card degrades correctly at
-   1, 2 or 3 items, unlike a 3-column grid with empty tracks. Flagged for
-   DSL review. */
-.fleet-team-group { margin-top: var(--space-7); }
+/* ---- Result page v6 (Ofir, 2026-09-07, fourth-pass redesign): section 1
+   rebuilt as compact HORIZONTAL tiles (avatar + role + one sentence) so the
+   whole team reads in seconds - the previous tall vertical .card stack is
+   gone from this screen. New .fleet-agent-tile is a small, deliberate
+   primitive (flagged for DSL review): same surface/border/radius/shadow
+   tokens as .card, but a row layout .card was never built for. Avatar disc
+   reuses .reader__av's exact recipe (S6 loading already established this
+   circular-crop language) for both the real crew photos and the generic
+   .fleet-agent-tile__av--silhouette (I.user icon, accent-on-tint) used for
+   personalized agents that have no specific character. */
+.fleet-team-group { margin-top: var(--space-6); }
 .fleet-team-label {
   font-size: var(--text-caption); font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.08em; color: var(--pl-fg-secondary); margin-bottom: var(--space-3);
+  letter-spacing: 0.08em; color: var(--pl-fg-secondary); margin-bottom: var(--space-2);
 }
 .fleet-team-sub { font-size: var(--text-sm); color: var(--pl-fg-secondary); margin-bottom: var(--space-4); max-width: 60ch; }
-.fleet-team-row--personal {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4);
+.fleet-team-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3);
 }
-.fleet-team-row--personal .fleet-agent-card { flex: 1 1 280px; max-width: 360px; }
-.fleet-team-row--crew { margin-top: 0; }
-.fleet-agent-card p { margin-top: 0.6rem; }
-.fleet-team-connector {
-  text-align: center; max-width: 42ch; margin: var(--space-7) auto 0;
-  font-size: var(--text-sm); color: var(--pl-fg-secondary);
+.fleet-agent-tile {
+  display: flex; align-items: center; gap: var(--space-3);
+  flex: 1 1 300px; max-width: 380px;
+  background: var(--pl-surface); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4);
+  box-shadow: var(--shadow-pl-sm);
 }
+.fleet-agent-tile__av {
+  flex: none; width: var(--ctl-lg, 56px); height: var(--ctl-lg, 56px);
+  border-radius: 999px; overflow: hidden; background: var(--pl-illo-bg);
+  box-shadow: 0 0 0 1px var(--pl-border);
+}
+.fleet-agent-tile__av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.fleet-agent-tile__av--silhouette { display: grid; place-items: center; color: var(--pl-accent); }
+.fleet-agent-tile__av--silhouette svg { width: 55%; height: 55%; }
+.fleet-agent-tile__body { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.fleet-agent-tile__body strong { font-size: var(--text-sm); font-weight: 700; color: var(--pl-fg); }
+.fleet-agent-tile__body span { font-size: var(--text-caption); color: var(--pl-fg-secondary); line-height: 1.35; }
 .fleet-broke { margin-top: var(--space-5); }
 .fleet-broke strong { color: var(--pl-fg); }
 .fleet-benefits { margin-top: var(--space-6); }

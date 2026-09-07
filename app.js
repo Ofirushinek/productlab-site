@@ -2941,25 +2941,32 @@ function fleetLoading(f) {
 }
 
 function fleetResult(f, b) {
-  /* v5 (Ofir, 2026-09-07, third-pass redesign): ONE sentence per agent card
-     (title + value, no sub-headers, no permission/boundary language, no
-     start-with marker — flagged twice as clutter), ONE compact team section
-     holding both her personalized specialists and the always-included base
-     trio, one verbatim quote only (the second was cut for density), exact
-     section copy from Ofir (fleet-content.js is the source of truth, not
-     reworded here). `text` here is ALWAYS fixed template-bank copy, keyed
-     by specialist enum — never a value from `b`, never model output. */
-  const q1Quote = fleetExcerpt(FLEET.answers.q1, 160);
-  const brokeLine = b.broke_because && f.broke_bank ? f.broke_bank[b.broke_because] : null;
+  /* v6 (Ofir, 2026-09-07, fourth-pass redesign): section 1 rebuilt as
+     compact HORIZONTAL tiles (avatar/silhouette + role + one sentence),
+     hero cut to eyebrow + title + one description line only — "וזהו, לא
+     יותר טקסט מזה" — no verbatim quote, no broke-notice, no connector line.
+     ⚠️ Real crew photos are back on this screen (Ofir's explicit call this
+     round, reversing the earlier no-puppets rule for the base 3 only);
+     personalized tiles get a generic silhouette (I.user), never a specific
+     character - never fully "identified." `text` is ALWAYS fixed
+     template-bank copy, keyed by specialist enum — never model output. */
+  const readingOnly = { "crew-strategist": 1, "crew-designer": 1, "crew-architect": 1 };
+  const crewAvatar = (img) => `<img src="assets/${img}${readingOnly[img] ? "-reading" : ""}.webp?v=2" alt="" loading="lazy" />`;
   const specialistCard = (key) => `
-      <article class="card card--feature fleet-agent-card">
-        <h3>${f.lib[key] || key}</h3>
-        <p>${escapeHtml((f.spec_lines && f.spec_lines[key]) || "")}</p>
+      <article class="fleet-agent-tile">
+        <span class="fleet-agent-tile__av fleet-agent-tile__av--silhouette">${I.user}</span>
+        <span class="fleet-agent-tile__body">
+          <strong>${f.lib[key] || key}</strong>
+          <span>${escapeHtml((f.spec_lines && f.spec_lines[key]) || "")}</span>
+        </span>
       </article>`;
-  const crewCard = (a) => `
-      <article class="card fleet-agent-card">
-        <h3>${a.role}</h3>
-        <p>${a.line}</p>
+  const crewTile = (a) => `
+      <article class="fleet-agent-tile">
+        <span class="fleet-agent-tile__av">${crewAvatar(a.img)}</span>
+        <span class="fleet-agent-tile__body">
+          <strong>${a.role}</strong>
+          <span>${a.line}</span>
+        </span>
       </article>`;
   return `
   <section class="section"><div class="wrap">
@@ -2967,9 +2974,6 @@ function fleetResult(f, b) {
       <span class="eyebrow">${f.result_eyebrow}</span>
       <h1 class="section-title">${f.team_title}</h1>
       <p class="section-lead">${f.team_sub}</p>
-      ${q1Quote ? `<p class="section-lead">${f.result_lead} <q>${escapeHtml(q1Quote)}</q></p>` : ""}
-      ${brokeLine ? `
-      <div class="prep-note fleet-broke">${I.info}<div><strong>${f.broke_title}</strong><br />${escapeHtml(brokeLine)}</div></div>` : ""}
     </div>
 
     <div class="fleet-team-group reveal">
@@ -2983,12 +2987,10 @@ function fleetResult(f, b) {
     <div class="fleet-team-group reveal">
       <p class="fleet-team-label">${f.crew_label}</p>
       ${f.crew_sub ? `<p class="fleet-team-sub">${f.crew_sub}</p>` : ""}
-      <div class="grid grid--3 fleet-team-row--crew">
-        ${f.crew.map(crewCard).join("")}
+      <div class="fleet-team-row fleet-team-row--crew">
+        ${f.crew.map(crewTile).join("")}
       </div>
     </div>
-
-    <p class="fleet-team-connector reveal">${f.team_connector}</p>
   </div></section>
 
   <section class="section section--alt"><div class="wrap">
