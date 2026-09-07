@@ -693,7 +693,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    than that (real mobile, already fine there). Scoped to .fleet-card--entry
    so every OTHER screen sharing .login__title (questions, loading, done,
    the site's login/registration modals) is untouched. */
-.fleet-card--entry .login__title { font-size: 1.375rem; }
+.fleet-card--entry .login__title { font-size: 1.5625rem; }
 .login__sub { margin-top: 0.6rem; color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-body); }
 .login__form { display: grid; gap: var(--space-4); margin-top: 1.75rem; text-align: start; }
 .login__submit { width: 100%; margin-top: var(--space-1); }
@@ -1525,7 +1525,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    v4 - a separate .ss-note sub-line was redundant, Ofir cut it), spaced off
    the CTA with margin only - a divider/border here is explicitly unwanted. */
 .fleet-agents { margin-top: var(--space-7); }
-.fleet-agents .field__label { margin-bottom: var(--space-4); }
+.fleet-agents .field__label { margin-bottom: var(--space-4); font-size: var(--text-caption); font-weight: 600; }
 
 /* ===== Student sign-in MODAL (opens from the header button) ===== */
 body.modal-open { overflow: hidden; }

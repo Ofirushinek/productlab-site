@@ -111,7 +111,7 @@ window.FLEET_CONTENT = {
 
     /* ---- S0 "examples" block, below the CTA (2026-09-07, v8: one merged
        title instead of title+sub - Ofir: the two lines were redundant) ---- */
-    agents_title: "הנה כמה דוגמאות לסוכני AI שיכולים להצטרף לצוות שלכם.",
+    agents_title: "דוגמאות לסוכני AI שיכולים להצטרף לצוות שלכם.",
     agents_aria: "דוגמאות לסוכנים אפשריים",
     /* Full real-portrait roster (Marketing Designer inventory, 2026-09-07):
        10 characters with a real image today. `role` is the REAL professional
@@ -326,7 +326,7 @@ window.FLEET_CONTENT = {
     entry_sub: "5 short questions about your work. At the end, we recommend who to start with.",
     entry_cta: "Start",
 
-    agents_title: "Here are a few examples of AI agents that could join your crew.",
+    agents_title: "Examples of AI agents that could join your crew.",
     agents_aria: "Examples of possible agents",
     agents: [
       { img: "crew-strategist", role: "Product Manager", line: "Sharpens what to build and why, helps prioritize decisions, and connects user needs to product goals." },
