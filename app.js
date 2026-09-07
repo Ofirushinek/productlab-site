@@ -120,6 +120,12 @@ const I = {
   slides: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
   info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.6 3.2-5.6 7-5.6s7 2 7 5.6"/></svg>',
+  // Puppet-shaped placeholder silhouette (Marketing Designer, 2026-09-07): the
+  // egg-shaped head + rounded flared body reads as "one of the felt puppets,"
+  // deliberately generic (no hat/beard/hair) so it never points at one named
+  // character. Solid fill, no strokes, on purpose - Ofir wants a single flat
+  // color that signals "placeholder," not a rendered character.
+  puppetSilhouette: '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="7" rx="4" ry="4.6"/><path d="M12 12.2c-3.4 0-6.2 1.9-7.4 4.6C4.2 17.7 4 18.7 4 19.8v.7c0 .8.6 1.5 1.5 1.5h13c.8 0 1.5-.7 1.5-1.5v-.7c0-1.1-.2-2.1-.6-3-1.2-2.7-4-4.6-7.4-4.6z"/></svg>',
   // Google "G" - brand colors are intentional (not tokenized: this is a third-party logo).
   google: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.52 12.27c0-.82-.07-1.6-.2-2.36H12v4.47h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.74Z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.08 7.95-2.91l-3.88-3.01c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.28v3.11A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.27 14.27a7.2 7.2 0 0 1 0-4.54v-3.1H1.28a12 12 0 0 0 0 10.75l3.99-3.11Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44A11.98 11.98 0 0 0 12 0 12 12 0 0 0 1.28 6.63l3.99 3.1C6.22 6.86 8.87 4.75 12 4.75Z"/></svg>',
   menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
@@ -2966,7 +2972,7 @@ function fleetResult(f, b) {
   const crewAvatar = (img) => `<img src="assets/${img}${readingOnly[img] ? "-reading" : ""}.webp?v=2" alt="" loading="lazy" />`;
   const specialistTile = (key) => `
       <article class="fleet-agent-tile">
-        <span class="fleet-agent-tile__av fleet-agent-tile__av--silhouette">${I.user}</span>
+        <span class="fleet-agent-tile__av fleet-agent-tile__av--silhouette">${I.puppetSilhouette}</span>
         <span class="fleet-agent-tile__body">
           <strong>${f.lib[key] || key}</strong>
           <span>${escapeHtml((f.spec_lines && f.spec_lines[key]) || "")}</span>
