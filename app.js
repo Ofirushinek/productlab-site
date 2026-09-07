@@ -2488,21 +2488,28 @@ function renderKit(lang) {
   wireKitAutoDownload();
 }
 
-/* Auto-fires the download once per page entry via a real, off-screen
-   `<a download>` click — never a location redirect, so the tab is never
-   navigated away from this page. The visible "download again" button is the
-   SAME href/download pair as a plain link, so it still works anywhere a
-   script-fired click is blocked (iOS Safari, some in-app browsers): a real
-   tap on a real `<a download>` always works, independent of this function.
+/* Auto-fires the download ONCE EVER PER BROWSER (localStorage flag
+   "plKitAutoDownloaded") via a real, off-screen `<a download>` click — never
+   a location redirect, so the tab is never navigated away from this page.
+   A repeat visit to #/kit (bookmark, old email link, re-testing) does NOT
+   re-fire the auto-download — it silently no-ops and the page renders
+   normally. The visible "download again" button is the SAME href/download
+   pair as a plain link, so it still works anywhere a script-fired click is
+   blocked (iOS Safari, some in-app browsers), AND is the only way to get the
+   zip again on purpose after the first visit.
    Timing: if the intro curtain (#pl-intro) is on screen, wait for it to lift
    (assets/intro.js's LIFT=2630ms) before firing, so the browser's download
    UI doesn't appear before the headline is even visible; skip the wait
    entirely when there's no curtain to wait for (repeat visit same session,
    reduced motion, or intro.js failed to load — this download must not
-   depend on the veil, which is explicitly optional by its own contract). */
+   depend on the veil, which is explicitly optional by its own contract).
+   localStorage access is wrapped in try/catch: private browsing can throw. */
 let kitAutoFired = false;
 function wireKitAutoDownload() {
   kitAutoFired = false;
+  let alreadyAutoDownloaded = false;
+  try { alreadyAutoDownloaded = !!localStorage.getItem("plKitAutoDownloaded"); } catch (e) {}
+  if (alreadyAutoDownloaded) return;
   const curtain = document.getElementById("pl-intro");
   const delay = curtain ? 2900 : 500;
   window.setTimeout(() => {
@@ -2516,6 +2523,7 @@ function wireKitAutoDownload() {
       document.body.appendChild(a);
       a.click();
       window.setTimeout(() => { if (a.parentNode) a.parentNode.removeChild(a); }, 0);
+      try { localStorage.setItem("plKitAutoDownloaded", "1"); } catch (e) {}
     } catch (e) { /* the visible "download again" button still works */ }
   }, delay);
 }
