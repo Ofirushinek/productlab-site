@@ -157,7 +157,7 @@ window.FLEET_CONTENT = {
     mic_denied: "המיקרופון חסום בדפדפן. אפשר לאשר אותו, או להמשיך להקליד.",
     questions: [
       { key: "q1", title: "מה אתם בונים עכשיו?", hint: "ספרו בקצרה מה המוצר או הפרויקט, למי הוא מיועד ומה אתם רוצים להשיג.", ph: "כלי שעוזר לצוותי מוצר לרכז פידבק מלקוחות ולהחליט מה כדאי לבנות קודם." },
-      { key: "q5", title: "עם אילו כלי AI כבר עבדתם?", hint: "סמנו כל מה שניסיתם — גם אם השתמשתם בו רק פעם או פעמיים.", ph: "",
+      { key: "q5", title: "עם אילו כלי AI כבר עבדתם?", hint: "סמנו כל מה שניסיתם, גם אם השתמשתם בו רק פעם או פעמיים.", ph: "",
         tools: [
           { v: "chatgpt", l: "ChatGPT" },
           { v: "claude", l: "Claude" },
@@ -213,7 +213,7 @@ window.FLEET_CONTENT = {
        of hardcoding "two." ---- */
     result_eyebrow: "הצוות שלכם",
     team_title: "זה הצוות שילך איתכם לבנות",
-    team_sub: "אלה הסוכנים שהרכבנו עבורכם לפי מה שסיפרתם לנו — סוכנים ייחודיים לצרכים שלכם, יחד עם צוות הבסיס של כל סדנת מוצר.",
+    team_sub: "אלה הסוכנים שהרכבנו עבורכם לפי מה שסיפרתם לנו. סוכנים ייחודיים לצרכים שלכם, יחד עם צוות הבסיס של כל סדנת מוצר.",
     personal_label: "הסוכנים הייחודיים שלכם",
     crew_label: "צוות הבסיס",
     crew: [
@@ -253,7 +253,7 @@ window.FLEET_CONTENT = {
       "design-system-lead": "שומר על עקביות בממשק ועוזר להרחיב את המוצר בלי שכל מסך יתחיל מאפס.",
       "reviewer": "עובר על מה שנבנה ומוודא שהוא תואם למה שסוכם לפני שהוא ממשיך הלאה.",
       "chief-of-staff": "עוזר לעשות סדר, לרכז החלטות ולשמור שהעבודה מתקדמת בכיוון הנכון.",
-      "marketing-designer": "מתרגם את המוצר לוויזואלים — לפוסט, למצגת, לעמוד — מתוך המותג שכבר יש לכם.",
+      "marketing-designer": "מתרגם את המוצר לוויזואלים (לפוסט, למצגת, לעמוד) מתוך המותג שכבר יש לכם.",
       "product-analyst": "מחבר בין שימוש והתנהגות משתמשים לבין החלטות מוצר, כדי להבין מה עובד ומה כדאי לשפר.",
       "content-curator": "עוזר לארגן, לסווג ולנהל את התוכן שחי בתוך המוצר כך שיישאר שימושי ומסודר.",
       "qa-specialist": "עובר על המוצר לפני שחרור ומוצא בעיות לפני שהמשתמשים נתקלים בהן.",
@@ -278,14 +278,14 @@ window.FLEET_CONTENT = {
     /* v5 (2026-09-07, third pass): Ofir's exact copy, source of truth. */
     benefits_eyebrow: "מה מקימים בסדנה",
     benefits_title: "לא רק ממליצים על צוות. בסדנה אתם מקימים אותו.",
-    benefits_sub: "במהלך הסדנה הסוכנים לא רק מוגדרים — הם מתחילים לעבוד יחד על משהו אמיתי שלכם.",
+    benefits_sub: "במהלך הסדנה הסוכנים לא רק מוגדרים. הם מתחילים לעבוד יחד על משהו אמיתי שלכם.",
     benefits: [
       { t: "הצוות שלכם, מוכן לעבודה", b: "מגדירים את הסוכנים, התפקידים והדרך שבה הם עובדים יחד." },
       { t: "זיכרון משותף", b: "החלטות, הקשר וידע נשמרים במקום אחד, כך שכל הצוות עובד מאותה תמונה." },
       { t: "זיכרון מתמשך לכל סוכן", b: "כל סוכן ממשיך להכיר את התחום שלו ואת מה שכבר בניתם יחד." },
       { t: "ממשיכים גם אחרי הסדנה", b: "הצוות והסטאפ נשארים אצלכם, כדי שתוכלו להמשיך לעבוד בלי להתחיל מחדש." },
     ],
-    positioning_line: "הכול בנוי סביב עבודה על מוצרים דיגיטליים — מהחלטות מוצר ועיצוב ועד הבנייה עצמה.",
+    positioning_line: "הכול בנוי סביב עבודה על מוצרים דיגיטליים, מהחלטות מוצר ועיצוב ועד הבנייה עצמה.",
     result_cta_title: "רוצים לצאת מהסדנה עם הצוות הזה עובד?",
     result_cta_sub: "נבנה אותו יחד על משהו אמיתי שלכם, נחבר לו זיכרון משותף, ותצאו עם מערכת שאפשר להמשיך לעבוד איתה גם אחרי הסדנה.",
     result_cta: "להרשמה לסדנה",
@@ -405,7 +405,7 @@ window.FLEET_CONTENT = {
 
     result_eyebrow: "Your team",
     team_title: "This is the team that'll go build with you",
-    team_sub: "These are the agents we put together for you based on what you told us — specialists matched to your needs, alongside the base crew of every product workshop.",
+    team_sub: "These are the agents we put together for you based on what you told us. Specialists matched to your needs, alongside the base crew of every product workshop.",
     personal_label: "Your unique specialists",
     crew_label: "The base crew",
     crew: [
@@ -443,7 +443,7 @@ window.FLEET_CONTENT = {
       "design-system-lead": "Keeps the interface consistent and helps the product grow without every screen starting from zero.",
       "reviewer": "Goes over what was built and makes sure it matches what was agreed before it moves on.",
       "chief-of-staff": "Helps bring order, centers decisions, and keeps the work moving in the right direction.",
-      "marketing-designer": "Turns the product into visuals — for the post, the deck, the page — from the brand you already have.",
+      "marketing-designer": "Turns the product into visuals (for the post, the deck, the page) from the brand you already have.",
       "product-analyst": "Connects usage and user behavior to product decisions, to understand what's working and what's worth improving.",
       "content-curator": "Helps organize, classify and manage the content living inside the product so it stays useful and tidy.",
       "qa-specialist": "Goes over the product before release and catches issues before your users run into them.",
@@ -469,14 +469,14 @@ window.FLEET_CONTENT = {
        split of shared vs. continuous memory. */
     benefits_eyebrow: "What you set up in the workshop",
     benefits_title: "We don't just recommend a team. You set it up in the workshop.",
-    benefits_sub: "During the workshop the agents aren't just defined — they start working together on something real of yours.",
+    benefits_sub: "During the workshop the agents aren't just defined. They start working together on something real of yours.",
     benefits: [
       { t: "Your team, ready to work", b: "You define the agents, the roles, and how they work together." },
       { t: "Shared memory", b: "Decisions, context, and knowledge are kept in one place, so the whole team works off the same picture." },
       { t: "Continuous memory per agent", b: "Each agent keeps knowing its area and what you've already built together." },
       { t: "Keep going after the workshop", b: "The team and the setup stay with you, so you can keep working without starting over." },
     ],
-    positioning_line: "It's all built around working on digital products — from product and design decisions through to the build itself.",
+    positioning_line: "It's all built around working on digital products, from product and design decisions through to the build itself.",
     result_cta_title: "Want to leave the workshop with this team working?",
     result_cta_sub: "We'll build it together on something real of yours, connect it to shared memory, and you'll leave with a system you can keep working with, even after the workshop.",
     result_cta: "Register for the workshop",
