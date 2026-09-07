@@ -2038,6 +2038,15 @@ function fleetInitial(label) {
   return (w.charAt(0) || "?").toUpperCase();
 }
 
+// Clean standalone job-title label from a `role` field written for sentence
+// context ("The product manager", "מנהל המוצר"): strips a leading English
+// article and title-cases the rest, so it reads as a name/label on its own
+// rather than a sentence fragment. Hebrew is unaffected (no article to
+// strip, .toUpperCase() is a no-op on Hebrew letters).
+function fleetRoleTitle(role) {
+  return String(role || "").replace(/^(the|a|an)\s+/i, "").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 // Bind the "Add user" form once per render (outside the re-fetched table body so
 // listeners never stack). A lead can be added with a NAME ONLY (email is optional)
 // (the migrated allowlist is id-keyed with nullable email). Adds confirmed=false.
@@ -2797,18 +2806,23 @@ function fleetEntry(f, saved) {
     : `<button class="btn btn--accent btn--lg" type="button" data-fleet="start">${f.entry_cta}</button>`;
   /* Ofir, 2026-09-07 (v3, reverting v2's top-of-card cluster): back to a
      plain eyebrow/title/description/CTA hero, nothing above or between it.
-     The avatars move BELOW the CTA as a small supporting "examples" block -
-     real crew photos only (the only portraits we have), interactive again
-     (hover/tap tooltip: name + the crew's own existing `line` copy, reused
-     verbatim from the S7 crew section - no new copy). No initials, no "+"
-     mark this time - an avatar with no real photo is dropped, not faked. */
+     The avatars move BELOW the CTA as a small supporting "examples" block.
+     v4, same day: ONE merged title (no separate sub - was redundant); the
+     FULL real-portrait roster (f.agents, 10 characters per the Marketing
+     Designer's inventory - not just the 3 build-crew), wraps onto more than
+     one row on narrow screens (.cta-row's own wrap+gap recipe, reused);
+     tooltip shows the character's REAL job title in bold + the description
+     in regular weight - a plain [data-tooltip] can't mix weights (CSS
+     `content: attr()` is one run of uniform text), so this is a real DOM
+     popover instead, built from the exact same light-tooltip recipe
+     (surface/border/shadow/radius/arrow) - see .avatar-tip in styles.css. */
   const agents = saved ? "" : `
     <div class="fleet-agents">
       <p class="field__label">${f.agents_title || ""}</p>
-      <p class="ss-note">${f.agents_sub || ""}</p>
       <div class="avatar-stack" role="group" aria-label="${escapeAttr(f.agents_aria || "")}">
-        ${f.crew.map((c) => `<button type="button" class="avatar-stack__item" data-tooltip="${escapeAttr(c.tag + "\n" + c.line)}" data-tip-theme="light" data-tip-pos="top" aria-label="${escapeAttr(c.tag + ", " + c.line)}" data-fleet-avatar>
-          <img src="assets/${c.img}.webp?v=2" alt="" loading="lazy" />
+        ${(f.agents || []).map((a) => `<button type="button" class="avatar-stack__item" aria-label="${escapeAttr(fleetRoleTitle(a.role) + ", " + a.line)}" data-fleet-avatar>
+          <img src="assets/${a.img}.webp?v=2" alt="" loading="lazy" />
+          <span class="avatar-tip" role="tooltip" aria-hidden="true"><strong>${escapeHtml(fleetRoleTitle(a.role))}</strong><span>${escapeHtml(a.line)}</span></span>
         </button>`).join("")}
       </div>
     </div>`;

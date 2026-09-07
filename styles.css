@@ -1502,23 +1502,22 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .agentcard__role { font-weight: 700; color: var(--pl-fg); font-size: var(--text-h3); margin-bottom: 0.35rem; }
 .agentcard__body p { color: var(--pl-fg-body); font-weight: 500; font-size: var(--text-sm); }
 
-/* ---- .avatar-stack — overlapping avatar circles (molecule, 2026-09-06) ----
-   Items on the control ladder (--ctl-sm). DOM order = reading order = paint
-   order; margin-inline-start mirrors in RTL. Radius/overflow live on the
-   img, never on the item, so the tooltip pseudo is not clipped.
+/* ---- .avatar-stack — avatar circle row (molecule, 2026-09-06) -------------
+   Items on the control ladder (--ctl-sm). DOM order = reading order.
    ⛔ v3 (Ofir, 2026-09-07): back to interactive - a small "examples" block
-   below the S0 CTA, real crew photos only, hover/tap shows a tooltip
-   (name + role line). v2's decorative top-of-card cluster (initial marks,
-   "+" hint, no interaction) is reverted; DSL ruling 2026-09-06 on this base
-   shape is canonical again. */
-.avatar-stack { display: flex; justify-content: center; margin: 0 auto var(--space-4); }
+   below the S0 CTA, real crew photos only, hover/tap shows a tooltip.
+   ⛔ v4 (Ofir, 2026-09-07, same day): the row now holds the FULL real-
+   portrait roster (10, not 3) and needs to wrap on narrow screens - swapped
+   the fixed-3 overlap trick (negative margin-inline-start, breaks across a
+   wrap boundary) for the SAME wrap+gap recipe already used by .cta-row.
+   Tooltip is .avatar-tip below, not [data-tooltip] - see that block for why. */
+.avatar-stack { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin: 0 auto var(--space-4); max-width: 26rem; }
 .avatar-stack__item {
   position: relative; flex: none; width: var(--ctl-sm); height: var(--ctl-sm);
   padding: 0; border: 2px solid var(--pl-surface); border-radius: 999px;
   background: var(--pl-illo-bg); box-shadow: 0 0 0 1px var(--pl-border);
   transition: transform 0.15s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
 }
-.avatar-stack__item + .avatar-stack__item { margin-inline-start: calc(-1 * var(--space-3)); }
 .avatar-stack__item img {
   width: 100%; height: 100%; border-radius: 999px; display: block;
   object-fit: cover; object-position: center top;
@@ -1537,13 +1536,44 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    .chip__logo--initial. Not used on S0 any more (v3, real photos only). */
 .avatar-initial { width: 100%; height: 100%; display: grid; place-items: center; font-weight: 700; color: var(--pl-accent); }
 .avatar-initial svg { width: 44%; height: 44%; }
+/* ---- .avatar-tip — real DOM tooltip for the S0 agent row (2026-09-07) -----
+   A plain [data-tooltip] renders via CSS `content: attr()`, one run of
+   uniform text - it cannot bold a name and leave a description regular.
+   This is a real child element instead, built from the EXACT same
+   light-theme tooltip recipe below ([data-tooltip][data-tip-theme="light"]):
+   same surface/border/radius/shadow/arrow/transition, just swapping
+   generated content for two styled child nodes. Shown the same way (hover,
+   keyboard focus, or a pinned tap via [data-tip-open] - wired by the SAME
+   data-fleet-avatar handler the old [data-tooltip] version used).
+   Opens BELOW the avatar, not above: the title sits only var(--space-7)
+   above the row, not enough clearance for a 2-line bubble to pop up without
+   overlapping the title text (found by hovering the live render - real
+   collision, not a hypothetical). Below has the card's own bottom padding
+   to open into. */
+.avatar-tip {
+  position: absolute; left: 50%; top: calc(100% + 8px); transform: translateX(-50%) translateY(4px);
+  background: var(--pl-surface); color: var(--pl-fg);
+  border: 1px solid var(--pl-border); border-radius: var(--radius-md); box-shadow: var(--shadow-pl-md);
+  padding: var(--space-2) var(--space-3); max-width: 16rem; width: max-content; text-align: center;
+  opacity: 0; pointer-events: none; z-index: 100;
+  transition: opacity 0.12s var(--ease-pl), transform 0.12s var(--ease-pl);
+}
+.avatar-tip::after {
+  content: ""; position: absolute; left: 50%; bottom: 100%; width: 10px; height: 10px; margin-bottom: -5px;
+  background: var(--pl-surface); border-left: 1px solid var(--pl-border); border-top: 1px solid var(--pl-border);
+  transform: translateX(-50%) rotate(45deg);
+}
+.avatar-tip strong { display: block; font-weight: 700; font-size: var(--text-sm); color: var(--pl-fg); }
+.avatar-tip span { display: block; font-weight: 500; font-size: var(--text-sm); color: var(--pl-fg-secondary); margin-top: 2px; }
+.avatar-stack__item:hover .avatar-tip, .avatar-stack__item:focus-visible .avatar-tip, .avatar-stack__item[data-tip-open] .avatar-tip {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
 /* ---- .fleet-agents — the S0 "examples" block under the CTA (2026-09-07) --
-   Supporting content, not a second hero: .field__label + .ss-note (both
-   existing type roles), spaced off the CTA with margin only - Ofir was
-   explicit last round that a divider/border here is unwanted. */
-.fleet-agents { margin-top: var(--space-7); }
-.fleet-agents .field__label { margin-bottom: var(--space-1); }
-.fleet-agents .ss-note { margin-bottom: var(--space-4); }
+   Supporting content, not a second hero: .field__label (one merged title,
+   v4 - a separate .ss-note sub-line was redundant, Ofir cut it), spaced off
+   the CTA with margin only - a divider/border here is explicitly unwanted. */
+.fleet-agents { margin-top: var(--space-7); overflow-x: hidden; }
+.fleet-agents .field__label { margin-bottom: var(--space-4); }
 
 /* ===== Student sign-in MODAL (opens from the header button) ===== */
 body.modal-open { overflow: hidden; }

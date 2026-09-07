@@ -109,10 +109,29 @@ window.FLEET_CONTENT = {
     entry_sub: "5 שאלות קצרות על העבודה שלכם. בסוף נמליץ עם מי כדאי להתחיל.",
     entry_cta: "להתחיל",
 
-    /* ---- S0 "examples" block, below the CTA (2026-09-07) ---- */
-    agents_title: "יש הרבה סוגים של סוכנים. אתם כנראה צריכים רק כמה מהם.",
-    agents_sub: "הנה כמה דוגמאות לסוכנים שיכולים להצטרף לצוות שלכם.",
+    /* ---- S0 "examples" block, below the CTA (2026-09-07, v8: one merged
+       title instead of title+sub - Ofir: the two lines were redundant) ---- */
+    agents_title: "הנה כמה דוגמאות לסוכני AI שיכולים להצטרף לצוות שלכם.",
     agents_aria: "דוגמאות לסוכנים אפשריים",
+    /* Full real-portrait roster (Marketing Designer inventory, 2026-09-07):
+       10 characters with a real image today. `role` is the REAL professional
+       title (tooltip's bold line, Ofir: "nobody knows the nicknames, I want
+       known titles") - never the internal deck nickname. `line` is the
+       tooltip's regular-weight description, same "does X, never Y alone"
+       shape as the existing crew lines. CFO/Curator/Mentor/PA have no real
+       portrait yet (confirmed absent fleet-wide) and are excluded on purpose. */
+    agents: [
+      { img: "crew-strategist", role: "מנהל המוצר", line: "מחדד מה בונים קודם. לא סוגר לבד מה נכנס לגרסה." },
+      { img: "crew-designer", role: "מעצב המוצר", line: "בונה מסכים מתוך מערכת העיצוב. לא מוסר לפיתוח בלעדיכם." },
+      { img: "crew-architect", role: "המהנדס הראשי", line: "בונה מה שסוכם. לא מעלה לאוויר בלי שראיתם." },
+      { img: "crew-cmo", role: "סמנכ\"לית שיווק", line: "בונה את אסטרטגיית ההפצה והתוכן. לא מפרסמת בלי שראיתם." },
+      { img: "crew-cso", role: "סמנכ\"ל אסטרטגיה", line: "מסדר סדרי עדיפויות בין רעיונות. לא בוחר כיוון בשבילכם." },
+      { img: "crew-dslead", role: "ראש מערכת עיצוב", line: "שומר שהמסכים החדשים נשארים עקביים. לא משנה טוקן בלי לתעד." },
+      { img: "crew-copywriter", role: "קופירייטר", line: "מנסח כל טקסט שיוצא החוצה. לא שולח בלי שאישרתם." },
+      { img: "crew-mdesigner", role: "מעצב שיווק", line: "בונה את התדמית הוויזואלית של המותג. לא מפרסם עיצוב בלי שראיתם." },
+      { img: "crew-dean", role: "ראש תוכנית", line: "בונה את סדר הלמידה והתוכן. לא מדלג על שלב בלי לבדוק." },
+      { img: "crew-userresearcher", role: "חוקר משתמשים", line: "בודק הנחות לפני שבונים. לא קובע מסקנה בלי לבדוק בשטח." },
+    ],
 
     /* ---- S0, returning visitor ---- */
     return_note: "כבר יש לכם הרכב צוות מהפעם הקודמת.",
@@ -281,9 +300,20 @@ window.FLEET_CONTENT = {
     entry_sub: "5 short questions about your work. At the end, we recommend who to start with.",
     entry_cta: "Start",
 
-    agents_title: "There are many kinds of agents. You probably need only a few.",
-    agents_sub: "Here are a few examples of agents that could join your team.",
+    agents_title: "Here are a few examples of AI agents that could join your crew.",
     agents_aria: "Examples of possible agents",
+    agents: [
+      { img: "crew-strategist", role: "Product Manager", line: "Sharpens what gets built first. Never closes alone what makes the release." },
+      { img: "crew-designer", role: "Product Designer", line: "Builds screens from the design system. Never hands off to dev without you." },
+      { img: "crew-architect", role: "Lead Engineer", line: "Builds what was agreed. Never ships without you seeing it." },
+      { img: "crew-cmo", role: "Chief Marketing Officer", line: "Builds the distribution and content strategy. Never publishes without you seeing it." },
+      { img: "crew-cso", role: "Chief Strategy Officer", line: "Sequences ideas by priority. Never picks the direction for you." },
+      { img: "crew-dslead", role: "Design System Lead", line: "Keeps new screens consistent with the system. Never changes a token without documenting it." },
+      { img: "crew-copywriter", role: "Copywriter", line: "Writes every word that ships. Never sends it without your approval." },
+      { img: "crew-mdesigner", role: "Marketing Designer", line: "Builds the brand's visual identity. Never publishes a design without you seeing it." },
+      { img: "crew-dean", role: "Dean", line: "Builds the learning order and content. Never skips a step without checking." },
+      { img: "crew-userresearcher", role: "User Researcher", line: "Tests assumptions before you build. Never draws a conclusion without checking with real users." },
+    ],
 
     return_note: "You already have a team lineup from last time.",
     return_open: "Show me my team",
