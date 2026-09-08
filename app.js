@@ -3675,9 +3675,11 @@ const FLEET_PREVIEW_Q = {
 };
 const FLEET_PREVIEW_UI = {
   he: { eyebrow: "תצוגה מקדימה", finish: "סיום התצוגה", back: "חזרה", doneTitle: "ככה זה ייראה",
-    doneSub: "תצוגה מקדימה בלבד — לא נשלח לשום מקום. זה לא ה-fleet האמיתי.", restart: "מהתחלה" },
+    doneSub: "תצוגה מקדימה בלבד — לא נשלח לשום מקום. זה לא ה-fleet האמיתי.", restart: "מהתחלה",
+    otherPh: "הוסיפו משהו שהדוגמאות למעלה לא כיסו." },
   en: { eyebrow: "preview", finish: "Finish preview", back: "Back", doneTitle: "Here's how it'll look",
-    doneSub: "Preview only — nothing is submitted anywhere. This isn't the real fleet flow.", restart: "Start over" },
+    doneSub: "Preview only — nothing is submitted anywhere. This isn't the real fleet flow.", restart: "Start over",
+    otherPh: "Add something the examples above didn't cover." },
 };
 let FLEET_PREVIEW = { qi: 0, answers: {}, done: false };
 function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
@@ -3693,7 +3695,7 @@ function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
         ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="checkbox" data-fp-choice="${c.v}" aria-checked="${picked.indexOf(c.v) !== -1}">${c.l}</button>`).join("")}
       </div>
       <div class="field" data-fp-other-wrap ${isOther ? "" : "hidden"}>
-        <textarea class="reg__note" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fp-answer>${escapeHtml(textVal)}</textarea>
+        <textarea class="reg__note" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(ui.otherPh)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fp-answer>${escapeHtml(textVal)}</textarea>
         <div class="field__hint field__hint--mic">
           <span class="ltr-iso" dir="ltr" data-fp-count>${fleetFmt(f.q_chars, { n: textVal.length, max: FLEET_MAX })}</span>
           ${mic ? `<button type="button" class="mic-btn" data-fp-mic aria-pressed="false" data-tooltip="${escapeAttr(f.mic_start || "")}" data-tip-theme="light" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}</button>` : ""}
