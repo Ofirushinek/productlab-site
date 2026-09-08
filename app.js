@@ -170,7 +170,7 @@ const I18N = {
        sub split into line units the design controls, register CTA */
     hero_t1: "מרעיון למציאות.",
     hero_t2a: "עולם חדש של עבודה עם ",
-    hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "עם <span class=\"mark\">זיכרון משותף</span>, ותתחילו לבנות איתו את המוצר הראשון שלכם.", "בזמן אמת."],
+    hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "עם זיכרון משותף, ותתחילו לבנות איתו את המוצר הראשון שלכם.", "בזמן אמת."],
     hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
     session: {
