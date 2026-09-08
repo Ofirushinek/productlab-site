@@ -1141,7 +1141,7 @@ function render(lang) {
       </div>
     </div>
     <picture class="hero__bg">
-      <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=2" />
+      <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=3" />
       <source type="image/webp" srcset="assets/hero-room.webp?v=1" />
       <img class="hero__img is-loaded" src="assets/hero-room.webp?v=1" alt="" width="2560" height="1440" fetchpriority="high" decoding="async" />
     </picture>
