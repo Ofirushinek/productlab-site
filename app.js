@@ -3944,6 +3944,17 @@ window.addEventListener("hashchange", () => {
   route(document.documentElement.lang || "he");
   window.scrollTo(0, 0);
 });
+// Safety net so a hung Supabase call (getSession()/RPC) can never leave the
+// page blank forever - the OAuth-return boot path deliberately skips the
+// early signed-out paint (see below) so it can land the user straight in the
+// vault, which means loadAuth() is the ONLY thing that ever paints anything
+// on that path. If it stalls, this makes the boot proceed anyway after a
+// bounded wait rather than hang indefinitely with nothing on screen (real
+// 2026-09-08 incident: a stuck OAuth-return session left a real visitor on a
+// blank white page for several minutes with no way forward but a reload).
+function withTimeout(promise, ms) {
+  return Promise.race([promise, new Promise((resolve) => setTimeout(resolve, ms))]);
+}
 (async function () {
   let lang = "he";
   try { lang = localStorage.getItem("pl_lang") || "he"; } catch (e) {}
@@ -3967,12 +3978,12 @@ window.addEventListener("hashchange", () => {
   // auth state once it resolves (existing behavior).
   if (!oauthReturn) setLang(lang);
 
-  await loadAuth();
+  await withTimeout(loadAuth(), 8000);
 
   // React to later auth changes (sign-in, sign-out, token refresh, other tabs).
   // Keep the callback non-async (loadAuth().then) per supabase-js guidance.
   sb.auth.onAuthStateChange(() => {
-    loadAuth().then(() => {
+    withTimeout(loadAuth(), 8000).then(() => {
       // Same person, same tier -> nothing on screen is stale, so leave the admin
       // exactly where he was (tab, open rows, scroll, half-typed note).
       if (PAINTED_AUTH !== null && authFingerprint() === PAINTED_AUTH) return;
