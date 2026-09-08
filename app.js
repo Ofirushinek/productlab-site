@@ -2922,6 +2922,16 @@ function fleetQuestion(f) {
   const last = FLEET.qi === f.questions.length - 1;
   const val = FLEET.answers[q.key] || "";
   const picked = Array.isArray(FLEET.answers.tools) ? FLEET.answers.tools : [];
+  /* Multi-select chips + a combinable "other" free-text field (Ofir,
+     2026-09-08: any combination of chips, plus the other field addable
+     alongside them, not exclusive). Raw picked/typed state lives in
+     `<key>_chips`/`<key>_other` (mirrors tools/tools_other); FLEET.answers
+     [q.key] itself holds the synthesized display string (chip labels +
+     other text) that fleetSubmit() sends as-is - the backend contract
+     (one string per question) never changed. */
+  const choicesPicked = Array.isArray(FLEET.answers[q.key + "_chips"]) ? FLEET.answers[q.key + "_chips"] : [];
+  const choicesOtherOn = choicesPicked.indexOf("other") !== -1;
+  const choicesOtherVal = FLEET.answers[q.key + "_other"] || "";
   const toolMark = (v, l) => v === "other" ? `<span class="chip__logo" aria-hidden="true">${I.plus}</span>`
     : FLEET_LOGOS[v] ? `<span class="chip__logo" aria-hidden="true">${FLEET_LOGOS[v]}</span>`
     : `<span class="chip__logo chip__logo--initial" aria-hidden="true">${escapeHtml(String(l || v).trim().charAt(0).toUpperCase())}</span>`;
@@ -2936,8 +2946,16 @@ function fleetQuestion(f) {
          <input class="input" type="text" maxlength="${FLEET_OTHER_MAX}" placeholder="${escapeAttr(f.tools_other_ph || "")}" aria-label="${escapeAttr(f.tools_other || "")}" value="${escapeAttr(FLEET.answers.tools_other || "")}" data-fleet-other />
        </div>`
     : q.choices
-    ? `<div class="cta-row fleet-choices" role="radiogroup" aria-label="${escapeAttr(q.title)}">
-        ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="radio" data-fleet-choice="${c.v}" aria-checked="${val === c.v}">${c.l}</button>`).join("")}
+    ? `<div class="cta-row fleet-choices" role="group" aria-label="${escapeAttr(q.title)}">
+        ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="checkbox" data-fleet-choice="${c.v}" aria-checked="${choicesPicked.indexOf(c.v) !== -1}">${c.l}</button>`).join("")}
+       </div>
+       <div class="field" data-fleet-choices-wrap ${choicesOtherOn ? "" : "hidden"}>
+        <textarea class="reg__note" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(f.q_other_ph || "")}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fleet-answer>${escapeHtml(choicesOtherVal)}</textarea>
+        <div class="field__hint field__hint--mic">
+          <span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: choicesOtherVal.length, max: FLEET_MAX })}</span>
+          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" data-tooltip="${escapeAttr(f.mic_start || "")}" data-tip-theme="light" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}</button>` : ""}
+        </div>
+        ${FLEET_SR ? `<p class="reg__error" data-fleet-mic-error hidden>${I.info}<span>${f.mic_denied || ""}</span></p>` : ""}
        </div>`
     : `<div class="field">
         <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fleet-answer>${escapeHtml(val)}</textarea>
@@ -2953,7 +2971,7 @@ function fleetQuestion(f) {
     ${q.hint ? `<p class="login__sub">${q.hint}</p>` : ""}
     <form class="reg__form" data-fleet-form novalidate>
       ${control}
-      <p class="reg__error" data-fleet-error hidden>${I.info}<span>${q.tools ? (f.q_choose_many || f.q_choose) : q.choices ? f.q_choose : f.q_short}</span></p>
+      <p class="reg__error" data-fleet-error hidden>${I.info}<span data-fleet-error-text>${(q.tools || q.choices) ? (f.q_choose_many || f.q_choose) : f.q_short}</span></p>
       <div class="cta-row fleet-nav">
         ${FLEET.qi > 0 ? `<button type="button" class="btn btn--ghost" data-fleet="back">${f.q_back}</button>` : ""}
         <button type="submit" class="btn btn--accent">${last ? f.q_submit : f.q_next}</button>
@@ -3338,15 +3356,38 @@ function wireFleet(lang, f) {
     const ta = form.querySelector("[data-fleet-answer]");
     const count = form.querySelector("[data-fleet-count]");
     const err = form.querySelector("[data-fleet-error]");
+    const errText = form.querySelector("[data-fleet-error-text]");
+    // Multi-select chips (q.choices, distinct from the tools picker below):
+    // any combination, plus "other" combinable with them rather than
+    // exclusive. syncChoices keeps `<key>_chips`/`<key>_other` (raw state,
+    // read back on "back" navigation) and FLEET.answers[q.key] (the
+    // synthesized display string fleetSubmit() sends) all in sync on every
+    // toggle/keystroke - mirrors syncTools()/tools_other below exactly.
+    const choiceBtns = form.querySelectorAll("[data-fleet-choice]");
+    const choicesWrap = form.querySelector("[data-fleet-choices-wrap]");
+    const syncChoices = () => {
+      if (!q.choices) return;
+      const on = [...choiceBtns].filter((b) => b.getAttribute("aria-checked") === "true").map((b) => b.getAttribute("data-fleet-choice"));
+      FLEET.answers[q.key + "_chips"] = on;
+      const otherOn = on.indexOf("other") !== -1;
+      if (choicesWrap) choicesWrap.hidden = !otherOn;
+      const labels = on.filter((v) => v !== "other").map((v) => (q.choices.find((c) => c.v === v) || {}).l).filter(Boolean);
+      const otherText = (FLEET.answers[q.key + "_other"] || "").trim();
+      if (otherOn && otherText) labels.push(otherText);
+      FLEET.answers[q.key] = labels.join(", ");
+      fleetSaveAnswers();
+      if (err && on.length) err.hidden = true;
+    };
     if (ta) {
       ta.addEventListener("input", () => {
         if (count) {
           count.textContent = fleetFmt(f.q_chars, { n: ta.value.length, max: FLEET_MAX });
           count.classList.toggle("is-max", ta.value.length >= FLEET_MAX);
         }
+        if (q.choices) { FLEET.answers[q.key + "_other"] = ta.value; syncChoices(); }
         if (err && !err.hidden && ta.value.trim().length >= FLEET_MIN) err.hidden = true;
       });
-      setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 50);
+      if (!q.choices) setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 50);
     }
     // Voice: one toggle. Listening appends live transcript after whatever is
     // already typed; the counter and the max follow the same input event.
@@ -3384,7 +3425,11 @@ function wireFleet(lang, f) {
           rec.onerror = (e) => {
             if (micErr && (e.error === "not-allowed" || e.error === "service-not-allowed")) micErr.hidden = false;
           };
-          rec.onend = () => { rec = null; setState(false); FLEET.answers[q.key] = (ta.value || "").trim().slice(0, FLEET_MAX); fleetSaveAnswers(); };
+          rec.onend = () => {
+            rec = null; setState(false);
+            if (q.choices) { FLEET.answers[q.key + "_other"] = (ta.value || "").trim().slice(0, FLEET_MAX); syncChoices(); }
+            else { FLEET.answers[q.key] = (ta.value || "").trim().slice(0, FLEET_MAX); fleetSaveAnswers(); }
+          };
           rec.start();
           setState(true);
           if (micErr) micErr.hidden = true;
@@ -3414,15 +3459,12 @@ function wireFleet(lang, f) {
       if (v === "other" && now && otherIn) setTimeout(() => { try { otherIn.focus({ preventScroll: true }); } catch (e) {} }, 30);
     }));
     if (otherIn) otherIn.addEventListener("input", () => { FLEET.answers.tools_other = otherIn.value.slice(0, FLEET_OTHER_MAX); fleetSaveAnswers(); });
-    form.querySelectorAll("[data-fleet-choice]").forEach((c) => c.addEventListener("click", () => {
+    choiceBtns.forEach((c) => c.addEventListener("click", () => {
       const v = c.getAttribute("data-fleet-choice");
-      FLEET.answers[q.key] = v;
-      fleetSaveAnswers();
-      form.querySelectorAll("[data-fleet-choice]").forEach((o) => {
-        const on = o === c;
-        o.setAttribute("aria-checked", on ? "true" : "false");
-      });
-      if (err) err.hidden = true;
+      const now = c.getAttribute("aria-checked") !== "true";
+      c.setAttribute("aria-checked", now ? "true" : "false");
+      syncChoices();
+      if (v === "other" && now && ta) setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 30);
     }));
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -3432,7 +3474,14 @@ function wireFleet(lang, f) {
         FLEET.answers.q5 = fleetDeriveQ5(on);
         fleetSaveAnswers();
       } else if (q.choices) {
-        if (FLEET_Q5.indexOf(FLEET.answers[q.key]) === -1) { if (err) err.hidden = false; return; }
+        const on = Array.isArray(FLEET.answers[q.key + "_chips"]) ? FLEET.answers[q.key + "_chips"] : [];
+        if (!on.length) { if (errText) errText.textContent = f.q_choose_many || f.q_choose || ""; if (err) err.hidden = false; return; }
+        if (on.length === 1 && on[0] === "other" && (FLEET.answers[q.key + "_other"] || "").trim().length < FLEET_MIN) {
+          if (errText) errText.textContent = f.q_short || "";
+          if (err) err.hidden = false;
+          if (ta) ta.focus();
+          return;
+        }
       } else {
         const v = (ta.value || "").trim().slice(0, FLEET_MAX);
         const needs = q.key === "q1" || q.key === "q2" ? FLEET_MIN : 1;
@@ -3608,212 +3657,6 @@ function afterRender() {
   wireWhyCursors();
 }
 
-/* ============================================================================
-   #/fleet-preview — ISOLATED EXPERIMENT, NOT the real questionnaire.
-   Ofir, 2026-09-08 (voice note): wants every fleet question to offer ready-
-   made answer chips PLUS an "אחר" (other) chip that opens the exact same
-   free-text input the questions use today (char count, mic, full width) —
-   so most people just tap a chip and only the odd case types. Explicitly
-   asked for this to live as a DUPLICATE somewhere else first, so if it
-   doesn't work out it can be deleted without touching the real /fleet flow
-   at all. This whole block (content + 2 functions + the 2 router lines
-   tagged below) is that duplicate: it reuses the exact same CSS classes as
-   production (.chip--choice, .reg__note, .field__hint--mic, .mic-btn,
-   .cta-row.fleet-nav, .btn--ghost/--accent) but its own state (FLEET_PREVIEW,
-   not FLEET) and its own data-fp-* attributes, so it cannot cross-wire with
-   the real questionnaire's data-fleet-* handlers. Chip labels are pulled
-   straight from each question's existing `ph` example text — no new copy.
-   To remove: delete this block and the two `"fleet-preview"` lines in
-   currentRoute()/route() below. Nothing else references it. */
-const FLEET_PREVIEW_Q = {
-  he: [
-    { key: "q1", title: "מה אתם בונים עכשיו?", hint: "ספרו בקצרה מה המוצר או הפרויקט, למי הוא מיועד ומה אתם רוצים להשיג.", ph: "כלי שעוזר לצוותי מוצר לרכז פידבק מלקוחות ולהחליט מה כדאי לבנות קודם.",
-      choices: [
-        { v: "site", l: "אתר" }, { v: "crm", l: "CRM" }, { v: "app", l: "אפליקציה" }, { v: "saas", l: "מוצר SaaS" },
-        { v: "extension", l: "תוסף לדפדפן" }, { v: "internal", l: "כלי פנימי לצוות" }, { v: "other", l: "אחר" },
-      ] },
-    { key: "q2", title: "איפה העבודה שלכם נתקעת?", hint: "מה לוקח יותר מדי זמן, נדחה שוב ושוב או תלוי בכם כדי להתקדם?", ph: "כל מסך חדש מתחיל כמעט מאפס, ואני חוזר שוב ושוב על החלטות שכבר קיבלתי.",
-      choices: [
-        { v: "qa", l: "QA" }, { v: "design", l: "עיצוב" }, { v: "new_page", l: "עמוד חדש" }, { v: "feedback", l: "פידבק מלקוחות" },
-        { v: "blank_screen", l: "מסך חדש שמתחיל מאפס" }, { v: "repeat_decisions", l: "החלטות שחוזרות על עצמן" },
-        { v: "repetitive", l: "תהליכים שחוזרים על עצמם" }, { v: "other", l: "אחר" },
-      ] },
-    { key: "q3", title: "מה אתם מוצאים את עצמכם מסבירים שוב ושוב לכלי ה-AI שאתם בונים או עובדים איתו?", hint: "כללים, החלטות והעדפות שהייתם רוצים שכלי ה-AI שאתם בונים או עובדים איתו כבר יזכור לבד.", ph: "מי קהל היעד, איך אנחנו כותבים, אילו רכיבים כבר קיימים ומה החלטנו לא לבנות.",
-      choices: [
-        { v: "audience", l: "מי קהל היעד" }, { v: "writing_style", l: "איך אנחנו כותבים" },
-        { v: "not_building", l: "מה החלטנו לא לבנות" }, { v: "components", l: "אילו רכיבים כבר קיימים" }, { v: "other", l: "אחר" },
-      ] },
-    { key: "q4", title: "מה לא צריך לקרות בלי האישור שלכם?", hint: "אילו החלטות או פעולות אתם לא רוצים שכלי ה-AI יבצע לבד?", ph: "לפרסם משהו ללקוחות, לשנות מחיר, למחוק מידע או לשנות החלטה שכבר אושרה.",
-      choices: [
-        { v: "change_price", l: "לשנות מחיר" }, { v: "delete_data", l: "למחוק מידע" },
-        { v: "publish_customers", l: "לפרסם משהו ללקוחות" }, { v: "change_decision", l: "לשנות החלטה שכבר אושרה" }, { v: "other", l: "אחר" },
-      ] },
-  ],
-  en: [
-    { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. A sentence or two, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too.",
-      choices: [
-        { v: "app", l: "App" }, { v: "crm", l: "CRM" }, { v: "site", l: "Website" }, { v: "saas", l: "SaaS product" },
-        { v: "extension", l: "Browser extension" }, { v: "internal", l: "Internal team tool" }, { v: "other", l: "Other" },
-      ] },
-    { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users.",
-      choices: [
-        { v: "qa", l: "QA" }, { v: "design", l: "Design" }, { v: "new_page", l: "A new page" }, { v: "feedback", l: "Customer feedback" },
-        { v: "repetitive", l: "Repetitive processes" }, { v: "repeat_decisions", l: "Decisions that repeat" },
-        { v: "blank_screen", l: "A new screen starting from zero" }, { v: "other", l: "Other" },
-      ] },
-    { key: "q3", title: "What do you keep explaining in every chat?", hint: "What gets forgotten between one chat and the next. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero.",
-      choices: [
-        { v: "writing_style", l: "How we write" }, { v: "audience", l: "Who the audience is" },
-        { v: "not_building", l: "What we decided not to build" }, { v: "components", l: "Which components already exist" }, { v: "other", l: "Other" },
-      ] },
-    { key: "q4", title: "What shouldn't happen without your approval?", hint: "Which decisions or actions you don't want the AI tool making without you.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move.",
-      choices: [
-        { v: "delete_data", l: "Delete data" }, { v: "change_price", l: "Change a price" },
-        { v: "publish_customers", l: "Publish something to customers" }, { v: "change_decision", l: "Change a decision already approved" }, { v: "other", l: "Other" },
-      ] },
-  ],
-};
-const FLEET_PREVIEW_UI = {
-  he: { eyebrow: "תצוגה מקדימה", finish: "סיום התצוגה", back: "חזרה", doneTitle: "ככה זה ייראה",
-    doneSub: "תצוגה מקדימה בלבד — לא נשלח לשום מקום. זה לא ה-fleet האמיתי.", restart: "מהתחלה",
-    otherPh: "הוסיפו משהו שהדוגמאות למעלה לא כיסו." },
-  en: { eyebrow: "preview", finish: "Finish preview", back: "Back", doneTitle: "Here's how it'll look",
-    doneSub: "Preview only — nothing is submitted anywhere. This isn't the real fleet flow.", restart: "Start over",
-    otherPh: "Add something the examples above didn't cover." },
-};
-let FLEET_PREVIEW = { qi: 0, answers: {}, done: false };
-function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
-  const picked = Array.isArray(answers[q.key + "__chips"]) ? answers[q.key + "__chips"] : [];
-  const isOther = picked.indexOf("other") !== -1;
-  const textVal = answers[q.key] || "";
-  return fleetCard(`
-    <span class="eyebrow">${fleetFmt(f.q_counter, { n: qi + 1 })} — ${ui.eyebrow}</span>
-    <h1 class="login__title">${q.title}</h1>
-    ${q.hint ? `<p class="login__sub">${q.hint}</p>` : ""}
-    <form class="reg__form" data-fp-form novalidate>
-      <div class="cta-row fleet-choices fp-choices" role="group" aria-label="${escapeAttr(q.title)}">
-        ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="checkbox" data-fp-choice="${c.v}" aria-checked="${picked.indexOf(c.v) !== -1}">${c.l}</button>`).join("")}
-      </div>
-      <div class="field" data-fp-other-wrap ${isOther ? "" : "hidden"}>
-        <textarea class="reg__note" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(ui.otherPh)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fp-answer>${escapeHtml(textVal)}</textarea>
-        <div class="field__hint field__hint--mic">
-          <span class="ltr-iso" dir="ltr" data-fp-count>${fleetFmt(f.q_chars, { n: textVal.length, max: FLEET_MAX })}</span>
-          ${mic ? `<button type="button" class="mic-btn" data-fp-mic aria-pressed="false" data-tooltip="${escapeAttr(f.mic_start || "")}" data-tip-theme="light" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}</button>` : ""}
-        </div>
-      </div>
-      <p class="reg__error" data-fp-error hidden>${I.info}<span data-fp-error-text>${f.q_choose_many || f.q_choose || ""}</span></p>
-      <div class="cta-row fleet-nav">
-        ${qi > 0 ? `<button type="button" class="btn btn--ghost" data-fp="back">${ui.back}</button>` : ""}
-        <button type="submit" class="btn btn--accent">${qi === total - 1 ? ui.finish : f.q_next}</button>
-      </div>
-    </form>`);
-}
-function fleetPreviewDone(f, ui, list, answers) {
-  const rows = list.map((q) => {
-    const picked = Array.isArray(answers[q.key + "__chips"]) ? answers[q.key + "__chips"] : [];
-    const labels = picked.filter((v) => v !== "other").map((v) => (q.choices.find((c) => c.v === v) || {}).l).filter(Boolean);
-    if (picked.indexOf("other") !== -1 && (answers[q.key] || "").trim()) labels.push(answers[q.key].trim());
-    const shown = labels.length ? labels.join(" · ") : "—";
-    return `<div class="field"><div class="field__label">${q.title}</div><p class="login__sub" style="margin:0">${escapeHtml(shown)}</p></div>`;
-  }).join("");
-  return fleetCard(`
-    <span class="eyebrow">${ui.eyebrow}</span>
-    <h1 class="login__title">${ui.doneTitle}</h1>
-    <p class="login__sub">${ui.doneSub}</p>
-    ${rows}
-    <div class="cta-row fleet-nav">
-      <button type="button" class="btn btn--ghost" data-fp="restart">${ui.restart}</button>
-    </div>`);
-}
-function renderFleetPreview(lang) {
-  const t = I18N[lang];
-  const FC = window.FLEET_CONTENT || {};
-  const f = FC[lang] || FC.he;
-  const ui = FLEET_PREVIEW_UI[lang] || FLEET_PREVIEW_UI.he;
-  const list = FLEET_PREVIEW_Q[lang] || FLEET_PREVIEW_Q.he;
-  if (!f) { render(lang); return; }
-  const body = FLEET_PREVIEW.done
-    ? fleetPreviewDone(f, ui, list, FLEET_PREVIEW.answers)
-    : fleetPreviewQuestion(f, ui, list[FLEET_PREVIEW.qi], FLEET_PREVIEW.qi, list.length, FLEET_PREVIEW.answers, !!FLEET_SR);
-  document.title = f.page_title + " (preview)";
-  document.getElementById("app").innerHTML = `
-  ${navHeader(t, lang)}
-  <main id="top" class="page fleet moment-page">${body}</main>
-  ${studentModal(t)}`;
-  afterRender();
-  wireFleetPreview(lang, f, list);
-  window.scrollTo(0, 0);
-}
-function wireFleetPreview(lang, f, list) {
-  const root = document.querySelector("main.fleet");
-  if (!root) return;
-  const restartBtn = root.querySelector("[data-fp='restart']");
-  if (restartBtn) restartBtn.addEventListener("click", () => { FLEET_PREVIEW = { qi: 0, answers: {}, done: false }; renderFleetPreview(lang); });
-  const form = root.querySelector("[data-fp-form]");
-  if (!form) return;
-  const backBtn = form.querySelector("[data-fp='back']");
-  if (backBtn) backBtn.addEventListener("click", () => { if (FLEET_PREVIEW.qi > 0) FLEET_PREVIEW.qi -= 1; renderFleetPreview(lang); });
-  const q = list[FLEET_PREVIEW.qi];
-  const chips = form.querySelectorAll("[data-fp-choice]");
-  const otherWrap = form.querySelector("[data-fp-other-wrap]");
-  const ta = form.querySelector("[data-fp-answer]");
-  const count = form.querySelector("[data-fp-count]");
-  const err = form.querySelector("[data-fp-error]");
-  chips.forEach((c) => c.addEventListener("click", () => {
-    const v = c.getAttribute("data-fp-choice");
-    const now = c.getAttribute("aria-checked") !== "true";
-    c.setAttribute("aria-checked", now ? "true" : "false");
-    const picked = [...chips].filter((o) => o.getAttribute("aria-checked") === "true").map((o) => o.getAttribute("data-fp-choice"));
-    FLEET_PREVIEW.answers[q.key + "__chips"] = picked;
-    if (err) err.hidden = true;
-    const otherOn = picked.indexOf("other") !== -1;
-    if (otherWrap) otherWrap.hidden = !otherOn;
-    if (v === "other" && now) setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 30);
-  }));
-  if (ta) {
-    ta.addEventListener("input", () => {
-      FLEET_PREVIEW.answers[q.key] = ta.value;
-      if (count) count.textContent = fleetFmt(f.q_chars, { n: ta.value.length, max: FLEET_MAX });
-      if (err && !err.hidden && ta.value.trim().length >= FLEET_MIN) err.hidden = true;
-    });
-  }
-  const mic = form.querySelector("[data-fp-mic]");
-  if (mic && ta && FLEET_SR) {
-    let rec = null;
-    const setState = (on) => mic.setAttribute("aria-pressed", on ? "true" : "false");
-    mic.addEventListener("click", () => {
-      if (rec) { try { rec.stop(); } catch (e) {} return; }
-      try {
-        rec = new FLEET_SR();
-        rec.lang = lang === "he" ? "he-IL" : "en-US";
-        rec.continuous = true; rec.interimResults = true;
-        rec.onresult = (e) => {
-          let text = "";
-          for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
-          ta.value = text.slice(0, FLEET_MAX);
-          ta.dispatchEvent(new Event("input", { bubbles: true }));
-        };
-        rec.onend = () => { rec = null; setState(false); };
-        rec.start(); setState(true);
-      } catch (e) { rec = null; setState(false); }
-    });
-  }
-  const errText = form.querySelector("[data-fp-error-text]");
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const picked = Array.isArray(FLEET_PREVIEW.answers[q.key + "__chips"]) ? FLEET_PREVIEW.answers[q.key + "__chips"] : [];
-    if (!picked.length) { if (errText) errText.textContent = f.q_choose_many || f.q_choose || ""; if (err) err.hidden = false; return; }
-    if (picked.length === 1 && picked[0] === "other" && (FLEET_PREVIEW.answers[q.key] || "").trim().length < FLEET_MIN) {
-      if (errText) errText.textContent = f.q_short || "";
-      if (err) err.hidden = false;
-      if (ta) ta.focus();
-      return;
-    }
-    if (FLEET_PREVIEW.qi < list.length - 1) { FLEET_PREVIEW.qi += 1; } else { FLEET_PREVIEW.done = true; }
-    renderFleetPreview(lang);
-  });
-}
-/* ---- end #/fleet-preview isolated experiment ---------------------------- */
 
 /* ---- Router — hash routes: #/prep, #/kit, #/fleet, #/privacy, #/terms, else home --- */
 function currentRoute() {
@@ -3822,7 +3665,6 @@ function currentRoute() {
   if (h === "prep") return "prep";
   if (h === "kit") return "kit";
   if (h === "fleet") return "fleet";
-  if (h === "fleet-preview") return "fleet-preview"; // isolated experiment, see block above
   if (h === "privacy") return "privacy";
   if (h === "terms") return "terms";
   return "home";
@@ -3864,7 +3706,6 @@ function route(lang) {
   if (r === "prep") renderPrep(lang);
   else if (r === "kit") renderKit(lang);
   else if (r === "fleet") renderFleet(lang);
-  else if (r === "fleet-preview") renderFleetPreview(lang); // isolated experiment, see block above
   else if (r === "privacy") renderLegal(lang, "privacy");
   else if (r === "terms") renderLegal(lang, "terms");
   else render(lang);
@@ -4087,6 +3928,14 @@ function wireReveal() {
 /* ---- Boot ---------------------------------------------------------------- */
 // Re-render on hash route changes, scrolling to top on navigation.
 window.addEventListener("hashchange", () => {
+  // Ofir, 2026-09-08: clicking into /fleet (hero CTA, retyped URL, browser
+  // back/forward) must always land on the entry screen, never resume
+  // mid-questionnaire. FLEET.step/qi are in-memory only (never persisted),
+  // so within the same tab they'd otherwise still read wherever the user
+  // left off, since go()'s internal step changes never touch the hash and
+  // so never reach this listener - only a REAL navigation does. Skipped for
+  // ?view= dev deep links, which intentionally target a specific step.
+  if (currentRoute() === "fleet" && !fleetQuery().get("view")) { FLEET.step = "entry"; FLEET.qi = 0; }
   route(document.documentElement.lang || "he");
   window.scrollTo(0, 0);
 });
