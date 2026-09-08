@@ -1669,10 +1669,19 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    ("leave it 800") after seeing it next to 700 side by side. Sanctioned
    exception for the hero title only; the rest of the system's heaviest weight
    is 700. Don't "fix" this to 700 elsewhere without asking again. */
+/* cqh multipliers re-tuned 2026-09-08 (7.2->6.7, 4.6->4.3): the v3 mobile
+   hero image is a taller aspect-ratio than v2 (1024/1536 vs 1061/1482), so
+   the SAME cqh coefficients now compute a bigger px font from a taller
+   container - just enough to push ht2 ("...עם סוכני AI.") from one line to
+   two, adding a 3rd total title line on mobile. Scaled both coefficients by
+   544.75/585 (old mobile hero height / new) to land back on the exact same
+   px size at the new mobile height - real 1-line fit measured, not eyeballed
+   - while keeping this the SAME single formula for both breakpoints (the
+   comment above is the reason: "one curve with the image", not a fork). */
 .ht1{ display:block; font-weight:800; color:var(--pl-fg); line-height:1.12;
-      font-size:clamp(1.5rem, 7.2cqh, 5rem); }
+      font-size:clamp(1.5rem, 6.7cqh, 5rem); }
 .ht2{ display:block; font-weight:800; color:var(--pl-fg); line-height:1.15;
-      font-size:clamp(1rem, 4.6cqh, 3rem); margin-top:0.3cqh; }
+      font-size:clamp(1rem, 4.3cqh, 3rem); margin-top:0.3cqh; }
 
 /* balance the wrap: never a line of one orphaned word ("משלכם,") */
 .hero__sub{ margin:1.4cqh 0 0; color:var(--pl-fg-body); font-weight:500; text-align:center;
