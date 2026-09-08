@@ -174,7 +174,7 @@ const I18N = {
     hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
     session: {
-      badge: "המפגש הנוכחי",
+      badge: "המפגש האחרון",
       when_label: "מתי?",
       when_value: ["יום ה׳, 3 בספטמבר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
@@ -484,7 +484,7 @@ const I18N = {
     hero_cta: "Register for the next cohort",
     hero_cta2: "See which agents fit you",
     session: {
-      badge: "Current session",
+      badge: "Last session",
       when_label: "When?",
       when_value: ["Thursday, 3 September", "17:30-20:30", "One session, 3 hours"],
       where_label: "Where?",
