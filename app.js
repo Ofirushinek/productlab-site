@@ -3681,16 +3681,16 @@ const FLEET_PREVIEW_UI = {
 };
 let FLEET_PREVIEW = { qi: 0, answers: {}, done: false };
 function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
-  const chipVal = answers[q.key + "__chip"] || "";
-  const isOther = chipVal === "other";
-  const textVal = answers[q.key] && chipVal === "other" ? answers[q.key] : "";
+  const picked = Array.isArray(answers[q.key + "__chips"]) ? answers[q.key + "__chips"] : [];
+  const isOther = picked.indexOf("other") !== -1;
+  const textVal = answers[q.key] || "";
   return fleetCard(`
     <span class="eyebrow">${fleetFmt(f.q_counter, { n: qi + 1 })} — ${ui.eyebrow}</span>
     <h1 class="login__title">${q.title}</h1>
     ${q.hint ? `<p class="login__sub">${q.hint}</p>` : ""}
     <form class="reg__form" data-fp-form novalidate>
-      <div class="cta-row fleet-choices fp-choices" role="radiogroup" aria-label="${escapeAttr(q.title)}">
-        ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="radio" data-fp-choice="${c.v}" aria-checked="${chipVal === c.v}">${c.l}</button>`).join("")}
+      <div class="cta-row fleet-choices fp-choices" role="group" aria-label="${escapeAttr(q.title)}">
+        ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="checkbox" data-fp-choice="${c.v}" aria-checked="${picked.indexOf(c.v) !== -1}">${c.l}</button>`).join("")}
       </div>
       <div class="field" data-fp-other-wrap ${isOther ? "" : "hidden"}>
         <textarea class="reg__note" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fp-answer>${escapeHtml(textVal)}</textarea>
@@ -3699,7 +3699,7 @@ function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
           ${mic ? `<button type="button" class="mic-btn" data-fp-mic aria-pressed="false" data-tooltip="${escapeAttr(f.mic_start || "")}" data-tip-theme="light" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="dot"></span>${I.mic}</button>` : ""}
         </div>
       </div>
-      <p class="reg__error" data-fp-error hidden>${I.info}<span data-fp-error-text>${f.q_choose || ""}</span></p>
+      <p class="reg__error" data-fp-error hidden>${I.info}<span data-fp-error-text>${f.q_choose_many || f.q_choose || ""}</span></p>
       <div class="cta-row fleet-nav">
         ${qi > 0 ? `<button type="button" class="btn btn--ghost" data-fp="back">${ui.back}</button>` : ""}
         <button type="submit" class="btn btn--accent">${qi === total - 1 ? ui.finish : f.q_next}</button>
@@ -3708,8 +3708,10 @@ function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
 }
 function fleetPreviewDone(f, ui, list, answers) {
   const rows = list.map((q) => {
-    const chipVal = answers[q.key + "__chip"] || "";
-    const shown = chipVal === "other" ? (answers[q.key] || "") : (q.choices.find((c) => c.v === chipVal) || {}).l || "—";
+    const picked = Array.isArray(answers[q.key + "__chips"]) ? answers[q.key + "__chips"] : [];
+    const labels = picked.filter((v) => v !== "other").map((v) => (q.choices.find((c) => c.v === v) || {}).l).filter(Boolean);
+    if (picked.indexOf("other") !== -1 && (answers[q.key] || "").trim()) labels.push(answers[q.key].trim());
+    const shown = labels.length ? labels.join(" · ") : "—";
     return `<div class="field"><div class="field__label">${q.title}</div><p class="login__sub" style="margin:0">${escapeHtml(shown)}</p></div>`;
   }).join("");
   return fleetCard(`
@@ -3757,13 +3759,14 @@ function wireFleetPreview(lang, f, list) {
   const err = form.querySelector("[data-fp-error]");
   chips.forEach((c) => c.addEventListener("click", () => {
     const v = c.getAttribute("data-fp-choice");
-    chips.forEach((o) => o.setAttribute("aria-checked", o === c ? "true" : "false"));
-    FLEET_PREVIEW.answers[q.key + "__chip"] = v;
+    const now = c.getAttribute("aria-checked") !== "true";
+    c.setAttribute("aria-checked", now ? "true" : "false");
+    const picked = [...chips].filter((o) => o.getAttribute("aria-checked") === "true").map((o) => o.getAttribute("data-fp-choice"));
+    FLEET_PREVIEW.answers[q.key + "__chips"] = picked;
     if (err) err.hidden = true;
-    if (v === "other") {
-      if (otherWrap) { otherWrap.hidden = false; }
-      setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 30);
-    } else if (otherWrap) { otherWrap.hidden = true; }
+    const otherOn = picked.indexOf("other") !== -1;
+    if (otherWrap) otherWrap.hidden = !otherOn;
+    if (v === "other" && now) setTimeout(() => { try { ta.focus({ preventScroll: true }); } catch (e) {} }, 30);
   }));
   if (ta) {
     ta.addEventListener("input", () => {
@@ -3796,9 +3799,9 @@ function wireFleetPreview(lang, f, list) {
   const errText = form.querySelector("[data-fp-error-text]");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const chipVal = FLEET_PREVIEW.answers[q.key + "__chip"] || "";
-    if (!chipVal) { if (errText) errText.textContent = f.q_choose || ""; if (err) err.hidden = false; return; }
-    if (chipVal === "other" && (FLEET_PREVIEW.answers[q.key] || "").trim().length < FLEET_MIN) {
+    const picked = Array.isArray(FLEET_PREVIEW.answers[q.key + "__chips"]) ? FLEET_PREVIEW.answers[q.key + "__chips"] : [];
+    if (!picked.length) { if (errText) errText.textContent = f.q_choose_many || f.q_choose || ""; if (err) err.hidden = false; return; }
+    if (picked.length === 1 && picked[0] === "other" && (FLEET_PREVIEW.answers[q.key] || "").trim().length < FLEET_MIN) {
       if (errText) errText.textContent = f.q_short || "";
       if (err) err.hidden = false;
       if (ta) ta.focus();
