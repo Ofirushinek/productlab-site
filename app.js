@@ -299,8 +299,9 @@ const I18N = {
       // Sent to Ofir via WhatsApp verbatim on 2026-09-08 (message opened with a plain
       // "היי בטח!!!!" greeting reply — stripped, not part of the testimonial, same trap
       // as the Ilya quote). Role confirmed off her real LinkedIn (linkedin.com/in/adi-lev/).
-      // No photo — falls back to the component's existing I.user silhouette.
-      { q: "הסדנה של אופיר נתנה לי בסיס מצוין להתחיל לעבוד נכון עם AI Agents ולהכניס אותם לתהליכי העבודה שלי. אופיר העביר את התוכן בצורה מקצועית, מעמיקה ובגובה העיניים, משלב ההבנה הבסיסית ועד להתנסות פרקטית ועבודה אמיתית עם סוכנים. יצאתי עם בסיס של agents שאני יכולה כבר להתחיל לעבוד איתם ולשפר אותם, ובעיקר עם ההבנה שפשוט צריך להתחיל ולתרגם את הידע לעבודה מעשית. ממליצה בחום למעצבי ומנהלי מוצר שרוצים להתחיל להשתמש ב-AI בצורה פרקטית ולשלב אותו בעבודה היומיומית שלהם.", n: "עדי לב", m: "Product Designer at Onit Security", li: "https://www.linkedin.com/in/adi-lev/" },
+      // Photo: real headshot from Ofir (LinkedIn photo), cropped 440x440 to match the
+      // Dekel/Ilya treatment. Source: campaign/assets/adi-lev-source.png.
+      { q: "הסדנה של אופיר נתנה לי בסיס מצוין להתחיל לעבוד נכון עם AI Agents ולהכניס אותם לתהליכי העבודה שלי. אופיר העביר את התוכן בצורה מקצועית, מעמיקה ובגובה העיניים, משלב ההבנה הבסיסית ועד להתנסות פרקטית ועבודה אמיתית עם סוכנים. יצאתי עם בסיס של agents שאני יכולה כבר להתחיל לעבוד איתם ולשפר אותם, ובעיקר עם ההבנה שפשוט צריך להתחיל ולתרגם את הידע לעבודה מעשית. ממליצה בחום למעצבי ומנהלי מוצר שרוצים להתחיל להשתמש ב-AI בצורה פרקטית ולשלב אותו בעבודה היומיומית שלהם.", n: "עדי לב", m: "Product Designer at Onit Security", img: "testimonial-adi", li: "https://www.linkedin.com/in/adi-lev/" },
     ],
 
     // "יום בחייו של בוגר Product Lab" — copy v5 (Copywriter, 2026-08-21).
