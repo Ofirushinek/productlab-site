@@ -1715,7 +1715,18 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    (white-space:nowrap - never wraps, per the standing rule). */
 @media (min-width:761px){
   .hero__cta{ flex-direction:row; justify-content:center; gap:12px; }
-  .hero__cta .btn{ width:auto; min-width:230px; white-space:nowrap; }
+  /* Ofir, 2026-09-08 (2nd pass): the mobile-scoped values above (12px font,
+     10px padding, a raw 10px radius) were never meant for desktop - they
+     were sized tight for the stacked mobile layout's own height budget.
+     Desktop has plenty of room (confirmed: hero__cta bottom sits ~41% of
+     hero height, safe zone starts ~46%), so it goes back to the CANONICAL
+     .btn scale here - same height/font-size/padding/radius TOKENS as every
+     other .btn in the system (Storybook's Accent story), not a one-off. */
+  .hero__cta .btn{
+    width:auto; min-width:230px; white-space:nowrap;
+    height:var(--ctl-md); padding-inline:var(--space-5);
+    font-size:var(--text-body); border-radius:var(--radius-md);
+  }
   /* Ofir, 2026-09-08: the register button (accent) goes on the LEFT, the
      secondary (ghost) on the RIGHT - opposite of plain DOM order in RTL,
      `order` only, markup unchanged. */
