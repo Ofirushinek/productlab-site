@@ -341,6 +341,7 @@ const I18N = {
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
     reg_title: "לשמור מקום במפגש הקרוב",
     reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים כדי לשמור מקום במפגש הקרוב, ואחזור אליכם באופן אישי עם כל מה שצריך לדעת.",
+    reg_name_label: "שם מלא",
     reg_first_label: "שם פרטי",
     reg_last_label: "שם משפחה",
     reg_email_label: "אימייל",
@@ -635,6 +636,7 @@ const I18N = {
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
     reg_title: "Save your spot in the next session",
     reg_sub: "Spots are limited and go in small groups. Leave your details to hold your place in the next session, and I'll reach out personally with everything you need to know.",
+    reg_name_label: "Full name",
     reg_first_label: "First name",
     reg_last_label: "Last name",
     reg_email_label: "Email",
@@ -914,12 +916,8 @@ const registerModal = (t) => `
         <p class="login__sub">${t.reg_sub}</p>
         <form class="reg__form" data-register-form novalidate>
           <div class="field">
-            <label class="field__label" for="reg-first">${t.reg_first_label}</label>
-            <input class="input" id="reg-first" name="first" type="text" autocomplete="given-name" required />
-          </div>
-          <div class="field">
-            <label class="field__label" for="reg-last">${t.reg_last_label}</label>
-            <input class="input" id="reg-last" name="last" type="text" autocomplete="family-name" required />
+            <label class="field__label" for="reg-name">${t.reg_name_label}</label>
+            <input class="input" id="reg-name" name="fullname" type="text" autocomplete="name" required />
           </div>
           <div class="field">
             <label class="field__label" for="reg-email">${t.reg_email_label}</label>
@@ -3820,14 +3818,21 @@ function wireRegister() {
     if (submitting) return;                         // hard guard against double-submit
     if (errorEl) errorEl.hidden = true;
 
-    const first = form.first.value.trim();
-    const last = form.last.value.trim();
+    // One visible "full name" field (Ofir, 2026-09-08: merge first+last into
+    // one input); register_lead still wants them split, so split on the
+    // first run of whitespace - "Ilya Borukhov" -> first "Ilya", last
+    // "Borukhov". A single word with no space becomes both (no blank
+    // last_name against the DB).
+    const fullname = form.fullname.value.trim();
+    const nameParts = fullname.split(/\s+/).filter(Boolean);
+    const first = nameParts[0] || "";
+    const last = nameParts.slice(1).join(" ") || first;
     const email = form.email.value.trim();
     const note = form.note.value.trim();
 
-    // Client-side: require first + last + a valid-looking email (note optional).
-    if (!first || !last || !EMAIL_RE.test(email)) {
-      const missing = !first ? form.first : !last ? form.last : form.email;
+    // Client-side: require a name + a valid-looking email (note optional).
+    if (!first || !EMAIL_RE.test(email)) {
+      const missing = !first ? form.fullname : form.email;
       missing.focus();
       return;
     }
