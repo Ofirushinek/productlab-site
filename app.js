@@ -3659,6 +3659,8 @@ function afterRender() {
   wireSignout();
   wirePrompts();
   wireWhyCursors();
+  fitHeroSub();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeroSub);
 }
 
 
@@ -3926,6 +3928,29 @@ function wireHeroImage() {
   });
 }
 
+/* Hero sub always renders as exactly hero_sub_lines.length rows: each .sd is
+   one row by design (display:block), but its own text can still wrap onto a
+   second visual line once the line's real width runs out (long content,
+   narrow phone, real font metrics). Rather than cap the copy to whatever
+   fits at the smallest screen, shrink that one row's font-size down until it
+   fits on its own line — the row count stays fixed, only the text scales. */
+function fitHeroSub() {
+  const lines = document.querySelectorAll(".hero__sub .sd");
+  if (!lines.length) return;
+  lines.forEach((el) => { el.style.fontSize = ""; });
+  const MIN_PX = 9;
+  const wrapped = (el) => el.scrollHeight > parseFloat(getComputedStyle(el).lineHeight) * 1.3;
+  let size = parseFloat(getComputedStyle(lines[0]).fontSize);
+  let guard = 0;
+  // Shrink every row together (not just the overflowing one) so the three
+  // rows keep one consistent size instead of one line looking mismatched.
+  while (Array.from(lines).some(wrapped) && size > MIN_PX && guard < 60) {
+    size -= 0.5;
+    lines.forEach((el) => { el.style.fontSize = size + "px"; });
+    guard++;
+  }
+}
+
 /* ---- Reveal on scroll ---------------------------------------------------- */
 function wireReveal() {
   const els = document.querySelectorAll(".reveal");
@@ -3937,6 +3962,14 @@ function wireReveal() {
 }
 
 /* ---- Boot ---------------------------------------------------------------- */
+// Re-fit the hero sub row-by-row on viewport/orientation changes (resize
+// only fires on the window, so this lives here once rather than per-render).
+let heroFitTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(heroFitTimer);
+  heroFitTimer = setTimeout(fitHeroSub, 120);
+});
+
 // Re-render on hash route changes, scrolling to top on navigation.
 window.addEventListener("hashchange", () => {
   // Ofir, 2026-09-08: clicking into /fleet (hero CTA, retyped URL, browser
