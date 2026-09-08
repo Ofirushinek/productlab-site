@@ -3081,7 +3081,7 @@ function fleetResult(f, b) {
     <div class="deliv reveal fleet-benefits">
       ${f.benefits.map((d, i) => `
         <div class="deliv__item">
-          <div class="deliv__num">${i + 1}</div>
+          <div class="deliv__num">${String(i + 1).padStart(2, "0")}</div>
           <div><h3>${d.t}</h3><p>${d.b}</p></div>
         </div>`).join("")}
     </div>

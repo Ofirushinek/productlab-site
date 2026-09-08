@@ -499,6 +499,22 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .deliv__item h3 { font-size: var(--text-h3); margin-bottom: 0.3rem; }
 .deliv__item p { color: var(--pl-fg-body); font-size: var(--text-sm); font-weight: 500; }
 
+/* Fleet result "benefits" cards (Ofir, 2026-09-08): match the homepage WHY
+   tiles' number badge exactly - light accent-tint square, accent-colored
+   text, sitting above the title instead of beside it. Same recipe as
+   .whytile__num, just scoped to .fleet-benefits so the rest of the site's
+   .deliv/.deliv__num (currently only used here anyway) is untouched if
+   reused elsewhere later. */
+.fleet-benefits .deliv__item { flex-direction: column; align-items: flex-start; }
+.fleet-benefits .deliv__num {
+  width: var(--ctl-sm); height: var(--ctl-sm); border-radius: var(--radius-md);
+  margin-bottom: var(--space-4); direction: ltr;
+  background: color-mix(in srgb, var(--pl-accent) 12%, transparent);
+  color: var(--pl-accent);
+  font-size: 1.25rem; font-weight: 700; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
 /* agenda — 3 phases */
 .agenda { display: grid; gap: 1.1rem; }
 .phase {
