@@ -284,13 +284,17 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 /* ---- Buttons ------------------------------------------------------------- */
 /* SYSTEM RULE: a button is NEVER narrower than its height (min-width = height).
    Icon-only buttons therefore render at least square, never a thin sliver. */
+/* SYSTEM RULE: button text NEVER wraps to a second line, for any reason. If it
+   doesn't fit, it truncates with an ellipsis - it never breaks the layout and
+   it never grows the button. One law, on the base class, so no button can
+   opt out of it by accident (Ofir, 2026-09-08). */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
-  height: var(--ctl-md); min-width: var(--ctl-md); padding-inline: var(--space-5);
+  height: var(--ctl-md); min-width: var(--ctl-md); max-width: 100%; padding-inline: var(--space-5);
   border-radius: var(--radius-md);
   font-family: inherit; font-size: var(--text-body); font-weight: 600;
   border: 1px solid transparent;
-  text-decoration: none; white-space: nowrap;
+  text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   transition: transform 0.15s var(--ease-pl), background-color 0.2s var(--ease-pl),
               border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl), opacity 0.2s var(--ease-pl);
 }
