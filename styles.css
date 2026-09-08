@@ -33,13 +33,6 @@
      page (#/kit). intro.css now points its own --pl-intro-cream at this. */
   --pl-brand-cream: #FBEAD9;
 
-  /* Hero mobile-frame wall tone (2026-09-07) — sampled directly off
-     hero-room-mobile.webp's own cream backdrop (45-point average across the
-     top band, x0.02-0.98 * y10-200: rgb(245,212,177)). Scoped to this one
-     photo, not a reusable brand color — flagged to Design System Lead for
-     the canonical-vs-one-off call, not self-promoted. */
-  --pl-hero-mobile-wall: #f5d4b1;
-
   /* tooltip — dark bubble for icon-only controls (design-system token) */
   --pl-tooltip-bg: #1a1a1a;
   --pl-tooltip-fg: #ffffff;
@@ -1625,31 +1618,6 @@ html.pl-zoom-park .hero__bg{ transform: scale(0.980392); }
 html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
 /* backstop only - intro.js never adds the class under reduced motion anyway */
 @media (prefers-reduced-motion: reduce){ html.pl-zoom .hero__bg{ animation: none; } }
-
-/* MOBILE FRAME (2026-09-07, Ofir: the mobile hero felt crowded - puppets
-   edge-to-edge, no breathing room). The mobile master already has a cream
-   backdrop above the puppets; the bug was purely CSS full-bleed math, not
-   the photo (only ~6.5% blank wall showed above their heads, zero side
-   margin - the man's shoulder and the teal puppet's arm sat right at the
-   frame edge). Fix: shrink the box a few % on every side instead of
-   full-bleed. Because .hero--oneview's own aspect-ratio AT THIS WIDTH
-   (1600/2233) already equals the mobile image's own ratio, an EQUAL %
-   inset on all four sides preserves that ratio exactly - the box gets
-   smaller but keeps the same shape, so the whole image still fits with
-   zero crop and zero letterbox (object-fit:contain is set anyway, as a
-   safety net against a future asymmetric inset - at this exact ratio match
-   it's a no-op next to `cover`). The ring of space this opens needs the
-   wall's own tone behind it, or the margin reads as a letterboxed photo
-   instead of "more of the same room" - see --pl-hero-mobile-wall above.
-   Safe-band math is unaffected: characters that began at 45% down the old
-   full-bleed image land at 7 + 0.45*86 = 45.7% of the container now - a
-   hair MORE clearance than before, not less. Desktop (min-width:761px,
-   below) is a completely separate media range - zero change there. */
-@media (max-width:760px){
-  .hero--oneview{ background: var(--pl-hero-mobile-wall); }
-  .hero__bg{ inset:7%; }
-  .hero__bg img{ object-fit:contain; }
-}
 
 /* DESKTOP ZOOM, MADE PROFOUND (2026-08-25, Ofir: the 2% move read as
    unnoticeable on desktop). Same mechanism as above, 6x the distance: 12%
