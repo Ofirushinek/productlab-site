@@ -3634,7 +3634,7 @@ const FLEET_PREVIEW_Q = {
       ] },
     { key: "q2", title: "איפה העבודה שלכם נתקעת?", hint: "מה לוקח יותר מדי זמן, נדחה שוב ושוב או תלוי בכם כדי להתקדם?", ph: "כל מסך חדש מתחיל כמעט מאפס, ואני חוזר שוב ושוב על החלטות שכבר קיבלתי.",
       choices: [
-        { v: "new_page", l: "עמוד חדש" }, { v: "feedback", l: "פידבק מלקוחות" },
+        { v: "qa", l: "QA" }, { v: "design", l: "עיצוב" }, { v: "new_page", l: "עמוד חדש" }, { v: "feedback", l: "פידבק מלקוחות" },
         { v: "blank_screen", l: "מסך חדש שמתחיל מאפס" }, { v: "repeat_decisions", l: "החלטות שחוזרות על עצמן" },
         { v: "repetitive", l: "תהליכים שחוזרים על עצמם" }, { v: "other", l: "אחר" },
       ] },
@@ -3657,7 +3657,7 @@ const FLEET_PREVIEW_Q = {
       ] },
     { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users.",
       choices: [
-        { v: "new_page", l: "A new page" }, { v: "feedback", l: "Customer feedback" },
+        { v: "qa", l: "QA" }, { v: "design", l: "Design" }, { v: "new_page", l: "A new page" }, { v: "feedback", l: "Customer feedback" },
         { v: "repetitive", l: "Repetitive processes" }, { v: "repeat_decisions", l: "Decisions that repeat" },
         { v: "blank_screen", l: "A new screen starting from zero" }, { v: "other", l: "Other" },
       ] },
