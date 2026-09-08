@@ -365,12 +365,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .nav__brand { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; margin-inline-end: auto; }
 .nav__brand img { height: var(--space-6); width: auto; }
 .nav__brand span { font-weight: 700; color: var(--pl-fg); font-size: var(--text-body); letter-spacing: -0.02em; }
-/* Desktop only (Ofir, 2026-09-08): student sign-in (inside .nav__menu, alongside
-   the language switcher) moves to the far left, ahead of the WhatsApp button -
-   `order` only, markup/DOM unchanged. Mobile's own @media(max-width:620px) block
-   switches .nav__in to position:absolute zones and ignores flex `order` entirely,
-   so this is desktop-only for free, no separate media query needed. */
-.nav__menu { display: flex; align-items: center; gap: var(--space-3); order: 3; }
+.nav__menu { display: flex; align-items: center; gap: var(--space-3); }
 /* hamburger — hidden on desktop, shown on mobile */
 .nav__burger {
   display: none; width: var(--ctl-sm); height: var(--ctl-sm); flex: none;
@@ -420,7 +415,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 .langswitch__item:hover { background: var(--pl-bg-alt); }
 .langswitch__item[aria-current="true"] { color: var(--pl-accent); }
-.nav__book { order: 2; }
+.nav__book { }
 /* WhatsApp nav icon is intentionally NOT sized here — it inherits the persistent
    20px from .btn--wa-solid svg. (Student entrance is text-only, no icon.) */
 
@@ -1712,6 +1707,11 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 @media (min-width:761px){
   .hero__cta{ flex-direction:row; justify-content:center; gap:12px; }
   .hero__cta .btn{ width:auto; min-width:230px; white-space:nowrap; }
+  /* Ofir, 2026-09-08: the register button (accent) goes on the LEFT, the
+     secondary (ghost) on the RIGHT - opposite of plain DOM order in RTL,
+     `order` only, markup unchanged. */
+  .hero__cta .btn--ghost{ order:1; }
+  .hero__cta .btn--accent{ order:2; }
 }
 .btn--accent{ background:var(--pl-accent); color:var(--pl-accent-fg); border-color:transparent; box-shadow:var(--shadow-pl-md); }
 .btn--accent:hover{ background:var(--pl-accent-hover); }
