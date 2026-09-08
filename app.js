@@ -746,7 +746,7 @@ const I18N = {
 // WhatsApp only — Ofir wants people to reach him directly, no booking funnel.
 const ctaRow = (t) => `
   <div class="cta-row">
-    <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+    <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
   </div>`;
 
 const ctaBand = (t, title, sub) => `
@@ -841,7 +841,7 @@ const noticeModal = (key, title, body, t) => `
       <h2 class="noacct__title">${title}</h2>
       <p class="noacct__body">${body}</p>
       <div class="cta-row" style="margin-top:1.5rem">
-        <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+        <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
       </div>
     </div>
   </div>`;
@@ -862,8 +862,8 @@ const confirmRemoveModal = (t) => `
       <h2 class="login__title">${t.roster_remove_title}</h2>
       <p class="login__sub">${t.roster_remove_body_pre}<strong data-remove-name></strong>${t.roster_remove_body_post}</p>
       <div class="cta-row" style="margin-top:1.5rem; justify-content:center">
-        <button class="btn btn--ghost" type="button" data-remove-cancel>${t.roster_remove_cancel}</button>
-        <button class="btn btn--danger" type="button" data-remove-confirm>${t.roster_remove_confirm}</button>
+        <button class="btn btn--ghost" type="button" data-remove-cancel><span class="btn__label">${t.roster_remove_cancel}</span></button>
+        <button class="btn btn--danger" type="button" data-remove-confirm><span class="btn__label">${t.roster_remove_confirm}</span></button>
       </div>
     </div>
   </div>`;
@@ -879,10 +879,10 @@ const studentModal = (t) => `
       <p class="login__sub">${t.login_sub}</p>
       <div class="login__form">
         <button class="btn btn--primary login__submit login__google" type="button" data-google-signin>
-          ${I.google}<span>${t.login_google}</span>
+          ${I.google}<span class="btn__label">${t.login_google}</span>
         </button>
         <!-- Opens the register-your-interest form (writes a lead via register_lead). -->
-        <button class="btn btn--ghost login__submit" type="button" data-register-open>${t.login_register}</button>
+        <button class="btn btn--ghost login__submit" type="button" data-register-open><span class="btn__label">${t.login_register}</span></button>
       </div>
     </div>
   </div>
@@ -925,7 +925,7 @@ const registerModal = (t) => `
           <p class="reg__error" data-register-error hidden>${I.info}<span>${t.reg_error}</span></p>
           <button class="btn btn--primary login__submit reg__submit" type="submit" data-register-submit>
             <span class="reg__submit-spinner" aria-hidden="true"></span>
-            <span class="reg__submit-label">${t.reg_submit}</span>
+            <span class="btn__label reg__submit-label">${t.reg_submit}</span>
           </button>
         </form>
       </div>
@@ -934,7 +934,7 @@ const registerModal = (t) => `
         <div class="noacct__ico reg__success-ico">${I.check}</div>
         <p class="reg__success-body">${t.reg_success}</p>
         <div class="cta-row" style="margin-top:1.5rem; justify-content:center">
-          <button class="btn btn--ghost" type="button" data-register-close>${t.modal_close}</button>
+          <button class="btn btn--ghost" type="button" data-register-close><span class="btn__label">${t.modal_close}</span></button>
         </div>
       </div>
     </div>
@@ -1088,8 +1088,8 @@ function wireWhyCursors() {
 // duplicate this markup per-strip — edit once, both render.
 function sessionStripHtml(s, opts = {}) {
   const cta = opts.disabled
-    ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
-    : `<button class="btn btn--accent" type="button" data-register-open>${s.cta}</button>`;
+    ? `<span class="btn btn--accent btn--disabled" aria-disabled="true"><span class="btn__label">${s.cta}</span></span>`
+    : `<button class="btn btn--accent" type="button" data-register-open><span class="btn__label">${s.cta}</span></button>`;
   const price = opts.price
     ? `<div class="ss-price"><strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
     : "";
@@ -1133,7 +1133,7 @@ function render(lang) {
     <div class="hero__content">
       <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
       <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
-      <div class="hero__cta"><button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button></div>
+      <div class="hero__cta"><button class="btn btn--accent" type="button" data-register-open><span class="btn__label">${t.hero_cta}</span></button></div>
     </div>
     <picture class="hero__bg">
       <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=1" />
@@ -1602,7 +1602,7 @@ function renderPrep(lang) {
             <div class="card__foot">
               ${kitMedia(k)}
               <div class="cta-row">
-                <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download` : ` target="_blank" rel="noopener"`}>${k.cta}</a>
+                <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download` : ` target="_blank" rel="noopener"`}><span class="btn__label">${k.cta}</span></a>
               </div>
             </div>
           </div>`).join("")}
@@ -1756,7 +1756,7 @@ function renderPrep(lang) {
         <h2 class="prep__h">${t.prep_help_title}</h2>
         <p class="section-lead" style="margin-top:.5rem">${t.prep_help_body}</p>
         <div class="cta-row" style="margin-top:1.25rem">
-          <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+          <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa}<span class="btn__label">${t.cta_wa}</span></a>
         </div>
       </div>
     </div></section>`;
@@ -1777,7 +1777,7 @@ function renderPrep(lang) {
           placeholder="${t.roster_add_name_placeholder}" aria-label="${t.roster_add_name_placeholder}" autocomplete="off" />
         <input class="roster__input" type="email" name="email"
           placeholder="${t.roster_add_placeholder}" aria-label="${t.roster_add_placeholder}" autocomplete="off" />
-        <button class="btn btn--primary roster__addbtn" type="submit">${I.check}<span>${t.roster_add_cta}</span></button>
+        <button class="btn btn--primary roster__addbtn" type="submit">${I.check}<span class="btn__label">${t.roster_add_cta}</span></button>
       </form>
       <p class="roster__hint">${t.roster_add_hint}</p>
       <div class="roster" data-roster style="margin-top:1.5rem">
@@ -2273,10 +2273,10 @@ async function renderRoster(lang) {
     // Actions: gate-crasher -> Add to list; on-list -> confirm (email only) + remove.
     let actions;
     if (!r.on_list) {
-      actions = `<button type="button" class="btn btn--ghost btn--sm" data-add="${escapeAttr(r.email || "")}">${t.roster_add_to_list}</button>`;
+      actions = `<button type="button" class="btn btn--ghost btn--sm" data-add="${escapeAttr(r.email || "")}"><span class="btn__label">${t.roster_add_to_list}</span></button>`;
     } else {
       const confirmBtn = r.email
-        ? `<button type="button" class="btn ${r.confirmed ? "btn--ghost" : "btn--primary"} btn--sm" data-confirm="${escapeAttr(r.email)}" data-next="${r.confirmed ? "0" : "1"}">${r.confirmed ? t.roster_unconfirm : t.roster_confirm}</button>`
+        ? `<button type="button" class="btn ${r.confirmed ? "btn--ghost" : "btn--primary"} btn--sm" data-confirm="${escapeAttr(r.email)}" data-next="${r.confirmed ? "0" : "1"}"><span class="btn__label">${r.confirmed ? t.roster_unconfirm : t.roster_confirm}</span></button>`
         : "";
       actions = `${confirmBtn}
          <button type="button" class="btn btn--ghost btn--danger btn--sm roster__remove" data-remove-ask="${i}" aria-label="${t.roster_remove}" data-tooltip="${t.roster_remove}">${I.trash}</button>`;
@@ -2325,13 +2325,13 @@ async function renderRoster(lang) {
               <span class="roster__fieldlbl">${t.roster_col_notes}</span>
               <div class="rnotes__add">
                 <textarea class="roster__ta rnotes__new" data-note-new="${i}" data-grow rows="1" dir="${lang === "he" ? "rtl" : "ltr"}" placeholder="${escapeAttr(t.roster_notes_ph)}"></textarea>
-                <button type="button" class="btn btn--ghost btn--sm rnotes__addbtn" data-note-add="${i}">${I.check}<span>${t.roster_note_add}</span></button>
+                <button type="button" class="btn btn--ghost btn--sm rnotes__addbtn" data-note-add="${i}">${I.check}<span class="btn__label">${t.roster_note_add}</span></button>
               </div>
               <div class="rnotes__list" data-note-list="${i}">${notesListHtml(notes, lang, t)}</div>
               <textarea class="rnotes__raw" data-field="notes" data-i="${i}" hidden aria-hidden="true" tabindex="-1">${escapeHtml(notes)}</textarea>
             </div>
             <div class="roster__detailbar">
-              <button type="button" class="btn btn--primary btn--sm" data-save="${i}">${t.roster_save}</button>
+              <button type="button" class="btn btn--primary btn--sm" data-save="${i}"><span class="btn__label">${t.roster_save}</span></button>
               <span class="roster__savemsg" data-savemsg="${i}" role="status" aria-live="polite"></span>
             </div>
           </div>
@@ -2520,7 +2520,7 @@ function renderKit(lang) {
       <h1 class="section-title">${t.kit_title}</h1>
       <p class="login__sub">${t.kit_sub}</p>
       <div class="cta-row kitfull__cta">
-        <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}${t.kit_btn_download}</a>
+        <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}<span class="btn__label">${t.kit_btn_download}</span></a>
       </div>
     </div>
   </main>
@@ -2873,9 +2873,9 @@ const fleetCard = (inner, mod = "") => `
 
 function fleetEntry(f, saved) {
   const actions = saved
-    ? `<button class="btn btn--accent" type="button" data-fleet="open">${f.return_open}</button>
-       <button class="btn btn--ghost" type="button" data-fleet="reset">${f.return_reset}</button>`
-    : `<button class="btn btn--accent btn--lg" type="button" data-fleet="start">${f.entry_cta}</button>`;
+    ? `<button class="btn btn--accent" type="button" data-fleet="open"><span class="btn__label">${f.return_open}</span></button>
+       <button class="btn btn--ghost" type="button" data-fleet="reset"><span class="btn__label">${f.return_reset}</span></button>`
+    : `<button class="btn btn--accent btn--lg" type="button" data-fleet="start"><span class="btn__label">${f.entry_cta}</span></button>`;
   /* Ofir, 2026-09-07 (v3, reverting v2's top-of-card cluster): back to a
      plain eyebrow/title/description/CTA hero, nothing above or between it.
      The avatars move BELOW the CTA as a small supporting "examples" block.
@@ -2945,8 +2945,8 @@ function fleetQuestion(f) {
       ${control}
       <p class="reg__error" data-fleet-error hidden>${I.info}<span>${q.tools ? (f.q_choose_many || f.q_choose) : q.choices ? f.q_choose : f.q_short}</span></p>
       <div class="cta-row fleet-nav">
-        ${FLEET.qi > 0 ? `<button type="button" class="btn btn--ghost" data-fleet="back">${f.q_back}</button>` : ""}
-        <button type="submit" class="btn btn--accent">${last ? f.q_submit : f.q_next}</button>
+        ${FLEET.qi > 0 ? `<button type="button" class="btn btn--ghost" data-fleet="back"><span class="btn__label">${f.q_back}</span></button>` : ""}
+        <button type="submit" class="btn btn--accent"><span class="btn__label">${last ? f.q_submit : f.q_next}</span></button>
       </div>
     </form>`);
 }
@@ -3068,8 +3068,8 @@ function fleetResult(f, b) {
       <h2>${f.result_cta_title}</h2>
       <p>${f.result_cta_sub}</p>
       <div class="cta-row fleet-cta-row">
-        <a class="btn btn--wa-solid btn--lg" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${f.result_cta_wa}</a>
-        <button class="btn btn--primary btn--lg" type="button" data-fleet="gate">${f.result_cta}</button>
+        <a class="btn btn--wa-solid btn--lg" href="${WA_URL}" target="_blank" rel="noopener">${I.wa}<span class="btn__label">${f.result_cta_wa}</span></a>
+        <button class="btn btn--primary btn--lg" type="button" data-fleet="gate"><span class="btn__label">${f.result_cta}</span></button>
       </div>
     </div>
   </div></section>`;
@@ -3099,7 +3099,7 @@ function fleetGate(f) {
       <p class="reg__error" data-fleet-gate-error hidden>${I.info}<span>${f.gate_error}</span></p>
       <button class="btn btn--primary login__submit reg__submit" type="submit" data-fleet-gate-submit>
         <span class="reg__submit-spinner" aria-hidden="true"></span>
-        <span class="reg__submit-label">${f.gate_submit}</span>
+        <span class="btn__label reg__submit-label">${f.gate_submit}</span>
       </button>
     </form>`);
 }
@@ -3124,7 +3124,7 @@ function fleetLimited(f) {
     <h1 class="login__title">${f.limited_title}</h1>
     <p class="login__sub">${f.limited_sub}</p>
     <div class="cta-row">
-      <button class="btn btn--primary" type="button" data-fleet="limited-gate">${f.limited_cta}</button>
+      <button class="btn btn--primary" type="button" data-fleet="limited-gate"><span class="btn__label">${f.limited_cta}</span></button>
     </div>`);
 }
 
