@@ -3692,7 +3692,7 @@ function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
       <div class="cta-row fleet-choices" role="radiogroup" aria-label="${escapeAttr(q.title)}">
         ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="radio" data-fp-choice="${c.v}" aria-checked="${chipVal === c.v}">${c.l}</button>`).join("")}
       </div>
-      <div class="field fleet-other" data-fp-other-wrap ${isOther ? "" : "hidden"}>
+      <div class="field" data-fp-other-wrap ${isOther ? "" : "hidden"}>
         <textarea class="reg__note" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fp-answer>${escapeHtml(textVal)}</textarea>
         <div class="field__hint field__hint--mic">
           <span class="ltr-iso" dir="ltr" data-fp-count>${fleetFmt(f.q_chars, { n: textVal.length, max: FLEET_MAX })}</span>

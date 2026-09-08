@@ -2573,6 +2573,13 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .fleet-other { max-width: 16rem; margin: var(--space-4) auto 0; }
 .fleet-other[hidden] { display: none; }
 
+/* #/fleet-preview isolated experiment (see app.js): the "other" free-text
+   field is a plain .field, same as the real questions' textarea - full
+   width, no .fleet-other narrowing (that class is sized for the small
+   tools-picker input, not this). Scoped to data-fp-other-wrap only, same
+   [hidden]-needs-a-rule reason as .fleet-other above. */
+.field[data-fp-other-wrap][hidden] { display: none; }
+
 /* ---- #/fleet S6 readers — role types being compared (2026-09-06, v2 2026-09-07)
    Page composition from existing parts: .moment-card, an avatar at reading
    size (--ctl-lg = 56px disc, same crop as .team__photo img — or
