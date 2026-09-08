@@ -3629,7 +3629,7 @@ const FLEET_PREVIEW_Q = {
   he: [
     { key: "q1", title: "מה אתם בונים עכשיו?", hint: "ספרו בקצרה מה המוצר או הפרויקט, למי הוא מיועד ומה אתם רוצים להשיג.", ph: "כלי שעוזר לצוותי מוצר לרכז פידבק מלקוחות ולהחליט מה כדאי לבנות קודם.",
       choices: [
-        { v: "site", l: "אתר" }, { v: "app", l: "אפליקציה" }, { v: "saas", l: "מוצר SaaS" },
+        { v: "site", l: "אתר" }, { v: "crm", l: "CRM" }, { v: "app", l: "אפליקציה" }, { v: "saas", l: "מוצר SaaS" },
         { v: "extension", l: "תוסף לדפדפן" }, { v: "internal", l: "כלי פנימי לצוות" }, { v: "other", l: "אחר" },
       ] },
     { key: "q2", title: "איפה העבודה שלכם נתקעת?", hint: "מה לוקח יותר מדי זמן, נדחה שוב ושוב או תלוי בכם כדי להתקדם?", ph: "כל מסך חדש מתחיל כמעט מאפס, ואני חוזר שוב ושוב על החלטות שכבר קיבלתי.",
@@ -3652,7 +3652,7 @@ const FLEET_PREVIEW_Q = {
   en: [
     { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. A sentence or two, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too.",
       choices: [
-        { v: "app", l: "App" }, { v: "site", l: "Website" }, { v: "saas", l: "SaaS product" },
+        { v: "app", l: "App" }, { v: "crm", l: "CRM" }, { v: "site", l: "Website" }, { v: "saas", l: "SaaS product" },
         { v: "extension", l: "Browser extension" }, { v: "internal", l: "Internal team tool" }, { v: "other", l: "Other" },
       ] },
     { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users.",
