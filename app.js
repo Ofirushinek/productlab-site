@@ -296,7 +296,7 @@ const I18N = {
       // Role confirmed by Ofir off Ilya's real LinkedIn screenshot ("Ilya Boruhov · Product Designer ·
       // Mentor"). No img yet — silhouette fallback (I.user) renders correctly, same pattern as Dekel
       // before his photo landed.
-      { q: "היי בכיף\nסדנה מעולה וסופר פרקטית של אופיר! בסדנה צוללים לעומק של בניית סוכני AI ב-Claude ולומדים איך ליצור סוכנים בעלי אופי והגדרת תפקיד ספציפית שיודעים לתקשר זה עם זה, לשאול את השאלות הנכונות ולדייק את הביצוע מקצה לקצה. כלי חובה לעולמות הפרודקט לכל מנהל או מעצב מוצר שרוצה לבנות מוצרים איכותיים במינימום זמן.", n: "איליה בורוכוב", m: "Product Designer", li: "https://www.linkedin.com/in/ilyaboruhov/" },
+      { q: "סדנה מעולה וסופר פרקטית של אופיר! בסדנה צוללים לעומק של בניית סוכני AI ב-Claude ולומדים איך ליצור סוכנים בעלי אופי והגדרת תפקיד ספציפית שיודעים לתקשר זה עם זה, לשאול את השאלות הנכונות ולדייק את הביצוע מקצה לקצה. כלי חובה לעולמות הפרודקט לכל מנהל או מעצב מוצר שרוצה לבנות מוצרים איכותיים במינימום זמן.", n: "איליה בורוכוב", m: "Product Designer", li: "https://www.linkedin.com/in/ilyaboruhov/" },
     ],
 
     // "יום בחייו של בוגר Product Lab" — copy v5 (Copywriter, 2026-08-21).
