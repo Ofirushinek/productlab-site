@@ -292,6 +292,10 @@ const I18N = {
       // Role/title TODO (CSO asked Ofir, pending); no img/li yet — Ofir adding
       // a LinkedIn link + photo LATER, component already supports both as optional.
       { q: "הסדנה הייתה מעולה בגלל החיבור בין Product, Design ו-AI. עזרה לי להבין בצורה פרקטית איך אפשר להשתמש בסוכני AI כדי לייעל תהליכים, לחלק משימות בין סוכנים עם התמחויות שונות, ולבנות תהליך עבודה שמאפשר להתקדם מפיצוח רעיון ועד בניית מוצר בצורה הרבה יותר מהירה ואפקטיבית.", n: "דקל הלל", m: "Product Designer", img: "testimonial-dekel", li: "https://www.linkedin.com/in/dekelhillel/" },
+      // Sent to Ofir via WhatsApp verbatim on 2026-09-08, do not reword.
+      // Role/title TODO — LinkedIn fetch blocked (999), asked Ofir directly. No img yet — silhouette
+      // fallback (I.user) renders correctly, matches the pattern used for Dekel before his photo landed.
+      { q: "היי בכיף\nסדנה מעולה וסופר פרקטית של אופיר! בסדנה צוללים לעומק של בניית סוכני AI ב-Claude ולומדים איך ליצור סוכנים בעלי אופי והגדרת תפקיד ספציפית שיודעים לתקשר זה עם זה, לשאול את השאלות הנכונות ולדייק את הביצוע מקצה לקצה. כלי חובה לעולמות הפרודקט לכל מנהל או מעצב מוצר שרוצה לבנות מוצרים איכותיים במינימום זמן.", n: "איליה בורוכוב", m: "", li: "https://www.linkedin.com/in/ilyaboruhov/" },
     ],
 
     // "יום בחייו של בוגר Product Lab" — copy v5 (Copywriter, 2026-08-21).
