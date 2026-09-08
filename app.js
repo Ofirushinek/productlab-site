@@ -1098,7 +1098,7 @@ function sessionStripHtml(s, opts = {}) {
   return `
       <div class="session-strip reveal${opts.disabled ? " session-strip--closed" : ""}">
         <span class="ss-badge">${I.spark} ${s.badge}</span>
-        <div class="ss-col">
+        <div class="ss-col ss-col--when">
           <div class="ss-label">${s.when_label}</div>
           <div class="ss-val">
             <strong>${s.when_value[0]}</strong>
