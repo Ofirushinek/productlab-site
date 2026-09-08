@@ -3629,47 +3629,47 @@ const FLEET_PREVIEW_Q = {
   he: [
     { key: "q1", title: "מה אתם בונים עכשיו?", hint: "ספרו בקצרה מה המוצר או הפרויקט, למי הוא מיועד ומה אתם רוצים להשיג.", ph: "כלי שעוזר לצוותי מוצר לרכז פידבק מלקוחות ולהחליט מה כדאי לבנות קודם.",
       choices: [
-        { v: "app", l: "אפליקציה" }, { v: "site", l: "אתר" }, { v: "extension", l: "תוסף לדפדפן" },
-        { v: "saas", l: "מוצר SaaS" }, { v: "internal", l: "כלי פנימי לצוות" }, { v: "other", l: "אחר" },
+        { v: "site", l: "אתר" }, { v: "app", l: "אפליקציה" }, { v: "saas", l: "מוצר SaaS" },
+        { v: "extension", l: "תוסף לדפדפן" }, { v: "internal", l: "כלי פנימי לצוות" }, { v: "other", l: "אחר" },
       ] },
     { key: "q2", title: "איפה העבודה שלכם נתקעת?", hint: "מה לוקח יותר מדי זמן, נדחה שוב ושוב או תלוי בכם כדי להתקדם?", ph: "כל מסך חדש מתחיל כמעט מאפס, ואני חוזר שוב ושוב על החלטות שכבר קיבלתי.",
       choices: [
-        { v: "blank_screen", l: "מסך חדש שמתחיל מאפס" }, { v: "new_page", l: "עמוד חדש" },
-        { v: "repetitive", l: "תהליכים שחוזרים על עצמם" }, { v: "repeat_decisions", l: "החלטות שחוזרות על עצמן" },
-        { v: "feedback", l: "פידבק מלקוחות" }, { v: "other", l: "אחר" },
+        { v: "new_page", l: "עמוד חדש" }, { v: "feedback", l: "פידבק מלקוחות" },
+        { v: "blank_screen", l: "מסך חדש שמתחיל מאפס" }, { v: "repeat_decisions", l: "החלטות שחוזרות על עצמן" },
+        { v: "repetitive", l: "תהליכים שחוזרים על עצמם" }, { v: "other", l: "אחר" },
       ] },
     { key: "q3", title: "מה אתם מוצאים את עצמכם מסבירים שוב ושוב לכלי ה-AI שאתם בונים או עובדים איתו?", hint: "כללים, החלטות והעדפות שהייתם רוצים שכלי ה-AI שאתם בונים או עובדים איתו כבר יזכור לבד.", ph: "מי קהל היעד, איך אנחנו כותבים, אילו רכיבים כבר קיימים ומה החלטנו לא לבנות.",
       choices: [
         { v: "audience", l: "מי קהל היעד" }, { v: "writing_style", l: "איך אנחנו כותבים" },
-        { v: "components", l: "אילו רכיבים כבר קיימים" }, { v: "not_building", l: "מה החלטנו לא לבנות" }, { v: "other", l: "אחר" },
+        { v: "not_building", l: "מה החלטנו לא לבנות" }, { v: "components", l: "אילו רכיבים כבר קיימים" }, { v: "other", l: "אחר" },
       ] },
     { key: "q4", title: "מה לא צריך לקרות בלי האישור שלכם?", hint: "אילו החלטות או פעולות אתם לא רוצים שכלי ה-AI יבצע לבד?", ph: "לפרסם משהו ללקוחות, לשנות מחיר, למחוק מידע או לשנות החלטה שכבר אושרה.",
       choices: [
-        { v: "publish_customers", l: "לפרסם משהו ללקוחות" }, { v: "change_price", l: "לשנות מחיר" },
-        { v: "delete_data", l: "למחוק מידע" }, { v: "change_decision", l: "לשנות החלטה שכבר אושרה" }, { v: "other", l: "אחר" },
+        { v: "change_price", l: "לשנות מחיר" }, { v: "delete_data", l: "למחוק מידע" },
+        { v: "publish_customers", l: "לפרסם משהו ללקוחות" }, { v: "change_decision", l: "לשנות החלטה שכבר אושרה" }, { v: "other", l: "אחר" },
       ] },
   ],
   en: [
     { key: "q1", title: "What are you building that keeps you up at night?", hint: "What it is and who it is for. A sentence or two, your words.", ph: "A scheduling app for small clinics. I am alone on product, design and launch, and most of the time on support too.",
       choices: [
-        { v: "app", l: "App" }, { v: "site", l: "Website" }, { v: "extension", l: "Browser extension" },
-        { v: "saas", l: "SaaS product" }, { v: "internal", l: "Internal team tool" }, { v: "other", l: "Other" },
+        { v: "app", l: "App" }, { v: "site", l: "Website" }, { v: "saas", l: "SaaS product" },
+        { v: "extension", l: "Browser extension" }, { v: "internal", l: "Internal team tool" }, { v: "other", l: "Other" },
       ] },
     { key: "q2", title: "What gets stuck with you, or will?", hint: "Everything that waits until you are free. The team is built from this.", ph: "For now everything, because it is just me. Mostly the screens before dev, and every text that goes out to users.",
       choices: [
-        { v: "blank_screen", l: "A new screen starting from zero" }, { v: "new_page", l: "A new page" },
+        { v: "new_page", l: "A new page" }, { v: "feedback", l: "Customer feedback" },
         { v: "repetitive", l: "Repetitive processes" }, { v: "repeat_decisions", l: "Decisions that repeat" },
-        { v: "feedback", l: "Customer feedback" }, { v: "other", l: "Other" },
+        { v: "blank_screen", l: "A new screen starting from zero" }, { v: "other", l: "Other" },
       ] },
     { key: "q3", title: "What do you keep explaining in every chat?", hint: "What gets forgotten between one chat and the next. This goes into memory.", ph: "That the customer is the clinic manager, not the doctor, that the palette is locked, and no Android this year. Every new chat starts from zero.",
       choices: [
-        { v: "audience", l: "Who the audience is" }, { v: "writing_style", l: "How we write" },
-        { v: "components", l: "Which components already exist" }, { v: "not_building", l: "What we decided not to build" }, { v: "other", l: "Other" },
+        { v: "writing_style", l: "How we write" }, { v: "audience", l: "Who the audience is" },
+        { v: "not_building", l: "What we decided not to build" }, { v: "components", l: "Which components already exist" }, { v: "other", l: "Other" },
       ] },
     { key: "q4", title: "What shouldn't happen without your approval?", hint: "Which decisions or actions you don't want the AI tool making without you.", ph: "Any message to a customer, an email to the whole list, a price change, and any update going live. Without my approval it does not move.",
       choices: [
-        { v: "publish_customers", l: "Publish something to customers" }, { v: "change_price", l: "Change a price" },
-        { v: "delete_data", l: "Delete data" }, { v: "change_decision", l: "Change a decision already approved" }, { v: "other", l: "Other" },
+        { v: "delete_data", l: "Delete data" }, { v: "change_price", l: "Change a price" },
+        { v: "publish_customers", l: "Publish something to customers" }, { v: "change_decision", l: "Change a decision already approved" }, { v: "other", l: "Other" },
       ] },
   ],
 };
@@ -3689,7 +3689,7 @@ function fleetPreviewQuestion(f, ui, q, qi, total, answers, mic) {
     <h1 class="login__title">${q.title}</h1>
     ${q.hint ? `<p class="login__sub">${q.hint}</p>` : ""}
     <form class="reg__form" data-fp-form novalidate>
-      <div class="cta-row fleet-choices" role="radiogroup" aria-label="${escapeAttr(q.title)}">
+      <div class="cta-row fleet-choices fp-choices" role="radiogroup" aria-label="${escapeAttr(q.title)}">
         ${q.choices.map((c) => `<button type="button" class="chip chip--choice" role="radio" data-fp-choice="${c.v}" aria-checked="${chipVal === c.v}">${c.l}</button>`).join("")}
       </div>
       <div class="field" data-fp-other-wrap ${isOther ? "" : "hidden"}>

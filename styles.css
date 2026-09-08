@@ -2422,6 +2422,11 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    the register modal; the step buttons sit back-at-start, next-at-end. */
 .fleet-card .reg__form { margin-top: var(--space-5); }
 .fleet-card .reg__form .cta-row { margin-top: var(--space-2); }
+/* #/fleet-preview isolated experiment (see app.js): Ofir - the centered chip
+   row wraps into a jagged, "big gaps" look; wants it packed from the reading
+   start instead. Scoped to .fp-choices only, so the real tools picker above
+   (same .cta-row.fleet-choices classes, still centered) is untouched. */
+.fleet-card .cta-row.fp-choices { justify-content: flex-start; }
 .fleet-nav { flex-wrap: wrap-reverse; } /* at 390 Next stacks ABOVE Back; centered like .noacct */
 
 /* EXTEND .field — a quiet meta line under a control (the 0/300 counter).
