@@ -2956,7 +2956,7 @@ function fleetQuestion(f) {
         <textarea class="reg__note" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(f.q_other_ph || "")}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fleet-answer>${escapeHtml(choicesOtherVal)}</textarea>
         <div class="field__hint field__hint--mic">
           <span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: choicesOtherVal.length, max: FLEET_MAX })}</span>
-          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="mic-btn__label" data-fleet-mic-label>${escapeHtml(f.mic_start || "")}</span><span class="mic-btn__icon"><span class="dot"></span>${I.mic}</span></button>` : ""}
+          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="mic-btn__label" dir="${document.documentElement.dir || "rtl"}" data-fleet-mic-label>${escapeHtml(f.mic_start || "")}</span><span class="mic-btn__icon"><span class="dot"></span>${I.mic}</span></button>` : ""}
         </div>
         ${FLEET_SR ? `<p class="reg__error" data-fleet-mic-error hidden>${I.info}<span>${f.mic_denied || ""}</span></p>` : ""}
        </div>`
@@ -2964,7 +2964,7 @@ function fleetQuestion(f) {
         <textarea class="reg__note" id="fleet-q" name="answer" rows="4" dir="${document.documentElement.dir || "rtl"}" maxlength="${FLEET_MAX}" placeholder="${escapeAttr(q.ph)}" aria-label="${escapeAttr(f.q_answer_label || "")}" data-fleet-answer>${escapeHtml(val)}</textarea>
         <div class="field__hint field__hint--mic">
           <span class="ltr-iso" dir="ltr" data-fleet-count>${fleetFmt(f.q_chars, { n: val.length, max: FLEET_MAX })}</span>
-          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="mic-btn__label" data-fleet-mic-label>${escapeHtml(f.mic_start || "")}</span><span class="mic-btn__icon"><span class="dot"></span>${I.mic}</span></button>` : ""}
+          ${FLEET_SR ? `<button type="button" class="mic-btn" data-fleet-mic aria-pressed="false" aria-label="${escapeAttr(f.mic_aria_start || "")}"><span class="mic-btn__label" dir="${document.documentElement.dir || "rtl"}" data-fleet-mic-label>${escapeHtml(f.mic_start || "")}</span><span class="mic-btn__icon"><span class="dot"></span>${I.mic}</span></button>` : ""}
         </div>
         ${FLEET_SR ? `<p class="reg__error" data-fleet-mic-error hidden>${I.info}<span>${f.mic_denied || ""}</span></p>` : ""}
        </div>`;
