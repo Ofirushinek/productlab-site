@@ -3100,7 +3100,7 @@ function fleetResult(f, b) {
       <p>${f.result_cta_sub}</p>
       <div class="cta-row fleet-cta-row">
         <a class="btn btn--wa-solid btn--lg" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${f.result_cta_wa}</a>
-        <button class="btn btn--primary btn--lg" type="button" data-fleet="gate">${f.result_cta}</button>
+        <button class="btn btn--primary btn--lg" type="button" data-register-open>${f.result_cta}</button>
       </div>
     </div>
   </div></section>`;
