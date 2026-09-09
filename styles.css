@@ -484,7 +484,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .card p { color: var(--pl-fg-body); font-weight: 500; }
 
 /* deliverables (walk away) — numbered */
-.deliv { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+.deliv { display: grid; gap: var(--space-4); grid-template-columns: 1fr; margin-top: var(--space-7); }
 @media (min-width: 760px) { .deliv { grid-template-columns: repeat(2, 1fr); } }
 .deliv__item {
   display: flex; gap: var(--space-4); align-items: flex-start;
