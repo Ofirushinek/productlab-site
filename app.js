@@ -2506,7 +2506,12 @@ function renderLegal(lang, kind) {
    (productlab.studio/assets/product-lab-2fd8ad517d75.zip) sent by hand. This route
    replaces the LINK they click; the direct zip stays the actual download
    target underneath (KIT_ZIP_URL, same one #/prep's kit tile already uses).
-   Public, no auth gate — the people who reach this link already registered.
+
+   GATED as of 2026-09-10 (Ofir, direct instruction after the leaked-link
+   incident — "leave the kit available only to students"): same guard as
+   #/prep, via canSee()/AUTH.tier. Signed-out visitors are bounced home with
+   the sign-in modal auto-opened, same UX as #/prep. Previously this page was
+   deliberately public/ungated by design; that is no longer the case.
 
    FULL-BLEED direction, Ofir's own pick after comparing two mockups: no
    card, no boundary — character + text + button sit directly on the
@@ -2527,6 +2532,8 @@ function renderLegal(lang, kind) {
    map: `projects/product-lab/brand/kit-landing/CAST.md` (this repo). */
 function renderKit(lang) {
   const t = I18N[lang];
+  // Same guard as #/prep: signed-out visitors bounce home + auto-open sign-in.
+  if (!canSee()) { pendingStudentOpen = true; location.hash = "#/"; return; }
   document.getElementById("app").innerHTML = `
   ${navHeader(t, lang)}
 
