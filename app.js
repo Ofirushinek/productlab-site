@@ -10,10 +10,17 @@
 // WhatsApp only — no booking funnel. Ofir wants direct contact.
 const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2259730
 // Same relative target the gated #/prep kit tile already links to (content.js
-// EN + HE, both `href: "assets/product-lab.zip", download: true`). #/kit
-// (public, ungated) reuses the identical URL so there is exactly one zip
-// target on the whole site, not a second one that can drift from the first.
-const KIT_ZIP_URL = "assets/product-lab.zip";
+// EN + HE). #/kit (public, ungated) reuses the identical URL so there is
+// exactly one zip target on the whole site, not a second one that can drift
+// from the first.
+// ROTATED 2026-09-10: filename hashed after 2 unexplained downloads from two
+// different cities in the same minute (GA4) — a leaked/guessed link, not
+// people Ofir sent it to by hand. This narrows exposure by making the URL
+// unguessable; it is NOT a real access-control fix — #/kit is still
+// intentionally ungated by design (Ofir sends the link by hand). Whether
+// #/kit should require sign-in going forward is an open question flagged to
+// Ofir — see shared/shared-brain.md, 2026-09-10.
+const KIT_ZIP_URL = "assets/product-lab-2fd8ad517d75.zip";
 
 // When a gated redirect bounces a signed-out visitor home, this asks wireStudent
 // to auto-open the sign-in modal on the next render.
@@ -1615,7 +1622,7 @@ function renderPrep(lang) {
             <div class="card__foot">
               ${kitMedia(k)}
               <div class="cta-row">
-                <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download` : ` target="_blank" rel="noopener"`}>${k.cta}</a>
+                <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download="${k.download}"` : ` target="_blank" rel="noopener"`}>${k.cta}</a>
               </div>
             </div>
           </div>`).join("")}
@@ -2496,7 +2503,7 @@ function renderLegal(lang, kind) {
 
 /* ---- #/kit — the branded "here's your kit" landing page ------------------
    Ofir, 2026-08-31: a participant currently gets a raw zip URL
-   (productlab.studio/assets/product-lab.zip) sent by hand. This route
+   (productlab.studio/assets/product-lab-2fd8ad517d75.zip) sent by hand. This route
    replaces the LINK they click; the direct zip stays the actual download
    target underneath (KIT_ZIP_URL, same one #/prep's kit tile already uses).
    Public, no auth gate — the people who reach this link already registered.
@@ -2533,7 +2540,7 @@ function renderKit(lang) {
       <h1 class="section-title">${t.kit_title}</h1>
       <p class="login__sub">${t.kit_sub}</p>
       <div class="cta-row kitfull__cta">
-        <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}${t.kit_btn_download}</a>
+        <a class="btn btn--primary" href="${KIT_ZIP_URL}" download="product-lab.zip" data-kit-download>${I.repeat}${t.kit_btn_download}</a>
       </div>
     </div>
   </main>
@@ -2574,7 +2581,7 @@ function wireKitAutoDownload() {
     try {
       const a = document.createElement("a");
       a.href = KIT_ZIP_URL;
-      a.setAttribute("download", "");
+      a.setAttribute("download", "product-lab.zip");
       a.style.display = "none";
       document.body.appendChild(a);
       a.click();
