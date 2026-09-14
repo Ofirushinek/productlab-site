@@ -1183,9 +1183,53 @@ function render(lang) {
     </picture>
   </section>
 
+  <!-- 6 PROOF OF CRAFT — moved up to right after the hero (conversion-spec item
+       #5, 2026-09-14: proof + "what you leave with" move near the top). Markup
+       unchanged, position only. -->
+  <section class="section section--alt"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${t.proof_eyebrow}</span>
+      <h2 class="section-title">${t.proof_title}</h2>
+      <p class="section-lead">${t.proof_lead}</p>
+    </div>
+    <div class="proof" style="margin-top:2rem">
+      <div class="proof__block reveal">
+        <div class="proof__shot"><img src="assets/thispage-3.jpg" alt="" /></div>
+        <div class="proof__body">
+          <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
+        </div>
+      </div>
+      <div class="proof__block reveal">
+        <div class="proof__shot"><img src="assets/glimps.png" alt="Glimps" /></div>
+        <div class="proof__body">
+          <h3>${t.proof_glimps_t}</h3><p>${t.proof_glimps_b}</p>
+          <a class="linkline" href="https://glimps.design" target="_blank" rel="noopener">${t.proof_glimps_link} ${I.arrow}</a>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- 3 WALK AWAY — moved up to right after PROOF (conversion-spec item #5,
+       2026-09-14). Markup unchanged, position only. -->
+  <section class="section"><div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">${t.walk_eyebrow}</span>
+      <h2 class="section-title">${t.walk_title}</h2>
+    </div>
+    <div class="grid grid--2" style="margin-top:2rem">
+      ${t.walk_items.map((d, i) => `
+        <div class="card reveal">
+          <div class="card__ico">${[I.users, I.brain, I.box, I.repeat][i] || I.check}</div>
+          <h3>${d.t}</h3><p>${d.b}</p>
+        </div>`).join("")}
+    </div>
+  </div></section>
+
   <!-- 1b SESSION STRIPS — flat full-width band (like the site's other section
-       bands), flush below the hero so a hint peeks above the fold. NOT floating/
-       rounded cards.
+       bands). Was flush below the hero; now sits below PROOF/WALK AWAY per
+       conversion-spec item #5 (2026-09-14) — those two moved up, this one kept
+       its relative position among the other sections, unchanged otherwise.
+       NOT floating/rounded cards.
        2026-09-14 (spec item #4, Ofir's own words): the closed cohort #1 no longer
        sits inline above the open cohort by default. A toggle — reusing the SAME
        .tabs/.tabpanel component as the student-area tab bar (app.js ~1856, DS
@@ -1212,30 +1256,6 @@ function render(lang) {
       </div>
     </div>
   </section>
-
-  <!-- 6 PROOF OF CRAFT -->
-  <section class="section section--alt"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${t.proof_eyebrow}</span>
-      <h2 class="section-title">${t.proof_title}</h2>
-      <p class="section-lead">${t.proof_lead}</p>
-    </div>
-    <div class="proof" style="margin-top:2rem">
-      <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/thispage-3.jpg" alt="" /></div>
-        <div class="proof__body">
-          <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
-        </div>
-      </div>
-      <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/glimps.png" alt="Glimps" /></div>
-        <div class="proof__body">
-          <h3>${t.proof_glimps_t}</h3><p>${t.proof_glimps_b}</p>
-          <a class="linkline" href="https://glimps.design" target="_blank" rel="noopener">${t.proof_glimps_link} ${I.arrow}</a>
-        </div>
-      </div>
-    </div>
-  </div></section>
 
   <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath -->
   <section class="section"><div class="wrap">
@@ -1290,32 +1310,20 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 3 WALK AWAY -->
-  <section class="section"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${t.walk_eyebrow}</span>
-      <h2 class="section-title">${t.walk_title}</h2>
-    </div>
-    <div class="grid grid--2" style="margin-top:2rem">
-      ${t.walk_items.map((d, i) => `
-        <div class="card reveal">
-          <div class="card__ico">${[I.users, I.brain, I.box, I.repeat][i] || I.check}</div>
-          <h3>${d.t}</h3><p>${d.b}</p>
-        </div>`).join("")}
-    </div>
-  </div></section>
-
   <!-- 3b FLEET RECOMMENDER TEASER — moved out of the hero (CPO conversion-spec
        item #3, 2026-09-14). Minimal by design (Ofir's own words): icon +
        headline + one line + one button into the SAME #/fleet flow the old
        hero button used. Rung 1/2 reuse only, no new component: .wrap (plain,
        not .narrow — headline needs full desktop width, see styles.css),
        .noacct__ico (icon badge, already used in modals), .section-title/
-       .section-lead typography and .cta-row/.btn--ghost verbatim. Sits right
-       after "what you leave with" per Ofir's placement instruction. Revised
-       2026-09-14 per Ofir's review: widened container + title max-width:none
-       so the HE headline stops wrapping to an orphan word on desktop, and
-       swapped the CTA to secondary/.btn--ghost instead of primary. -->
+       .section-lead typography and .cta-row/.btn--ghost verbatim. Originally
+       placed right after "what you leave with"; that section moved up near
+       the hero per conversion-spec item #5 (2026-09-14), and per Ofir's scoped
+       instruction ("only about moving those two blocks up") this teaser kept
+       its relative position among the other sections rather than following it.
+       Revised 2026-09-14 per Ofir's review: widened container + title
+       max-width:none so the HE headline stops wrapping to an orphan word on
+       desktop, and swapped the CTA to secondary/.btn--ghost instead of primary. -->
   <section class="section fleet-teaser"><div class="wrap">
     <div class="reveal">
       <div class="noacct__ico">${I.users}</div>
