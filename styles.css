@@ -276,12 +276,16 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 
 /* ---- FLEET RECOMMENDER TEASER (2026-09-14) — minimal centered moment:
    icon badge + title + lead + one button, reusing .noacct__ico/.section-
-   title/.section-lead/.cta-row/.btn verbatim. Only new rule is centering
-   this section's copy — same technique as [dir] .kitfull .section-title
-   elsewhere in this file. No new token/color/radius/shadow. */
+   title/.section-lead/.cta-row/.btn verbatim. Centering + title max-width:
+   none is the same technique as [dir] .fleet-done-cohort .section-title
+   elsewhere in this file (plain .wrap container, not .narrow, so the
+   headline gets the page's full desktop width instead of wrapping on an
+   arbitrary 24ch/760px cap — fix per Ofir, 2026-09-14). No new token/
+   color/radius/shadow. Button is .btn--ghost (secondary), not the solid
+   .btn--accent primary — also per Ofir's review. */
 [dir] .fleet-teaser .section-title,
 [dir] .fleet-teaser .section-lead { text-align: center; margin-inline: auto; }
-.fleet-teaser .section-title { max-width: 24ch; }
+.fleet-teaser .section-title { max-width: none; }
 .fleet-teaser .noacct__ico { margin-bottom: var(--space-4); }
 .fleet-teaser .cta-row { justify-content: center; margin-top: var(--space-5); }
 

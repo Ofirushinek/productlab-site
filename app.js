@@ -1282,19 +1282,21 @@ function render(lang) {
   <!-- 3b FLEET RECOMMENDER TEASER — moved out of the hero (CPO conversion-spec
        item #3, 2026-09-14). Minimal by design (Ofir's own words): icon +
        headline + one line + one button into the SAME #/fleet flow the old
-       hero button used. Rung 1/2 reuse only, no new component: .wrap.narrow,
+       hero button used. Rung 1/2 reuse only, no new component: .wrap (plain,
+       not .narrow — headline needs full desktop width, see styles.css),
        .noacct__ico (icon badge, already used in modals), .section-title/
-       .section-lead typography and .cta-row/.btn verbatim. The only new CSS
-       is centering this section's copy, same technique as the existing
-       [dir] .kitfull .section-title override. Sits right after "what you
-       leave with" per Ofir's placement instruction. -->
-  <section class="section fleet-teaser"><div class="wrap narrow">
+       .section-lead typography and .cta-row/.btn--ghost verbatim. Sits right
+       after "what you leave with" per Ofir's placement instruction. Revised
+       2026-09-14 per Ofir's review: widened container + title max-width:none
+       so the HE headline stops wrapping to an orphan word on desktop, and
+       swapped the CTA to secondary/.btn--ghost instead of primary. -->
+  <section class="section fleet-teaser"><div class="wrap">
     <div class="reveal">
       <div class="noacct__ico">${I.users}</div>
       <h2 class="section-title">${t.fleet_teaser_title}</h2>
       <p class="section-lead">${t.fleet_teaser_body}</p>
       <div class="cta-row">
-        <a class="btn btn--accent" href="#/fleet">${t.fleet_teaser_cta}</a>
+        <a class="btn btn--ghost" href="#/fleet">${t.fleet_teaser_cta}</a>
       </div>
     </div>
   </div></section>
