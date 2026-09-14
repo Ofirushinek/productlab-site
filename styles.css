@@ -274,6 +274,17 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 .section-lead q { quotes: "\201C" "\201D"; font-weight: 600; color: var(--pl-fg); }
 
+/* ---- FLEET RECOMMENDER TEASER (2026-09-14) — minimal centered moment:
+   icon badge + title + lead + one button, reusing .noacct__ico/.section-
+   title/.section-lead/.cta-row/.btn verbatim. Only new rule is centering
+   this section's copy — same technique as [dir] .kitfull .section-title
+   elsewhere in this file. No new token/color/radius/shadow. */
+[dir] .fleet-teaser .section-title,
+[dir] .fleet-teaser .section-lead { text-align: center; margin-inline: auto; }
+.fleet-teaser .section-title { max-width: 24ch; }
+.fleet-teaser .noacct__ico { margin-bottom: var(--space-4); }
+.fleet-teaser .cta-row { justify-content: center; margin-top: var(--space-5); }
+
 /* ---- Buttons ------------------------------------------------------------- */
 /* SYSTEM RULE: a button is NEVER narrower than its height (min-width = height).
    Icon-only buttons therefore render at least square, never a thin sliver. */

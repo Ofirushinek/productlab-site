@@ -221,6 +221,13 @@ const I18N = {
       { t: "שיטת עבודה שתמשיך איתכם גם אחרי הסדנה", b: "תצאו עם צוות, זיכרון ותהליך עבודה שתוכלו להמשיך לפתח ולהשתמש בהם גם בפרויקטים הבאים." },
     ],
 
+    /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
+       moved out of the hero, into its own minimal section. Copy is final,
+       from Copywriter, verbatim. */
+    fleet_teaser_title: "מצאו את הסוכנים שמתאימים לכם",
+    fleet_teaser_body: "חמש שאלות קצרות על העבודה שלכם, ובסוף תקבלו המלצה אישית: עם איזה סוכן מהצוות כדאי להתחיל.",
+    fleet_teaser_cta: "אילו סוכנים מתאימים לי?",
+
     who_eyebrow: "למי זה מתאים",
     who_for_title: "אם אתם רוצים לבנות בעצמכם, אבל לא לבד.",
     who_intro: "לא משנה אם אתם אנשי מוצר ועיצוב, יזמים, בוני מוצרים או אנשי מקצוע שרוצים לעבוד אחרת. אם אתם רוצים להפוך את ה-AI לשותף אמיתי בתהליך העבודה שלכם, אתם במקום הנכון.",
@@ -531,6 +538,13 @@ const I18N = {
       { t: "Your first project, already underway", b: "During the workshop itself you'll start working with the team you built on your own project, instead of leaving with only theory." },
       { t: "A way of working that stays with you after the workshop", b: "You'll leave with a team, a memory, and a workflow you can keep developing and using on your next projects too." },
     ],
+
+    /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
+       moved out of the hero, into its own minimal section. Copy is final,
+       from Copywriter, verbatim. */
+    fleet_teaser_title: "Find the agents that fit you",
+    fleet_teaser_body: "Five short questions about your work. At the end, you get a personal recommendation: which agent on the crew to start with.",
+    fleet_teaser_cta: "Which agents fit me?",
 
     who_eyebrow: "Who it is for",
     who_for_title: "If you want to build on your own, but not alone.",
@@ -1152,7 +1166,6 @@ function render(lang) {
       <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
       <div class="hero__cta">
         <button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button>
-        <a class="btn btn--ghost" href="#/fleet">${t.hero_cta2}</a>
       </div>
     </div>
     <picture class="hero__bg">
@@ -1263,6 +1276,26 @@ function render(lang) {
           <div class="card__ico">${[I.users, I.brain, I.box, I.repeat][i] || I.check}</div>
           <h3>${d.t}</h3><p>${d.b}</p>
         </div>`).join("")}
+    </div>
+  </div></section>
+
+  <!-- 3b FLEET RECOMMENDER TEASER — moved out of the hero (CPO conversion-spec
+       item #3, 2026-09-14). Minimal by design (Ofir's own words): icon +
+       headline + one line + one button into the SAME #/fleet flow the old
+       hero button used. Rung 1/2 reuse only, no new component: .wrap.narrow,
+       .noacct__ico (icon badge, already used in modals), .section-title/
+       .section-lead typography and .cta-row/.btn verbatim. The only new CSS
+       is centering this section's copy, same technique as the existing
+       [dir] .kitfull .section-title override. Sits right after "what you
+       leave with" per Ofir's placement instruction. -->
+  <section class="section fleet-teaser"><div class="wrap narrow">
+    <div class="reveal">
+      <div class="noacct__ico">${I.users}</div>
+      <h2 class="section-title">${t.fleet_teaser_title}</h2>
+      <p class="section-lead">${t.fleet_teaser_body}</p>
+      <div class="cta-row">
+        <a class="btn btn--accent" href="#/fleet">${t.fleet_teaser_cta}</a>
+      </div>
     </div>
   </div></section>
 
