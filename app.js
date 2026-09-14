@@ -1198,7 +1198,7 @@ function render(lang) {
        just hidden until picked, not deleted. No new component/token. -->
   <section class="session-strip-band">
     <div class="wrap sessions-tabsrow">
-      <div class="tabs" role="tablist" data-sessions-tabs>
+      <div class="tabs tabs--pill" role="tablist" data-sessions-tabs>
         <button type="button" class="tabs__btn" role="tab" data-sessions-tab="upcoming" aria-selected="true">${t.sessions_tab_upcoming}</button>
         <button type="button" class="tabs__btn" role="tab" data-sessions-tab="past" aria-selected="false">${t.sessions_tab_past}</button>
       </div>
