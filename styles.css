@@ -282,7 +282,19 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
    headline gets the page's full desktop width instead of wrapping on an
    arbitrary 24ch/760px cap — fix per Ofir, 2026-09-14). No new token/
    color/radius/shadow. Button is .btn--ghost (secondary), not the solid
-   .btn--accent primary — also per Ofir's review. */
+   .btn--accent primary — also per Ofir's review.
+   Background (2026-09-14, round 2): Ofir flagged the section disappears
+   into its neighbors (WALK AWAY above is plain .section, WHO below is
+   .section--alt — this sat as a 2nd plain section back-to-back with WALK
+   AWAY, no boundary). .section--alt (--pl-bg-alt) was ruled out because
+   WHO right below is ALREADY --alt — reusing it here would just merge the
+   teaser into WHO instead of separating it. Reused --pl-illo-bg instead:
+   the existing violet-tint surface token (already the site's "distinct
+   framed surface" color — proof__shot, tilecard__illo, card--feature, the
+   agent-card illustration frames), just applied to a full section instead
+   of a component frame for the first time. Distinct from BOTH neighbors,
+   on-brand (tint of --pl-accent), no new token/hex introduced. */
+.fleet-teaser { background: var(--pl-illo-bg); }
 [dir] .fleet-teaser .section-title,
 [dir] .fleet-teaser .section-lead { text-align: center; margin-inline: auto; }
 .fleet-teaser .section-title { max-width: none; }
