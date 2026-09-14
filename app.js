@@ -180,6 +180,11 @@ const I18N = {
     hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "עם זיכרון משותף, ותתחילו לבנות איתו.", "בזמן אמת."],
     hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
+    // Ofir's own words, 2026-09-14 spec item #4 (סווג לסדנאות עבר/הבאות) — used
+    // verbatim as the toggle labels, not routed through Copywriter (functional UI
+    // microcopy he dictated himself, not authored copy).
+    sessions_tab_upcoming: "סדנאות הבאות",
+    sessions_tab_past: "סדנאות עבר",
     session: {
       badge: "המפגש האחרון",
       when_label: "מתי?",
@@ -498,6 +503,9 @@ const I18N = {
     hero_sub_lines: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
     hero_cta: "Register for the next cohort",
     hero_cta2: "See which agents fit you",
+    // EN equivalent of Ofir's own HE toggle labels above (2026-09-14 spec item #4).
+    sessions_tab_upcoming: "Upcoming workshops",
+    sessions_tab_past: "Past workshops",
     session: {
       badge: "Last session",
       when_label: "When?",
@@ -1175,15 +1183,33 @@ function render(lang) {
     </picture>
   </section>
 
-  <!-- 1b SESSION STRIPS — flat full-width bands (like the site's other section
+  <!-- 1b SESSION STRIPS — flat full-width band (like the site's other section
        bands), flush below the hero so a hint peeks above the fold. NOT floating/
-       rounded cards. Current cohort stays on top, closed; cohort #2 goes directly
-       beneath it, active, price shown (2026-08-31 — see sessionStripHtml above). -->
+       rounded cards.
+       2026-09-14 (spec item #4, Ofir's own words): the closed cohort #1 no longer
+       sits inline above the open cohort by default. A toggle — reusing the SAME
+       .tabs/.tabpanel component as the student-area tab bar (app.js ~1856, DS
+       ledger under "Student-area tab bar") — sits above the strip, right-aligned
+       via that component's own reading-start convention (right in RTL/Hebrew,
+       which is the "top-right" Ofir asked for; left in LTR/English, unchanged
+       from how every other reading-order element on the site already behaves).
+       Default tab "upcoming" shows only the open cohort (session2); "past"
+       reveals the closed one (session), same disabled/sold-out card as before —
+       just hidden until picked, not deleted. No new component/token. -->
   <section class="session-strip-band">
+    <div class="wrap sessions-tabsrow">
+      <div class="tabs" role="tablist" data-sessions-tabs>
+        <button type="button" class="tabs__btn" role="tab" data-sessions-tab="upcoming" aria-selected="true">${t.sessions_tab_upcoming}</button>
+        <button type="button" class="tabs__btn" role="tab" data-sessions-tab="past" aria-selected="false">${t.sessions_tab_past}</button>
+      </div>
+    </div>
     <div class="wrap">
-      ${sessionStripHtml(t.session, { disabled: true })}
-      <div class="ss-divider-full"></div>
-      ${sessionStripHtml(t.session2, { price: true })}
+      <div class="tabpanel" data-sessions-panel="upcoming">
+        ${sessionStripHtml(t.session2, { price: true })}
+      </div>
+      <div class="tabpanel" data-sessions-panel="past" hidden>
+        ${sessionStripHtml(t.session, { disabled: true })}
+      </div>
     </div>
   </section>
 
@@ -1412,6 +1438,29 @@ function render(lang) {
   ${siteFooter(t)}`;
 
   afterRender();
+  initSessionsTabs();
+}
+
+/* Home-page "upcoming / past workshops" toggle above the session-strip band
+   (2026-09-14, spec item #4). Same mechanism as initPrepTabs() below — kept as
+   its own function since it targets a different data-attribute pair (this toggle
+   can appear alongside the student-area tabs are never on the same page, but
+   sharing one generic tab-wiring function across two unrelated attribute names
+   would be the more fragile choice). */
+function initSessionsTabs() {
+  const bar = document.querySelector("[data-sessions-tabs]");
+  if (!bar) return;
+  const btns = [...bar.querySelectorAll("[data-sessions-tab]")];
+  const panels = [...document.querySelectorAll("[data-sessions-panel]")];
+  btns.forEach((b) => b.addEventListener("click", () => {
+    const id = b.getAttribute("data-sessions-tab");
+    btns.forEach((x) => x.setAttribute("aria-selected", x === b ? "true" : "false"));
+    panels.forEach((p) => {
+      const show = p.getAttribute("data-sessions-panel") === id;
+      p.hidden = !show;
+      if (show) p.querySelectorAll(".reveal").forEach((r) => r.classList.add("in"));
+    });
+  }));
 }
 
 /* ---- Student PREP page - gated by the live session tier (AUTH.tier) ------- */
