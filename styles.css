@@ -1732,7 +1732,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    every viewport, no separate desktop override. */
 .hero__cta{
   display:flex; flex-direction:column; align-items:center;
-  gap:8px; margin-top:6px;
+  gap:8px; margin-top:22px;
 }
 /* Mobile also on the CANONICAL .btn scale now (Ofir, 2026-09-08, 3rd pass -
    was shrunk to fit the stacked layout, he wants the real system size on
