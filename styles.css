@@ -274,6 +274,37 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 }
 .section-lead q { quotes: "\201C" "\201D"; font-weight: 600; color: var(--pl-fg); }
 
+/* ---- FLEET RECOMMENDER TEASER (2026-09-14) — minimal centered moment:
+   icon badge + title + lead + one button, reusing .noacct__ico/.section-
+   title/.section-lead/.cta-row/.btn verbatim. Centering + title max-width:
+   none is the same technique as [dir] .fleet-done-cohort .section-title
+   elsewhere in this file (plain .wrap container, not .narrow, so the
+   headline gets the page's full desktop width instead of wrapping on an
+   arbitrary 24ch/760px cap — fix per Ofir, 2026-09-14). No new token/
+   color/radius/shadow. Button is .btn--ghost (secondary), not the solid
+   .btn--accent primary — also per Ofir's review.
+   Background (2026-09-14, round 2): tried reusing --pl-illo-bg (the
+   violet-tint surface token) as a full-section background to separate the
+   teaser from its neighbors. Ofir rejected it live — contrast against the
+   page's other backgrounds didn't read well, and he doesn't want a new/
+   special background invented for this section either way.
+   Round 3 (2026-09-14): per Ofir's direction, no background change at all.
+   Reordering the .section/.section--alt rotation to give the teaser its
+   own slot would ripple the alternation for every section after it (WHO,
+   AGENDA, TESTIMONIALS... are already a clean alt/plain chain with no
+   gaps to absorb one extra slot) — so instead, reused the site's existing
+   divider technique: a 1px --pl-border line (the exact token/pattern
+   already used for section separation elsewhere — .footer border-top,
+   .ss-divider-full, .team__crew border-top), added top AND bottom on the
+   plain --pl-bg base. No background color, no new token — the section
+   just gets a visible top+bottom rule instead of a fill. */
+.fleet-teaser { border-block: 1px solid var(--pl-border); }
+[dir] .fleet-teaser .section-title,
+[dir] .fleet-teaser .section-lead { text-align: center; margin-inline: auto; }
+.fleet-teaser .section-title { max-width: none; }
+.fleet-teaser .noacct__ico { margin-bottom: var(--space-4); }
+.fleet-teaser .cta-row { justify-content: center; margin-top: var(--space-5); }
+
 /* ---- Buttons ------------------------------------------------------------- */
 /* SYSTEM RULE: a button is NEVER narrower than its height (min-width = height).
    Icon-only buttons therefore render at least square, never a thin sliver. */
@@ -1717,7 +1748,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    every viewport, no separate desktop override. */
 .hero__cta{
   display:flex; flex-direction:column; align-items:center;
-  gap:8px; margin-top:6px;
+  gap:8px; margin-top:22px;
 }
 /* Mobile also on the CANONICAL .btn scale now (Ofir, 2026-09-08, 3rd pass -
    was shrunk to fit the stacked layout, he wants the real system size on
@@ -1768,6 +1799,49 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   background: color-mix(in srgb, var(--pl-accent) 6%, var(--pl-bg));
   border-block: 1px solid var(--pl-border);
 }
+/* Upcoming/past toggle above the strip (2026-09-14, spec item #4, direction A
+   — segmented pill control). Extends .tabs/.tabs__btn with a track+fill
+   modifier (.tabs--pill) instead of changing the shared underline tabs used
+   by the student-area tab bar (app.js ~1905, untouched). Centered above the
+   section it controls. Active segment uses the SAME white-bg/black-text
+   treatment as .btn--ghost (secondary button) — not a solid accent fill,
+   per Ofir's review: too loud at solid purple. Sized off --ctl-xs (32px) —
+   the same quiet-secondary-control size .langtoggle already uses in this
+   file (line ~411) — per Ofir's 2nd-round review: the --ctl-sm build read
+   as too large/bombastic for a quiet utility control above the card it
+   controls. Zero new tokens: --pl-bg-alt/--pl-surface/--pl-fg/
+   --pl-fg-secondary/--shadow-pl-sm/--ctl-xs/--text-sm/--radius-full. */
+.sessions-tabsrow { padding-top: 0.65rem; display: flex; justify-content: center; }
+.tabs--pill {
+  display: inline-flex; gap: 2px; border-bottom: 0;
+  background: var(--pl-bg-alt); border: 1px solid var(--pl-border);
+  border-radius: var(--radius-full); padding: 2px;
+}
+.tabs--pill .tabs__btn {
+  height: var(--ctl-xs); padding: 0 var(--space-3); margin-bottom: 0;
+  border-bottom: 0; border-radius: var(--radius-full);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: var(--text-sm); font-weight: 600;
+  color: var(--pl-fg-secondary);
+  transition: background 0.2s var(--ease-pl), color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+}
+.tabs--pill .tabs__btn[aria-selected="true"] {
+  background: var(--pl-surface); color: var(--pl-fg); box-shadow: var(--shadow-pl-sm);
+}
+.tabs--pill .tabs__btn:hover:not([aria-selected="true"]) { color: var(--pl-fg); }
+/* Explicit per-language physical placement (Ofir, 2026-09-14 3rd round):
+   reading-start maps to "past", reading-end maps to "upcoming" - "בעברית
+   כותבים מימין לשמאל, ימין זה עבר, שמאל זה עתיד". Same technique as
+   .hero__cta's order-only placement above (order, markup unchanged) - but
+   unlike that one this needs no [dir] scoping at all: flex `order` is
+   already relative to the container's reading direction (`dir="rtl"`/
+   `dir="ltr"`, set on <html> by setLang()), so one pair of order values
+   gives the correct MIRRORED physical result in both languages for free:
+   RTL start=right -> past; LTR start=left -> past; either way "upcoming"
+   lands on the reading-end side (left in HE, right in EN), exactly as
+   asked. Verified empirically in both languages, not just reasoned. */
+.tabs--pill [data-sessions-tab="past"] { order: 1; }
+.tabs--pill [data-sessions-tab="upcoming"] { order: 2; }
 .session-strip {
   display: flex; align-items: center; justify-content: center; flex-wrap: nowrap;
   gap: clamp(1.25rem, 3vw, 2.75rem);
