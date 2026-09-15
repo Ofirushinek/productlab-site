@@ -10,17 +10,10 @@
 // WhatsApp only — no booking funnel. Ofir wants direct contact.
 const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2259730
 // Same relative target the gated #/prep kit tile already links to (content.js
-// EN + HE). #/kit (public, ungated) reuses the identical URL so there is
-// exactly one zip target on the whole site, not a second one that can drift
-// from the first.
-// ROTATED 2026-09-10: filename hashed after 2 unexplained downloads from two
-// different cities in the same minute (GA4) — a leaked/guessed link, not
-// people Ofir sent it to by hand. This narrows exposure by making the URL
-// unguessable; it is NOT a real access-control fix — #/kit is still
-// intentionally ungated by design (Ofir sends the link by hand). Whether
-// #/kit should require sign-in going forward is an open question flagged to
-// Ofir — see shared/shared-brain.md, 2026-09-10.
-const KIT_ZIP_URL = "assets/product-lab-2fd8ad517d75.zip";
+// EN + HE, both `href: "assets/product-lab.zip", download: true`). #/kit
+// (public, ungated) reuses the identical URL so there is exactly one zip
+// target on the whole site, not a second one that can drift from the first.
+const KIT_ZIP_URL = "assets/product-lab.zip";
 
 // When a gated redirect bounces a signed-out visitor home, this asks wireStudent
 // to auto-open the sign-in modal on the next render.
@@ -180,11 +173,6 @@ const I18N = {
     hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "עם זיכרון משותף, ותתחילו לבנות איתו.", "בזמן אמת."],
     hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
-    // Ofir's own words, 2026-09-14 spec item #4 (סווג לסדנאות עבר/הבאות) — used
-    // verbatim as the toggle labels, not routed through Copywriter (functional UI
-    // microcopy he dictated himself, not authored copy).
-    sessions_tab_upcoming: "סדנאות הבאות",
-    sessions_tab_past: "סדנאות עבר",
     session: {
       badge: "המפגש האחרון",
       when_label: "מתי?",
@@ -225,13 +213,6 @@ const I18N = {
       { t: "הפרויקט הראשון שכבר התחלתם לבנות", b: "כבר במהלך הסדנה תתחילו לעבוד עם הצוות שבניתם על הפרויקט שלכם, במקום לצאת רק עם ידע תיאורטי." },
       { t: "שיטת עבודה שתמשיך איתכם גם אחרי הסדנה", b: "תצאו עם צוות, זיכרון ותהליך עבודה שתוכלו להמשיך לפתח ולהשתמש בהם גם בפרויקטים הבאים." },
     ],
-
-    /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
-       moved out of the hero, into its own minimal section. Copy is final,
-       from Copywriter, verbatim. */
-    fleet_teaser_title: "מצאו את הסוכנים שמתאימים לכם",
-    fleet_teaser_body: "חמש שאלות קצרות על העבודה שלכם, ובסוף תקבלו המלצה אישית: עם איזה סוכן מהצוות כדאי להתחיל.",
-    fleet_teaser_cta: "אילו סוכנים מתאימים לי?",
 
     who_eyebrow: "למי זה מתאים",
     who_for_title: "אם אתם רוצים לבנות בעצמכם, אבל לא לבד.",
@@ -503,9 +484,6 @@ const I18N = {
     hero_sub_lines: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
     hero_cta: "Register for the next cohort",
     hero_cta2: "See which agents fit you",
-    // EN equivalent of Ofir's own HE toggle labels above (2026-09-14 spec item #4).
-    sessions_tab_upcoming: "Upcoming workshops",
-    sessions_tab_past: "Past workshops",
     session: {
       badge: "Last session",
       when_label: "When?",
@@ -546,13 +524,6 @@ const I18N = {
       { t: "Your first project, already underway", b: "During the workshop itself you'll start working with the team you built on your own project, instead of leaving with only theory." },
       { t: "A way of working that stays with you after the workshop", b: "You'll leave with a team, a memory, and a workflow you can keep developing and using on your next projects too." },
     ],
-
-    /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
-       moved out of the hero, into its own minimal section. Copy is final,
-       from Copywriter, verbatim. */
-    fleet_teaser_title: "Find the agents that fit you",
-    fleet_teaser_body: "Five short questions about your work. At the end, you get a personal recommendation: which agent on the crew to start with.",
-    fleet_teaser_cta: "Which agents fit me?",
 
     who_eyebrow: "Who it is for",
     who_for_title: "If you want to build on your own, but not alone.",
@@ -1174,6 +1145,7 @@ function render(lang) {
       <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
       <div class="hero__cta">
         <button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button>
+        <a class="btn btn--ghost" href="#/fleet">${t.hero_cta2}</a>
       </div>
     </div>
     <picture class="hero__bg">
@@ -1183,9 +1155,19 @@ function render(lang) {
     </picture>
   </section>
 
-  <!-- 6 PROOF OF CRAFT — moved up to right after the hero (conversion-spec item
-       #5, 2026-09-14: proof + "what you leave with" move near the top). Markup
-       unchanged, position only. -->
+  <!-- 1b SESSION STRIPS — flat full-width bands (like the site's other section
+       bands), flush below the hero so a hint peeks above the fold. NOT floating/
+       rounded cards. Current cohort stays on top, closed; cohort #2 goes directly
+       beneath it, active, price shown (2026-08-31 — see sessionStripHtml above). -->
+  <section class="session-strip-band">
+    <div class="wrap">
+      ${sessionStripHtml(t.session, { disabled: true })}
+      <div class="ss-divider-full"></div>
+      ${sessionStripHtml(t.session2, { price: true })}
+    </div>
+  </section>
+
+  <!-- 6 PROOF OF CRAFT -->
   <section class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.proof_eyebrow}</span>
@@ -1208,54 +1190,6 @@ function render(lang) {
       </div>
     </div>
   </div></section>
-
-  <!-- 3 WALK AWAY — moved up to right after PROOF (conversion-spec item #5,
-       2026-09-14). Markup unchanged, position only. -->
-  <section class="section"><div class="wrap">
-    <div class="reveal">
-      <span class="eyebrow">${t.walk_eyebrow}</span>
-      <h2 class="section-title">${t.walk_title}</h2>
-    </div>
-    <div class="grid grid--2" style="margin-top:2rem">
-      ${t.walk_items.map((d, i) => `
-        <div class="card reveal">
-          <div class="card__ico">${[I.users, I.brain, I.box, I.repeat][i] || I.check}</div>
-          <h3>${d.t}</h3><p>${d.b}</p>
-        </div>`).join("")}
-    </div>
-  </div></section>
-
-  <!-- 1b SESSION STRIPS — flat full-width band (like the site's other section
-       bands). Was flush below the hero; now sits below PROOF/WALK AWAY per
-       conversion-spec item #5 (2026-09-14) — those two moved up, this one kept
-       its relative position among the other sections, unchanged otherwise.
-       NOT floating/rounded cards.
-       2026-09-14 (spec item #4, Ofir's own words): the closed cohort #1 no longer
-       sits inline above the open cohort by default. A toggle — reusing the SAME
-       .tabs/.tabpanel component as the student-area tab bar (app.js ~1856, DS
-       ledger under "Student-area tab bar") — sits above the strip, right-aligned
-       via that component's own reading-start convention (right in RTL/Hebrew,
-       which is the "top-right" Ofir asked for; left in LTR/English, unchanged
-       from how every other reading-order element on the site already behaves).
-       Default tab "upcoming" shows only the open cohort (session2); "past"
-       reveals the closed one (session), same disabled/sold-out card as before —
-       just hidden until picked, not deleted. No new component/token. -->
-  <section class="session-strip-band">
-    <div class="wrap sessions-tabsrow">
-      <div class="tabs tabs--pill" role="tablist" data-sessions-tabs>
-        <button type="button" class="tabs__btn" role="tab" data-sessions-tab="upcoming" aria-selected="true">${t.sessions_tab_upcoming}</button>
-        <button type="button" class="tabs__btn" role="tab" data-sessions-tab="past" aria-selected="false">${t.sessions_tab_past}</button>
-      </div>
-    </div>
-    <div class="wrap">
-      <div class="tabpanel" data-sessions-panel="upcoming">
-        ${sessionStripHtml(t.session2, { price: true })}
-      </div>
-      <div class="tabpanel" data-sessions-panel="past" hidden>
-        ${sessionStripHtml(t.session, { disabled: true })}
-      </div>
-    </div>
-  </section>
 
   <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath -->
   <section class="section"><div class="wrap">
@@ -1310,28 +1244,18 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 3b FLEET RECOMMENDER TEASER — moved out of the hero (CPO conversion-spec
-       item #3, 2026-09-14). Minimal by design (Ofir's own words): icon +
-       headline + one line + one button into the SAME #/fleet flow the old
-       hero button used. Rung 1/2 reuse only, no new component: .wrap (plain,
-       not .narrow — headline needs full desktop width, see styles.css),
-       .noacct__ico (icon badge, already used in modals), .section-title/
-       .section-lead typography and .cta-row/.btn--ghost verbatim. Originally
-       placed right after "what you leave with"; that section moved up near
-       the hero per conversion-spec item #5 (2026-09-14), and per Ofir's scoped
-       instruction ("only about moving those two blocks up") this teaser kept
-       its relative position among the other sections rather than following it.
-       Revised 2026-09-14 per Ofir's review: widened container + title
-       max-width:none so the HE headline stops wrapping to an orphan word on
-       desktop, and swapped the CTA to secondary/.btn--ghost instead of primary. -->
-  <section class="section fleet-teaser"><div class="wrap">
+  <!-- 3 WALK AWAY -->
+  <section class="section"><div class="wrap">
     <div class="reveal">
-      <div class="noacct__ico">${I.users}</div>
-      <h2 class="section-title">${t.fleet_teaser_title}</h2>
-      <p class="section-lead">${t.fleet_teaser_body}</p>
-      <div class="cta-row">
-        <a class="btn btn--ghost" href="#/fleet">${t.fleet_teaser_cta}</a>
-      </div>
+      <span class="eyebrow">${t.walk_eyebrow}</span>
+      <h2 class="section-title">${t.walk_title}</h2>
+    </div>
+    <div class="grid grid--2" style="margin-top:2rem">
+      ${t.walk_items.map((d, i) => `
+        <div class="card reveal">
+          <div class="card__ico">${[I.users, I.brain, I.box, I.repeat][i] || I.check}</div>
+          <h3>${d.t}</h3><p>${d.b}</p>
+        </div>`).join("")}
     </div>
   </div></section>
 
@@ -1446,29 +1370,6 @@ function render(lang) {
   ${siteFooter(t)}`;
 
   afterRender();
-  initSessionsTabs();
-}
-
-/* Home-page "upcoming / past workshops" toggle above the session-strip band
-   (2026-09-14, spec item #4). Same mechanism as initPrepTabs() below — kept as
-   its own function since it targets a different data-attribute pair (this toggle
-   can appear alongside the student-area tabs are never on the same page, but
-   sharing one generic tab-wiring function across two unrelated attribute names
-   would be the more fragile choice). */
-function initSessionsTabs() {
-  const bar = document.querySelector("[data-sessions-tabs]");
-  if (!bar) return;
-  const btns = [...bar.querySelectorAll("[data-sessions-tab]")];
-  const panels = [...document.querySelectorAll("[data-sessions-panel]")];
-  btns.forEach((b) => b.addEventListener("click", () => {
-    const id = b.getAttribute("data-sessions-tab");
-    btns.forEach((x) => x.setAttribute("aria-selected", x === b ? "true" : "false"));
-    panels.forEach((p) => {
-      const show = p.getAttribute("data-sessions-panel") === id;
-      p.hidden = !show;
-      if (show) p.querySelectorAll(".reveal").forEach((r) => r.classList.add("in"));
-    });
-  }));
 }
 
 /* ---- Student PREP page - gated by the live session tier (AUTH.tier) ------- */
@@ -1714,7 +1615,7 @@ function renderPrep(lang) {
             <div class="card__foot">
               ${kitMedia(k)}
               <div class="cta-row">
-                <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download="${k.download}"` : ` target="_blank" rel="noopener"`}>${k.cta}</a>
+                <a class="btn btn--primary btn--sm" href="${k.href}"${k.download ? ` download` : ` target="_blank" rel="noopener"`}>${k.cta}</a>
               </div>
             </div>
           </div>`).join("")}
@@ -2595,15 +2496,10 @@ function renderLegal(lang, kind) {
 
 /* ---- #/kit — the branded "here's your kit" landing page ------------------
    Ofir, 2026-08-31: a participant currently gets a raw zip URL
-   (productlab.studio/assets/product-lab-2fd8ad517d75.zip) sent by hand. This route
+   (productlab.studio/assets/product-lab.zip) sent by hand. This route
    replaces the LINK they click; the direct zip stays the actual download
    target underneath (KIT_ZIP_URL, same one #/prep's kit tile already uses).
-
-   GATED as of 2026-09-10 (Ofir, direct instruction after the leaked-link
-   incident — "leave the kit available only to students"): same guard as
-   #/prep, via canSee()/AUTH.tier. Signed-out visitors are bounced home with
-   the sign-in modal auto-opened, same UX as #/prep. Previously this page was
-   deliberately public/ungated by design; that is no longer the case.
+   Public, no auth gate — the people who reach this link already registered.
 
    FULL-BLEED direction, Ofir's own pick after comparing two mockups: no
    card, no boundary — character + text + button sit directly on the
@@ -2624,8 +2520,6 @@ function renderLegal(lang, kind) {
    map: `projects/product-lab/brand/kit-landing/CAST.md` (this repo). */
 function renderKit(lang) {
   const t = I18N[lang];
-  // Same guard as #/prep: signed-out visitors bounce home + auto-open sign-in.
-  if (!canSee()) { pendingStudentOpen = true; location.hash = "#/"; return; }
   document.getElementById("app").innerHTML = `
   ${navHeader(t, lang)}
 
@@ -2639,7 +2533,7 @@ function renderKit(lang) {
       <h1 class="section-title">${t.kit_title}</h1>
       <p class="login__sub">${t.kit_sub}</p>
       <div class="cta-row kitfull__cta">
-        <a class="btn btn--primary" href="${KIT_ZIP_URL}" download="product-lab.zip" data-kit-download>${I.repeat}${t.kit_btn_download}</a>
+        <a class="btn btn--primary" href="${KIT_ZIP_URL}" download data-kit-download>${I.repeat}${t.kit_btn_download}</a>
       </div>
     </div>
   </main>
@@ -2680,7 +2574,7 @@ function wireKitAutoDownload() {
     try {
       const a = document.createElement("a");
       a.href = KIT_ZIP_URL;
-      a.setAttribute("download", "product-lab.zip");
+      a.setAttribute("download", "");
       a.style.display = "none";
       document.body.appendChild(a);
       a.click();
