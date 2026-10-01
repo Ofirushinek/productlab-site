@@ -177,7 +177,7 @@ const I18N = {
        sub split into line units the design controls, register CTA */
     hero_t1: "מרעיון למציאות.",
     hero_t2a: "עולם חדש של עבודה עם ",
-    hero_sub_lines: ["[COPY: hero sub line 1 — the owner's outcome: a landing page for YOUR business,]", "[COPY: line 2 — built by you with Claude, in one evening,]", "[COPY: line 3 — live, and you know how to change it alone.]"],
+    hero_sub_lines: ["[COPY: hero sub line 1 — the promise, per CMO/CSO offer]", "[COPY: hero sub line 2]", "[COPY: hero sub line 3]"],
     hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
     // Ofir's own words, 2026-09-14 spec item #4 (סווג לסדנאות עבר/הבאות) — used
@@ -220,9 +220,9 @@ const I18N = {
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "[COPY: take-home 1 — your live page / site for your business]", b: "[COPY: one line: built by you in the session, published, yours to keep]" },
+      { t: "[COPY: take-home 1]", b: "[COPY: take-home 1 one-liner]" },
       { t: "[COPY: take-home 2 — a reusable prompt kit]", b: "[COPY: one line: the prompts and the setup, so you can do it again alone]" },
-      { t: "[COPY: take-home 3 — a small custom tool for your business]", b: "[COPY: one line: second half of the session / follow-up — Dean to confirm scope]" },
+      { t: "[COPY: take-home 3]", b: "[COPY: take-home 3 one-liner]" },
       { t: "[COPY: take-home 4 — the way of working, after the workshop]", b: "[COPY: one line: how to keep editing and building without a developer]" }
     ],
 
@@ -234,7 +234,7 @@ const I18N = {
     fleet_teaser_cta: "אילו סוכנים מתאימים לי?",
 
     who_eyebrow: "למי זה מתאים",
-    who_for_title: "[COPY: who-for title — for owners and freelancers who want a site they built themselves]",
+    who_for_title: "[COPY: who-for title — owners and freelancers]",
     who_intro: "[COPY: who-intro — freelancers + small-business owners (clinic, studio, coach, trades, local shop), zero code, AI-curious]",
     who_tiles: [
       { t: "[COPY: tile 1 — freelancers]", b: "[COPY: one line: you sell through WhatsApp/Instagram and have no site, or an embarrassing one]" },
@@ -244,12 +244,12 @@ const I18N = {
     who_not: "[COPY: not-for line — a full e-commerce store, or a developer course]",
 
     agenda_eyebrow: "שלושה שלבים",
-    agenda_title: "[COPY: agenda title — three hours, you leave with a live page for your business]",
-    agenda_intro: "[COPY: agenda intro — setup, your page, publish, a small tool for your business (Dean curriculum v2)]",
+    agenda_title: "[COPY: agenda title — two sessions with Claude Code + homework questionnaire between them]",
+    agenda_intro: "[COPY: agenda intro — per Dean curriculum v2]",
     agenda_phases: [
-      { time: "[COPY: stage 1]", t: "[COPY: stage 1 title — setup]", b: "[COPY: stage 1 one-liner]" },
-      { time: "[COPY: stage 2]", t: "[COPY: stage 2 title — build your page]", b: "[COPY: stage 2 one-liner]" },
-      { time: "[COPY: stage 3]", t: "[COPY: stage 3 title — publish + a small tool]", b: "[COPY: stage 3 one-liner]" }
+      { time: "[COPY: session 1]", t: "[COPY: session 1 title]", b: "[COPY: one-liner]" },
+      { time: "[COPY: between sessions]", t: "[COPY: homework questionnaire title]", b: "[COPY: one-liner]" },
+      { time: "[COPY: session 2]", t: "[COPY: session 2 title]", b: "[COPY: one-liner]" }
     ],
     agenda_toggle: "מה יש בפנים",
     agenda_p1_items: [
@@ -343,7 +343,7 @@ const I18N = {
 
     final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
     final_title: "בואו נבנה ביחד",
-    final_sub: "[COPY: final CTA sub — one evening, small group, your own page live by the end; price + date]",
+    final_sub: "[COPY: final CTA sub — promise per offer; price + dates]",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER HE copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -494,7 +494,7 @@ const I18N = {
     hero_points: ["Shared memory", "No code", "A team that stays with you"],
     hero_t1: "From idea to reality.",
     hero_t2a: "A new world of working with ",
-    hero_sub_lines: ["[COPY: hero sub line 1 — the owner's outcome: a landing page for YOUR business,]", "[COPY: line 2 — built by you with Claude, in one evening,]", "[COPY: line 3 — live, and you know how to change it alone.]"],
+    hero_sub_lines: ["[COPY: hero sub line 1 — the promise, per CMO/CSO offer]", "[COPY: hero sub line 2]", "[COPY: hero sub line 3]"],
     hero_cta: "Register for the next cohort",
     hero_cta2: "See which agents fit you",
     // EN equivalent of Ofir's own HE toggle labels above (2026-09-14 spec item #4).
@@ -535,9 +535,9 @@ const I18N = {
     walk_eyebrow: "What you take home",
     walk_title: "What you leave with",
     walk_items: [
-      { t: "[COPY: take-home 1 — your live page / site for your business]", b: "[COPY: one line: built by you in the session, published, yours to keep]" },
+      { t: "[COPY: take-home 1]", b: "[COPY: take-home 1 one-liner]" },
       { t: "[COPY: take-home 2 — a reusable prompt kit]", b: "[COPY: one line: the prompts and the setup, so you can do it again alone]" },
-      { t: "[COPY: take-home 3 — a small custom tool for your business]", b: "[COPY: one line: second half of the session / follow-up — Dean to confirm scope]" },
+      { t: "[COPY: take-home 3]", b: "[COPY: take-home 3 one-liner]" },
       { t: "[COPY: take-home 4 — the way of working, after the workshop]", b: "[COPY: one line: how to keep editing and building without a developer]" }
     ],
 
@@ -549,7 +549,7 @@ const I18N = {
     fleet_teaser_cta: "Which agents fit me?",
 
     who_eyebrow: "Who it is for",
-    who_for_title: "[COPY: who-for title — for owners and freelancers who want a site they built themselves]",
+    who_for_title: "[COPY: who-for title — owners and freelancers]",
     who_intro: "[COPY: who-intro — freelancers + small-business owners (clinic, studio, coach, trades, local shop), zero code, AI-curious]",
     who_tiles: [
       { t: "[COPY: tile 1 — freelancers]", b: "[COPY: one line: you sell through WhatsApp/Instagram and have no site, or an embarrassing one]" },
@@ -559,12 +559,12 @@ const I18N = {
     who_not: "[COPY: not-for line — a full e-commerce store, or a developer course]",
 
     agenda_eyebrow: "Three stages",
-    agenda_title: "[COPY: agenda title — three hours, you leave with a live page for your business]",
-    agenda_intro: "[COPY: agenda intro — setup, your page, publish, a small tool for your business (Dean curriculum v2)]",
+    agenda_title: "[COPY: agenda title — two sessions with Claude Code + homework questionnaire between them]",
+    agenda_intro: "[COPY: agenda intro — per Dean curriculum v2]",
     agenda_phases: [
-      { time: "[COPY: stage 1]", t: "[COPY: stage 1 title — setup]", b: "[COPY: stage 1 one-liner]" },
-      { time: "[COPY: stage 2]", t: "[COPY: stage 2 title — build your page]", b: "[COPY: stage 2 one-liner]" },
-      { time: "[COPY: stage 3]", t: "[COPY: stage 3 title — publish + a small tool]", b: "[COPY: stage 3 one-liner]" }
+      { time: "[COPY: session 1]", t: "[COPY: session 1 title]", b: "[COPY: one-liner]" },
+      { time: "[COPY: between sessions]", t: "[COPY: homework questionnaire title]", b: "[COPY: one-liner]" },
+      { time: "[COPY: session 2]", t: "[COPY: session 2 title]", b: "[COPY: one-liner]" }
     ],
     agenda_toggle: "What's inside",
     agenda_p1_items: [
@@ -642,7 +642,7 @@ const I18N = {
 
     final_chip: "Invite-only. Small groups.",
     final_title: "Let's build together",
-    final_sub: "[COPY: final CTA sub — one evening, small group, your own page live by the end; price + date]",
+    final_sub: "[COPY: final CTA sub — promise per offer; price + dates]",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER EN copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
