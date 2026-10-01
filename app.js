@@ -177,7 +177,7 @@ const I18N = {
        sub split into line units the design controls, register CTA */
     hero_t1: "מרעיון למציאות.",
     hero_t2a: "עולם חדש של עבודה עם ",
-    hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "עם זיכרון משותף, ותתחילו לבנות איתו.", "בזמן אמת."],
+    hero_sub_lines: ["[COPY: hero sub line 1 — the owner's outcome: a landing page for YOUR business,]", "[COPY: line 2 — built by you with Claude, in one evening,]", "[COPY: line 3 — live, and you know how to change it alone.]"],
     hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
     // Ofir's own words, 2026-09-14 spec item #4 (סווג לסדנאות עבר/הבאות) — used
@@ -220,10 +220,10 @@ const I18N = {
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "צוות סוכני AI אישי, מותאם בדיוק אליכם", b: "יוצאים עם צוות שכבר מכיר את הפרויקט שלכם, ועם חבר צוות אחד שהגדרתם בעצמכם מאפס." },
-      { t: "זיכרון משותף שכל הצוות עובד ממנו", b: "כל הסוכנים עובדים מאותו מקור ידע, מכירים את הפרויקט ומשתפים ביניהם הקשר ומידע לאורך כל העבודה." },
-      { t: "הפרויקט הראשון שכבר התחלתם לבנות", b: "כבר במהלך הסדנה תתחילו לעבוד עם הצוות שבניתם על הפרויקט שלכם, במקום לצאת רק עם ידע תיאורטי." },
-      { t: "שיטת עבודה שתמשיך איתכם גם אחרי הסדנה", b: "תצאו עם צוות, זיכרון ותהליך עבודה שתוכלו להמשיך לפתח ולהשתמש בהם גם בפרויקטים הבאים." },
+      { t: "[COPY: take-home 1 — your live page / site for your business]", b: "[COPY: one line: built by you in the session, published, yours to keep]" },
+      { t: "[COPY: take-home 2 — a reusable prompt kit]", b: "[COPY: one line: the prompts and the setup, so you can do it again alone]" },
+      { t: "[COPY: take-home 3 — a small custom tool for your business]", b: "[COPY: one line: second half of the session / follow-up — Dean to confirm scope]" },
+      { t: "[COPY: take-home 4 — the way of working, after the workshop]", b: "[COPY: one line: how to keep editing and building without a developer]" }
     ],
 
     /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
@@ -234,49 +234,43 @@ const I18N = {
     fleet_teaser_cta: "אילו סוכנים מתאימים לי?",
 
     who_eyebrow: "למי זה מתאים",
-    who_for_title: "אם אתם רוצים לבנות בעצמכם, אבל לא לבד.",
-    who_intro: "לא משנה אם אתם אנשי מוצר ועיצוב, יזמים, בוני מוצרים או אנשי מקצוע שרוצים לעבוד אחרת. אם אתם רוצים להפוך את ה-AI לשותף אמיתי בתהליך העבודה שלכם, אתם במקום הנכון.",
+    who_for_title: "[COPY: who-for title — for owners and freelancers who want a site they built themselves]",
+    who_intro: "[COPY: who-intro — freelancers + small-business owners (clinic, studio, coach, trades, local shop), zero code, AI-curious]",
     who_tiles: [
-      { t: "אנשי מוצר ועיצוב", b: "בין אם אתם מעצבי מוצר, מובילי עיצוב או מנהלי מוצר, הסדנה תראה לכם איך לעבוד עם צוות סוכני AI שמרחיב את היכולות שלכם ומשאיר אתכם להתמקד במה שאף כלי לא עושה: לחשוב, להחליט ולהוביל." },
-      { t: "בונים ויזמים", b: "יש לכם רעיון, מוצר או עסק שאתם רוצים לבנות או לקדם. בסדנה תבנו צוות סוכני AI שחושב איתכם, מתכנן, מאתגר רעיונות ועוזר להפוך אותם למוצר אמיתי." },
-      { t: "מרחיבי אופקים", b: "אם אתם מרגישים שהדרך שבה עובדים משתנה, ורוצים להבין איך באמת עובדים עם AI, לא רק לשאול שאלות אלא לבנות תהליך עבודה שלם, הסדנה הזו בשבילכם." },
+      { t: "[COPY: tile 1 — freelancers]", b: "[COPY: one line: you sell through WhatsApp/Instagram and have no site, or an embarrassing one]" },
+      { t: "[COPY: tile 2 — small-business owners]", b: "[COPY: one line: 1-10 people, service business, quoted thousands for a site]" },
+      { t: "[COPY: tile 3 — AI-curious, never built anything]", b: "[COPY: one line: everyone talks AI, you want to know what it does for YOUR business]" }
     ],
-    who_not: "מתאים פחות למי שמחפש כפתור קסם. אם בא לך להפשיל שרוולים ולבנות בעצמך, יש לך מקום סביב השולחן.",
+    who_not: "[COPY: not-for line — a full e-commerce store, or a developer course]",
 
     agenda_eyebrow: "שלושה שלבים",
-    agenda_title: "שלוש שעות. בסוף הסדנה תצאו עם צוות סוכני AI שעובד איתכם.",
-    agenda_intro: "בשלושה שלבים נבנה יחד את מערכת העבודה החדשה שלכם, מהיכרות עם השיטה, דרך הקמת צוות סוכני AI אישי ועד לבניית הפרויקט הראשון שלכם.",
+    agenda_title: "[COPY: agenda title — three hours, you leave with a live page for your business]",
+    agenda_intro: "[COPY: agenda intro — setup, your page, publish, a small tool for your business (Dean curriculum v2)]",
     agenda_phases: [
-      { time: "שלב ראשון", t: "מתחילים", b: "מבינים את שיטת העבודה, מכירים את הכלים שנשתמש בהם ומניחים את היסודות לצוות שנבנה בהמשך." },
-      { time: "שלב שני", t: "פוגשים את הצוות", b: "פותחים את הערכה ומגלים שהצוות כבר בפנים, מחובר לזיכרון משותף ומוכן לעבוד. משם בונים יחד." },
-      { time: "שלב שלישי", t: "בונים עם הצוות", b: "מפעילים את הצוות שבניתם ומתחילים לעבוד יחד על הפרויקט הראשון שלכם." },
+      { time: "[COPY: stage 1]", t: "[COPY: stage 1 title — setup]", b: "[COPY: stage 1 one-liner]" },
+      { time: "[COPY: stage 2]", t: "[COPY: stage 2 title — build your page]", b: "[COPY: stage 2 one-liner]" },
+      { time: "[COPY: stage 3]", t: "[COPY: stage 3 title — publish + a small tool]", b: "[COPY: stage 3 one-liner]" }
     ],
     agenda_toggle: "מה יש בפנים",
     agenda_p1_items: [
-      { t: "מבינים את התמונה הגדולה", b: "מה השתנה בעולם ה-AI, למה סוכני AI הפכו לכלי עבודה אמיתי ואיך זה משפיע על הדרך שבה בונים מוצרים." },
-      { t: "מכירים את כלי העבודה", b: "מתי משתמשים ב-Claude, מתי ב-ChatGPT, מתי ב-Gemini, ואיך כל כלי משתלב בתהליך העבודה." },
-      { t: "חושבים כמו צוות", b: "למה מתחילים מתפקיד ברור, ממשיכים לכישורים ולכלים, ורק אחר כך בונים את הזיכרון המשותף." },
-      { t: "מקימים את המוח המשותף", b: "יוצרים בסיס ידע משותף שמאפשר לכל הסוכנים לעבוד מאותו הקשר ולהשתפר לאורך הדרך." },
-      { t: "מבינים את הדרך", b: "מכירים את שלבי הסדנה ומבינים איך כל חלק מתחבר לתהליך עבודה אחד." },
+      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
     ],
     agenda_p2_items: [
-      { t: "מכירים את הצוות", b: "שלושה שותפים כבר בפנים: שותף טכני, מנהל מוצר ומעצב מוצר, כל אחד עם תפקיד ברור וכלים משלו." },
-      { t: "רואים את המוח המשותף", b: "כל הידע, ההחלטות והתובנות נשמרים במקום אחד, וכל הצוות כבר קורא וכותב ממנו." },
-      { t: "פותחים את הערכה", b: "מחברים את Claude לתיקיית הערכה שתלווה אתכם גם אחרי הסדנה, בלי שום התקנה נוספת." },
-      { t: "רואים איך הם מתואמים", b: "כל שותף עובד בשיחה נפרדת משלו, וקודם קורא מה שהאחרים כתבו בזיכרון המשותף. ככה הם נשארים מסונכרנים בלי לדבר ישירות." },
-      { t: "מריצים בדיקת התקנה", b: "מריצים `/check`, והמערכת מאשרת שהצוות מותקן ופעיל על המכונה שלכם." },
+      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
     ],
     agenda_p3_items: [
-      { t: "נותנים בריף", b: "מסבירים למנהל המוצר מה רוצים לבנות, והוא מתחיל לתעדף, לכוון ולתזמר את העבודה." },
-      { t: "רואים את הצוות בפעולה", b: "כל שותף בצוות עובד בשיחה משלו, אבל קורא קודם מה שהאחרים כתבו בזיכרון המשותף וממשיך משם." },
-      { t: "בונים את הפרויקט הראשון", b: "הופכים את הרעיון שלכם לעמוד נחיתה עובד, יחד עם צוות סוכני ה-AI שכבר איתכם." },
-      { t: "מוסיפים שותף משלכם", b: "עונים בהודעה אחת מי הוא, מה התפקיד שלו ומה האופי שלו, והמשימה הראשונה שלו היא לחוות דעה על העמוד שכבר בניתם." },
-      { t: "ממשיכים גם אחרי הסדנה", b: "יוצאים עם צוות סוכני AI אישי שתוכלו להמשיך להתייעץ איתו, לבנות איתו ולהרחיב אותו גם אחרי שהמפגש מסתיים." },
+      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
     ],
 
     proof_eyebrow: "לא מצגת. מוצרים אמיתיים.",
     proof_title: "כל מה שאתם רואים כאן נבנה באותה הדרך.",
-    proof_lead: "כל פרויקט בעמוד הזה נבנה בעזרת צוות סוכני AI, זיכרון משותף ותהליך העבודה שתלמדו בסדנה.",
+    proof_lead: "[COPY: proof lead — everything on this page was built with Claude the same way you will in the workshop]",
     proof_self_tag: "הדף הזה",
     proof_self_t: "הדף הזה",
     proof_self_b: "את הדף הזה, ואת כל הסדנה, בניתי עם אותו סוג של צוות סוכני AI שתקימו בעצמכם.",
@@ -349,7 +343,7 @@ const I18N = {
 
     final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
     final_title: "בואו נבנה ביחד",
-    final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות משלכם שבונה איתכם את הפרויקט הראשון שלכם, ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
+    final_sub: "[COPY: final CTA sub — one evening, small group, your own page live by the end; price + date]",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER HE copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -500,7 +494,7 @@ const I18N = {
     hero_points: ["Shared memory", "No code", "A team that stays with you"],
     hero_t1: "From idea to reality.",
     hero_t2a: "A new world of working with ",
-    hero_sub_lines: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
+    hero_sub_lines: ["[COPY: hero sub line 1 — the owner's outcome: a landing page for YOUR business,]", "[COPY: line 2 — built by you with Claude, in one evening,]", "[COPY: line 3 — live, and you know how to change it alone.]"],
     hero_cta: "Register for the next cohort",
     hero_cta2: "See which agents fit you",
     // EN equivalent of Ofir's own HE toggle labels above (2026-09-14 spec item #4).
@@ -541,10 +535,10 @@ const I18N = {
     walk_eyebrow: "What you take home",
     walk_title: "What you leave with",
     walk_items: [
-      { t: "A personal team of AI agents, tuned to exactly how you work", b: "You leave with a team that already knows your project, and one teammate you defined yourself, from scratch." },
-      { t: "A shared memory the whole team works from", b: "Every agent works from the same source of knowledge, knows the project, and shares context and information across the entire process." },
-      { t: "Your first project, already underway", b: "During the workshop itself you'll start working with the team you built on your own project, instead of leaving with only theory." },
-      { t: "A way of working that stays with you after the workshop", b: "You'll leave with a team, a memory, and a workflow you can keep developing and using on your next projects too." },
+      { t: "[COPY: take-home 1 — your live page / site for your business]", b: "[COPY: one line: built by you in the session, published, yours to keep]" },
+      { t: "[COPY: take-home 2 — a reusable prompt kit]", b: "[COPY: one line: the prompts and the setup, so you can do it again alone]" },
+      { t: "[COPY: take-home 3 — a small custom tool for your business]", b: "[COPY: one line: second half of the session / follow-up — Dean to confirm scope]" },
+      { t: "[COPY: take-home 4 — the way of working, after the workshop]", b: "[COPY: one line: how to keep editing and building without a developer]" }
     ],
 
     /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
@@ -555,49 +549,43 @@ const I18N = {
     fleet_teaser_cta: "Which agents fit me?",
 
     who_eyebrow: "Who it is for",
-    who_for_title: "If you want to build on your own, but not alone.",
-    who_intro: "It doesn't matter if you're in product and design, a founder, a product builder, or a professional who wants to work differently. If you want to make AI a real partner in the way you work, you're in the right place.",
+    who_for_title: "[COPY: who-for title — for owners and freelancers who want a site they built themselves]",
+    who_intro: "[COPY: who-intro — freelancers + small-business owners (clinic, studio, coach, trades, local shop), zero code, AI-curious]",
     who_tiles: [
-      { t: "Product and design people", b: "Whether you're a product designer, a design lead, or a product manager, the workshop shows you how to work with a team of AI agents that extends what you can do and frees you to focus on what no tool can: thinking, deciding, and leading." },
-      { t: "Builders and founders", b: "You have an idea, a product, or a business you want to build or grow. In the workshop you'll build a team of AI agents that thinks with you, plans, challenges ideas, and helps turn them into a real product." },
-      { t: "Horizon seekers", b: "If you feel the way we work is changing, and you want to understand how to really work with AI, not just ask it questions but build a whole way of working, this workshop is for you." },
+      { t: "[COPY: tile 1 — freelancers]", b: "[COPY: one line: you sell through WhatsApp/Instagram and have no site, or an embarrassing one]" },
+      { t: "[COPY: tile 2 — small-business owners]", b: "[COPY: one line: 1-10 people, service business, quoted thousands for a site]" },
+      { t: "[COPY: tile 3 — AI-curious, never built anything]", b: "[COPY: one line: everyone talks AI, you want to know what it does for YOUR business]" }
     ],
-    who_not: "Less of a fit for anyone after a magic button. If you'd rather roll up your sleeves and build it yourself, there's a chair at the table.",
+    who_not: "[COPY: not-for line — a full e-commerce store, or a developer course]",
 
     agenda_eyebrow: "Three stages",
-    agenda_title: "Three hours. By the end you'll walk out with a team of AI agents that works with you.",
-    agenda_intro: "In three stages we'll build your new way of working together, from learning the method, through setting up your own team of AI agents, to building your first project.",
+    agenda_title: "[COPY: agenda title — three hours, you leave with a live page for your business]",
+    agenda_intro: "[COPY: agenda intro — setup, your page, publish, a small tool for your business (Dean curriculum v2)]",
     agenda_phases: [
-      { time: "Stage one", t: "Getting started", b: "You'll understand the method, get to know the tools we'll use, and lay the foundations for the team you'll build next." },
-      { time: "Stage two", t: "Meet the team", b: "Open the kit and find the team already inside, connected to shared memory and ready to work. From there, you build together." },
-      { time: "Stage three", t: "Building with the team", b: "You'll put the team you built to work and start building your first project together." },
+      { time: "[COPY: stage 1]", t: "[COPY: stage 1 title — setup]", b: "[COPY: stage 1 one-liner]" },
+      { time: "[COPY: stage 2]", t: "[COPY: stage 2 title — build your page]", b: "[COPY: stage 2 one-liner]" },
+      { time: "[COPY: stage 3]", t: "[COPY: stage 3 title — publish + a small tool]", b: "[COPY: stage 3 one-liner]" }
     ],
     agenda_toggle: "What's inside",
     agenda_p1_items: [
-      { t: "See the big picture", b: "What's changed in the AI world, why AI agents became a real working tool, and how that shifts the way products get built." },
-      { t: "Get to know the tools", b: "When to use Claude, when ChatGPT, when Gemini, and how each one fits into your workflow." },
-      { t: "Think like a team", b: "Why you start from a clear role, move on to skills and tools, and only then build the shared memory." },
-      { t: "Set up the shared brain", b: "You'll create a shared knowledge base that lets every agent work from the same context and improve along the way." },
-      { t: "See the path ahead", b: "Get to know the stages of the workshop and how each part connects into one way of working." },
+      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
     ],
     agenda_p2_items: [
-      { t: "Meet the team", b: "Three teammates already inside: a technical partner, a product manager, and a product designer, each with a clear role and their own tools." },
-      { t: "See the shared brain", b: "All the knowledge, decisions, and insights live in one place, and the whole team already reads and writes to it." },
-      { t: "Open the kit", b: "Point Claude at the kit folder that stays with you after the workshop, no extra install needed." },
-      { t: "See how they stay in sync", b: "Each teammate works in their own conversation, and reads what the others wrote in shared memory first. That's how they stay aligned without talking directly." },
-      { t: "Run the setup check", b: "Run `/check`, and the system confirms the team is installed and live on your machine." },
+      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
     ],
     agenda_p3_items: [
-      { t: "Give the brief", b: "Tell your product manager what you want to build, and it starts prioritizing, steering, and orchestrating the work." },
-      { t: "See the team at work", b: "Each teammate works in their own conversation, but reads what the others already wrote in the shared memory first, and builds from there." },
-      { t: "Build your first project", b: "Turn your idea into a working landing page, together with the team of AI agents already with you." },
-      { t: "Add your own agent", b: "Answer who it is, its one job, and its character, all in one message, and its first task is to weigh in on the page you just built." },
-      { t: "Keep going after the workshop", b: "Walk out with your own team of AI agents you can keep consulting, building with, and expanding long after the session ends." },
+      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
+      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
     ],
 
     proof_eyebrow: "Not a slide deck. Real products.",
     proof_title: "Everything you see here was built the same way.",
-    proof_lead: "Every project on this page was built with a team of AI agents, shared memory, and the workflow you'll learn in the workshop.",
+    proof_lead: "[COPY: proof lead — everything on this page was built with Claude the same way you will in the workshop]",
     proof_self_tag: "This page",
     proof_self_t: "This page",
     proof_self_b: "This page, and the whole workshop, I built with a team of AI agents, the same kind you'll set up yourself.",
@@ -654,7 +642,7 @@ const I18N = {
 
     final_chip: "Invite-only. Small groups.",
     final_title: "Let's build together",
-    final_sub: "One afternoon, a small group, and a team of your own that builds your first project with you, and stays yours long after. The first step is a call with me.",
+    final_sub: "[COPY: final CTA sub — one evening, small group, your own page live by the end; price + date]",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER EN copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -1310,32 +1298,15 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 3b FLEET RECOMMENDER TEASER — moved out of the hero (CPO conversion-spec
-       item #3, 2026-09-14). Minimal by design (Ofir's own words): icon +
-       headline + one line + one button into the SAME #/fleet flow the old
-       hero button used. Rung 1/2 reuse only, no new component: .wrap (plain,
-       not .narrow — headline needs full desktop width, see styles.css),
-       .noacct__ico (icon badge, already used in modals), .section-title/
-       .section-lead typography and .cta-row/.btn--ghost verbatim. Originally
-       placed right after "what you leave with"; that section moved up near
-       the hero per conversion-spec item #5 (2026-09-14), and per Ofir's scoped
-       instruction ("only about moving those two blocks up") this teaser kept
-       its relative position among the other sections rather than following it.
-       Revised 2026-09-14 per Ofir's review: widened container + title
-       max-width:none so the HE headline stops wrapping to an orphan word on
-       desktop, and swapped the CTA to secondary/.btn--ghost instead of primary. -->
-  <section class="section fleet-teaser"><div class="wrap">
-    <div class="reveal">
-      <div class="noacct__ico">${I.users}</div>
-      <h2 class="section-title">${t.fleet_teaser_title}</h2>
-      <p class="section-lead">${t.fleet_teaser_body}</p>
-      <div class="cta-row">
-        <a class="btn btn--ghost" href="#/fleet">${t.fleet_teaser_cta}</a>
-      </div>
-    </div>
-  </div></section>
+  <!-- 3b FLEET RECOMMENDER TEASER — REMOVED from the main path on broad-market-v1
+       (2026-10-01): insider tool for agent builders, not the business-owner
+       journey. Route #/fleet and renderFleet() stay alive; markup in git history
+       (main, section "3b"). -->
 
-  <!-- 4 WHO — three tiles (icon on top, like Three-hats cards) -->
+  <!-- 4 WHO — three tiles. broad-market-v1 (2026-10-01): the puppet
+       illustrations (who-designer/builder/horizon.webp) are OFF the main path;
+       puppets live ONLY in the agents block. Tiles reuse the SAME .card +
+       .card__ico component as "what you leave with" (rung 2, no new CSS). -->
   <section class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.who_eyebrow}</span>
@@ -1344,9 +1315,9 @@ function render(lang) {
     </div>
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
-        <div class="tilecard reveal">
-          <div class="tilecard__illo"><img src="assets/${["who-designer", "who-builder", "who-horizon"][i]}.webp?v=2" alt="" /></div>
-          <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
+        <div class="card reveal">
+          <div class="card__ico">${[I.users, I.box, I.brain][i] || I.check}</div>
+          <h3>${x.t}</h3><p>${x.b}</p>
         </div>`).join("")}
     </div>
     <p class="who__not reveal">${t.who_not}</p>
@@ -1400,27 +1371,10 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 8b A DAY IN THE LIFE OF A GRADUATE — sits directly BELOW the last testimonial.
-       Same --pl-bg-alt band as the section above it and NO top padding, so the two
-       read as one continuous band rather than two stacked stripes.
-       The photograph is the FULL 3:2 frame at every width — never cropped. -->
-  <section class="section section--alt grad-section"><div class="grad-wrap">
-    <div class="grad">
-      <div class="grad__text reveal">
-        <span class="eyebrow">${t.grad_kicker}</span>
-        <h2 class="section-title grad__title">${t.grad_title}</h2>
-        <div class="grad__paras">
-          ${t.grad_paras.map((g) => `<p>${g}</p>`).join("")}
-        </div>
-      </div>
-      <div class="grad__media reveal">
-        <figure class="grad__frame">
-          <span class="grad__pin" aria-hidden="true"></span>
-          <img src="assets/grad-day.webp" alt="" loading="lazy" decoding="async" width="1536" height="1024" />
-        </figure>
-      </div>
-    </div>
-  </div></section>
+  <!-- 8b A DAY IN THE LIFE OF A GRADUATE — REMOVED on broad-market-v1
+       (2026-10-01): puppet photo (grad-day.webp) + designer-persona narrative.
+       Brief says replace with real screens of pages built in the workshop once
+       they exist. Markup + CSS (.grad*) kept in git history / styles.css. -->
 
   <!-- 9 DETAILS — ONE unified accordion (logistics + FAQ), icon on every row -->
   <section class="section"><div class="wrap narrow">
