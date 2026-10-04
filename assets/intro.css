@@ -27,7 +27,7 @@
      prestige"; site stays light, cooler). Was the logo spec.json pair
      #FBEAD9 / #402D1F. Ink = the site's --pl-fg. */
   --pl-intro-ground: #F2F3F4;
-  --pl-intro-ink:    #16131C;
+  --pl-intro-ink:    #14151A;
   --stage: clamp(112.5px, 19.5vh, 210px);  /* 75% of the previous 150/26vh/280 —
      Ofir, 2026-08-24: the loader read too big. Scaled the size itself, not a
      transform, so the choreography (which is %-translate + unitless-scale,

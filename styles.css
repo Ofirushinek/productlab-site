@@ -1,57 +1,59 @@
 /* =============================================================================
    PRODUCT LAB — WORKSHOP ONE-PAGER (productlab.studio)
    Standalone marketing page. Tokens ported VERBATIM from the Product Lab design
-   system (product-lab-studio/src/index.css). No inline hex in markup. Warm paper
+   system (product-lab-studio/src/index.css). No inline hex in markup. Cool studio grey
    + ink, violet secondary accent, Inter, 8px radius grid. Full RTL support.
    ========================================================================== */
 
 /* ---- TOKENS (verbatim from Product Lab system) --------------------------- */
 :root {
-  /* DAYLIGHT STUDIO reskin (DSL, 2026-10-04): Ofir picked direction A's
-     colours, no redesign. Ivory ground, ink text, ONE violet accent.
-     Old values: memory/design-system-lead-memory.md 2026-10-04. */
-  --pl-bg: #F3EFE7;
-  --pl-bg-alt: #E9E3D8;
-  --pl-surface: #FBF9F4;
-  --pl-elevated: #FBF9F4;
+  /* COOL STUDIO (DSL, 2026-10-04, v2 of Daylight Studio): Ofir "the cream
+     doesn't work, a bit colder, more prestige". Cool neutral greys keyed to
+     the hero-v3-cool wall #E8E9EB, cool ink, ONE violet accent. Tokens only.
+     Ivory values (#F3EFE7/#E9E3D8/#FBF9F4, ink #16131C) in component-log.md. */
+  --pl-bg: #F2F3F4;          /* = loader ground (assets/intro.css) */
+  --pl-bg-alt: #E8E9EB;      /* = the hero wall */
+  --pl-surface: #FAFAFB;
+  --pl-elevated: #FAFAFB;
+  --pl-hero-ground: #E8E9EB; /* hero section ground + every hero-image fade; MUST equal the image edge */
 
-  --pl-fg: #16131C;
-  --pl-fg-body: #2A2631;
-  --pl-fg-secondary: #5C5664;
-  --pl-fg-muted: #6B6572;
+  --pl-fg: #14151A;
+  --pl-fg-body: #2B2D33;
+  --pl-fg-secondary: #565A62;
+  --pl-fg-muted: #62666E;
 
-  --pl-border: rgb(22 19 28 / 0.14);
-  --pl-border-strong: rgb(22 19 28 / 0.24);
+  --pl-border: rgb(20 21 26 / 0.14);
+  --pl-border-strong: rgb(20 21 26 / 0.24);
 
   --pl-accent: #6D28D9;
   --pl-accent-hover: #5B21B6;
   --pl-accent-fg: #ffffff;
 
-  --pl-grid-dot: rgb(22 19 28 / 0.05);
-  --pl-illo-bg: #E9E3D8;
+  --pl-grid-dot: rgb(20 21 26 / 0.05);
+  --pl-illo-bg: #E8E9EB;
 
   /* 5% paper grain (direction A). One 160px SVG noise tile painted as a
      background layer on body + .section--alt only: no overlay, no blend mode,
      no fixed layer, never on top of text or photos. */
-  --pl-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .086 0 0 0 0 .075 0 0 0 0 .11 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --pl-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .078 0 0 0 0 .082 0 0 0 0 .102 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   /* WhatsApp CTA: was raw #25D366 green, a competing accent. Now ink. */
   --pl-wa-bg: var(--pl-fg);
-  --pl-wa-bg-hover: #2A2631;
+  --pl-wa-bg-hover: #2B2D33;
   --pl-wa-fg: #ffffff;
 
   /* Brand cream — the logo spec's brand ground. Was defined only in the intro
      overlay's own stylesheet (assets/intro.css); promoted into the core
      palette (Ofir, 2026-09-07) since it's also the full background of a real
      page (#/kit). intro.css now points its own --pl-intro-cream at this. */
-  --pl-brand-cream: #FBEAD9;
+  --pl-brand-cream: #F2F3F4; /* name kept for #/kit; value is now the cool loader ground (was #FBEAD9, 2026-10-04) */
 
   /* tooltip — dark bubble for icon-only controls (design-system token) */
-  --pl-tooltip-bg: #16131C;
+  --pl-tooltip-bg: #14151A;
   --pl-tooltip-fg: #ffffff;
 
   /* modal/overlay scrim — was a raw rgb() literal with no token (DSL, 2026-09-07) */
-  --pl-scrim: rgb(22 19 28 / 0.55);
+  --pl-scrim: rgb(20 21 26 / 0.55);
 
   /* crew palette — the felt-puppet character colors, for playful accents */
   --pl-crew-orange: #e0763c;
@@ -70,10 +72,10 @@
   --pl-stage-attended: var(--pl-crew-teal);  /* teal: showed up */
   --pl-stage-dropped: #b4443a;               /* muted red: went cold */
 
-  --shadow-pl-sm: 0 1px 2px 0 rgb(22 19 28 / 0.06);
-  --shadow-pl-md: 0 8px 24px -10px rgb(22 19 28 / 0.12);
-  --shadow-pl-lg: 0 24px 60px -20px rgb(22 19 28 / 0.18);
-  --shadow-pl-glow: 0 18px 50px -18px rgb(22 19 28 / 0.20);
+  --shadow-pl-sm: 0 1px 2px 0 rgb(20 21 26 / 0.06);
+  --shadow-pl-md: 0 8px 24px -10px rgb(20 21 26 / 0.12);
+  --shadow-pl-lg: 0 24px 60px -20px rgb(20 21 26 / 0.18);
+  --shadow-pl-glow: 0 18px 50px -18px rgb(20 21 26 / 0.20);
 
   /* radius grid */
   --radius-sm: 4px;
@@ -1635,12 +1637,12 @@ body.modal-open { overflow: hidden; }
    reading-start over the calm wall; captions = credits-style role tags with a
    hairline tick down to each head, placed by placeHeroCaps() (app.js) from
    image-fraction anchors, so they survive any crop, width and asset swap.
-   Section ground = --pl-bg-alt (the wall's value) so nothing the photo does
+   Section ground = --pl-hero-ground (#E8E9EB, the wall's value) so nothing the photo does
    not cover reads as a seam; the page grain lays over everything via ::after.
    ============================================================================ */
 .hero--bleed{
   position:relative; overflow:hidden; isolation:isolate; padding-top:0 !important;
-  background:var(--pl-bg-alt);
+  background:var(--pl-hero-ground);
   min-height:calc(100vh - var(--nav-h)); min-height:calc(100svh - var(--nav-h));
   display:grid; align-items:center;
   /* desktop: push the scene a little past the inline-end edge so the cast clears the title */
@@ -1655,7 +1657,7 @@ body.modal-open { overflow: hidden; }
 }
 /* EN reads left-to-right: text takes the left, so the scene flips to put the cast on the right. */
 html[dir="ltr"] .hero__bg img{ transform:scaleX(-1); }
-/* page grain over everything so the photo and the ivory are one surface */
+/* page grain over everything so the photo and the wall are one surface */
 .hero--bleed::after{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none; background:var(--pl-grain); }
 
 .hero--bleed .hero__grid{
@@ -1727,7 +1729,7 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
   content:""; position:absolute; bottom:4px; left:50%; width:1px; height:calc(var(--cap-lead) - 4px);
   background:var(--cap-line); box-shadow:1px 0 0 var(--cap-plate-edge);
 }
-.hero__cap::before{ /* the node on the head: accent core in an ivory ring */
+.hero__cap::before{ /* the node on the head: accent core in a light ring */
   content:""; position:absolute; bottom:0; left:50%; width:9px; height:9px; transform:translate(-50%, 50%);
   border-radius:var(--radius-full); background:var(--cap-node);
   box-shadow:0 0 0 2px var(--pl-elevated), 0 1px 4px rgb(0 0 0 / 0.25);
@@ -1746,7 +1748,7 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
   html[dir="ltr"] .hero__bg img{ transform:none; }
   .hero__bg::after{ /* soften the top edge of the contained photo into the section ground */
     content:""; position:absolute; left:0; right:0; top:0; height:40%;
-    background:linear-gradient(180deg, var(--pl-bg-alt) 0%, var(--pl-bg-alt) 55%, color-mix(in srgb, var(--pl-bg-alt) 0%, transparent) 100%);
+    background:linear-gradient(180deg, var(--pl-hero-ground) 0%, var(--pl-hero-ground) 55%, color-mix(in srgb, var(--pl-hero-ground) 0%, transparent) 100%);
   }
   .hero--bleed .hero__grid{ padding-top:var(--space-6); padding-bottom:0; }
   /* the scene flows right under the CTA instead of pinning to the bottom of a 100svh box
@@ -2034,7 +2036,7 @@ html.pl-zoom .hero__bg{ opacity:1; transform:none; }
   background:
     radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0) 48%),
     var(--pl-accent);
-  box-shadow: 0 3px 7px -1px rgb(22 19 28 / 0.40), 0 10px 12px -6px rgb(22 19 28 / 0.30);
+  box-shadow: 0 3px 7px -1px rgb(20 21 26 / 0.40), 0 10px 12px -6px rgb(20 21 26 / 0.30);
 }
 
 /* SPLIT — text column, then the photograph. In RTL the grid flips on its own
