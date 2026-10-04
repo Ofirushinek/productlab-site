@@ -1732,6 +1732,11 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
     background:linear-gradient(180deg, var(--pl-bg-alt) 0%, var(--pl-bg-alt) 55%, color-mix(in srgb, var(--pl-bg-alt) 0%, transparent) 100%);
   }
   .hero--bleed .hero__grid{ padding-top:var(--space-6); padding-bottom:0; }
+  /* the scene flows right under the CTA instead of pinning to the bottom of a 100svh box
+     (that left ~150px of empty wall). The 2:3 photo's top ~38% is calm wall, so it tucks
+     up behind the copy and the screen's top edge lands one --space-6 below the button. */
+  .hero--bleed{ display:flex; flex-direction:column; min-height:0; }
+  .hero__bg{ order:1; position:relative; inset:auto; width:100%; aspect-ratio:2/3; margin-top:calc(var(--space-6) - 57vw); }
   .hero--bleed .hero__title{ font-size:clamp(2.25rem, 10.5vw, 3rem); }
   .hero__lede{ margin-top:var(--space-4); font-size:var(--text-body); max-width:none; }
   .hero--bleed .hero__cta{ margin-top:var(--space-5); }
@@ -1739,6 +1744,12 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
   .hero__cap{ margin-bottom:var(--space-3); }
   .hero__cap::after{ height:var(--space-3); }
   .hero__cap-role{ display:none; }
+}
+/* >=21:9 screens: the Marketing Designer's 21:9 cut (screen top sits near the image top),
+   so anchor to the top and drop the inline shift - only desk/floor ever crops. */
+@media (min-width:761px) and (min-aspect-ratio:21/9){
+  .hero--bleed{ --hero-shift:0%; }
+  .hero__bg img{ object-position:left top; }
 }
 /* first-paint lift as the brand curtain goes up (same class intro.js already sets) */
 .hero__bg, .hero__copy{ transition:opacity .6s var(--ease-pl), transform .9s var(--ease-pl); }

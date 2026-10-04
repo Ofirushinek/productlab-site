@@ -1274,7 +1274,7 @@ function render(lang) {
   <!-- 1 HERO — full-bleed "Daylight Studio" (2026-10-04, revival v2).
        The scene IS the hero background (edge to edge, no panel): ONE
        swappable asset per breakpoint (assets/hero-v2-desktop.webp 16:9 /
-       hero-v2-mobile.webp 2:3, Marketing Designer hero-v2 2026-10-04 - the
+       hero-v2-mobile.webp 2:3, hero-v2-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v2 2026-10-04 - the
        three agents building a site on a wall screen). Text block at
        reading-start over the calm wall; each agent gets a credits-style role
        caption anchored to its head. Head anchors = image-fraction pairs in
@@ -1283,9 +1283,11 @@ function render(lang) {
        Title = the LIVE one verbatim (Ofir). No kicker, no facts row. -->
   <section class="hero hero--bleed"
     data-caps-desktop="architect:0.154,0.558;strategist:0.325,0.498;designer:0.432,0.532"
+    data-caps-wide="architect:0.113,0.43;strategist:0.292,0.347;designer:0.40,0.393"
     data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
     <picture class="hero__bg" aria-hidden="true">
       <source media="(max-width: 760px)" srcset="assets/hero-v2-mobile.webp?v=3" type="image/webp" width="1200" height="1800" />
+      <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v2-desktop-21x9.webp?v=1" type="image/webp" width="3360" height="1440" />
       <img src="assets/hero-v2-desktop.webp?v=3" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
     </picture>
     <div class="hero__caps" aria-hidden="true">
@@ -4274,7 +4276,8 @@ function placeHeroCaps() {
   const bx = bb.left - hb.left, by = bb.top - hb.top;
   const ox = bx + (bb.width - w) * px / 100, oy = by + (bb.height - h) * py / 100;
   const mirrored = cs.transform && cs.transform !== "none";
-  const set = (/mobile/.test(img.currentSrc) ? hero.dataset.capsMobile : hero.dataset.capsDesktop) || "";
+  const src = img.currentSrc;
+  const set = (/mobile/.test(src) ? hero.dataset.capsMobile : /21x9/.test(src) ? hero.dataset.capsWide : hero.dataset.capsDesktop) || "";
   set.split(";").forEach((e) => {
     const [k, v] = e.split(":"); if (!v) return;
     const [fx, fy] = v.split(",").map(Number);
