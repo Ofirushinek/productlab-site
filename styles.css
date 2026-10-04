@@ -926,9 +926,21 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .reg__error[hidden] { display: none; }
 .reg__error svg { width: 18px; height: 18px; flex: none; }
 /* Submit: spinner replaces the label while in flight; button stays disabled. */
-.reg__cohorts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.reg__cohorts .chip--choice { height: auto; min-height: var(--ctl-sm); padding-block: 0.45rem; white-space: normal; text-align: start; line-height: 1.25; }
-.field.is-missing .chip--choice { border-color: var(--pl-stage-dropped); }
+/* .tabs--seg (EXTENDS .tabs--pill, 2026-10-04, register cohort picker): the
+   same track + white raised segment, stretched full-width with two equal
+   two-line segments and radio semantics (aria-checked; none checked at
+   first). Zero new tokens. */
+.tabs--seg { display: flex; width: 100%; min-width: 0; border-radius: var(--radius-lg); }
+.tabs--seg .tabs__btn {
+  flex: 1 1 0; min-width: 0; height: auto; min-height: var(--ctl-md);
+  flex-direction: column; gap: 2px; padding: var(--space-2) var(--space-1);
+  border-radius: calc(var(--radius-lg) - 2px); line-height: 1.2; text-align: center;
+}
+.tabs--seg .tabs__btn[aria-checked="true"] { background: var(--pl-surface); color: var(--pl-fg); box-shadow: var(--shadow-pl-sm); }
+.tabs--seg .tabs__btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent); }
+.tabs--seg .tabs__seg-main { font-weight: 700; font-size: var(--text-sm); }
+.tabs--seg .tabs__seg-sub { font-weight: 500; font-size: var(--text-caption); color: var(--pl-fg-secondary); font-variant-numeric: tabular-nums; }
+.field.is-missing .tabs--seg { border-color: var(--pl-stage-dropped); }
 .reg__submit { margin-top: var(--space-1); }
 .reg__submit:disabled { cursor: default; opacity: 0.85; }
 .reg__submit-spinner {
@@ -1632,7 +1644,7 @@ body.modal-open { overflow: hidden; }
    Ofir on the stage-panel version: "my agents inside some stupid box ... the
    image should be part of the whole background". So: the scene IS the section
    background, edge to edge, no panel/border/radius. The photo (Marketing
-   Designer hero-v2: the three agents building a site on a wall screen, pale
+   Designer hero-v3-cool: the three agents building a site on a wall screen, pale
    oak desk, ivory wall) is ONE swappable asset per breakpoint. Text block at
    reading-start over the calm wall; captions = credits-style role tags with a
    hairline tick down to each head, placed by placeHeroCaps() (app.js) from
