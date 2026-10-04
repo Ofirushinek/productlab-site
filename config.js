@@ -13,7 +13,7 @@ window.PL_CONFIG = {
   PIXEL_ID: "",
 
   // Value attached to the Meta `Lead` event (fired once on a successful form submit).
-  PRICE_ILS: 300,
+  PRICE_ILS: 290,
   CURRENCY: "ILS",
   PRODUCT_NAME: "Build with Claude",
 };

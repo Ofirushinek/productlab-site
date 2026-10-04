@@ -28,14 +28,14 @@ const KIT_ZIP_URL = "assets/product-lab-2fd8ad517d75.zip";
 const CFG = window.PL_CONFIG || {};
 const PAYMENT_LINK = CFG.PAYMENT_LINK || ""; // unused for the 2026-10 cohorts (see config.js)
 const PIXEL_ID = CFG.PIXEL_ID || "";
-const PRICE_ILS = CFG.PRICE_ILS || 300;
+const PRICE_ILS = CFG.PRICE_ILS || 290;
 const CURRENCY = CFG.CURRENCY || "ILS";
 const PRODUCT_NAME = CFG.PRODUCT_NAME || "Build with Claude";
 
 /* The ONE registration CTA (hero, both session strips, final band).
    CPO 2026-10-04: no Stripe (doesn't serve Israel). The PRIMARY path is the
    site's own register form (Supabase register_lead) -> /thanks/ -> Ofir calls
-   within 24h -> ₪300 by invoice after the call. */
+   within 24h -> ₪290 by invoice after the call. */
 const checkoutCta = (label, cls = "btn btn--accent") =>
   `<button class="${cls}" type="button" data-register-open>${label}</button>`;
 
@@ -260,7 +260,7 @@ const I18N = {
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪300"],
+      price_value: ["₪290"],
       cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
@@ -271,7 +271,7 @@ const I18N = {
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪300"],
+      price_value: ["₪290"],
       cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
@@ -361,9 +361,9 @@ const I18N = {
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
-      { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
-      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
+      { img: "crew-designer", tag: "המעצב", cap: "סוכן עיצוב מוצר", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
+      { img: "crew-strategist", tag: "האסטרטג", cap: "סוכן ניהול מוצר", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
+      { img: "crew-architect", tag: "הארכיטקט", cap: "סוכן פיתוח", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
     ],
     ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות סוכני AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה. יחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
     ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
@@ -411,7 +411,7 @@ const I18N = {
       { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם צוות סוכני AI עובד ועם אתר משלכם באוויר. לאן לוקחים את זה משם, כבר תלוי בכם." },
       { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד, או להביא כמה אנשים מהצוות." },
       { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "נדבר על זה בשיחה. הקבוצות קטנות והמפגשים חוזרים על עצמם, אז נמצא מועד שמתאים לכם." },
-      { ico: "calendar", q: "מה קורה אחרי ההרשמה?", a: "אחזור אליכם תוך 24 שעות לשיחה קצרה. מכירים, בודקים שהסדנה מתאימה לכם ומוודאים שהכול מותקן. התשלום, ₪300, בחשבונית אחרי השיחה. אם מתברר שזה לא מתאים, לא משלמים." },
+      { ico: "calendar", q: "מה קורה אחרי ההרשמה?", a: "אחזור אליכם תוך 24 שעות לשיחה קצרה. מכירים, בודקים שהסדנה מתאימה לכם ומוודאים שהכול מותקן. התשלום, ₪290, בחשבונית אחרי השיחה. אם מתברר שזה לא מתאים, לא משלמים." },
     ],
 
     final_chip: "בקבוצות קטנות. שיחה אישית לפני המפגש.",
@@ -599,7 +599,7 @@ const I18N = {
       where_label: "Where?",
       where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪300"],
+      price_value: ["₪290"],
       cta: "Save a seat",
       limited_note: "Limited seats per cohort",
     },
@@ -610,7 +610,7 @@ const I18N = {
       where_label: "Where?",
       where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪300"],
+      price_value: ["₪290"],
       cta: "Save a seat",
       limited_note: "Limited seats per cohort",
     },
@@ -695,9 +695,9 @@ const I18N = {
     ofir_name: "Ofir Rushinek",
     ofir_role: "The operator",
     agents: [
-      { img: "crew-designer", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
-      { img: "crew-strategist", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
-      { img: "crew-architect", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
+      { img: "crew-designer", tag: "The Designer", cap: "Product design agent", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
+      { img: "crew-strategist", tag: "The Strategist", cap: "Product management agent", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
+      { img: "crew-architect", tag: "The Architect", cap: "Development agent", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
     ],
     ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with a team of AI agents I built for myself - partners in thinking, planning, design, and building. Together we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
     ofir_why: "Now I want to help you build a team like that for yourself too.",
@@ -1266,15 +1266,25 @@ function render(lang) {
        swappable asset per breakpoint (assets/hero-v2-desktop.webp 16:9 /
        hero-v2-mobile.webp 2:3, hero-v2-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v2 2026-10-04 - the
        three agents building a site on a wall screen). Text block at
-       reading-start over the calm wall. Name badges over the cast removed
-       2026-10-04 (Ofir: they read odd).
+       reading-start over the calm wall; each agent gets a credits-style role
+       caption anchored to its head. Head anchors = image-fraction pairs in
+       data-caps-* (swap the asset -> update six numbers); placeHeroCaps()
+       below turns them into px for whatever crop object-fit produced.
        Title = the LIVE one verbatim (Ofir). No kicker, no facts row. -->
-  <section class="hero hero--bleed">
+  <section class="hero hero--bleed"
+    data-caps-desktop="architect:0.154,0.558;strategist:0.325,0.498;designer:0.432,0.532"
+    data-caps-wide="architect:0.113,0.43;strategist:0.292,0.347;designer:0.40,0.393"
+    data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
     <picture class="hero__bg" aria-hidden="true">
       <source media="(max-width: 760px)" srcset="assets/hero-v2-mobile.webp?v=3" type="image/webp" width="1200" height="1800" />
       <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v2-desktop-21x9.webp?v=1" type="image/webp" width="3360" height="1440" />
       <img src="assets/hero-v2-desktop.webp?v=3" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
     </picture>
+    <div class="hero__caps" aria-hidden="true">
+      <span class="hero__cap hero__cap--designer"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[0].tag}</span><span class="hero__cap-role">${t.agents[0].cap}</span></span></span>
+      <span class="hero__cap hero__cap--strategist"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[1].tag}</span><span class="hero__cap-role">${t.agents[1].cap}</span></span></span>
+      <span class="hero__cap hero__cap--architect"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[2].tag}</span><span class="hero__cap-role">${t.agents[2].cap}</span></span></span>
+    </div>
     <div class="wrap hero__grid">
       <div class="hero__copy">
         <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
@@ -4238,3 +4248,46 @@ function withTimeout(promise, ms) {
   }
 })();
 
+/* HERO CAPTIONS — maps head anchors (image fractions, data-caps-* on .hero--bleed)
+   to px for the crop object-fit actually produced, so the role tags sit on the
+   heads at every viewport and after any asset swap. Runs on load/resize/lang. */
+function placeHeroCaps() {
+  const hero = document.querySelector(".hero--bleed"); if (!hero) return;
+  const pic = hero.querySelector(".hero__bg"), img = pic && pic.querySelector("img");
+  if (!img || !img.naturalWidth) return;
+  const hb = hero.getBoundingClientRect(), bb = pic.getBoundingClientRect();
+  const cs = getComputedStyle(img);
+  const nw = img.naturalWidth, nh = img.naturalHeight;
+  const s = cs.objectFit === "contain" ? Math.min(bb.width / nw, bb.height / nh) : Math.max(bb.width / nw, bb.height / nh);
+  const w = nw * s, h = nh * s;
+  const pos = cs.objectPosition.split(" ").map(parseFloat);
+  const px = isNaN(pos[0]) ? 50 : pos[0], py = isNaN(pos[1]) ? 50 : pos[1];
+  const bx = bb.left - hb.left, by = bb.top - hb.top;
+  const ox = bx + (bb.width - w) * px / 100, oy = by + (bb.height - h) * py / 100;
+  const mirrored = cs.transform && cs.transform !== "none";
+  const src = img.currentSrc;
+  const set = (/mobile/.test(src) ? hero.dataset.capsMobile : /21x9/.test(src) ? hero.dataset.capsWide : hero.dataset.capsDesktop) || "";
+  set.split(";").forEach((e) => {
+    const [k, v] = e.split(":"); if (!v) return;
+    const [fx, fy] = v.split(",").map(Number);
+    const cap = hero.querySelector(".hero__cap--" + k); if (!cap) return;
+    let x = ox + fx * w; if (mirrored) x = bx + bb.width - (x - bx);
+    cap.style.setProperty("--cx", Math.round(x) + "px");
+    cap.style.setProperty("--cy", Math.round(oy + fy * h) + "px");
+  });
+  hero.classList.add("caps-ready");
+}
+(function wireHeroCaps() {
+  const run = () => placeHeroCaps();
+  const arm = () => {
+    const img = document.querySelector(".hero--bleed .hero__bg img");
+    if (!img) return;
+    if (img.complete) run(); else img.addEventListener("load", run, { once: true });
+  };
+  arm();
+  window.addEventListener("resize", run);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+  // the app re-renders #app on language/route changes: re-arm after each render
+  const app = document.getElementById("app");
+  if (app && window.MutationObserver) new MutationObserver(() => arm()).observe(app, { childList: true });
+})();
