@@ -1310,7 +1310,7 @@ function render(lang) {
     </div>
     <div class="proof" style="margin-top:2rem">
       <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/thispage-4.jpg" alt="" /></div>
+        <div class="proof__shot"><img src="assets/thispage-5.jpg" alt="" /></div>
         <div class="proof__body">
           <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
         </div>
