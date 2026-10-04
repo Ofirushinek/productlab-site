@@ -253,7 +253,6 @@ const I18N = {
     // rendered directly beneath it — the ONLY place price appears on the page.
     // Revival 2026-10 (Copywriter site-copy-v3-minimal, dates/price locked by Ofir
     // 2026-10-04): TWO open cohorts, same strip component rendered twice.
-    // `price_was` = regular price struck through beside ₪300 ("חצי מחיר").
     session2: {
       badge: "המחזור הבא",
       when_label: "מתי?",
@@ -261,8 +260,7 @@ const I18N = {
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪300", "חצי מחיר"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
@@ -273,13 +271,10 @@ const I18N = {
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪300", "חצי מחיר"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
-    // Under both strips (Copywriter v2 pay_note, kept: F6 call + refund).
-    pay_note: "נרשמים כאן, ואחזור אליכם לשיחה קצרה. התשלום בחשבונית אחרי השיחה, ואם מתברר שזה לא מתאים, לא משלמים.",
 
     why_eyebrow: "למה עכשיו",
     why_heading: "אדם אחד, יותר מעבודה אחת.",
@@ -604,8 +599,7 @@ const I18N = {
       where_label: "Where?",
       where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪300", "half price"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "Save a seat",
       limited_note: "Limited seats per cohort",
     },
@@ -616,12 +610,10 @@ const I18N = {
       where_label: "Where?",
       where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪300", "half price"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "Save a seat",
       limited_note: "Limited seats per cohort",
     },
-    pay_note: "Register here and I will call you for a short chat. Payment is by invoice after the call, and if it is not a fit, you pay nothing.",
 
     why_eyebrow: "Why now",
     why_heading: "One person, more than one job.",
@@ -1233,10 +1225,8 @@ function sessionStripHtml(s, opts = {}) {
   const cta = opts.disabled
     ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
     : checkoutCta(s.cta);
-  // `price_was` (optional) = regular price struck through beside the live one
-  // (Ofir, 2026-10-04: "half price" — ₪600 crossed out next to ₪300).
   const price = opts.price
-    ? `<div class="ss-price">${s.price_was ? `<s class="ss-price__was">${s.price_was}</s>` : ""}<strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
+    ? `<div class="ss-price"><strong>${s.price_value[0]}</strong>${s.price_value[1] ? `<span>${s.price_value[1]}</span>` : ""}</div>`
     : "";
   return `
       <div class="session-strip reveal${opts.disabled ? " session-strip--closed" : ""}">
@@ -1276,25 +1266,15 @@ function render(lang) {
        swappable asset per breakpoint (assets/hero-v2-desktop.webp 16:9 /
        hero-v2-mobile.webp 2:3, hero-v2-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v2 2026-10-04 - the
        three agents building a site on a wall screen). Text block at
-       reading-start over the calm wall; each agent gets a credits-style role
-       caption anchored to its head. Head anchors = image-fraction pairs in
-       data-caps-* (swap the asset -> update six numbers); placeHeroCaps()
-       below turns them into px for whatever crop object-fit produced.
+       reading-start over the calm wall. Name badges over the cast removed
+       2026-10-04 (Ofir: they read odd).
        Title = the LIVE one verbatim (Ofir). No kicker, no facts row. -->
-  <section class="hero hero--bleed"
-    data-caps-desktop="architect:0.154,0.558;strategist:0.325,0.498;designer:0.432,0.532"
-    data-caps-wide="architect:0.113,0.43;strategist:0.292,0.347;designer:0.40,0.393"
-    data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
+  <section class="hero hero--bleed">
     <picture class="hero__bg" aria-hidden="true">
       <source media="(max-width: 760px)" srcset="assets/hero-v2-mobile.webp?v=3" type="image/webp" width="1200" height="1800" />
       <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v2-desktop-21x9.webp?v=1" type="image/webp" width="3360" height="1440" />
       <img src="assets/hero-v2-desktop.webp?v=3" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
     </picture>
-    <div class="hero__caps" aria-hidden="true">
-      <span class="hero__cap hero__cap--designer"><span class="hero__cap-tag">${t.agents[0].tag}</span><span class="hero__cap-role">${t.agents[0].role}</span></span>
-      <span class="hero__cap hero__cap--strategist"><span class="hero__cap-tag">${t.agents[1].tag}</span><span class="hero__cap-role">${t.agents[1].role}</span></span>
-      <span class="hero__cap hero__cap--architect"><span class="hero__cap-tag">${t.agents[2].tag}</span><span class="hero__cap-role">${t.agents[2].role}</span></span>
-    </div>
     <div class="wrap hero__grid">
       <div class="hero__copy">
         <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
@@ -1375,7 +1355,6 @@ function render(lang) {
         ${sessionStripHtml(t.session2, { price: true })}
         <div class="ss-divider-full"></div>
         ${sessionStripHtml(t.session3, { price: true })}
-        <p class="ss-note ss-note--pay reveal">${t.pay_note}</p>
       </div>
       <div class="tabpanel" data-sessions-panel="past" hidden>
         ${sessionStripHtml(t.session, { disabled: true })}
@@ -4259,46 +4238,3 @@ function withTimeout(promise, ms) {
   }
 })();
 
-/* HERO CAPTIONS — maps head anchors (image fractions, data-caps-* on .hero--bleed)
-   to px for the crop object-fit actually produced, so the role tags sit on the
-   heads at every viewport and after any asset swap. Runs on load/resize/lang. */
-function placeHeroCaps() {
-  const hero = document.querySelector(".hero--bleed"); if (!hero) return;
-  const pic = hero.querySelector(".hero__bg"), img = pic && pic.querySelector("img");
-  if (!img || !img.naturalWidth) return;
-  const hb = hero.getBoundingClientRect(), bb = pic.getBoundingClientRect();
-  const cs = getComputedStyle(img);
-  const nw = img.naturalWidth, nh = img.naturalHeight;
-  const s = cs.objectFit === "contain" ? Math.min(bb.width / nw, bb.height / nh) : Math.max(bb.width / nw, bb.height / nh);
-  const w = nw * s, h = nh * s;
-  const pos = cs.objectPosition.split(" ").map(parseFloat);
-  const px = isNaN(pos[0]) ? 50 : pos[0], py = isNaN(pos[1]) ? 50 : pos[1];
-  const bx = bb.left - hb.left, by = bb.top - hb.top;
-  const ox = bx + (bb.width - w) * px / 100, oy = by + (bb.height - h) * py / 100;
-  const mirrored = cs.transform && cs.transform !== "none";
-  const src = img.currentSrc;
-  const set = (/mobile/.test(src) ? hero.dataset.capsMobile : /21x9/.test(src) ? hero.dataset.capsWide : hero.dataset.capsDesktop) || "";
-  set.split(";").forEach((e) => {
-    const [k, v] = e.split(":"); if (!v) return;
-    const [fx, fy] = v.split(",").map(Number);
-    const cap = hero.querySelector(".hero__cap--" + k); if (!cap) return;
-    let x = ox + fx * w; if (mirrored) x = bx + bb.width - (x - bx);
-    cap.style.setProperty("--cx", Math.round(x) + "px");
-    cap.style.setProperty("--cy", Math.round(oy + fy * h) + "px");
-  });
-  hero.classList.add("caps-ready");
-}
-(function wireHeroCaps() {
-  const run = () => placeHeroCaps();
-  const arm = () => {
-    const img = document.querySelector(".hero--bleed .hero__bg img");
-    if (!img) return;
-    if (img.complete) run(); else img.addEventListener("load", run, { once: true });
-  };
-  arm();
-  window.addEventListener("resize", run);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
-  // the app re-renders #app on language/route changes: re-arm after each render
-  const app = document.getElementById("app");
-  if (app && window.MutationObserver) new MutationObserver(() => arm()).observe(app, { childList: true });
-})();
