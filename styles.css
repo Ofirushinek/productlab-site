@@ -1885,6 +1885,13 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 .ss-price { display: flex; align-items: baseline; gap: 0.3rem; }
 .ss-price strong { font-weight: 700; font-size: var(--text-body-lg); color: var(--pl-fg); }
 .ss-price span { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-body); }
+/* Struck-through regular price beside the live one (Ofir, 2026-10-04: "half
+   price" — ₪600 crossed out next to ₪300). Extends .ss-price, same tokens as
+   its small label; no new token. */
+.ss-price__was { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-secondary); text-decoration: line-through; margin-inline-end: 0.15rem; }
+/* One payment note under BOTH open-cohort strips (Stripe → call → full refund).
+   Reuses .ss-note; only adds spacing + a readable measure. */
+.ss-note--pay { max-width: 60ch; margin: 0 auto; padding-block: 0 clamp(1rem, 2vw, 1.4rem); }
 
 /* Full-bleed rule between the two stacked strips — breaks out of `.wrap`'s
    max-width to span the whole viewport, not just the centered content column. */

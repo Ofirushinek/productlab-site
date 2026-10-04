@@ -22,6 +22,55 @@ const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2
 // Ofir — see shared/shared-brain.md, 2026-09-10.
 const KIT_ZIP_URL = "assets/product-lab-2fd8ad517d75.zip";
 
+/* ---- Launch config (config.js, loaded before this file) -------------------
+   STRIPE_LINK / PIXEL_ID live in ONE place (config.js) so swapping them is a
+   one-line change and thanks/index.html reads the very same values. */
+const CFG = window.PL_CONFIG || {};
+const STRIPE_LINK = CFG.STRIPE_LINK || "";
+const PIXEL_ID = CFG.PIXEL_ID || "";
+const PRICE_ILS = CFG.PRICE_ILS || 300;
+const CURRENCY = CFG.CURRENCY || "ILS";
+const PRODUCT_NAME = CFG.PRODUCT_NAME || "Build with Claude";
+
+/* The ONE registration CTA (hero, both session strips, final band).
+   STRIPE_LINK set  -> plain <a href> to the Payment Link (no JS dependency for
+                       the payment itself; the click just also fires the Pixel).
+   STRIPE_LINK empty -> FALLBACK (clearly interim): the button keeps opening the
+                       existing register form (Supabase register_lead), so it is
+                       never dead. TODO(Ofir): paste the link in config.js. */
+const checkoutCta = (label, cls = "btn btn--accent") => STRIPE_LINK
+  ? `<a class="${cls}" href="${STRIPE_LINK}" data-checkout>${label}</a>`
+  : `<button class="${cls}" type="button" data-register-open data-checkout>${label}</button>`;
+
+/* ---- Meta Pixel (CTO spec publish-and-pixel-v1, 2026-10-04) -------------
+   Standard base snippet, loaded ONLY when PIXEL_ID is set; every call goes
+   through fbqSafe() so a blocked/missing fbq can never throw. IS_LOCAL traffic
+   is skipped like GA4 (see ga() below). Purchase fires on /thanks/ only. */
+function fbqSafe() {
+  try { if (typeof window.fbq === "function") window.fbq.apply(null, arguments); } catch (e) {}
+}
+function loadPixel() {
+  if (!PIXEL_ID || typeof location === "undefined") return;
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") return;
+  if (window.fbq) return;
+  const n = (window.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); });
+  if (!window._fbq) window._fbq = n;
+  n.push = n; n.loaded = true; n.version = "2.0"; n.queue = [];
+  const sc = document.createElement("script");
+  sc.async = true; sc.src = "https://connect.facebook.net/en_US/fbevents.js";
+  document.head.appendChild(sc);
+  fbqSafe("init", PIXEL_ID);
+  fbqSafe("track", "PageView");
+}
+loadPixel();
+/* InitiateCheckout on every registration CTA click (before navigating). */
+function wireCheckout() {
+  document.querySelectorAll("[data-checkout]").forEach((b) => b.addEventListener("click", () => {
+    fbqSafe("track", "InitiateCheckout", { value: PRICE_ILS, currency: CURRENCY, content_name: PRODUCT_NAME });
+    ga("begin_checkout", { value: PRICE_ILS, currency: CURRENCY, items: [{ item_name: PRODUCT_NAME }] });
+  }));
+}
+
 // When a gated redirect bounces a signed-out visitor home, this asks wireStudent
 // to auto-open the sign-in modal on the next render.
 let pendingStudentOpen = false;
@@ -167,18 +216,19 @@ const I18N = {
     nav_student: "כניסת תלמידים",
     nav_signout: "יציאה",
     nav_account: "התפריט שלך",
-    hero_chip: "בהזמנה בלבד. בקבוצות קטנות.",
-    hero_title_a: "מרעיון למציאות. עולם חדש של עבודה עם ",
-    hero_title_mark: "סוכני AI",
-    hero_title_b: ".",
-    hero_sub: "ב-3 שעות תקימו עם Claude צוות סוכני AI, עם זיכרון משותף, ותתחילו לבנות איתו. בזמן אמת.",
-    hero_points: ["זיכרון משותף", "בלי קוד", "צוות שנשאר איתכם"],
+    hero_chip: "קבוצה קטנה. שיחה אישית לפני המפגש.",
+    hero_title_a: "הרבה דברים נשארים בראש. עכשיו יש לכם ",
+    hero_title_mark: "עם מי לבנות אותם.",
+    hero_title_b: "",
+    hero_sub: "סדנה של 3 שעות, על המחשב שלכם, עם Claude וצוות סוכנים. בסוף המפגש יש לכם אתר משלכם, מעוצב ובאוויר. והצוות נשאר אצלכם לדבר הבא.",
+    hero_points: ["בלי קוד", "אתר משלכם באוויר", "הצוות נשאר אצלכם"],
     /* new one-view hero (2026-08-20): headline split into its two sentences,
        sub split into line units the design controls, register CTA */
-    hero_t1: "מרעיון למציאות.",
-    hero_t2a: "עולם חדש של עבודה עם ",
-    hero_sub_lines: ["[COPY: hero sub line 1 — the promise, per CMO/CSO offer]", "[COPY: hero sub line 2]", "[COPY: hero sub line 3]"],
-    hero_cta: "הרשמה למחזור הבא",
+    // Copywriter site-copy-v2 (2026-10-04), HERO OPTION B — chosen by Ofir.
+    hero_t1: "הרבה דברים נשארים בראש.",
+    hero_t2a: "עכשיו יש לכם ",
+    hero_sub_lines: ["סדנה של 3 שעות, על המחשב שלכם, עם Claude וצוות סוכנים.", "בסוף המפגש יש לכם אתר משלכם, מעוצב ובאוויר.", "והצוות נשאר אצלכם לדבר הבא."],
+    hero_cta: "לשמור מקום",
     hero_cta2: "איזה סוכנים מתאימים לי?",
     // Ofir's own words, 2026-09-14 spec item #4 (סווג לסדנאות עבר/הבאות) — used
     // verbatim as the toggle labels, not routed through Copywriter (functional UI
@@ -197,33 +247,53 @@ const I18N = {
     // Cohort #2, added 2026-08-31 (date+price decided by Ofir/CMO, shared-brain
     // IN FLIGHT 2026-08-31 [cmo]). Same shape as `session` above + a price column,
     // rendered directly beneath it — the ONLY place price appears on the page.
+    // Revival 2026-10 (Copywriter site-copy-v2, dates locked by Ofir 2026-10-04):
+    // TWO open cohorts a week apart, each its own strip (same component, rendered
+    // twice — exactly how cohort #1 + #2 stacked before). Badges "מחזור ערב" /
+    // "מחזור בוקר" re-slot the copywriter's own "(ערב)" / "(בוקר)" into the badge
+    // slot so the two rows tell apart at a glance. `price_was` = the struck-through
+    // regular price (Ofir, 2026-10-04: "half price", ₪600 crossed out next to ₪300).
     session2: {
-      badge: "המחזור הבא",
+      badge: "מחזור ערב",
       when_label: "מתי?",
-      when_value: ["יום ה׳, 15 באוקטובר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
+      when_value: ["רביעי 28.10", "19:00-22:00", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
-      where_value: ["אונליין בזום", "מכל מקום בעולם"],
+      where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪600", "לאדם"],
-      cta: "הרשמה",
-      limited_note: "מקומות מוגבלים",
+      price_value: ["₪300", "חצי מחיר"],
+      price_was: "₪600",
+      cta: "לשמור מקום",
+      limited_note: "מקומות מוגבלים בכל מחזור",
     },
+    session3: {
+      badge: "מחזור בוקר",
+      when_label: "מתי?",
+      when_value: ["רביעי 4.11", "09:00-12:00", "מפגש יחיד, 3 שעות"],
+      where_label: "איפה?",
+      where_value: ["אונליין בזום", "על המחשב שלכם"],
+      price_label: "מחיר",
+      price_value: ["₪300", "חצי מחיר"],
+      price_was: "₪600",
+      cta: "לשמור מקום",
+      limited_note: "מקומות מוגבלים בכל מחזור",
+    },
+    pay_note: "התשלום ב-Stripe. אחריו אחזור אליכם לשיחה קצרה, ואם מתברר שזה לא מתאים, מקבלים את כל הכסף בחזרה.",
 
     why_eyebrow: "למה עכשיו",
-    why_heading: "אדם אחד, יותר מעבודה אחת.",
+    why_heading: "הבעיה לא בכם. היא בכל מה שבין הרעיון לביצוע.",
     why_tiles: [
-      { t: "הכול עליך", b: "מוצר, עיצוב והוצאה לאוויר, הכול עובר דרכך. צוות סוכנים הוא הדרך שבה אדם אחד מכסה עבודה של כמה אנשים, בלי להעביר שום דבר הלאה." },
-      { t: "מיומנות, לא טריק", b: "עובדים ישירות מול Claude, עם היתרונות והמגבלות על השולחן. יוצאים עם שיטה עובדת לתזמור צוות סוכנים על עבודת מוצר ועיצוב אמיתית, לא עוד פרומפטים גנריים." },
-      { t: "יתרון ההתחלה", b: "עולם הסטארטאפים נע לכיוון של אנשים וסוכנים שבונים זה לצד זה. כדאי להתרגל לעבוד ככה עכשיו, כל עוד זה עדיין יתרון ולא ברירת המחדל של כולם." },
+      { t: "דברים שנשארים בראש", b: "עם השנים מתרגלים לתמחר כל רעיון מראש: כמה זמן, כמה מאמץ, את מי צריך לגייס. הרבה רעיונות לא מגיעים אפילו לניסיון. לא כי חסר לכם משהו, אלא כי הדרך אליהם נראית ארוכה מדי." },
+      { t: "לא צריך להיות כל האנשים", b: "אין צורך ללמוד לתכנת, לעצב ולכתוב בעצמכם. בונים סביבכם צוות שמשלים אתכם: אחד חזק בדיוק איפה שאתם פחות, אחר עוצר אתכם כשאתם רצים מהר מדי." },
+      { t: "מיומנות, לא טריק", b: "לא עוד פרומפט שמעתיקים מהרשת. יוצאים עם דרך עבודה שאפשר לחזור אליה בכל פעם שיש משהו חדש לבנות." },
     ],
 
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "[COPY: take-home 1]", b: "[COPY: take-home 1 one-liner]" },
-      { t: "[COPY: take-home 2 — a reusable prompt kit]", b: "[COPY: one line: the prompts and the setup, so you can do it again alone]" },
-      { t: "[COPY: take-home 3]", b: "[COPY: take-home 3 one-liner]" },
-      { t: "[COPY: take-home 4 — the way of working, after the workshop]", b: "[COPY: one line: how to keep editing and building without a developer]" }
+      { t: "אתר משלכם, באוויר", b: "אתר מעוצב לעסק, לשירות או לכם עצמכם: מי אתם, מה אתם עושים ואיך פונים אליכם. עולה לאוויר עוד במפגש, בכתובת חינמית שאפשר לשלוח. דומיין משלכם אפשר לחבר אחר כך." },
+      { t: "צוות סוכנים שעובד איתכם", b: "ערכה מוכנה שאני מביא, עם סוכנים לבנייה. כל אחד מהם משלים אתכם במקום אחר, וכולם עובדים על המחשב שלכם, ב-Claude." },
+      { t: "לא מתחילים מאפס בפעם הבאה", b: "הצוות זוכר מה החלטתם, מה תיקנתם ומה אהבתם. הפרויקט הבא מתחיל מהמקום שבו הקודם נגמר." },
+      { t: "הדבר הבא כבר לא נראה רחוק", b: "אחרי שבניתם דבר אחד מההתחלה ועד שהוא באוויר, רעיון חדש כבר לא נראה כמו חודשים של עבודה." },
     ],
 
     /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
@@ -234,46 +304,46 @@ const I18N = {
     fleet_teaser_cta: "אילו סוכנים מתאימים לי?",
 
     who_eyebrow: "למי זה מתאים",
-    who_for_title: "[COPY: who-for title — owners and freelancers]",
-    who_intro: "[COPY: who-intro — freelancers + small-business owners (clinic, studio, coach, trades, local shop), zero code, AI-curious]",
+    who_for_title: "אם אתם רוצים לבנות בעצמכם, אבל לא לבד.",
+    who_intro: "עצמאים ושכירים, מכל תחום. אם יוצא לכם לשמוע על אנשים שבונים דברים עם Claude, ובא לכם לבנות ככה בעצמכם, זה המקום להתחיל. לא צריך רקע טכני.",
     who_tiles: [
-      { t: "[COPY: tile 1 — freelancers]", b: "[COPY: one line: you sell through WhatsApp/Instagram and have no site, or an embarrassing one]" },
-      { t: "[COPY: tile 2 — small-business owners]", b: "[COPY: one line: 1-10 people, service business, quoted thousands for a site]" },
-      { t: "[COPY: tile 3 — AI-curious, never built anything]", b: "[COPY: one line: everyone talks AI, you want to know what it does for YOUR business]" }
+      { t: "עצמאים ובעלי עסקים", b: "יש לכם שירות או עסק, ואין אתר שנעים לשלוח. בסוף המפגש יש, ואתם יודעים לשנות אותו לבד, בלי לחכות לאף אחד." },
+      { t: "שכירים עם רעיון", b: "יש משהו שאתם רוצים לקדם, בעבודה או לצידה. מתחילים מאתר כי הוא הכי מהיר להוציא לאוויר, אבל הדרך עצמה עובדת גם על הרעיון הבא שתרצו להראות." },
+      { t: "סקרנים שעוד לא התחילו", b: "שמעתם על Claude, אולי ניסיתם לשאול אותו שאלות. כאן עוברים משאלות לבנייה, ויוצאים עם משהו שאפשר לשלוח לאנשים." },
     ],
-    who_not: "[COPY: not-for line — a full e-commerce store, or a developer course]",
+    who_not: "מתאים פחות למי שמחפש כפתור קסם, או בוט שעונה ללקוחות ואוטומציות. עדיין צריך לדעת מה אתם רוצים להגיד. הצוות עוזר לכם להגיד את זה טוב.",
 
     agenda_eyebrow: "שלושה שלבים",
-    agenda_title: "[COPY: agenda title — two sessions with Claude Code + homework questionnaire between them]",
-    agenda_intro: "[COPY: agenda intro — per Dean curriculum v2]",
+    agenda_title: "שלוש שעות. בסוף יש לכם אתר באוויר.",
+    agenda_intro: "בכל שלב אתם בונים, לא צופים. את ההתקנה עושים לפני, בשיחה איתי, כך שמהדקה הראשונה עובדים.",
     agenda_phases: [
-      { time: "[COPY: session 1]", t: "[COPY: session 1 title]", b: "[COPY: one-liner]" },
-      { time: "[COPY: between sessions]", t: "[COPY: homework questionnaire title]", b: "[COPY: one-liner]" },
-      { time: "[COPY: session 2]", t: "[COPY: session 2 title]", b: "[COPY: one-liner]" }
+      { time: "שלב ראשון", t: "פוגשים את הצוות", b: "מה זה לבנות עם סוכנים, ואיך כל אחד מהם משלים אתכם. מתחילים מהשאלון שמילאתם לפני המפגש." },
+      { time: "שלב שני", t: "בונים את האתר, חלק אחרי חלק", b: "פתיח, שירותים, מחירים, עליכם, המלצות, שאלות ויצירת קשר. כולם בונים באותו מבנה, וכל אחד יוצא עם המראה, המילים והמחירים שלו." },
+      { time: "שלב שלישי", t: "מתאימים ומעלים לאוויר", b: "משנים את מה שלא יושב נכון, ומעלים לכתובת חינמית שאפשר לשלוח עוד באותו יום." },
     ],
     agenda_toggle: "מה יש בפנים",
     agenda_p1_items: [
-      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
+      { t: "למה צוות ולא צ'אט אחד", b: "מה משתנה כשכל סוכן אחראי על משהו אחר, ואתם מחליטים." },
+      { t: "פוגשים את הערכה", b: "התיקייה שהכנתי מראש, עם הסוכנים שתעבדו איתם היום." },
+      { t: "מהשאלון לאתר", b: "מה שכתבתם על עצמכם ועל מה שאתם עושים הופך לחומר שממנו בונים." },
     ],
     agenda_p2_items: [
-      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
+      { t: "פתיח ושירותים", b: "מה אתם עושים ולמי, במילים שלכם, בשורה שאנשים קוראים עד הסוף." },
+      { t: "מחירים, עליכם והמלצות", b: "החלקים שגורמים למי שנכנס לסמוך עליכם." },
+      { t: "שאלות ויצירת קשר", b: "תשובות לשאלות שחוזרות, ודרך פשוטה לפנות אליכם." },
     ],
     agenda_p3_items: [
-      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
+      { t: "הופכים אותו לשלכם", b: "צבעים, תמונות, ניסוח. אומרים לצוות מה לא מרגיש נכון, והוא מתקן." },
+      { t: "עולים לאוויר", b: "כתובת חינמית, בלי לקנות כלום. דומיין משלכם אפשר לחבר אחר כך." },
+      { t: "מה בונים בפעם הבאה", b: "הצוות נשאר על המחשב שלכם וזוכר מה כבר עשיתם. יוצאים עם הדבר הבא בראש, ועם דרך לבנות אותו." },
     ],
 
     proof_eyebrow: "לא מצגת. מוצרים אמיתיים.",
     proof_title: "כל מה שאתם רואים כאן נבנה באותה הדרך.",
-    proof_lead: "[COPY: proof lead — everything on this page was built with Claude the same way you will in the workshop]",
+    proof_lead: "כל פרויקט בעמוד הזה נבנה עם Claude וצוות סוכנים, באותה דרך שתבנו בסדנה.",
     proof_self_tag: "הדף הזה",
     proof_self_t: "הדף הזה",
-    proof_self_b: "את הדף הזה, ואת כל הסדנה, בניתי עם אותו סוג של צוות סוכני AI שתקימו בעצמכם.",
+    proof_self_b: "את הדף הזה, ואת כל הסדנה, בניתי עם צוות הסוכנים שלי. באותה דרך שתבנו אתם.",
     proof_glimps_tag: "מוצר אמיתי",
     proof_glimps_t: "Glimps",
     proof_glimps_b: "מוצר אמיתי, שנבנה ככה. תראו בעצמכם.",
@@ -282,19 +352,19 @@ const I18N = {
     ofir_eyebrow: "מי תכירו בסדנה",
     roster_title: "אני, והצוות שאיתו אני בונה כל יום.",
     lead_label: "מוביל הסדנה",
-    crew_label: "צוות סוכני ה-AI שלי",
-    crew_title: "אלה השותפים שאיתם אני בונה כל מוצר.",
-    crew_intro: "לכל אחד מהשותפים שלי יש תחום אחריות אחר. יחד הם עוזרים לי לחשוב, לקבל החלטות, לעצב ולבנות מוצרים. במהלך הסדנה תבנו גרסה משלכם לאותו צוות, שתותאם בדיוק לאופן שבו אתם עובדים.\n\nבסוף הסדנה, אלה כבר לא יהיו רק השותפים שלי. הם יהיו גם שלכם.",
+    crew_label: "צוות הסוכנים שלי",
+    crew_title: "כל אחד מהם חזק במקום אחר.",
+    crew_intro: "הם לא העתקים שלי. הם משלימים אותי: אחד מחזיק את הפרטים כשאני חושב בגדול, אחר עוצר אותי כשאני רץ מהר מדי. בסדנה תקבלו צוות כזה משלכם, ותבנו איתו את האתר הראשון.",
     crew_close: "כשתצאו מכאן, יהיה גם לכם צוות כזה. וכבר לא תבנו לבד.",
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
-      { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
-      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
+      { img: "crew-designer", tag: "המעצב", role: "חזק איפה שאני פחות", b: "כשמשהו צריך להיראות טוב, אני מתחיל איתו. הוא בוחר צבעים, סדר ותמונות, ודואג שמי שנכנס יבין מיד במה מדובר." },
+      { img: "crew-strategist", tag: "האסטרטג", role: "עוצר אותי כשאני רץ מהר מדי", b: "כשאני לא בטוח מה צריך להיות בעמוד, אני מתייעץ איתו. הוא שואל את מה שמי שנכנס היה שואל, ומוריד את מה שמיותר." },
+      { img: "crew-architect", tag: "הארכיטקט", role: "מחזיק את הפרטים כשאני חושב בגדול", b: "כשמשהו צריך לעבוד, הוא בונה. טופס, כפתור, כתובת באינטרנט. הוא מטפל בחלק הטכני, כדי שאתם לא תצטרכו." },
     ],
-    ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות סוכני AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה. יחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
-    ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
+    ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה לבד. אני עובד עם צוות סוכנים שבניתי לעצמי, ויחד בנינו את Product Lab, את Glimps ואת האתר שאתם קוראים עכשיו.",
+    ofir_why: "עכשיו אני רוצה שגם לכם יהיה צוות כזה.",
 
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
@@ -331,19 +401,24 @@ const I18N = {
     incl_title: "כל מה שצריך לדעת",
     // ONE unified accordion. `open:true` = logistics facts shown by default.
     detail_items: [
-      { ico: "video",    q: "איפה ואיך זה מתנהל?", a: "מפגש חי בזום, בקבוצה קטנה, כדי שלכל אחד תהיה תשומת לב אישית." },
-      { ico: "clock",    q: "כמה זמן זה לוקח?", a: "כשלוש שעות רצופות עם הפסקה אחת. מגיעים בלי צוות סוכני AI, יוצאים עם אחד." },
-      { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונה לאורך כל הדרך, לא צופה מהצד. יוצאים עם משהו אמיתי שבנית בעצמך." },
-      { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. אם יודעים לכתוב בריף ברור, אפשר לעשות את זה. בונים על Claude, בשפה רגילה, בלי קוד." },
-      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ, חשבון Claude, וחיבור אינטרנט יציב. כדאי גם פינה שקטה שבה תוכלו להתרכז. נגיד לכם מה עוד להכין לפני המפגש." },
-      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם צוות סוכני AI עובד ועם משהו אמיתי שבניתם. לאן לוקחים את זה משם, כבר תלוי בכם." },
-      { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד, או להביא כמה אנשים מהצוות." },
-      { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "נדבר על זה בשיחה. הקבוצות קטנות והמפגשים חוזרים על עצמם, אז נמצא מועד שמתאים לכם." },
+      { ico: "video",    q: "איפה ואיך זה מתנהל?", a: "מפגש חי בזום, בקבוצה קטנה. עובדים על המחשב שלכם, באפליקציית Claude למחשב, ואני עוצר עם כל מי שנתקע." },
+      { ico: "clock",    q: "כמה זמן זה לוקח?", a: "שלוש שעות, עם הפסקה אחת. יש שני מועדים: רביעי 28.10 בערב (19:00-22:00), או רביעי 4.11 בבוקר (09:00-12:00)." },
+      { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונים לאורך כל הדרך. כולם עובדים באותו מבנה, וכל אחד יוצא עם אתר אחר: המראה, המילים והמחירים שלו." },
+      { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. כותבים לצוות בעברית רגילה, והוא בונה. את החלק הטכני הוא לוקח על עצמו." },
+      { ico: "box",      q: "מה צריך להביא?", a: "מחשב נייד או נייח (לא טאבלט ולא טלפון), חשבון Claude בתשלום (המנוי הבסיסי, כ-20 דולר לחודש) ואפליקציית Claude מותקנת. את ההתקנה בודקים יחד בשיחה לפני המפגש. אם יש לוגו וכמה תמונות, כדאי להביא." },
+      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם אתר באוויר, ועם צוות סוכנים שנשאר על המחשב שלכם לדבר הבא שתרצו לבנות." },
+      { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד או עם עוד אנשים. כל אחד צריך מחשב וחשבון Claude משלו." },
+      { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "כתבו לי. הקבוצות קטנות, ויהיו עוד מחזורים." },
+      { ico: "check",    q: "מה קורה אחרי התשלום?", a: "קובעים שיחה קצרה איתי. מכירים, בודקים שהסדנה מתאימה לכם ומוודאים שהכול מותקן. אם בשיחה מתברר שזה לא מתאים, מקבלים את כל הכסף בחזרה." },
+      { ico: "user",     q: "אין לי שום רקע טכני. אסתדר?", a: "כן. את ההתקנה עושים לפני, יחד איתי. במפגש עצמו כותבים, בוחרים ומחליטים, והצוות בונה." },
+      { ico: "globe",    q: "מה עם דומיין?", a: "האתר עולה לכתובת חינמית, בלי לקנות כלום. דומיין משלכם אפשר לחבר אחר כך, ואשלח לכם הסבר איך." },
+      { ico: "info",     q: "למה ₪300?", a: "זה חצי מהמחיר הרגיל (₪600), לשני המחזורים האלה." },
+      { ico: "flow",     q: "במה זה שונה מ-Wix?", a: "ב-Wix בוחרים תבנית וממלאים אותה. כאן מספרים מה אתם עושים, והצוות בונה אתר שנראה כמוכם. ויוצאים גם עם דרך לבנות את הדבר הבא." },
     ],
 
-    final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
+    final_chip: "קבוצה קטנה. שיחה אישית לפני המפגש.",
     final_title: "בואו נבנה ביחד",
-    final_sub: "[COPY: final CTA sub — promise per offer; price + dates]",
+    final_sub: "מפגש אחד, קבוצה קטנה, ואתר משלכם באוויר בסוף. ומשם, הדבר הבא שרציתם לבנות כבר לא נראה רחוק כל כך.",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER HE copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -357,17 +432,17 @@ const I18N = {
     denied_title: "עדיין אין לכם גישה",
     denied_body: "האזור הזה פתוח למשתתפי הסדנה שאושרו. נכנסתם עם Google אבל החשבון עדיין לא רשום. אם נרשמתם וזה לא עובד, דברו איתי ואפתח לכם גישה.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
-    reg_title: "לשמור מקום במפגש הקרוב",
-    reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים כדי לשמור מקום במפגש הקרוב, ואחזור אליכם באופן אישי עם כל מה שצריך לדעת.",
+    reg_title: "לשמור מקום במחזור הבא",
+    reg_sub: "התשלום ב-Stripe. אחריו אחזור אליכם באופן אישי לקבוע שיחה קצרה. אם מתברר שזה לא מתאים, מקבלים את כל הכסף בחזרה.",
     reg_name_label: "שם מלא",
     reg_first_label: "שם פרטי",
     reg_last_label: "שם משפחה",
     reg_email_label: "אימייל",
     reg_email_ph: "you@email.com",
     reg_note_label: "משהו שתרצו לשתף (לא חובה)",
-    reg_note_ph: "שורה עליכם, על מה שאתם בונים, או על מה שאתם מקווים לקבל מזה.",
+    reg_note_ph: "מה תרצו שיהיה באתר שלכם? שורה אחת מספיקה.",
     reg_submit: "לשמור מקום",
-    reg_success: "אתם בפנים. אחזור אליכם באופן אישי עם כל הפרטים על המפגש הקרוב. נדבר בקרוב.",
+    reg_success: "אתם בפנים. אחזור אליכם באופן אישי לקבוע שיחה קצרה לפני המפגש.",
     reg_error: "משהו לא נשלח. נסו שוב, או פשוט כתבו לי ישירות.",
 
     // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
@@ -477,7 +552,7 @@ const I18N = {
     footer_privacy: "מדיניות פרטיות",
     footer_terms: "תנאי שימוש",
 
-    footer_line: "סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
+    footer_line: "סדנאות בקבוצות קטנות. בונים עם Claude וצוות סוכנים, בלי קוד.",
     footer_contact: "יצירת קשר",
   },
 
@@ -486,16 +561,17 @@ const I18N = {
     nav_student: "Student entrance",
     nav_signout: "Sign out",
     nav_account: "Your menu",
-    hero_chip: "Invite-only. Small groups.",
-    hero_title_a: "From idea to reality. A new world of working with ",
-    hero_title_mark: "AI agents",
-    hero_title_b: ".",
-    hero_sub: "In 3 hours, create your own AI agent team with Claude, and start building your first product with it. Live.",
-    hero_points: ["Shared memory", "No code", "A team that stays with you"],
-    hero_t1: "From idea to reality.",
-    hero_t2a: "A new world of working with ",
-    hero_sub_lines: ["[COPY: hero sub line 1 — the promise, per CMO/CSO offer]", "[COPY: hero sub line 2]", "[COPY: hero sub line 3]"],
-    hero_cta: "Register for the next cohort",
+    // EN = INTERIM PD translation of the HE v2 facts (Copywriter has not written EN v2).
+    hero_chip: "Small group. A personal call before the session.",
+    hero_title_a: "A lot of things stay in your head. Now you have ",
+    hero_title_mark: "someone to build them with.",
+    hero_title_b: "",
+    hero_sub: "A 3-hour workshop, on your own computer, with Claude and a team of agents. By the end you have your own site, designed and live. And the team stays with you for the next thing.",
+    hero_points: ["No code", "Your own site, live", "The team stays with you"],
+    hero_t1: "A lot of things stay in your head.",
+    hero_t2a: "Now you have ",
+    hero_sub_lines: ["A 3-hour workshop, on your own computer, with Claude and a team of agents.", "By the end you have your own site, designed and live.", "And the team stays with you for the next thing."],
+    hero_cta: "Save a seat",
     hero_cta2: "See which agents fit you",
     // EN equivalent of Ofir's own HE toggle labels above (2026-09-14 spec item #4).
     sessions_tab_upcoming: "Upcoming workshops",
@@ -513,16 +589,30 @@ const I18N = {
     // as `session` above + a price column, rendered directly beneath it — the
     // ONLY place price appears on the page.
     session2: {
-      badge: "Next cohort",
+      badge: "Evening cohort",
       when_label: "When?",
-      when_value: ["Thursday, 15 October", "17:30-20:30", "One session, 3 hours"],
+      when_value: ["Wed 28.10", "19:00-22:00", "One session, 3 hours"],
       where_label: "Where?",
-      where_value: ["Online, over Zoom", "From anywhere"],
+      where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪600", "per person"],
-      cta: "Sign up",
-      limited_note: "Spots are limited",
+      price_value: ["₪300", "half price"],
+      price_was: "₪600",
+      cta: "Save a seat",
+      limited_note: "Limited seats per cohort",
     },
+    session3: {
+      badge: "Morning cohort",
+      when_label: "When?",
+      when_value: ["Wed 4.11", "09:00-12:00", "One session, 3 hours"],
+      where_label: "Where?",
+      where_value: ["Online on Zoom", "On your own computer"],
+      price_label: "Price",
+      price_value: ["₪300", "half price"],
+      price_was: "₪600",
+      cta: "Save a seat",
+      limited_note: "Limited seats per cohort",
+    },
+    pay_note: "Payment is via Stripe. After it I will call you for a short chat, and if it turns out not to be a fit, you get a full refund.",
 
     why_eyebrow: "Why now",
     why_heading: "One person, more than one job.",
@@ -535,10 +625,10 @@ const I18N = {
     walk_eyebrow: "What you take home",
     walk_title: "What you leave with",
     walk_items: [
-      { t: "[COPY: take-home 1]", b: "[COPY: take-home 1 one-liner]" },
-      { t: "[COPY: take-home 2 — a reusable prompt kit]", b: "[COPY: one line: the prompts and the setup, so you can do it again alone]" },
-      { t: "[COPY: take-home 3]", b: "[COPY: take-home 3 one-liner]" },
-      { t: "[COPY: take-home 4 — the way of working, after the workshop]", b: "[COPY: one line: how to keep editing and building without a developer]" }
+      { t: "A personal team of AI agents, tuned to exactly how you work", b: "You leave with a team that already knows your project, and one teammate you defined yourself, from scratch." },
+      { t: "A shared memory the whole team works from", b: "Every agent works from the same source of knowledge, knows the project, and shares context and information across the entire process." },
+      { t: "Your first project, already underway", b: "During the workshop itself you'll start working with the team you built on your own project, instead of leaving with only theory." },
+      { t: "A way of working that stays with you after the workshop", b: "You'll leave with a team, a memory, and a workflow you can keep developing and using on your next projects too." },
     ],
 
     /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
@@ -549,43 +639,43 @@ const I18N = {
     fleet_teaser_cta: "Which agents fit me?",
 
     who_eyebrow: "Who it is for",
-    who_for_title: "[COPY: who-for title — owners and freelancers]",
-    who_intro: "[COPY: who-intro — freelancers + small-business owners (clinic, studio, coach, trades, local shop), zero code, AI-curious]",
+    who_for_title: "If you want to build on your own, but not alone.",
+    who_intro: "It doesn't matter if you're in product and design, a founder, a product builder, or a professional who wants to work differently. If you want to make AI a real partner in the way you work, you're in the right place.",
     who_tiles: [
-      { t: "[COPY: tile 1 — freelancers]", b: "[COPY: one line: you sell through WhatsApp/Instagram and have no site, or an embarrassing one]" },
-      { t: "[COPY: tile 2 — small-business owners]", b: "[COPY: one line: 1-10 people, service business, quoted thousands for a site]" },
-      { t: "[COPY: tile 3 — AI-curious, never built anything]", b: "[COPY: one line: everyone talks AI, you want to know what it does for YOUR business]" }
+      { t: "Product and design people", b: "Whether you're a product designer, a design lead, or a product manager, the workshop shows you how to work with a team of AI agents that extends what you can do and frees you to focus on what no tool can: thinking, deciding, and leading." },
+      { t: "Builders and founders", b: "You have an idea, a product, or a business you want to build or grow. In the workshop you'll build a team of AI agents that thinks with you, plans, challenges ideas, and helps turn them into a real product." },
+      { t: "Horizon seekers", b: "If you feel the way we work is changing, and you want to understand how to really work with AI, not just ask it questions but build a whole way of working, this workshop is for you." },
     ],
-    who_not: "[COPY: not-for line — a full e-commerce store, or a developer course]",
+    who_not: "Less of a fit for anyone after a magic button. If you'd rather roll up your sleeves and build it yourself, there's a chair at the table.",
 
     agenda_eyebrow: "Three stages",
-    agenda_title: "[COPY: agenda title — two sessions with Claude Code + homework questionnaire between them]",
-    agenda_intro: "[COPY: agenda intro — per Dean curriculum v2]",
+    agenda_title: "Three hours. By the end, your site is live.",
+    agenda_intro: "In three stages we'll build your new way of working together, from learning the method, through setting up your own team of AI agents, to building your first project.",
     agenda_phases: [
-      { time: "[COPY: session 1]", t: "[COPY: session 1 title]", b: "[COPY: one-liner]" },
-      { time: "[COPY: between sessions]", t: "[COPY: homework questionnaire title]", b: "[COPY: one-liner]" },
-      { time: "[COPY: session 2]", t: "[COPY: session 2 title]", b: "[COPY: one-liner]" }
+      { time: "Stage one", t: "Getting started", b: "You'll understand the method, get to know the tools we'll use, and lay the foundations for the team you'll build next." },
+      { time: "Stage two", t: "Meet the team", b: "Open the kit and find the team already inside, connected to shared memory and ready to work. From there, you build together." },
+      { time: "Stage three", t: "Building with the team", b: "You'll put the team you built to work and start building your first project together." },
     ],
     agenda_toggle: "What's inside",
     agenda_p1_items: [
-      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
+      { t: "See the big picture", b: "What's changed in the AI world, why AI agents became a real working tool, and how that shifts the way products get built." },
+      { t: "Get to know the tools", b: "When to use Claude, when ChatGPT, when Gemini, and how each one fits into your workflow." },
+      { t: "Think like a team", b: "Why you start from a clear role, move on to skills and tools, and only then build the shared memory." },
     ],
     agenda_p2_items: [
-      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
+      { t: "Meet the team", b: "Three teammates already inside: a technical partner, a product manager, and a product designer, each with a clear role and their own tools." },
+      { t: "See the shared brain", b: "All the knowledge, decisions, and insights live in one place, and the whole team already reads and writes to it." },
+      { t: "Open the kit", b: "Point Claude at the kit folder that stays with you after the workshop, no extra install needed." },
     ],
     agenda_p3_items: [
-      { t: "[COPY: item title — from Dean curriculum v2]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" },
-      { t: "[COPY: item title]", b: "[COPY: item one-liner]" }
+      { t: "Give the brief", b: "Tell your product manager what you want to build, and it starts prioritizing, steering, and orchestrating the work." },
+      { t: "Build your first project", b: "Turn your idea into a working landing page, together with the team of AI agents already with you." },
+      { t: "Keep going after the workshop", b: "Walk out with your own team of AI agents you can keep consulting, building with, and expanding long after the session ends." },
     ],
 
     proof_eyebrow: "Not a slide deck. Real products.",
     proof_title: "Everything you see here was built the same way.",
-    proof_lead: "[COPY: proof lead — everything on this page was built with Claude the same way you will in the workshop]",
+    proof_lead: "Every project on this page was built with a team of AI agents, shared memory, and the workflow you'll learn in the workshop.",
     proof_self_tag: "This page",
     proof_self_t: "This page",
     proof_self_b: "This page, and the whole workshop, I built with a team of AI agents, the same kind you'll set up yourself.",
@@ -640,9 +730,9 @@ const I18N = {
       { ico: "calendar", q: "What if I can't make the date?", a: "Tell me on the call. The groups are small and sessions run regularly, so we'll find one that fits." },
     ],
 
-    final_chip: "Invite-only. Small groups.",
+    final_chip: "Small group. A personal call before the session.",
     final_title: "Let's build together",
-    final_sub: "[COPY: final CTA sub — promise per offer; price + dates]",
+    final_sub: "One session, a small group, and your own site live by the end. From there, the next thing you wanted to build no longer looks so far away.",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER EN copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -768,7 +858,7 @@ const I18N = {
     footer_privacy: "Privacy Policy",
     footer_terms: "Terms of Use",
 
-    footer_line: "Invite-only workshops on AI-led product design.",
+    footer_line: "Small-group workshops. Building with Claude and a team of agents, no code.",
     footer_contact: "Get in touch",
   },
 };
@@ -780,12 +870,15 @@ const ctaRow = (t) => `
     <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
   </div>`;
 
-const ctaBand = (t, title, sub) => `
+const ctaBand = (t, title, sub, opts = {}) => `
   <section class="section"><div class="wrap">
     <div class="ctaband reveal">
       <h2>${title}</h2>
       <p>${sub}</p>
-      ${ctaRow(t)}
+      <div class="cta-row">
+        ${opts.checkout ? checkoutCta(t.hero_cta) : ""}
+        <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+      </div>
     </div>
   </div></section>`;
 
@@ -1116,9 +1209,11 @@ function wireWhyCursors() {
 function sessionStripHtml(s, opts = {}) {
   const cta = opts.disabled
     ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
-    : `<button class="btn btn--accent" type="button" data-register-open>${s.cta}</button>`;
+    : checkoutCta(s.cta);
+  // `price_was` (optional) = regular price struck through beside the live one
+  // (Ofir, 2026-10-04: "half price" — ₪600 crossed out next to ₪300).
   const price = opts.price
-    ? `<div class="ss-price"><strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
+    ? `<div class="ss-price">${s.price_was ? `<s class="ss-price__was">${s.price_was}</s>` : ""}<strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
     : "";
   return `
       <div class="session-strip reveal${opts.disabled ? " session-strip--closed" : ""}">
@@ -1161,7 +1256,7 @@ function render(lang) {
       <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
       <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
       <div class="hero__cta">
-        <button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button>
+        ${checkoutCta(t.hero_cta)}
       </div>
     </div>
     <picture class="hero__bg">
@@ -1238,6 +1333,9 @@ function render(lang) {
     <div class="wrap">
       <div class="tabpanel" data-sessions-panel="upcoming">
         ${sessionStripHtml(t.session2, { price: true })}
+        <div class="ss-divider-full"></div>
+        ${sessionStripHtml(t.session3, { price: true })}
+        <p class="ss-note ss-note--pay reveal">${t.pay_note}</p>
       </div>
       <div class="tabpanel" data-sessions-panel="past" hidden>
         ${sessionStripHtml(t.session, { disabled: true })}
@@ -1245,7 +1343,11 @@ function render(lang) {
     </div>
   </section>
 
-  <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath -->
+  <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath.
+       2026-10-04 (revival brief, Ofir: "bring the felt puppets back as the agent
+       characters"): crew-*.webp are the felt-puppet portraits again (restored
+       from commit 3191be2; the 2026-09-20 line-icon pattern swap is reversed).
+       ?v=3 so no CDN serves the cached pattern under the same filename. -->
   <section class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.ofir_eyebrow}</span>
@@ -1268,7 +1370,7 @@ function render(lang) {
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=2" alt="" /></div>
+              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=3" alt="" /></div>
               <div class="agentcard__body">
                 <span class="agentcard__tag">${a.tag}</span>
                 <div class="agentcard__role">${a.role}</div>
@@ -1303,10 +1405,9 @@ function render(lang) {
        journey. Route #/fleet and renderFleet() stay alive; markup in git history
        (main, section "3b"). -->
 
-  <!-- 4 WHO — three tiles. broad-market-v1 (2026-10-01): the puppet
-       illustrations (who-designer/builder/horizon.webp) are OFF the main path;
-       puppets live ONLY in the agents block. Tiles reuse the SAME .card +
-       .card__ico component as "what you leave with" (rung 2, no new CSS). -->
+  <!-- 4 WHO — three tiles (puppet illustration on top, like Three-hats cards).
+       Puppets were cut here on 2026-10-01 and brought BACK 2026-10-04 (Ofir,
+       revival brief: the felt puppets are the workshop's characters). -->
   <section class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.who_eyebrow}</span>
@@ -1315,9 +1416,9 @@ function render(lang) {
     </div>
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
-        <div class="card reveal">
-          <div class="card__ico">${[I.users, I.box, I.brain][i] || I.check}</div>
-          <h3>${x.t}</h3><p>${x.b}</p>
+        <div class="tilecard reveal">
+          <div class="tilecard__illo"><img src="assets/${["who-designer", "who-builder", "who-horizon"][i]}.webp?v=2" alt="" /></div>
+          <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
         </div>`).join("")}
     </div>
     <p class="who__not reveal">${t.who_not}</p>
@@ -1392,7 +1493,7 @@ function render(lang) {
   </div></section>
 
   <!-- 10 FINAL CTA -->
-  ${ctaBand(t, t.final_title, t.final_sub)}
+  ${ctaBand(t, t.final_title, t.final_sub, { checkout: true })}
 
   </main>
 
@@ -3710,6 +3811,7 @@ function wireSignout() {
 function afterRender() {
   wireLang();
   wireReveal();
+  wireCheckout();
   wireHeroImage();
   wireStudent();
   wireNotices();
