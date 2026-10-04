@@ -1,0 +1,38 @@
+/* palette-1-paper-stone.css - CANDIDATE palette override (DSL, 2026-10-04, round 3: between ivory and cool).
+   PAPER & STONE - barely-warm neutral: paper white, stone wall, soft graphite ink. Closest to cool, with the chill taken off.
+   Load AFTER styles.css (and intro.css). Overrides tokens only.
+   Hero image must be graded so its edge = --pl-hero-ground #EAE8E4. */
+:root {
+  --pl-bg: #F4F3F0;
+  --pl-bg-alt: #EAE8E4;
+  --pl-surface: #FBFAF8;
+  --pl-elevated: #FBFAF8;
+  --pl-hero-ground: #EAE8E4;
+  --pl-illo-bg: #EAE8E4;
+
+  --pl-fg: #19181A;
+  --pl-fg-body: #2D2C2B;
+  --pl-fg-secondary: #56544F;
+  --pl-fg-muted: #5F5D58;
+
+  --pl-border: rgb(25 24 26 / 0.14);
+  --pl-border-strong: rgb(25 24 26 / 0.24);
+  --pl-grid-dot: rgb(25 24 26 / 0.05);
+  --pl-scrim: rgb(25 24 26 / 0.55);
+
+  --pl-accent: #6D28D9;
+  --pl-accent-hover: #5B21B6;
+
+  --pl-wa-bg-hover: #2D2C2B;
+  --pl-tooltip-bg: #19181A;
+  --pl-brand-cream: #F4F3F0;
+
+  --shadow-pl-sm: 0 1px 2px 0 rgb(25 24 26 / 0.06);
+  --shadow-pl-md: 0 8px 24px -10px rgb(25 24 26 / 0.12);
+  --shadow-pl-lg: 0 24px 60px -20px rgb(25 24 26 / 0.18);
+  --shadow-pl-glow: 0 18px 50px -18px rgb(25 24 26 / 0.20);
+
+  --pl-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.098 0 0 0 0 0.094 0 0 0 0 0.102 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* loader ground (defined on .intro-veil in assets/intro.css, not :root) */
+.intro-veil { --pl-intro-ground: #F4F3F0; --pl-intro-ink: #19181A; }
