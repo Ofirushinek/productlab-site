@@ -1504,10 +1504,27 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 8b A DAY IN THE LIFE OF A GRADUATE — REMOVED on broad-market-v1
-       (2026-10-01): puppet photo (grad-day.webp) + designer-persona narrative.
-       Brief says replace with real screens of pages built in the workshop once
-       they exist. Markup + CSS (.grad*) kept in git history / styles.css. -->
+  <!-- 8b A DAY IN THE LIFE OF A GRADUATE — sits directly BELOW the last testimonial.
+       Same --pl-bg-alt band as the section above it and NO top padding, so the two
+       read as one continuous band rather than two stacked stripes.
+       The photograph is the FULL 3:2 frame at every width — never cropped. -->
+  <section class="section section--alt grad-section"><div class="grad-wrap">
+    <div class="grad">
+      <div class="grad__text reveal">
+        <span class="eyebrow">${t.grad_kicker}</span>
+        <h2 class="section-title grad__title">${t.grad_title}</h2>
+        <div class="grad__paras">
+          ${t.grad_paras.map((g) => `<p>${g}</p>`).join("")}
+        </div>
+      </div>
+      <div class="grad__media reveal">
+        <figure class="grad__frame">
+          <span class="grad__pin" aria-hidden="true"></span>
+          <img src="assets/grad-day.webp" alt="" loading="lazy" decoding="async" width="1536" height="1024" />
+        </figure>
+      </div>
+    </div>
+  </div></section>
 
   <!-- 9 DETAILS — ONE unified accordion (logistics + FAQ), icon on every row -->
   <section class="section"><div class="wrap narrow">
