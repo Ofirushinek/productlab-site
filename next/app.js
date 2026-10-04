@@ -431,7 +431,7 @@ const I18N = {
     denied_body: "האזור הזה פתוח למשתתפי הסדנה שאושרו. נכנסתם עם Google אבל החשבון עדיין לא רשום. אם נרשמתם וזה לא עובד, דברו איתי ואפתח לכם גישה.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
     reg_title: "לשמור מקום במפגש הקרוב",
-    reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים, ואחזור אליכם תוך 24 שעות לשיחה קצרה. התשלום בחשבונית אחרי השיחה, ואם מתברר שזה לא מתאים, לא משלמים.",
+    reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים, ואחזור אליכם תוך 24 שעות לשיחה קצרה.",
     reg_name_label: "שם מלא",
     reg_first_label: "שם פרטי",
     reg_last_label: "שם משפחה",
@@ -748,7 +748,7 @@ const I18N = {
     denied_body: "This area is for approved workshop participants. You're signed in with Google, but your account isn't registered yet. If you registered and it isn't working, talk to me and I'll open it up for you.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
     reg_title: "Save your spot in the next session",
-    reg_sub: "Spots are limited and sessions run in small groups. Leave your details and I will call you within 24 hours for a short chat. Payment is by invoice after the call, and if it is not a fit, you pay nothing.",
+    reg_sub: "Spots are limited and sessions run in small groups. Leave your details and I'll call you within 24 hours for a short chat.",
     reg_name_label: "Full name",
     reg_first_label: "First name",
     reg_last_label: "Last name",
