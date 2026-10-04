@@ -1643,7 +1643,7 @@ body.modal-open { overflow: hidden; }
    Ofir on the stage-panel version: "my agents inside some stupid box ... the
    image should be part of the whole background". So: the scene IS the section
    background, edge to edge, no panel/border/radius. The photo (Marketing
-   Designer hero-v3-cool: the three agents building a site on a wall screen, pale
+   Designer hero-v2 warm: the three agents building a site on a wall screen, pale
    oak desk, ivory wall) is ONE swappable asset per breakpoint. Text block at
    reading-start over the calm wall; captions = credits-style role tags with a
    hairline tick down to each head, placed by placeHeroCaps() (app.js) from
