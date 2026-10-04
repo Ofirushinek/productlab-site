@@ -924,6 +924,9 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .reg__error[hidden] { display: none; }
 .reg__error svg { width: 18px; height: 18px; flex: none; }
 /* Submit: spinner replaces the label while in flight; button stays disabled. */
+.reg__cohorts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.reg__cohorts .chip--choice { height: auto; min-height: var(--ctl-sm); padding-block: 0.45rem; white-space: normal; text-align: start; line-height: 1.25; }
+.field.is-missing .chip--choice { border-color: var(--pl-stage-dropped); }
 .reg__submit { margin-top: var(--space-1); }
 .reg__submit:disabled { cursor: default; opacity: 0.85; }
 .reg__submit-spinner {
@@ -1497,8 +1500,13 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 @media (min-width: 720px) { .team__agents { grid-template-columns: repeat(3, 1fr); } }
 .agentcard { display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
   border: 1px solid var(--pl-border); background: var(--pl-surface); box-shadow: var(--shadow-pl-sm); }
-.agentcard__illo { height: 13rem; overflow: hidden; background: var(--pl-illo-bg); }
-.agentcard__illo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.agentcard__illo { height: 13rem; overflow: hidden; background: var(--pl-grain), var(--pl-illo-bg); position: relative; }
+/* 2026-10-04 revival: the peach-room portraits are retired for the same cutouts the hero stage uses
+   (direction A: one ivory ground, no second tint). Key light + head-and-shoulders crop. */
+.agentcard__illo::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(70% 60% at 50% 30%, var(--pl-surface) 0%, color-mix(in srgb, var(--pl-surface) 0%, transparent) 70%); }
+.agentcard__illo img { position: relative; width: 100%; height: 118%; object-fit: contain; object-position: center top; display: block;
+  margin-top: 6%; filter: drop-shadow(0 12px 14px color-mix(in srgb, var(--pl-fg) 16%, transparent)); }
 /* mobile: cards go full-width, so the fixed 10rem strip crops the character to
    just the face. Give the illo more height to reveal the hands/props it's holding. */
 @media (max-width: 719.98px) { .agentcard__illo { height: 17rem; } }
@@ -1618,177 +1626,114 @@ body.modal-open { overflow: hidden; }
 .modal__close svg { width: 18px; height: 18px; }
 
 /* ============================================================================
-   HERO — text lives ON the image at every width, and can never reach the
-   characters, because both are fractions of the same box.
-
-   Two photographs, swapped by viewport width alone:
-     <= 760px  portrait asset (1600x2233) - characters begin at 45% of height
-     >  760px  16:9 asset     (2560x1440) - characters begin at 40% of height
-   (Those percentages are measured from the pixels, per-row variance down the
-   centre column. Re-measure if an image is replaced.)
-
-   The hero takes the ACTIVE image's own aspect ratio, so the photo is never
-   cropped and never letterboxed - the image IS the background, edge to edge.
-   The hero is a size container and every piece of text, the gaps between them
-   and the button are all sized in cqh (fractions of the hero's height). Text
-   and image therefore scale on ONE curve: shrink the screen and the type
-   shrinks with the room, exactly like lowering a poster. The text block is
-   budgeted to ~80% of the safe band, so the button's bottom edge always keeps
-   clearance above the characters. No floors that could outgrow the band; the
-   probe (hero-probe.js, 24 viewports) asserts the button stays inside the band
-   and no text drops below 12px.
+   HERO — "Daylight Studio" stage (2026-10-04, workshop revival, direction A).
+   Replaces the full-bleed living-room photo hero (2026-08-20 .. 2026-10-04):
+   the peach photo fought the ivory ground the reskin brought in, and a cosy
+   room read "cute", not "studio". Same idea kept (the puppets ARE the hero),
+   new frame: two columns on desktop — text block at reading-start, the cast
+   on a calm ivory STAGE panel (bg-alt + grain + a soft key light + a hairline
+   floor, credits-style tags). Stacked on mobile, text first.
+   Everything is tokens: no raw hex, no raw shadow. Cutouts =
+   assets/hero-cast-*.webp (Marketing Designer, brand-premium step 1).
    ============================================================================ */
-
-.hero--oneview{
-  position:relative; overflow:hidden; background:transparent;
-  padding-top:0 !important; display:block;
-  height:auto; aspect-ratio:1024/1536;          /* portrait asset's own ratio (v3, 2026-09-08) */
-  container-type:size;
+.hero--stage{ position:relative; overflow:hidden; background:transparent; padding-top:0 !important; }
+.hero__grid{
+  display:grid; grid-template-columns:minmax(0,1fr); gap:var(--space-5);
+  padding-top:var(--space-5); padding-bottom:var(--space-6);
 }
 @media (min-width:761px){
-  .hero--oneview{ aspect-ratio:2560/1440; }     /* 16:9 asset's own ratio */
+  .hero__grid{
+    grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);
+    align-items:center; gap:clamp(var(--space-6), 4vw, 72px);
+    min-height:calc(100vh - var(--nav-h)); min-height:calc(100svh - var(--nav-h));
+    padding-top:var(--space-6); padding-bottom:var(--space-6);
+  }
 }
-
-/* the image is the background: absolute, full box, its own ratio, no crop.
-   FIRST-LOAD ZOOM (2026-08-22, Ofir approved: 2%, 1200ms, ease-out, fired as
-   the brand curtain lifts). Two rules make it behave:
-
-   1. THE 2% LIVES IN THE BOX, NOT IN A PERMANENT TRANSFORM. The box is drawn
-      2% oversize (inset:-1% resolves against width for the sides and height
-      for top/bottom, so the ratio is untouched and object-fit:cover is still
-      an exact fit). At rest there is NO transform at all - the photo
-      rasterises at full resolution and nothing stays composited once the move
-      is over. A permanent scale(1.02) would have left it slightly soft for the
-      whole visit for the sake of 1.2 seconds.
-   2. THE ANIMATION STARTS FROM THE RECIPROCAL. 1/1.02 = 0.980392, which is
-      EXACTLY the framing that shipped before this - so the move begins on the
-      old frame and settles onto the new one.
-
-   Only .hero__bg moves. .hero__content (title, sub, button) is a sibling
-   outside it and does not shift by a single pixel - measured, 0.0000px drift
-   across 146 frames. The hero already has overflow:hidden, so the 2% is clipped.
-
-   The `pl-zoom` class is put on <html> by assets/intro.js and by nothing else,
-   at the moment the curtain starts lifting (or the moment a visitor dismisses
-   it early). No class = no animation = the resting frame, which is what a
-   repeat visit, a deep link, a reduced-motion visitor and a failed intro.js
-   all correctly get. */
-.hero__bg{ position:absolute; inset:-1%; margin:0; z-index:0; line-height:0; font-size:0; }
-.hero__bg img{ width:100%; height:100%; max-height:none; display:block; object-fit:cover; object-position:center; }
-
-@keyframes hero-zoom{ from{ transform:scale(0.980392) } to{ transform:scale(1) } }
-/* Parked from the instant the curtain goes up, so the photo is ALREADY on the
-   old framing before anything is visible. Without this it sat at the resting
-   frame and snapped back at the lift — measured behind a 98%-opaque curtain,
-   so invisible in practice, but a 2% leak is not a thing to leave in on
-   purpose. The animation below fills `both`, so it owns the transform during
-   the move and holds scale(1) after it, outranking this park for good. */
-html.pl-zoom-park .hero__bg{ transform: scale(0.980392); }
-html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-/* backstop only - intro.js never adds the class under reduced motion anyway */
-@media (prefers-reduced-motion: reduce){ html.pl-zoom .hero__bg{ animation: none; } }
-
-/* DESKTOP ZOOM, MADE PROFOUND (2026-08-25, Ofir: the 2% move read as
-   unnoticeable on desktop). Same mechanism as above, 6x the distance: 12%
-   oversize box (inset -6%, so 1/1.12 = 0.892857 is the reciprocal start
-   scale) over a slightly longer 1600ms so the bigger move still settles
-   smoothly on the same easing curve. Mobile keeps the original 2% - it
-   reads fine there and wasn't the complaint. */
-@media (min-width:761px){
-  .hero__bg{ inset:-6%; }
-  @keyframes hero-zoom-desktop{ from{ transform:scale(0.892857) } to{ transform:scale(1) } }
-  html.pl-zoom-park .hero__bg{ transform: scale(0.892857); }
-  html.pl-zoom .hero__bg{ animation: hero-zoom-desktop 1600ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-  @media (prefers-reduced-motion: reduce){ html.pl-zoom .hero__bg{ animation: none; } }
+.hero__copy{ text-align:start; }
+.hero__kicker{
+  display:inline-flex; align-items:center; gap:var(--space-2);
+  font-size:var(--text-sm); font-weight:600; color:var(--pl-fg-secondary); letter-spacing:0.02em;
 }
+.hero__kicker .dot{ width:8px; height:8px; border-radius:var(--radius-full); background:var(--pl-accent); flex:none; }
 
-/* the safe band: 45% of the portrait scene, 40% of the wide one */
-.hero__content{
-  position:absolute; top:0; left:0; right:0; height:45%; z-index:2;
-  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-  padding:calc(3.2cqh + 24px) 1.1rem 0; text-align:center;
+/* Two-tone title: the opening sentence sits back (secondary ink), the promise
+   lands in full ink, the mark in accent. ONE size for both so they read as a
+   single poster line. 800 is the sanctioned hero-only weight (Ofir 2026-09-07). */
+.hero--stage .hero__title{
+  margin:var(--space-4) 0 0; max-width:100%; text-align:start;
+  font-weight:800; letter-spacing:-0.03em; line-height:1.02;
+  font-size:clamp(2.5rem, 4.3vw, 4rem); overflow-wrap:break-word;
 }
-@media (min-width:761px){
-  /* Ofir 2026-08-20: sit the text block 64px lower on desktop (8px grid).
-     The centre column the text occupies is clear down to ~45.7% of the scene
-     (measured), so the drop fits inside the clearance at laptop widths and up.
-     On the small-desktop range (761-1179) the hero is short enough that 64px
-     is ~13% of it and would land the button on the characters, so the drop
-     steps down the grid there: 16px. */
-  .hero__content{ height:40%; padding-top:calc(4.2cqh + 16px); }
-}
-@media (min-width:1180px){
-  .hero__content{ padding-top:calc(4.2cqh + 64px); }
-}
+.hero--stage .ht1{ display:block; color:var(--pl-fg-secondary); font-size:inherit; line-height:inherit; font-weight:inherit; }
+.hero--stage .ht2{ display:block; color:var(--pl-fg); font-size:inherit; line-height:inherit; font-weight:inherit; margin-top:0; }
+.hero--stage .mark{ color:var(--pl-accent); }
+/* HE mark is two words ("סוכני AI") that must not split; EN mark is a whole clause and must wrap. */
+html[dir="rtl"] .hero--stage .mark{ white-space:nowrap; }
+html[dir="ltr"] .hero--stage .hero__title{ font-size:clamp(2.25rem, 3.6vw, 3.4rem); letter-spacing:-0.035em; }
 
-.hero__title{ margin:0; max-width:100%; overflow-wrap:break-word; letter-spacing:-0.02em; text-align:center; }
-.hero__title .mark{ color:var(--pl-accent); }
+.hero__lede{
+  margin:var(--space-5) 0 0; color:var(--pl-fg-body); font-weight:500;
+  font-size:var(--text-body-lg); line-height:1.55; max-width:34ch; text-wrap:pretty;
+}
+.hero--stage .hero__cta{ margin-top:var(--space-6); display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:center; }
+.hero--stage .hero__cta .btn{ height:var(--ctl-lg); padding-inline:var(--space-6); font-size:var(--text-body-lg); border-radius:var(--radius-md); white-space:nowrap; }
+/* facts row under the button: dates + price, plain, no chips (Ofir: accessible) */
+.hero__facts{
+  margin:var(--space-5) 0 0; padding:0; list-style:none;
+  display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-4);
+  font-size:var(--text-sm); font-weight:600; color:var(--pl-fg-secondary);
+}
+.hero__facts li{ display:inline-flex; align-items:center; gap:var(--space-2); }
+.hero__facts li + li::before{ content:""; width:4px; height:4px; border-radius:var(--radius-full); background:var(--pl-border-strong); }
+.hero__facts strong{ color:var(--pl-fg); font-weight:700; }
 
-/* All type in cqh = one curve with the image. Ceilings only, no big floors.
-   font-weight: 800 is intentional here, not a stray - Ofir confirmed 2026-09-07
-   ("leave it 800") after seeing it next to 700 side by side. Sanctioned
-   exception for the hero title only; the rest of the system's heaviest weight
-   is 700. Don't "fix" this to 700 elsewhere without asking again. */
-/* cqh multipliers re-tuned 2026-09-08 (7.2->6.7, 4.6->4.3): the v3 mobile
-   hero image is a taller aspect-ratio than v2 (1024/1536 vs 1061/1482), so
-   the SAME cqh coefficients now compute a bigger px font from a taller
-   container - just enough to push ht2 ("...עם סוכני AI.") from one line to
-   two, adding a 3rd total title line on mobile. Scaled both coefficients by
-   544.75/585 (old mobile hero height / new) to land back on the exact same
-   px size at the new mobile height - real 1-line fit measured, not eyeballed
-   - while keeping this the SAME single formula for both breakpoints (the
-   comment above is the reason: "one curve with the image", not a fork). */
-.ht1{ display:block; font-weight:800; color:var(--pl-fg); line-height:1.12;
-      font-size:clamp(1.5rem, 6.7cqh, 5rem); }
-.ht2{ display:block; font-weight:800; color:var(--pl-fg); line-height:1.15;
-      font-size:clamp(1rem, 4.3cqh, 3rem); margin-top:0.3cqh; }
+/* THE STAGE. Square panel; everything inside is % of the panel so the cast
+   keeps its blocking at every width. */
+.hero__stage{
+  position:relative; aspect-ratio:1/1; width:100%;
+  background:var(--pl-grain), var(--pl-bg-alt);
+  border:1px solid var(--pl-border); border-radius:var(--radius-2xl); overflow:hidden;
+  box-shadow:var(--shadow-pl-sm);
+}
+.hero__stage::before{ /* key light */
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(60% 55% at 50% 36%, var(--pl-surface) 0%, color-mix(in srgb, var(--pl-surface) 0%, transparent) 70%);
+}
+.hero__floor{ position:absolute; left:0; right:0; bottom:22%; border-top:1px solid var(--pl-border); }
+.hero__stage-label{
+  position:absolute; top:var(--space-4); inset-inline-end:var(--space-5);
+  font-size:var(--text-caption); font-weight:600; letter-spacing:0.04em; color:var(--pl-fg-secondary);
+}
+.hero__puppet{
+  position:absolute; bottom:14%; width:auto; max-width:none;
+  filter:drop-shadow(0 18px 18px color-mix(in srgb, var(--pl-fg) 18%, transparent));
+}
+.hero__puppet--architect{ height:44%; inset-inline-start:4%; }
+.hero__puppet--strategist{ height:48%; inset-inline-start:35%; }
+.hero__puppet--designer{ height:52%; inset-inline-end:5%; }
+.hero__tags{ position:absolute; bottom:5.5%; inset-inline:9%; display:flex; justify-content:space-between; gap:var(--space-3); }
+.hero__tag{
+  display:inline-flex; gap:var(--space-2); align-items:baseline; white-space:nowrap;
+  font-size:var(--text-caption); font-weight:500; letter-spacing:0.04em; color:var(--pl-fg-secondary);
+}
+.hero__tag b{ font-weight:700; color:var(--pl-fg); font-variant-numeric:tabular-nums; }
 
-/* balance the wrap so no row ends on one orphaned word */
-.hero__sub{ margin:1.4cqh 0 0; color:var(--pl-fg-body); font-weight:500; text-align:center;
-  max-width:min(60ch, 98%); text-wrap:balance; }
-.sd{ display:block; line-height:1.5; font-size:clamp(0.85rem, 3cqh, 1.5rem); text-wrap:balance; }
-/* "בזמן אמת." / "In real time." always gets its own centered row (Ofir, 2026-08-24)
-   — it used to merge inline with the line above once the viewport was wide enough
-   to fit both, same base .sd{display:block} that mobile always had. */
-@media (min-width:761px){
-  .sd{ font-size:clamp(0.85rem, 2.5cqh, 1.5rem); }
+/* mobile: a wider-than-tall panel so the fold still shows the whole cast */
+@media (max-width:760px){
+  .hero__stage{ aspect-ratio:5/4; border-radius:var(--radius-xl); }
+  .hero__stage-label{ display:none; }
+  .hero--stage .hero__title{ margin-top:var(--space-3); font-size:clamp(2.25rem, 10.5vw, 3rem); }
+  .hero__lede{ margin-top:var(--space-4); font-size:var(--text-body); max-width:none; }
+  .hero--stage .hero__cta{ margin-top:var(--space-5); }
+  .hero--stage .hero__cta .btn{ width:100%; }
+  .hero__facts{ margin-top:var(--space-4); }
 }
+/* first-paint lift as the brand curtain goes up (same class intro.js already sets) */
+.hero__stage, .hero__copy{ transition:opacity .6s var(--ease-pl), transform .9s var(--ease-pl); }
+html.pl-zoom-park .hero__stage{ opacity:0; transform:translateY(12px); }
+html.pl-zoom .hero__stage{ opacity:1; transform:none; }
+@media (prefers-reduced-motion: reduce){ .hero__stage, .hero__copy{ transition:none; } }
 
-/* Secondary CTA restored 2026-09-08, stacked layout (Ofir tested 3 live
-   layouts, chose this one): primary on top, secondary below, both centered,
-   narrow, SAME font-size (never let one auto-shrink relative to the other -
-   Ofir's direct instruction after catching that exact bug). Same rule for
-   every viewport, no separate desktop override. */
-.hero__cta{
-  display:flex; flex-direction:column; align-items:center;
-  gap:8px; margin-top:22px;
-}
-/* Mobile also on the CANONICAL .btn scale now (Ofir, 2026-09-08, 3rd pass -
-   was shrunk to fit the stacked layout, he wants the real system size on
-   every viewport, no exceptions). width:100% (not a fixed px) keeps both
-   buttons equal-width for free and gives the longer label room at the
-   bigger font, on any card width. */
-.hero__cta .btn{
-  width:100%; height:var(--ctl-md); padding-inline:var(--space-5);
-  font-size:var(--text-body); border-radius:var(--radius-md);
-  border-width:1.5px; border-style:solid; cursor:pointer;
-}
-/* Desktop (Ofir, 2026-09-08): side by side, not stacked - mobile stays
-   stacked (declared above). Equal width on BOTH layouts: mobile gets it for
-   free (both width:100%); desktop pins both to the same min-width, sized to
-   the longer label, so neither is ever narrower than its own text
-   (white-space:nowrap - never wraps, per the standing rule). Font/height/
-   padding/radius are already the canonical tokens from the base rule above -
-   only width and nowrap actually differ here. */
-@media (min-width:761px){
-  .hero__cta{ flex-direction:row; justify-content:center; gap:12px; }
-  .hero__cta .btn{ width:auto; min-width:230px; white-space:nowrap; }
-  /* Ofir, 2026-09-08: the register button (accent) goes on the LEFT, the
-     secondary (ghost) on the RIGHT - opposite of plain DOM order in RTL,
-     `order` only, markup unchanged. */
-  .hero__cta .btn--ghost{ order:1; }
-  .hero__cta .btn--accent{ order:2; }
-}
 .btn--accent{ background:var(--pl-accent); color:var(--pl-accent-fg); border-color:transparent; box-shadow:var(--shadow-pl-md); }
 .btn--accent:hover{ background:var(--pl-accent-hover); }
 .btn--accent svg{ color:var(--pl-accent-fg); width:1em; height:1em; }

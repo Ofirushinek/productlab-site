@@ -23,29 +23,27 @@ const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2
 const KIT_ZIP_URL = "assets/product-lab-2fd8ad517d75.zip";
 
 /* ---- Launch config (config.js, loaded before this file) -------------------
-   STRIPE_LINK / PIXEL_ID live in ONE place (config.js) so swapping them is a
+   PAYMENT_LINK / PIXEL_ID live in ONE place (config.js) so swapping them is a
    one-line change and thanks/index.html reads the very same values. */
 const CFG = window.PL_CONFIG || {};
-const STRIPE_LINK = CFG.STRIPE_LINK || "";
+const PAYMENT_LINK = CFG.PAYMENT_LINK || ""; // unused for the 2026-10 cohorts (see config.js)
 const PIXEL_ID = CFG.PIXEL_ID || "";
 const PRICE_ILS = CFG.PRICE_ILS || 300;
 const CURRENCY = CFG.CURRENCY || "ILS";
 const PRODUCT_NAME = CFG.PRODUCT_NAME || "Build with Claude";
 
 /* The ONE registration CTA (hero, both session strips, final band).
-   STRIPE_LINK set  -> plain <a href> to the Payment Link (no JS dependency for
-                       the payment itself; the click just also fires the Pixel).
-   STRIPE_LINK empty -> FALLBACK (clearly interim): the button keeps opening the
-                       existing register form (Supabase register_lead), so it is
-                       never dead. TODO(Ofir): paste the link in config.js. */
-const checkoutCta = (label, cls = "btn btn--accent") => STRIPE_LINK
-  ? `<a class="${cls}" href="${STRIPE_LINK}" data-checkout>${label}</a>`
-  : `<button class="${cls}" type="button" data-register-open data-checkout>${label}</button>`;
+   CPO 2026-10-04: no Stripe (doesn't serve Israel). The PRIMARY path is the
+   site's own register form (Supabase register_lead) -> /thanks/ -> Ofir calls
+   within 24h -> ₪300 by invoice after the call. */
+const checkoutCta = (label, cls = "btn btn--accent") =>
+  `<button class="${cls}" type="button" data-register-open>${label}</button>`;
 
 /* ---- Meta Pixel (CTO spec publish-and-pixel-v1, 2026-10-04) -------------
    Standard base snippet, loaded ONLY when PIXEL_ID is set; every call goes
    through fbqSafe() so a blocked/missing fbq can never throw. IS_LOCAL traffic
-   is skipped like GA4 (see ga() below). Purchase fires on /thanks/ only. */
+   is skipped like GA4 (see ga() below). Events: PageView on load, `Lead` once
+   on a successful register-form submit (wireRegister). No checkout events. */
 function fbqSafe() {
   try { if (typeof window.fbq === "function") window.fbq.apply(null, arguments); } catch (e) {}
 }
@@ -63,12 +61,10 @@ function loadPixel() {
   fbqSafe("track", "PageView");
 }
 loadPixel();
-/* InitiateCheckout on every registration CTA click (before navigating). */
-function wireCheckout() {
-  document.querySelectorAll("[data-checkout]").forEach((b) => b.addEventListener("click", () => {
-    fbqSafe("track", "InitiateCheckout", { value: PRICE_ILS, currency: CURRENCY, content_name: PRODUCT_NAME });
-    ga("begin_checkout", { value: PRICE_ILS, currency: CURRENCY, items: [{ item_name: PRODUCT_NAME }] });
-  }));
+/* `Lead` (Meta) + generate_lead (GA4), once per successful form submit. */
+function trackLead(cohort) {
+  fbqSafe("track", "Lead", { value: PRICE_ILS, currency: CURRENCY, content_name: PRODUCT_NAME, content_category: cohort || "" });
+  ga("generate_lead", { value: PRICE_ILS, currency: CURRENCY, cohort: cohort || "" });
 }
 
 // When a gated redirect bounces a signed-out visitor home, this asks wireStudent
@@ -83,7 +79,16 @@ let pendingStudentOpen = false;
    NEVER put the service_role key or the DB password here.                     */
 const SUPABASE_URL = "https://qyeacmmfrbqimjpbgcal.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZWFjbW1mcmJxaW1qcGJnY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDczNjQsImV4cCI6MjEwMjAyMzM2NH0.WNLCixQe1XRnzddtjDtcWks4BnSVbIYZHStBiDBX8ho";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Guarded (2026-10-04): if the supabase-js CDN is blocked (offline preview,
+// strict CSP, ad blocker) the public page must still render. Every auth/rpc
+// call already sits in a try/catch and falls back to signed-out; this stub
+// just makes those calls reject instead of throwing at parse time.
+const sb = (window.supabase && typeof window.supabase.createClient === "function")
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : (() => {
+      const rej = () => Promise.reject(new Error("supabase-js not loaded"));
+      return { auth: { getSession: rej, signOut: rej, signInWithOAuth: rej, onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }) }, rpc: rej, from: () => ({ select: rej, insert: rej, update: rej, delete: rej }) };
+    })();
 
 /* Admin is gated by EMAIL — the same forge-proof gate RLS uses (it reads the
    signed JWT email), so the UI and the data gate always agree. This is NOT a
@@ -216,19 +221,18 @@ const I18N = {
     nav_student: "כניסת תלמידים",
     nav_signout: "יציאה",
     nav_account: "התפריט שלך",
-    hero_chip: "קבוצה קטנה. שיחה אישית לפני המפגש.",
-    hero_title_a: "הרבה דברים נשארים בראש. עכשיו יש לכם ",
-    hero_title_mark: "עם מי לבנות אותם.",
-    hero_title_b: "",
-    hero_sub: "סדנה של 3 שעות, על המחשב שלכם, עם Claude וצוות סוכנים. בסוף המפגש יש לכם אתר משלכם, מעוצב ובאוויר. והצוות נשאר אצלכם לדבר הבא.",
-    hero_points: ["בלי קוד", "אתר משלכם באוויר", "הצוות נשאר אצלכם"],
+    hero_chip: "בקבוצות קטנות. שיחה אישית לפני המפגש.",
+    hero_title_a: "מרעיון למציאות. עולם חדש של עבודה עם ",
+    hero_title_mark: "סוכני AI",
+    hero_title_b: ".",
+    hero_sub: "ב-3 שעות תקימו עם Claude צוות סוכני AI, ותבנו איתו אתר משלכם, מעוצב. עד סוף המפגש הוא כבר באוויר.",
+    hero_points: ["זיכרון משותף", "בלי קוד", "צוות שנשאר איתכם"],
     /* new one-view hero (2026-08-20): headline split into its two sentences,
        sub split into line units the design controls, register CTA */
-    // Copywriter site-copy-v2 (2026-10-04), HERO OPTION B — chosen by Ofir.
-    hero_t1: "הרבה דברים נשארים בראש.",
-    hero_t2a: "עכשיו יש לכם ",
-    hero_sub_lines: ["סדנה של 3 שעות, על המחשב שלכם, עם Claude וצוות סוכנים.", "בסוף המפגש יש לכם אתר משלכם, מעוצב ובאוויר.", "והצוות נשאר אצלכם לדבר הבא."],
-    hero_cta: "לשמור מקום",
+    hero_t1: "מרעיון למציאות.",
+    hero_t2a: "עולם חדש של עבודה עם ",
+    hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "ותבנו איתו אתר משלכם, מעוצב.", "עד סוף המפגש הוא כבר באוויר."],
+    hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
     // Ofir's own words, 2026-09-14 spec item #4 (סווג לסדנאות עבר/הבאות) — used
     // verbatim as the toggle labels, not routed through Copywriter (functional UI
@@ -247,53 +251,51 @@ const I18N = {
     // Cohort #2, added 2026-08-31 (date+price decided by Ofir/CMO, shared-brain
     // IN FLIGHT 2026-08-31 [cmo]). Same shape as `session` above + a price column,
     // rendered directly beneath it — the ONLY place price appears on the page.
-    // Revival 2026-10 (Copywriter site-copy-v2, dates locked by Ofir 2026-10-04):
-    // TWO open cohorts a week apart, each its own strip (same component, rendered
-    // twice — exactly how cohort #1 + #2 stacked before). Badges "מחזור ערב" /
-    // "מחזור בוקר" re-slot the copywriter's own "(ערב)" / "(בוקר)" into the badge
-    // slot so the two rows tell apart at a glance. `price_was` = the struck-through
-    // regular price (Ofir, 2026-10-04: "half price", ₪600 crossed out next to ₪300).
+    // Revival 2026-10 (Copywriter site-copy-v3-minimal, dates/price locked by Ofir
+    // 2026-10-04): TWO open cohorts, same strip component rendered twice.
+    // `price_was` = regular price struck through beside ₪300 ("חצי מחיר").
     session2: {
-      badge: "מחזור ערב",
+      badge: "המחזור הבא",
       when_label: "מתי?",
-      when_value: ["רביעי 28.10", "19:00-22:00", "מפגש יחיד, 3 שעות"],
+      when_value: ["יום ד׳, 28 באוקטובר", "19:00-22:00", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
       price_value: ["₪300", "חצי מחיר"],
       price_was: "₪600",
-      cta: "לשמור מקום",
-      limited_note: "מקומות מוגבלים בכל מחזור",
+      cta: "הרשמה",
+      limited_note: "מקומות מוגבלים",
     },
     session3: {
-      badge: "מחזור בוקר",
+      badge: "מחזור נוסף",
       when_label: "מתי?",
-      when_value: ["רביעי 4.11", "09:00-12:00", "מפגש יחיד, 3 שעות"],
+      when_value: ["יום ד׳, 4 בנובמבר", "09:00-12:00", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
       price_value: ["₪300", "חצי מחיר"],
       price_was: "₪600",
-      cta: "לשמור מקום",
-      limited_note: "מקומות מוגבלים בכל מחזור",
+      cta: "הרשמה",
+      limited_note: "מקומות מוגבלים",
     },
-    pay_note: "התשלום ב-Stripe. אחריו אחזור אליכם לשיחה קצרה, ואם מתברר שזה לא מתאים, מקבלים את כל הכסף בחזרה.",
+    // Under both strips (Copywriter v2 pay_note, kept: F6 call + refund).
+    pay_note: "נרשמים כאן, ואחזור אליכם לשיחה קצרה. התשלום בחשבונית אחרי השיחה, ואם מתברר שזה לא מתאים, לא משלמים.",
 
     why_eyebrow: "למה עכשיו",
-    why_heading: "הבעיה לא בכם. היא בכל מה שבין הרעיון לביצוע.",
+    why_heading: "אדם אחד, יותר מעבודה אחת.",
     why_tiles: [
-      { t: "דברים שנשארים בראש", b: "עם השנים מתרגלים לתמחר כל רעיון מראש: כמה זמן, כמה מאמץ, את מי צריך לגייס. הרבה רעיונות לא מגיעים אפילו לניסיון. לא כי חסר לכם משהו, אלא כי הדרך אליהם נראית ארוכה מדי." },
-      { t: "לא צריך להיות כל האנשים", b: "אין צורך ללמוד לתכנת, לעצב ולכתוב בעצמכם. בונים סביבכם צוות שמשלים אתכם: אחד חזק בדיוק איפה שאתם פחות, אחר עוצר אתכם כשאתם רצים מהר מדי." },
-      { t: "מיומנות, לא טריק", b: "לא עוד פרומפט שמעתיקים מהרשת. יוצאים עם דרך עבודה שאפשר לחזור אליה בכל פעם שיש משהו חדש לבנות." },
+      { t: "הכול עליך", b: "הרעיון, העיצוב והעלייה לאוויר, הכול עובר דרכך. צוות סוכנים הוא הדרך שבה אדם אחד מכסה עבודה של כמה אנשים, בלי להעביר שום דבר הלאה." },
+      { t: "מיומנות, לא טריק", b: "עובדים ישירות מול Claude, עם היתרונות והמגבלות על השולחן. יוצאים עם שיטה עובדת לתזמור צוות סוכנים על העבודה שלכם, לא עוד פרומפטים גנריים." },
+      { t: "יתרון ההתחלה", b: "עולם העבודה נע לכיוון של אנשים וסוכנים שבונים זה לצד זה. כדאי להתרגל לעבוד ככה עכשיו, כל עוד זה עדיין יתרון ולא ברירת המחדל של כולם." },
     ],
 
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "אתר משלכם, באוויר", b: "אתר מעוצב לעסק, לשירות או לכם עצמכם: מי אתם, מה אתם עושים ואיך פונים אליכם. עולה לאוויר עוד במפגש, בכתובת חינמית שאפשר לשלוח. דומיין משלכם אפשר לחבר אחר כך." },
-      { t: "צוות סוכנים שעובד איתכם", b: "ערכה מוכנה שאני מביא, עם סוכנים לבנייה. כל אחד מהם משלים אתכם במקום אחר, וכולם עובדים על המחשב שלכם, ב-Claude." },
-      { t: "לא מתחילים מאפס בפעם הבאה", b: "הצוות זוכר מה החלטתם, מה תיקנתם ומה אהבתם. הפרויקט הבא מתחיל מהמקום שבו הקודם נגמר." },
-      { t: "הדבר הבא כבר לא נראה רחוק", b: "אחרי שבניתם דבר אחד מההתחלה ועד שהוא באוויר, רעיון חדש כבר לא נראה כמו חודשים של עבודה." },
+      { t: "צוות סוכני AI אישי, מותאם בדיוק אליכם", b: "יוצאים עם צוות שכבר מכיר את הפרויקט שלכם." },
+      { t: "זיכרון משותף שכל הצוות עובד ממנו", b: "כל הסוכנים עובדים מאותו מקור ידע, מכירים את הפרויקט ומשתפים ביניהם הקשר ומידע לאורך כל העבודה." },
+      { t: "אתר משלכם, כבר באוויר", b: "כבר במהלך הסדנה תבנו עם הצוות אתר משלכם, מעוצב, ותעלו אותו לאוויר בכתובת חינמית שאפשר לשלוח. במקום לצאת רק עם ידע תיאורטי." },
+      { t: "שיטת עבודה שתמשיך איתכם גם אחרי הסדנה", b: "תצאו עם צוות, זיכרון ותהליך עבודה שתוכלו להמשיך לפתח ולהשתמש בהם גם בפרויקטים הבאים." },
     ],
 
     /* FLEET RECOMMENDER TEASER (2026-09-14, CPO conversion-spec item #3):
@@ -305,45 +307,50 @@ const I18N = {
 
     who_eyebrow: "למי זה מתאים",
     who_for_title: "אם אתם רוצים לבנות בעצמכם, אבל לא לבד.",
-    who_intro: "עצמאים ושכירים, מכל תחום. אם יוצא לכם לשמוע על אנשים שבונים דברים עם Claude, ובא לכם לבנות ככה בעצמכם, זה המקום להתחיל. לא צריך רקע טכני.",
+    who_intro: "לא משנה אם אתם עצמאים או שכירים, ומאיזה תחום, ולא צריך רקע טכני. אם אתם רוצים להפוך את ה-AI לשותף אמיתי בתהליך העבודה שלכם, אתם במקום הנכון.",
     who_tiles: [
-      { t: "עצמאים ובעלי עסקים", b: "יש לכם שירות או עסק, ואין אתר שנעים לשלוח. בסוף המפגש יש, ואתם יודעים לשנות אותו לבד, בלי לחכות לאף אחד." },
-      { t: "שכירים עם רעיון", b: "יש משהו שאתם רוצים לקדם, בעבודה או לצידה. מתחילים מאתר כי הוא הכי מהיר להוציא לאוויר, אבל הדרך עצמה עובדת גם על הרעיון הבא שתרצו להראות." },
-      { t: "סקרנים שעוד לא התחילו", b: "שמעתם על Claude, אולי ניסיתם לשאול אותו שאלות. כאן עוברים משאלות לבנייה, ויוצאים עם משהו שאפשר לשלוח לאנשים." },
+      { t: "עצמאים ושכירים", b: "יש לכם שירות, עסק או רעיון שאתם רוצים להראות לעולם. בסדנה תבנו עם צוות סוכני AI אתר משלכם, ותצאו עם דרך עבודה שתשמש אתכם גם בדבר הבא." },
+      { t: "בונים ויזמים", b: "יש לכם רעיון, מוצר או עסק שאתם רוצים לבנות או לקדם. בסדנה תבנו צוות סוכני AI שחושב איתכם, מתכנן, מאתגר רעיונות ועוזר להפוך אותם למוצר אמיתי." },
+      { t: "מרחיבי אופקים", b: "אם אתם מרגישים שהדרך שבה עובדים משתנה, ורוצים להבין איך באמת עובדים עם AI, לא רק לשאול שאלות אלא לבנות תהליך עבודה שלם, הסדנה הזו בשבילכם." },
     ],
-    who_not: "מתאים פחות למי שמחפש כפתור קסם, או בוט שעונה ללקוחות ואוטומציות. עדיין צריך לדעת מה אתם רוצים להגיד. הצוות עוזר לכם להגיד את זה טוב.",
+    who_not: "מתאים פחות למי שמחפש כפתור קסם. אם בא לך להפשיל שרוולים ולבנות בעצמך, יש לך מקום סביב השולחן.",
 
     agenda_eyebrow: "שלושה שלבים",
-    agenda_title: "שלוש שעות. בסוף יש לכם אתר באוויר.",
-    agenda_intro: "בכל שלב אתם בונים, לא צופים. את ההתקנה עושים לפני, בשיחה איתי, כך שמהדקה הראשונה עובדים.",
+    agenda_title: "שלוש שעות. בסוף הסדנה תצאו עם צוות סוכני AI שעובד איתכם, ועם אתר משלכם באוויר.",
+    agenda_intro: "בשלושה שלבים נבנה יחד את מערכת העבודה החדשה שלכם, מהיכרות עם השיטה, דרך הקמת צוות סוכני AI אישי ועד לאתר הראשון שלכם.",
     agenda_phases: [
-      { time: "שלב ראשון", t: "פוגשים את הצוות", b: "מה זה לבנות עם סוכנים, ואיך כל אחד מהם משלים אתכם. מתחילים מהשאלון שמילאתם לפני המפגש." },
-      { time: "שלב שני", t: "בונים את האתר, חלק אחרי חלק", b: "פתיח, שירותים, מחירים, עליכם, המלצות, שאלות ויצירת קשר. כולם בונים באותו מבנה, וכל אחד יוצא עם המראה, המילים והמחירים שלו." },
-      { time: "שלב שלישי", t: "מתאימים ומעלים לאוויר", b: "משנים את מה שלא יושב נכון, ומעלים לכתובת חינמית שאפשר לשלוח עוד באותו יום." },
+      { time: "שלב ראשון", t: "מתחילים", b: "מבינים את שיטת העבודה, מכירים את הכלים שנשתמש בהם ומניחים את היסודות לצוות שנבנה בהמשך." },
+      { time: "שלב שני", t: "פוגשים את הצוות", b: "פותחים את הערכה ומגלים שהצוות כבר בפנים, מחובר לזיכרון משותף ומוכן לעבוד. משם בונים יחד." },
+      { time: "שלב שלישי", t: "בונים עם הצוות", b: "מפעילים את הצוות שבניתם ובונים יחד את האתר שלכם, עד שהוא באוויר." },
     ],
     agenda_toggle: "מה יש בפנים",
     agenda_p1_items: [
-      { t: "למה צוות ולא צ'אט אחד", b: "מה משתנה כשכל סוכן אחראי על משהו אחר, ואתם מחליטים." },
-      { t: "פוגשים את הערכה", b: "התיקייה שהכנתי מראש, עם הסוכנים שתעבדו איתם היום." },
-      { t: "מהשאלון לאתר", b: "מה שכתבתם על עצמכם ועל מה שאתם עושים הופך לחומר שממנו בונים." },
+      { t: "מבינים את התמונה הגדולה", b: "מה השתנה בעולם ה-AI, למה סוכני AI הפכו לכלי עבודה אמיתי ואיך זה משפיע על הדרך שבה בונים מוצרים." },
+      { t: "מכירים את כלי העבודה", b: "מתי משתמשים ב-Claude, מתי ב-ChatGPT, מתי ב-Gemini, ואיך כל כלי משתלב בתהליך העבודה." },
+      { t: "חושבים כמו צוות", b: "למה מתחילים מתפקיד ברור, ממשיכים לכישורים ולכלים, ורק אחר כך בונים את הזיכרון המשותף." },
+      { t: "מקימים את המוח המשותף", b: "יוצרים בסיס ידע משותף שמאפשר לכל הסוכנים לעבוד מאותו הקשר ולהשתפר לאורך הדרך." },
+      { t: "מבינים את הדרך", b: "מכירים את שלבי הסדנה ומבינים איך כל חלק מתחבר לתהליך עבודה אחד." },
     ],
     agenda_p2_items: [
-      { t: "פתיח ושירותים", b: "מה אתם עושים ולמי, במילים שלכם, בשורה שאנשים קוראים עד הסוף." },
-      { t: "מחירים, עליכם והמלצות", b: "החלקים שגורמים למי שנכנס לסמוך עליכם." },
-      { t: "שאלות ויצירת קשר", b: "תשובות לשאלות שחוזרות, ודרך פשוטה לפנות אליכם." },
+      { t: "מכירים את הצוות", b: "שלושה שותפים כבר בפנים: שותף טכני, מנהל מוצר ומעצב מוצר, כל אחד עם תפקיד ברור וכלים משלו." },
+      { t: "רואים את המוח המשותף", b: "כל הידע, ההחלטות והתובנות נשמרים במקום אחד, וכל הצוות כבר קורא וכותב ממנו." },
+      { t: "פותחים את הערכה", b: "מחברים את Claude לתיקיית הערכה שתלווה אתכם גם אחרי הסדנה, בלי שום התקנה נוספת." },
+      { t: "רואים איך הם מתואמים", b: "כל שותף עובד בשיחה נפרדת משלו, וקודם קורא מה שהאחרים כתבו בזיכרון המשותף. ככה הם נשארים מסונכרנים בלי לדבר ישירות." },
+      { t: "מריצים בדיקת התקנה", b: "מריצים `/check`, והמערכת מאשרת שהצוות מותקן ופעיל על המכונה שלכם." },
     ],
     agenda_p3_items: [
-      { t: "הופכים אותו לשלכם", b: "צבעים, תמונות, ניסוח. אומרים לצוות מה לא מרגיש נכון, והוא מתקן." },
-      { t: "עולים לאוויר", b: "כתובת חינמית, בלי לקנות כלום. דומיין משלכם אפשר לחבר אחר כך." },
-      { t: "מה בונים בפעם הבאה", b: "הצוות נשאר על המחשב שלכם וזוכר מה כבר עשיתם. יוצאים עם הדבר הבא בראש, ועם דרך לבנות אותו." },
+      { t: "נותנים בריף", b: "מסבירים למנהל המוצר מה רוצים לבנות, והוא מתחיל לתעדף, לכוון ולתזמר את העבודה." },
+      { t: "רואים את הצוות בפעולה", b: "כל שותף בצוות עובד בשיחה משלו, אבל קורא קודם מה שהאחרים כתבו בזיכרון המשותף וממשיך משם." },
+      { t: "בונים את האתר שלכם", b: "הופכים את מה שאתם עושים לאתר מעוצב, יחד עם צוות סוכני ה-AI שכבר איתכם, ומעלים אותו לאוויר בכתובת חינמית." },
+      { t: "ממשיכים גם אחרי הסדנה", b: "יוצאים עם צוות סוכני AI אישי שתוכלו להמשיך להתייעץ איתו, לבנות איתו ולהרחיב אותו גם אחרי שהמפגש מסתיים." },
     ],
 
     proof_eyebrow: "לא מצגת. מוצרים אמיתיים.",
     proof_title: "כל מה שאתם רואים כאן נבנה באותה הדרך.",
-    proof_lead: "כל פרויקט בעמוד הזה נבנה עם Claude וצוות סוכנים, באותה דרך שתבנו בסדנה.",
+    proof_lead: "כל פרויקט בעמוד הזה נבנה בעזרת צוות סוכני AI, זיכרון משותף ותהליך העבודה שתלמדו בסדנה.",
     proof_self_tag: "הדף הזה",
     proof_self_t: "הדף הזה",
-    proof_self_b: "את הדף הזה, ואת כל הסדנה, בניתי עם צוות הסוכנים שלי. באותה דרך שתבנו אתם.",
+    proof_self_b: "את הדף הזה, ואת כל הסדנה, בניתי עם אותו סוג של צוות סוכני AI שתקימו בעצמכם.",
     proof_glimps_tag: "מוצר אמיתי",
     proof_glimps_t: "Glimps",
     proof_glimps_b: "מוצר אמיתי, שנבנה ככה. תראו בעצמכם.",
@@ -352,19 +359,19 @@ const I18N = {
     ofir_eyebrow: "מי תכירו בסדנה",
     roster_title: "אני, והצוות שאיתו אני בונה כל יום.",
     lead_label: "מוביל הסדנה",
-    crew_label: "צוות הסוכנים שלי",
-    crew_title: "כל אחד מהם חזק במקום אחר.",
-    crew_intro: "הם לא העתקים שלי. הם משלימים אותי: אחד מחזיק את הפרטים כשאני חושב בגדול, אחר עוצר אותי כשאני רץ מהר מדי. בסדנה תקבלו צוות כזה משלכם, ותבנו איתו את האתר הראשון.",
+    crew_label: "צוות סוכני ה-AI שלי",
+    crew_title: "אלה השותפים שאיתם אני בונה כל מוצר.",
+    crew_intro: "לכל אחד מהשותפים שלי יש תחום אחריות אחר. יחד הם עוזרים לי לחשוב, לקבל החלטות, לעצב ולבנות מוצרים. במהלך הסדנה תבנו גרסה משלכם לאותו צוות, שתותאם בדיוק לאופן שבו אתם עובדים.\n\nבסוף הסדנה, אלה כבר לא יהיו רק השותפים שלי. הם יהיו גם שלכם.",
     crew_close: "כשתצאו מכאן, יהיה גם לכם צוות כזה. וכבר לא תבנו לבד.",
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "crew-designer", tag: "המעצב", role: "חזק איפה שאני פחות", b: "כשמשהו צריך להיראות טוב, אני מתחיל איתו. הוא בוחר צבעים, סדר ותמונות, ודואג שמי שנכנס יבין מיד במה מדובר." },
-      { img: "crew-strategist", tag: "האסטרטג", role: "עוצר אותי כשאני רץ מהר מדי", b: "כשאני לא בטוח מה צריך להיות בעמוד, אני מתייעץ איתו. הוא שואל את מה שמי שנכנס היה שואל, ומוריד את מה שמיותר." },
-      { img: "crew-architect", tag: "הארכיטקט", role: "מחזיק את הפרטים כשאני חושב בגדול", b: "כשמשהו צריך לעבוד, הוא בונה. טופס, כפתור, כתובת באינטרנט. הוא מטפל בחלק הטכני, כדי שאתם לא תצטרכו." },
+      { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
+      { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
+      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
     ],
-    ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה לבד. אני עובד עם צוות סוכנים שבניתי לעצמי, ויחד בנינו את Product Lab, את Glimps ואת האתר שאתם קוראים עכשיו.",
-    ofir_why: "עכשיו אני רוצה שגם לכם יהיה צוות כזה.",
+    ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות סוכני AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה. יחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
+    ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
 
     quotes_eyebrow: "המלצות",
     quotes_title: "ממי שכבר עבר את זה",
@@ -401,24 +408,20 @@ const I18N = {
     incl_title: "כל מה שצריך לדעת",
     // ONE unified accordion. `open:true` = logistics facts shown by default.
     detail_items: [
-      { ico: "video",    q: "איפה ואיך זה מתנהל?", a: "מפגש חי בזום, בקבוצה קטנה. עובדים על המחשב שלכם, באפליקציית Claude למחשב, ואני עוצר עם כל מי שנתקע." },
-      { ico: "clock",    q: "כמה זמן זה לוקח?", a: "שלוש שעות, עם הפסקה אחת. יש שני מועדים: רביעי 28.10 בערב (19:00-22:00), או רביעי 4.11 בבוקר (09:00-12:00)." },
-      { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונים לאורך כל הדרך. כולם עובדים באותו מבנה, וכל אחד יוצא עם אתר אחר: המראה, המילים והמחירים שלו." },
-      { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. כותבים לצוות בעברית רגילה, והוא בונה. את החלק הטכני הוא לוקח על עצמו." },
-      { ico: "box",      q: "מה צריך להביא?", a: "מחשב נייד או נייח (לא טאבלט ולא טלפון), חשבון Claude בתשלום (המנוי הבסיסי, כ-20 דולר לחודש) ואפליקציית Claude מותקנת. את ההתקנה בודקים יחד בשיחה לפני המפגש. אם יש לוגו וכמה תמונות, כדאי להביא." },
-      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם אתר באוויר, ועם צוות סוכנים שנשאר על המחשב שלכם לדבר הבא שתרצו לבנות." },
-      { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד או עם עוד אנשים. כל אחד צריך מחשב וחשבון Claude משלו." },
-      { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "כתבו לי. הקבוצות קטנות, ויהיו עוד מחזורים." },
-      { ico: "check",    q: "מה קורה אחרי התשלום?", a: "קובעים שיחה קצרה איתי. מכירים, בודקים שהסדנה מתאימה לכם ומוודאים שהכול מותקן. אם בשיחה מתברר שזה לא מתאים, מקבלים את כל הכסף בחזרה." },
-      { ico: "user",     q: "אין לי שום רקע טכני. אסתדר?", a: "כן. את ההתקנה עושים לפני, יחד איתי. במפגש עצמו כותבים, בוחרים ומחליטים, והצוות בונה." },
-      { ico: "globe",    q: "מה עם דומיין?", a: "האתר עולה לכתובת חינמית, בלי לקנות כלום. דומיין משלכם אפשר לחבר אחר כך, ואשלח לכם הסבר איך." },
-      { ico: "info",     q: "למה ₪300?", a: "זה חצי מהמחיר הרגיל (₪600), לשני המחזורים האלה." },
-      { ico: "flow",     q: "במה זה שונה מ-Wix?", a: "ב-Wix בוחרים תבנית וממלאים אותה. כאן מספרים מה אתם עושים, והצוות בונה אתר שנראה כמוכם. ויוצאים גם עם דרך לבנות את הדבר הבא." },
+      { ico: "video",    q: "איפה ואיך זה מתנהל?", a: "מפגש חי בזום, בקבוצה קטנה, כדי שלכל אחד תהיה תשומת לב אישית. עובדים על המחשב שלכם, באפליקציית Claude, עם ערכה מוכנה." },
+      { ico: "clock",    q: "כמה זמן זה לוקח?", a: "כשלוש שעות רצופות עם הפסקה אחת. מגיעים בלי צוות סוכני AI, יוצאים עם אחד, ועם אתר משלכם באוויר." },
+      { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונה לאורך כל הדרך, לא צופה מהצד. יוצאים עם אתר שבנית בעצמך." },
+      { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. אם יודעים לכתוב בריף ברור, אפשר לעשות את זה. בונים על Claude, בשפה רגילה, בלי קוד." },
+      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ עם אפליקציית Claude למחשב, חשבון Claude בתשלום וחיבור אינטרנט יציב. כדאי גם פינה שקטה שבה תוכלו להתרכז. את ההתקנה בודקים יחד בשיחה לפני המפגש." },
+      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם צוות סוכני AI עובד ועם אתר משלכם באוויר. לאן לוקחים את זה משם, כבר תלוי בכם." },
+      { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד, או להביא כמה אנשים מהצוות." },
+      { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "נדבר על זה בשיחה. הקבוצות קטנות והמפגשים חוזרים על עצמם, אז נמצא מועד שמתאים לכם." },
+      { ico: "calendar", q: "מה קורה אחרי ההרשמה?", a: "אחזור אליכם תוך 24 שעות לשיחה קצרה. מכירים, בודקים שהסדנה מתאימה לכם ומוודאים שהכול מותקן. התשלום, ₪300, בחשבונית אחרי השיחה. אם מתברר שזה לא מתאים, לא משלמים." },
     ],
 
-    final_chip: "קבוצה קטנה. שיחה אישית לפני המפגש.",
+    final_chip: "בקבוצות קטנות. שיחה אישית לפני המפגש.",
     final_title: "בואו נבנה ביחד",
-    final_sub: "מפגש אחד, קבוצה קטנה, ואתר משלכם באוויר בסוף. ומשם, הדבר הבא שרציתם לבנות כבר לא נראה רחוק כל כך.",
+    final_sub: "מפגש אחד, קבוצה קטנה, וצוות משלכם שבונה איתכם את האתר הראשון שלכם עד שהוא באוויר, ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER HE copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -432,17 +435,21 @@ const I18N = {
     denied_title: "עדיין אין לכם גישה",
     denied_body: "האזור הזה פתוח למשתתפי הסדנה שאושרו. נכנסתם עם Google אבל החשבון עדיין לא רשום. אם נרשמתם וזה לא עובד, דברו איתי ואפתח לכם גישה.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
-    reg_title: "לשמור מקום במחזור הבא",
-    reg_sub: "התשלום ב-Stripe. אחריו אחזור אליכם באופן אישי לקבוע שיחה קצרה. אם מתברר שזה לא מתאים, מקבלים את כל הכסף בחזרה.",
+    reg_title: "לשמור מקום במפגש הקרוב",
+    reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים, ואחזור אליכם תוך 24 שעות לשיחה קצרה. התשלום בחשבונית אחרי השיחה, ואם מתברר שזה לא מתאים, לא משלמים.",
     reg_name_label: "שם מלא",
     reg_first_label: "שם פרטי",
     reg_last_label: "שם משפחה",
+    reg_phone_label: "טלפון",
+    reg_phone_ph: "050-0000000",
+    reg_cohort_label: "איזה מחזור?",
+    reg_cohorts: ["רביעי 28.10 · ערב 19:00-22:00", "רביעי 4.11 · בוקר 09:00-12:00"],
     reg_email_label: "אימייל",
     reg_email_ph: "you@email.com",
     reg_note_label: "משהו שתרצו לשתף (לא חובה)",
-    reg_note_ph: "מה תרצו שיהיה באתר שלכם? שורה אחת מספיקה.",
+    reg_note_ph: "שורה עליכם, על מה שאתם בונים, או על מה שאתם מקווים לקבל מזה.",
     reg_submit: "לשמור מקום",
-    reg_success: "אתם בפנים. אחזור אליכם באופן אישי לקבוע שיחה קצרה לפני המפגש.",
+    reg_success: "אתם בפנים. אחזור אליכם באופן אישי עם כל הפרטים על המפגש הקרוב. נדבר בקרוב.",
     reg_error: "משהו לא נשלח. נסו שוב, או פשוט כתבו לי ישירות.",
 
     // Admin roster - visible only to admin. PLACEHOLDER HE copy 2026-08-12, Copywriter to refine.
@@ -533,14 +540,15 @@ const I18N = {
 
     // ---- Legal: Terms (terms_*) — copy Copywriter 2026-08-05
     terms_title: "תנאי שימוש",
-    terms_intro: "בקצרה: זו סדנה בהזמנה בלבד, החומרים שלכם לשימוש אישי אבל לא להעברה, והתוכן הוא שלי. הנה הפירוט.",
+    terms_intro: "בקצרה: אזור התלמידים פתוח למשתתפים בלבד, החומרים שלכם לשימוש אישי אבל לא להעברה, והתוכן הוא שלי. הנה הפירוט.",
     terms_items: [
-      { t: "בהזמנה בלבד", b: "הגישה לסדנה ולאזור התלמידים היא בהזמנה. אל תשתפו את פרטי הכניסה שלכם." },
+      { t: "למשתתפים בלבד", b: "הגישה לאזור התלמידים פתוחה למשתתפי הסדנה. אל תשתפו את פרטי הכניסה שלכם." },
+      { t: "תשלום וביטול", b: "לפני המפגש נקבע שיחה קצרה, והתשלום בחשבונית אחריה. אם בשיחה מתברר שהסדנה לא מתאימה לכם, לא משלמים." },
       { t: "החומרים", b: "הפרומפטים, התבניות והחומרים שנשתף הם לשימוש אישי שלכם. אל תפיצו, תמכרו או תפרסמו אותם מחדש." },
       { t: "התוכן", b: "כל תוכן הסדנה הוא © אופיר רושינק / Product Lab." },
       { t: "יצירת קשר", b: "משהו לא ברור? כתבו לי בוואטסאפ." },
     ],
-    terms_updated: "עודכן לאחרונה: 5 באוגוסט 2026",
+    terms_updated: "עודכן לאחרונה: 4 באוקטובר 2026",
 
     // ---- #/kit — "here's your kit" landing page (branded, public, no auth).
     // Final copy, Copywriter pass 2026-08-31.
@@ -552,9 +560,10 @@ const I18N = {
     footer_privacy: "מדיניות פרטיות",
     footer_terms: "תנאי שימוש",
 
-    footer_line: "סדנאות בקבוצות קטנות. בונים עם Claude וצוות סוכנים, בלי קוד.",
+    footer_line: "סדנאות בקבוצות קטנות לבנייה עם סוכני AI.",
     footer_contact: "יצירת קשר",
   },
+
 
   en: {
     cta_wa: "Talk to me",
@@ -612,7 +621,7 @@ const I18N = {
       cta: "Save a seat",
       limited_note: "Limited seats per cohort",
     },
-    pay_note: "Payment is via Stripe. After it I will call you for a short chat, and if it turns out not to be a fit, you get a full refund.",
+    pay_note: "Register here and I will call you for a short chat. Payment is by invoice after the call, and if it is not a fit, you pay nothing.",
 
     why_eyebrow: "Why now",
     why_heading: "One person, more than one job.",
@@ -747,10 +756,14 @@ const I18N = {
     denied_body: "This area is for approved workshop participants. You're signed in with Google, but your account isn't registered yet. If you registered and it isn't working, talk to me and I'll open it up for you.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
     reg_title: "Save your spot in the next session",
-    reg_sub: "Spots are limited and go in small groups. Leave your details to hold your place in the next session, and I'll reach out personally with everything you need to know.",
+    reg_sub: "Spots are limited and sessions run in small groups. Leave your details and I will call you within 24 hours for a short chat. Payment is by invoice after the call, and if it is not a fit, you pay nothing.",
     reg_name_label: "Full name",
     reg_first_label: "First name",
     reg_last_label: "Last name",
+    reg_phone_label: "Phone",
+    reg_phone_ph: "050-0000000",
+    reg_cohort_label: "Which session?",
+    reg_cohorts: ["Wed 28.10 · evening 19:00-22:00", "Wed 4.11 · morning 09:00-12:00"],
     reg_email_label: "Email",
     reg_email_ph: "you@email.com",
     reg_note_label: "Anything you'd like to share (optional)",
@@ -1035,8 +1048,18 @@ const registerModal = (t) => `
             <input class="input" id="reg-name" name="fullname" type="text" autocomplete="name" required />
           </div>
           <div class="field">
+            <label class="field__label" for="reg-phone">${t.reg_phone_label}</label>
+            <input class="input ltr-iso" id="reg-phone" name="phone" type="tel" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="${t.reg_phone_ph}" required />
+          </div>
+          <div class="field">
             <label class="field__label" for="reg-email">${t.reg_email_label}</label>
             <input class="input ltr-iso" id="reg-email" name="email" type="email" inputmode="email" dir="ltr" autocomplete="email" placeholder="${t.reg_email_ph}" required />
+          </div>
+          <div class="field" role="radiogroup" aria-label="${t.reg_cohort_label}" data-register-cohorts>
+            <span class="field__label">${t.reg_cohort_label}</span>
+            <div class="reg__cohorts">
+              ${t.reg_cohorts.map((c, i) => `<button type="button" class="chip chip--choice" role="radio" aria-checked="false" data-cohort="${escapeAttr(c)}">${c}</button>`).join("")}
+            </div>
           </div>
           <div class="field">
             <label class="field__label" for="reg-note">${t.reg_note_label}</label>
@@ -1248,22 +1271,38 @@ function render(lang) {
   ${navHeader(t, lang)}
 
   <main id="top">
-  <!-- 1 HERO — full-bleed COZY CAFE SCENE as the background (the visual IS the bg).
-       Title sits over it, no separate graphic. Background photo is a PLACEHOLDER
-       (warm gradient) until the generated cafe image lands (OpenAI billing gate). -->
-  <section class="hero hero--oneview">
-    <div class="hero__content">
-      <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
-      <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
-      <div class="hero__cta">
-        ${checkoutCta(t.hero_cta)}
+  <!-- 1 HERO — "Daylight Studio" stage (2026-10-04, revival). Text block at
+       reading-start, the three agent puppets (cutouts) on an ivory stage panel.
+       Title = the LIVE one verbatim (Ofir). Facts row = dates + price only. -->
+  <section class="hero hero--stage">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <span class="hero__kicker"><span class="dot"></span>${t.hero_chip}</span>
+        <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
+        <p class="hero__lede">${t.hero_sub}</p>
+        <div class="hero__cta">
+          ${checkoutCta(t.hero_cta)}
+        </div>
+        <ul class="hero__facts">
+          <li>${t.session2.where_value[0]}</li>
+          <li><strong>${t.session2.when_value[0].replace(/^יום ד׳, /, "רביעי ")}</strong>${t.session2.when_value[1]}</li>
+          <li><strong>${t.session3.when_value[0].replace(/^יום ד׳, /, "רביעי ")}</strong>${t.session3.when_value[1]}</li>
+          <li><s class="ss-price__was">${t.session2.price_was}</s><strong>${t.session2.price_value[0]}</strong>${t.session2.price_value[1]}</li>
+        </ul>
+      </div>
+      <div class="hero__stage" aria-hidden="true">
+        <span class="hero__stage-label">${t.crew_label}</span>
+        <div class="hero__floor"></div>
+        <img class="hero__puppet hero__puppet--architect" src="assets/hero-cast-architect.webp?v=1" alt="" width="825" height="845" fetchpriority="high" decoding="async" />
+        <img class="hero__puppet hero__puppet--strategist" src="assets/hero-cast-strategist.webp?v=1" alt="" width="771" height="867" fetchpriority="high" decoding="async" />
+        <img class="hero__puppet hero__puppet--designer" src="assets/hero-cast-designer.webp?v=1" alt="" width="631" height="960" fetchpriority="high" decoding="async" />
+        <div class="hero__tags">
+          <span class="hero__tag"><b>01</b>${t.agents[2].tag}</span>
+          <span class="hero__tag"><b>02</b>${t.agents[1].tag}</span>
+          <span class="hero__tag"><b>03</b>${t.agents[0].tag}</span>
+        </div>
       </div>
     </div>
-    <picture class="hero__bg">
-      <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=3" />
-      <source type="image/webp" srcset="assets/hero-room.webp?v=1" />
-      <img class="hero__img is-loaded" src="assets/hero-room.webp?v=1" alt="" width="2560" height="1440" fetchpriority="high" decoding="async" />
-    </picture>
   </section>
 
   <!-- 6 PROOF OF CRAFT — moved up to right after the hero (conversion-spec item
@@ -1277,7 +1316,7 @@ function render(lang) {
     </div>
     <div class="proof" style="margin-top:2rem">
       <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/thispage-3.jpg" alt="" /></div>
+        <div class="proof__shot"><img src="assets/thispage-4.jpg" alt="" /></div>
         <div class="proof__body">
           <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
         </div>
@@ -1370,7 +1409,7 @@ function render(lang) {
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=3" alt="" /></div>
+              <div class="agentcard__illo"><img src="assets/hero-cast-${a.img.replace("crew-", "")}.webp?v=1" alt="" width="771" height="867" loading="lazy" /></div>
               <div class="agentcard__body">
                 <span class="agentcard__tag">${a.tag}</span>
                 <div class="agentcard__role">${a.role}</div>
@@ -1416,9 +1455,9 @@ function render(lang) {
     </div>
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
-        <div class="tilecard reveal">
-          <div class="tilecard__illo"><img src="assets/${["who-designer", "who-builder", "who-horizon"][i]}.webp?v=2" alt="" /></div>
-          <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
+        <div class="card reveal">
+          <div class="card__ico">${[I.user, I.spark, I.globe][i] || I.check}</div>
+          <h3>${x.t}</h3><p>${x.b}</p>
         </div>`).join("")}
     </div>
     <p class="who__not reveal">${t.who_not}</p>
@@ -3811,7 +3850,6 @@ function wireSignout() {
 function afterRender() {
   wireLang();
   wireReveal();
-  wireCheckout();
   wireHeroImage();
   wireStudent();
   wireNotices();
@@ -3975,6 +4013,11 @@ function wireRegister() {
       open();
     }));
   modal.querySelectorAll("[data-register-close]").forEach((b) => b.addEventListener("click", close));
+  // Cohort chips: a one-of radio group (same .chip--choice as the fleet recommender).
+  modal.querySelectorAll("[data-cohort]").forEach((b) => b.addEventListener("click", () => {
+    modal.querySelectorAll("[data-cohort]").forEach((o) => o.setAttribute("aria-checked", o === b ? "true" : "false"));
+    modal.querySelector("[data-register-cohorts]").classList.remove("is-missing");
+  }));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
 
   const setLoading = (on) => {
@@ -3998,12 +4041,20 @@ function wireRegister() {
     const first = nameParts[0] || "";
     const last = nameParts.slice(1).join(" ") || first;
     const email = form.email.value.trim();
-    const note = form.note.value.trim();
+    const phone = form.phone.value.trim();
+    const cohortBtn = modal.querySelector('[data-cohort][aria-checked="true"]');
+    const cohort = cohortBtn ? cohortBtn.getAttribute("data-cohort") : "";
+    const freeNote = form.note.value.trim();
+    // register_lead's signature is first/last/email/note (CTO-owned). Phone +
+    // cohort ride inside `note` until the CTO adds real columns — Ofir reads
+    // them in the lead email either way.
+    const note = [`מחזור: ${cohort}`, `טלפון: ${phone}`, freeNote].filter(Boolean).join(" · ");
 
-    // Client-side: require a name + a valid-looking email (note optional).
-    if (!first || !EMAIL_RE.test(email)) {
-      const missing = !first ? form.fullname : form.email;
-      missing.focus();
+    // Client-side: name, phone, valid-looking email, a cohort picked.
+    if (!first || !phone || !EMAIL_RE.test(email) || !cohort) {
+      const missing = !first ? form.fullname : !phone ? form.phone : !EMAIL_RE.test(email) ? form.email : modal.querySelector("[data-cohort]");
+      if (missing) missing.focus();
+      if (!cohort) modal.querySelector("[data-register-cohorts]").classList.add("is-missing");
       return;
     }
 
@@ -4021,6 +4072,10 @@ function wireRegister() {
         });
         if (error) throw error;
       }
+      trackLead(cohort);
+      // Hand off to the standalone /thanks/ page (same folder as index.html;
+      // trailing slash — static host, /thanks is a folder).
+      location.href = new URL("thanks/", location.href.split("#")[0]).href;
       formView.hidden = true;
       successView.hidden = false;
     } catch (err) {
