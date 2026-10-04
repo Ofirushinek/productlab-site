@@ -254,7 +254,7 @@ const I18N = {
     // Revival 2026-10 (Copywriter site-copy-v3-minimal, dates/price locked by Ofir
     // 2026-10-04): TWO open cohorts, same strip component rendered twice.
     session2: {
-      badge: "המחזור הבא",
+      badge: "מחזור ערב",
       when_label: "מתי?",
       when_value: ["יום ד׳, 28 באוקטובר", "19:00-22:00", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
@@ -265,7 +265,7 @@ const I18N = {
       limited_note: "מקומות מוגבלים",
     },
     session3: {
-      badge: "מחזור נוסף",
+      badge: "מחזור בוקר",
       when_label: "מתי?",
       when_value: ["יום ד׳, 4 בנובמבר", "09:00-12:00", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
