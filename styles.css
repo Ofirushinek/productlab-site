@@ -1632,9 +1632,7 @@ body.modal-open { overflow: hidden; }
    background, edge to edge, no panel/border/radius. The photo (Marketing
    Designer hero-v2: the three agents building a site on a wall screen, pale
    oak desk, ivory wall) is ONE swappable asset per breakpoint. Text block at
-   reading-start over the calm wall; captions = credits-style role tags with a
-   hairline tick down to each head, placed by placeHeroCaps() (app.js) from
-   image-fraction anchors, so they survive any crop, width and asset swap.
+   reading-start over the calm wall (name badges removed 2026-10-04, Ofir).
    Section ground = --pl-bg-alt (the wall's value) so nothing the photo does
    not cover reads as a seam; the page grain lays over everything via ::after.
    ============================================================================ */
@@ -1691,35 +1689,8 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
 .hero--bleed .hero__cta{ margin-top:var(--space-6); display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:center; }
 .hero--bleed .hero__cta .btn{ height:var(--ctl-lg); padding-inline:var(--space-6); font-size:var(--text-body-lg); border-radius:var(--radius-md); white-space:nowrap; }
 
-/* CAPTIONS: name-tags, one per agent, a hairline tick down to the head.
-   A tag sits on whatever the photo puts behind the head (wall, screen, code),
-   so it carries its own surface: the system's elevated surface + hairline, pill
-   radius, like the chips elsewhere on the page. --cx/--cy are set per caption by
-   placeHeroCaps(); hidden until placed. */
-.hero__caps{ position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; }
-.hero--bleed.caps-ready .hero__caps{ opacity:1; }
-.hero__cap{
-  position:absolute; left:var(--cx, -999px); top:var(--cy, 0);
-  transform:translate(-50%, -100%);
-  display:inline-flex; align-items:center; gap:var(--space-2);
-  margin-bottom:var(--space-4); padding:var(--space-1) var(--space-3);
-  background:color-mix(in srgb, var(--pl-elevated) 94%, transparent);
-  border:1px solid var(--pl-border); border-radius:var(--radius-full); box-shadow:var(--shadow-pl-sm);
-  white-space:nowrap; font-size:var(--text-caption); line-height:1.4; letter-spacing:0.01em; color:var(--pl-fg-secondary);
-}
-.hero__cap::after{ /* the tick, from the pill down to the head */
-  content:""; position:absolute; top:100%; left:50%; width:1px; height:var(--space-4);
-  background:var(--pl-border-strong);
-}
-.hero__cap-role::before{ /* the system's dot separator (same as .hero__facts / .meta) */
-  content:""; display:inline-block; width:3px; height:3px; border-radius:var(--radius-full);
-  background:var(--pl-border-strong); margin-inline-end:var(--space-2); vertical-align:middle;
-}
-.hero__cap-tag{ font-weight:700; color:var(--pl-fg); }
-.hero__cap-role{ font-weight:500; }
-
 /* mobile: text on the calm wall at the top, the scene across the bottom (contained,
-   bottom-anchored, on the wall's own value so the seam disappears); captions = tag only */
+   bottom-anchored, on the wall's own value so the seam disappears) */
 @media (max-width:760px){
   .hero--bleed{
     min-height:calc(100vh - var(--nav-h-mobile)); min-height:calc(100svh - var(--nav-h-mobile));
@@ -1741,9 +1712,6 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
   .hero__lede{ margin-top:var(--space-4); font-size:var(--text-body); max-width:none; }
   .hero--bleed .hero__cta{ margin-top:var(--space-5); }
   .hero--bleed .hero__cta .btn{ width:100%; }
-  .hero__cap{ margin-bottom:var(--space-3); }
-  .hero__cap::after{ height:var(--space-3); }
-  .hero__cap-role{ display:none; }
 }
 /* >=21:9 screens: the Marketing Designer's 21:9 cut (screen top sits near the image top),
    so anchor to the top and drop the inline shift - only desk/floor ever crops. */
@@ -1753,10 +1721,9 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
 }
 /* first-paint lift as the brand curtain goes up (same class intro.js already sets) */
 .hero__bg, .hero__copy{ transition:opacity .6s var(--ease-pl), transform .9s var(--ease-pl); }
-.hero__caps{ transition:opacity .6s var(--ease-pl); }
 html.pl-zoom-park .hero__bg{ opacity:0; transform:translateY(12px); }
 html.pl-zoom .hero__bg{ opacity:1; transform:none; }
-@media (prefers-reduced-motion: reduce){ .hero__bg, .hero__caps, .hero__copy{ transition:none; } }
+@media (prefers-reduced-motion: reduce){ .hero__bg, .hero__copy{ transition:none; } }
 
 .btn--accent{ background:var(--pl-accent); color:var(--pl-accent-fg); border-color:transparent; box-shadow:var(--shadow-pl-md); }
 .btn--accent:hover{ background:var(--pl-accent-hover); }
