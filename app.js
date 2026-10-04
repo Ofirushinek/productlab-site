@@ -1048,12 +1048,12 @@ const registerModal = (t) => `
             <input class="input ltr-iso" id="reg-email" name="email" type="email" inputmode="email" dir="ltr" autocomplete="email" placeholder="${t.reg_email_ph}" required />
           </div>
           <!-- Cohort picker = ONE segmented toggle (Ofir, 2026-10-04: side by side,
-               none pressed at first, then exactly one). Extends .tabs--pill
-               with .tabs--seg (full-width, two-line segments, radio semantics). -->
+               none pressed at first, then exactly one). .tabs--seg = two bordered
+               tiles with a radio ring each (radio semantics). -->
           <div class="field" data-register-cohorts>
             <span class="field__label" id="reg-cohort-label">${t.reg_cohort_label}</span>
-            <div class="tabs tabs--pill tabs--seg" role="radiogroup" aria-labelledby="reg-cohort-label">
-              ${t.reg_cohorts.map((c, i) => `<button type="button" class="tabs__btn" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-cohort="${escapeAttr(`${c.day} ${c.time}`)}"><span class="tabs__seg-main">${c.day}</span><span class="tabs__seg-sub" dir="ltr">${c.time}</span></button>`).join("")}
+            <div class="tabs tabs--seg" role="radiogroup" aria-labelledby="reg-cohort-label">
+              ${t.reg_cohorts.map((c, i) => `<button type="button" class="tabs__btn" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-cohort="${escapeAttr(`${c.day} ${c.time}`)}"><span class="tabs__seg-main">${c.day.replace(/^(\S+) /, "$1\u00a0").replace(" · ", "\u00a0· ")}</span><span class="tabs__seg-sub" dir="ltr">${c.time}</span></button>`).join("")}
             </div>
           </div>
           <div class="field">
