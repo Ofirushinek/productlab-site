@@ -253,7 +253,6 @@ const I18N = {
     // rendered directly beneath it — the ONLY place price appears on the page.
     // Revival 2026-10 (Copywriter site-copy-v3-minimal, dates/price locked by Ofir
     // 2026-10-04): TWO open cohorts, same strip component rendered twice.
-    // `price_was` = regular price struck through beside ₪300 ("חצי מחיר").
     session2: {
       badge: "המחזור הבא",
       when_label: "מתי?",
@@ -261,8 +260,7 @@ const I18N = {
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪300", "חצי מחיר"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
@@ -273,13 +271,10 @@ const I18N = {
       where_label: "איפה?",
       where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪300", "חצי מחיר"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
-    // Under both strips (Copywriter v2 pay_note, kept: F6 call + refund).
-    pay_note: "נרשמים כאן, ואחזור אליכם לשיחה קצרה. התשלום בחשבונית אחרי השיחה, ואם מתברר שזה לא מתאים, לא משלמים.",
 
     why_eyebrow: "למה עכשיו",
     why_heading: "אדם אחד, יותר מעבודה אחת.",
@@ -604,8 +599,7 @@ const I18N = {
       where_label: "Where?",
       where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪300", "half price"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "Save a seat",
       limited_note: "Limited seats per cohort",
     },
@@ -616,12 +610,10 @@ const I18N = {
       where_label: "Where?",
       where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪300", "half price"],
-      price_was: "₪600",
+      price_value: ["₪300"],
       cta: "Save a seat",
       limited_note: "Limited seats per cohort",
     },
-    pay_note: "Register here and I will call you for a short chat. Payment is by invoice after the call, and if it is not a fit, you pay nothing.",
 
     why_eyebrow: "Why now",
     why_heading: "One person, more than one job.",
@@ -1233,10 +1225,8 @@ function sessionStripHtml(s, opts = {}) {
   const cta = opts.disabled
     ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
     : checkoutCta(s.cta);
-  // `price_was` (optional) = regular price struck through beside the live one
-  // (Ofir, 2026-10-04: "half price" — ₪600 crossed out next to ₪300).
   const price = opts.price
-    ? `<div class="ss-price">${s.price_was ? `<s class="ss-price__was">${s.price_was}</s>` : ""}<strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
+    ? `<div class="ss-price"><strong>${s.price_value[0]}</strong>${s.price_value[1] ? `<span>${s.price_value[1]}</span>` : ""}</div>`
     : "";
   return `
       <div class="session-strip reveal${opts.disabled ? " session-strip--closed" : ""}">
@@ -1365,7 +1355,6 @@ function render(lang) {
         ${sessionStripHtml(t.session2, { price: true })}
         <div class="ss-divider-full"></div>
         ${sessionStripHtml(t.session3, { price: true })}
-        <p class="ss-note ss-note--pay reveal">${t.pay_note}</p>
       </div>
       <div class="tabpanel" data-sessions-panel="past" hidden>
         ${sessionStripHtml(t.session, { disabled: true })}

@@ -1760,7 +1760,10 @@ html.pl-zoom .hero__bg{ opacity:1; transform:none; }
    as too large/bombastic for a quiet utility control above the card it
    controls. Zero new tokens: --pl-bg-alt/--pl-surface/--pl-fg/
    --pl-fg-secondary/--shadow-pl-sm/--ctl-xs/--text-sm/--radius-full. */
-.sessions-tabsrow { padding-top: 0.65rem; display: flex; justify-content: center; }
+/* Tab notch (Ofir, 2026-10-04): the pill straddles the band's top border -
+   50% above the line, 50% below, centered. Zero-height row, child centered
+   on it; -0.5px puts y=0 on the centre of the 1px border. */
+.sessions-tabsrow { height: 0; margin-top: -0.5px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2; }
 .tabs--pill {
   display: inline-flex; gap: 2px; border-bottom: 0;
   background: var(--pl-bg-alt); border: 1px solid var(--pl-border);
@@ -1834,14 +1837,6 @@ html.pl-zoom .hero__bg{ opacity:1; transform:none; }
 .ss-price { display: flex; align-items: baseline; gap: 0.3rem; }
 .ss-price strong { font-weight: 700; font-size: var(--text-body-lg); color: var(--pl-fg); }
 .ss-price span { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-body); }
-/* Struck-through regular price beside the live one (Ofir, 2026-10-04: "half
-   price" — ₪600 crossed out next to ₪300). Extends .ss-price, same tokens as
-   its small label; no new token. */
-.ss-price__was { font-weight: 600; font-size: var(--text-sm); color: var(--pl-fg-secondary); text-decoration: line-through; margin-inline-end: 0.15rem; }
-/* One payment note under BOTH open-cohort strips (Stripe → call → full refund).
-   Reuses .ss-note; only adds spacing + a readable measure. */
-.ss-note--pay { max-width: 60ch; margin: 0 auto; padding-block: 0 clamp(1rem, 2vw, 1.4rem); }
-
 /* Full-bleed rule between the two stacked strips — breaks out of `.wrap`'s
    max-width to span the whole viewport, not just the centered content column. */
 .ss-divider-full { width: 100vw; margin-inline-start: calc(50% - 50vw); border-top: 1px solid var(--pl-border); }
@@ -1851,6 +1846,8 @@ html.pl-zoom .hero__bg{ opacity:1; transform:none; }
 .session-strip--closed { opacity: 0.82; }
 
 @media (max-width: 820px) {
+  /* Clear the half of the tab notch that sits inside the band. */
+  .tabpanel > .session-strip:first-child { padding-top: calc(clamp(1.35rem, 2.6vw, 1.85rem) + 1rem); }
   .session-strip { flex-direction: column; align-items: center; gap: 1.1rem; text-align: center; }
   .ss-badge { align-self: center; width: auto; }
   .ss-col { align-items: center; width: auto; }
