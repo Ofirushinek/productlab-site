@@ -438,7 +438,7 @@ const I18N = {
     reg_phone_label: "טלפון",
     reg_phone_ph: "050-0000000",
     reg_cohort_label: "איזה מחזור?",
-    reg_cohorts: ["רביעי 28.10 · ערב 19:00-22:00", "רביעי 4.11 · בוקר 09:00-12:00"],
+    reg_cohorts: [{ day: "רביעי 28.10 · ערב", time: "19:00–22:00" }, { day: "רביעי 4.11 · בוקר", time: "09:00–12:00" }],
     reg_email_label: "אימייל",
     reg_email_ph: "you@email.com",
     reg_note_label: "משהו שתרצו לשתף (לא חובה)",
@@ -755,7 +755,7 @@ const I18N = {
     reg_phone_label: "Phone",
     reg_phone_ph: "050-0000000",
     reg_cohort_label: "Which session?",
-    reg_cohorts: ["Wed 28.10 · evening 19:00-22:00", "Wed 4.11 · morning 09:00-12:00"],
+    reg_cohorts: [{ day: "Wed 28.10 · evening", time: "19:00–22:00" }, { day: "Wed 4.11 · morning", time: "09:00–12:00" }],
     reg_email_label: "Email",
     reg_email_ph: "you@email.com",
     reg_note_label: "Anything you'd like to share (optional)",
@@ -1047,10 +1047,13 @@ const registerModal = (t) => `
             <label class="field__label" for="reg-email">${t.reg_email_label}</label>
             <input class="input ltr-iso" id="reg-email" name="email" type="email" inputmode="email" dir="ltr" autocomplete="email" placeholder="${t.reg_email_ph}" required />
           </div>
-          <div class="field" role="radiogroup" aria-label="${t.reg_cohort_label}" data-register-cohorts>
-            <span class="field__label">${t.reg_cohort_label}</span>
-            <div class="reg__cohorts">
-              ${t.reg_cohorts.map((c, i) => `<button type="button" class="chip chip--choice" role="radio" aria-checked="false" data-cohort="${escapeAttr(c)}">${c}</button>`).join("")}
+          <!-- Cohort picker = ONE segmented toggle (Ofir, 2026-10-04: side by side,
+               none pressed at first, then exactly one). Extends .tabs--pill
+               with .tabs--seg (full-width, two-line segments, radio semantics). -->
+          <div class="field" data-register-cohorts>
+            <span class="field__label" id="reg-cohort-label">${t.reg_cohort_label}</span>
+            <div class="tabs tabs--pill tabs--seg" role="radiogroup" aria-labelledby="reg-cohort-label">
+              ${t.reg_cohorts.map((c, i) => `<button type="button" class="tabs__btn" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-cohort="${escapeAttr(`${c.day} ${c.time}`)}"><span class="tabs__seg-main">${c.day}</span><span class="tabs__seg-sub" dir="ltr">${c.time}</span></button>`).join("")}
             </div>
           </div>
           <div class="field">
@@ -1263,8 +1266,8 @@ function render(lang) {
   <main id="top">
   <!-- 1 HERO — full-bleed "Daylight Studio" (2026-10-04, revival v2).
        The scene IS the hero background (edge to edge, no panel): ONE
-       swappable asset per breakpoint (assets/hero-v2-desktop.webp 16:9 /
-       hero-v2-mobile.webp 2:3, hero-v2-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v2 2026-10-04 - the
+       swappable asset per breakpoint (assets/hero-v3-desktop.webp 16:9 /
+       hero-v3-mobile.webp 2:3, hero-v3-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v3-cool 2026-10-04 - the
        three agents building a site on a wall screen). Text block at
        reading-start over the calm wall; each agent gets a credits-style role
        caption anchored to its head. Head anchors = image-fraction pairs in
@@ -1276,9 +1279,9 @@ function render(lang) {
     data-caps-wide="architect:0.113,0.43;strategist:0.292,0.347;designer:0.40,0.393"
     data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
     <picture class="hero__bg" aria-hidden="true">
-      <source media="(max-width: 760px)" srcset="assets/hero-v2-mobile.webp?v=3" type="image/webp" width="1200" height="1800" />
-      <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v2-desktop-21x9.webp?v=1" type="image/webp" width="3360" height="1440" />
-      <img src="assets/hero-v2-desktop.webp?v=3" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
+      <source media="(max-width: 760px)" srcset="assets/hero-v3-mobile.webp?v=1" type="image/webp" width="1200" height="1800" />
+      <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v3-desktop-21x9.webp?v=1" type="image/webp" width="3360" height="1440" />
+      <img src="assets/hero-v3-desktop.webp?v=1" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
     </picture>
     <div class="hero__caps" aria-hidden="true">
       <span class="hero__cap hero__cap--designer"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[0].tag}</span><span class="hero__cap-role">${t.agents[0].cap}</span></span></span>
@@ -4003,11 +4006,27 @@ function wireRegister() {
       open();
     }));
   modal.querySelectorAll("[data-register-close]").forEach((b) => b.addEventListener("click", close));
-  // Cohort chips: a one-of radio group (same .chip--choice as the fleet recommender).
-  modal.querySelectorAll("[data-cohort]").forEach((b) => b.addEventListener("click", () => {
-    modal.querySelectorAll("[data-cohort]").forEach((o) => o.setAttribute("aria-checked", o === b ? "true" : "false"));
+  // Cohort segmented toggle: radio group, none checked until the user picks.
+  // Roving tabindex; arrows move + select (wraps), mirrored in RTL.
+  const cohortBtns = [...modal.querySelectorAll("[data-cohort]")];
+  const pickCohort = (b, focus) => {
+    cohortBtns.forEach((o) => {
+      o.setAttribute("aria-checked", o === b ? "true" : "false");
+      o.tabIndex = o === b ? 0 : -1;
+    });
+    if (focus) b.focus();
     modal.querySelector("[data-register-cohorts]").classList.remove("is-missing");
-  }));
+  };
+  cohortBtns.forEach((b, i) => {
+    b.addEventListener("click", () => pickCohort(b, false));
+    b.addEventListener("keydown", (e) => {
+      const rtl = getComputedStyle(b).direction === "rtl";
+      const fwd = { ArrowDown: 1, ArrowUp: -1, ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+      if (!fwd) return;
+      e.preventDefault();
+      pickCohort(cohortBtns[(i + fwd + cohortBtns.length) % cohortBtns.length], true);
+    });
+  });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
 
   const setLoading = (on) => {
