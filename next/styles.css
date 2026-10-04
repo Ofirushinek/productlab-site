@@ -21,8 +21,12 @@
   --pl-fg-secondary: #5C5664;
   --pl-fg-muted: #6B6572;
 
-  --pl-border: rgb(22 19 28 / 0.14);
-  --pl-border-strong: rgb(22 19 28 / 0.24);
+  /* Borders retuned 2026-10-04 (Ofir: "washed out"). Ink alpha keeps the warm hue.
+     --pl-border 0.28 = 1.83-1.86:1 on bg / bg-alt / surface (decorative cards, strips, tiles).
+     --pl-border-strong 0.52 = 3.47-3.66:1 on all three grounds (WCAG 1.4.11 inputs/controls).
+     Was 0.14 (1.33:1) and 0.24 (1.67:1). */
+  --pl-border: rgb(22 19 28 / 0.28);
+  --pl-border-strong: rgb(22 19 28 / 0.52);
 
   --pl-accent: #6D28D9;
   --pl-accent-hover: #5B21B6;
@@ -925,21 +929,43 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .reg__error[hidden] { display: none; }
 .reg__error svg { width: 18px; height: 18px; flex: none; }
 /* Submit: spinner replaces the label while in flight; button stays disabled. */
-/* .tabs--seg (EXTENDS .tabs--pill, 2026-10-04, register cohort picker): the
-   same track + white raised segment, stretched full-width with two equal
-   two-line segments and radio semantics (aria-checked; none checked at
-   first). Zero new tokens. */
-.tabs--seg { display: flex; width: 100%; min-width: 0; border-radius: var(--radius-lg); }
+/* .tabs--seg (EXTENDS .tabs, 2026-10-04, register cohort picker; reworked
+   same day per Ofir "doesn't look clickable"): two separate surface tiles,
+   each bordered like .input, with an empty radio ring so "pick one" reads
+   before any selection. Selected = accent border + accent tint + filled dot.
+   Zero new tokens. */
+.tabs.tabs--seg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-2); width: 100%; min-width: 0; border-bottom: 0; }
 .tabs--seg .tabs__btn {
-  flex: 1 1 0; min-width: 0; height: auto; min-height: var(--ctl-md);
-  flex-direction: column; gap: 2px; padding: var(--space-2) var(--space-1);
-  border-radius: calc(var(--radius-lg) - 2px); line-height: 1.2; text-align: center;
+  position: relative; min-width: 0; min-height: var(--ctl-md); margin: 0;
+  display: grid; grid-template-columns: 16px minmax(0, 1fr); column-gap: var(--space-2); row-gap: 2px;
+  align-content: center; align-items: start;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--pl-border-strong); border-radius: var(--radius-md);
+  background: var(--pl-surface); color: var(--pl-fg); line-height: 1.25; text-align: start;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.2s var(--ease-pl), background 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl), transform 0.12s var(--ease-pl);
 }
-.tabs--seg .tabs__btn[aria-checked="true"] { background: var(--pl-surface); color: var(--pl-fg); box-shadow: var(--shadow-pl-sm); }
-.tabs--seg .tabs__btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent); }
-.tabs--seg .tabs__seg-main { font-weight: 700; font-size: var(--text-sm); }
-.tabs--seg .tabs__seg-sub { font-weight: 500; font-size: var(--text-caption); color: var(--pl-fg-secondary); font-variant-numeric: tabular-nums; }
-.field.is-missing .tabs--seg { border-color: var(--pl-stage-dropped); }
+.tabs--seg .tabs__btn::before {
+  content: ""; grid-column: 1; grid-row: 1 / span 2; align-self: center;
+  width: 16px; height: 16px; box-sizing: border-box;
+  border: 1.5px solid var(--pl-fg-secondary); border-radius: var(--radius-full);
+  background: var(--pl-surface);
+  transition: border-color 0.2s var(--ease-pl), box-shadow 0.2s var(--ease-pl);
+}
+.tabs--seg .tabs__btn:hover { border-color: var(--pl-fg); box-shadow: var(--shadow-pl-sm); transform: translateY(-1px); }
+.tabs--seg .tabs__btn:active { transform: translateY(0) scale(0.98); box-shadow: none; }
+.tabs--seg .tabs__btn:focus-visible { outline: none; border-color: var(--pl-fg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-accent) 22%, transparent); }
+.tabs--seg .tabs__btn[aria-checked="true"] {
+  border-color: var(--pl-accent); color: var(--pl-accent);
+  background: color-mix(in srgb, var(--pl-accent) 8%, var(--pl-surface));
+  box-shadow: 0 0 0 1px var(--pl-accent);
+}
+.tabs--seg .tabs__btn[aria-checked="true"]::before { border-color: var(--pl-accent); box-shadow: inset 0 0 0 3px var(--pl-surface), inset 0 0 0 8px var(--pl-accent); }
+.tabs--seg .tabs__btn[aria-checked="true"]:hover { transform: none; }
+.tabs--seg .tabs__seg-main { grid-column: 2; font-weight: 700; font-size: var(--text-sm); }
+.tabs--seg .tabs__seg-sub { grid-column: 2; justify-self: start; font-weight: 500; font-size: var(--text-caption); color: var(--pl-fg-secondary); font-variant-numeric: tabular-nums; }
+.tabs--seg .tabs__btn[aria-checked="true"] .tabs__seg-sub { color: var(--pl-accent); }
+.field.is-missing .tabs--seg .tabs__btn { border-color: var(--pl-stage-dropped); }
 .reg__submit { margin-top: var(--space-1); }
 .reg__submit:disabled { cursor: default; opacity: 0.85; }
 .reg__submit-spinner {
@@ -2680,7 +2706,7 @@ html.pl-zoom .hero__bg{ opacity:1; transform:none; }
    make the two rows almost equal"). `text-wrap: balance` is exactly that rule
    in the browser (Chrome 114+, Safari 17.5+); older browsers keep the normal
    wrap, nothing breaks. Kept to the card's title + sub, not site-wide. */
-.fleet-card .login__title, .fleet-card .login__sub { text-wrap: balance; }
+.fleet-card .login__title, .fleet-card .login__sub { }
 
 /* EXTEND .chip — leading brand mark (DSL, 2026-09-06). Monochrome, currentColor:
    it takes the chip's ink and turns accent when selected. Brand colors never
