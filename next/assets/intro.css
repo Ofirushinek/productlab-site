@@ -23,11 +23,10 @@
   inset: 0;
   z-index: 9999;               /* the site's ceiling is 100 */
 
-  /* Cool prestige ground (Ofir 2026-10-04: the cream "doesn't work, needs
-     prestige"; site stays light, cooler). Was the logo spec.json pair
-     #FBEAD9 / #402D1F. Ink = the site's --pl-fg. */
-  --pl-intro-ground: #F2F3F4;
-  --pl-intro-ink:    #14151A;
+  /* Warm brand ground: logo spec.json pair #FBEAD9 / #402D1F. Restored
+     2026-10-04 after Ofir rejected the cool pass (was #F2F3F4 / #16131C). */
+  --pl-intro-ground: #FBEAD9;
+  --pl-intro-ink:    #402D1F;
   --stage: clamp(112.5px, 19.5vh, 210px);  /* 75% of the previous 150/26vh/280 —
      Ofir, 2026-08-24: the loader read too big. Scaled the size itself, not a
      transform, so the choreography (which is %-translate + unitless-scale,

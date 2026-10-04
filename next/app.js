@@ -1266,8 +1266,8 @@ function render(lang) {
   <main id="top">
   <!-- 1 HERO — full-bleed "Daylight Studio" (2026-10-04, revival v2).
        The scene IS the hero background (edge to edge, no panel): ONE
-       swappable asset per breakpoint (assets/hero-v3-desktop.webp 16:9 /
-       hero-v3-mobile.webp 2:3, hero-v3-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v3-cool 2026-10-04 - the
+       swappable asset per breakpoint (assets/hero-v2-desktop.webp 16:9 /
+       hero-v2-mobile.webp 2:3, hero-v2-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v2 warm 2026-10-04 - the
        three agents building a site on a wall screen). Text block at
        reading-start over the calm wall; each agent gets a credits-style role
        caption anchored to its head. Head anchors = image-fraction pairs in
@@ -1279,9 +1279,9 @@ function render(lang) {
     data-caps-wide="architect:0.113,0.43;strategist:0.292,0.347;designer:0.40,0.393"
     data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
     <picture class="hero__bg" aria-hidden="true">
-      <source media="(max-width: 760px)" srcset="assets/hero-v3-mobile.webp?v=1" type="image/webp" width="1200" height="1800" />
-      <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v3-desktop-21x9.webp?v=1" type="image/webp" width="3360" height="1440" />
-      <img src="assets/hero-v3-desktop.webp?v=1" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
+      <source media="(max-width: 760px)" srcset="assets/hero-v2-mobile.webp?v=4" type="image/webp" width="1200" height="1800" />
+      <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v2-desktop-21x9.webp?v=2" type="image/webp" width="3360" height="1440" />
+      <img src="assets/hero-v2-desktop.webp?v=4" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
     </picture>
     <div class="hero__caps" aria-hidden="true">
       <span class="hero__cap hero__cap--designer"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[0].tag}</span><span class="hero__cap-role">${t.agents[0].cap}</span></span></span>
