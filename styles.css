@@ -1771,6 +1771,10 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
   .hero__lede{ margin-top:var(--space-4); font-size:var(--text-body); max-width:none; }
   .hero--bleed .hero__cta{ margin-top:var(--space-5); }
   .hero--bleed .hero__cta .btn{ width:100%; }
+  /* mobile: the copy block is CENTERED (Ofir 2026-10-04), HE + EN; desktop stays start-aligned */
+  .hero--bleed .hero__copy, .hero--bleed .hero__title{ text-align:center; margin-inline:auto; }
+  .hero__lede{ margin-inline:auto; text-align:center; }
+  .hero--bleed .hero__cta{ justify-content:center; }
   .hero__caps{ --cap-lead:var(--space-5); }
   .hero__cap-tag{ font-size:var(--text-caption); }
   .hero__cap-role{ display:none; }
