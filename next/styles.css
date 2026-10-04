@@ -1632,7 +1632,9 @@ body.modal-open { overflow: hidden; }
    background, edge to edge, no panel/border/radius. The photo (Marketing
    Designer hero-v2: the three agents building a site on a wall screen, pale
    oak desk, ivory wall) is ONE swappable asset per breakpoint. Text block at
-   reading-start over the calm wall (name badges removed 2026-10-04, Ofir).
+   reading-start over the calm wall; captions = credits-style role tags with a
+   hairline tick down to each head, placed by placeHeroCaps() (app.js) from
+   image-fraction anchors, so they survive any crop, width and asset swap.
    Section ground = --pl-bg-alt (the wall's value) so nothing the photo does
    not cover reads as a seam; the page grain lays over everything via ::after.
    ============================================================================ */
@@ -1689,8 +1691,52 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
 .hero--bleed .hero__cta{ margin-top:var(--space-6); display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:center; }
 .hero--bleed .hero__cta .btn{ height:var(--ctl-lg); padding-inline:var(--space-6); font-size:var(--text-body-lg); border-radius:var(--radius-md); white-space:nowrap; }
 
+/* CAPTIONS (v2, 2026-10-04, Ofir: "don't remove the tags, they need to look
+   better"): editorial callouts, not pills. Two stacked lines (role name bold,
+   "agent" line lighter), a hairline leader down to a small accent node on the
+   head. No pill: a barely-there frosted placard (elevated surface, blur, no
+   border) keeps it legible on wall, screen or code. All colour is token-driven via the
+   --cap-* locals, so the Night Studio flip (dark --pl-bg-alt, ivory --pl-fg)
+   needs no edit here. --cx/--cy are set by placeHeroCaps(); hidden until placed. */
+.hero__caps{
+  position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0;
+  --cap-ink:var(--pl-fg); --cap-ink-soft:var(--pl-fg-secondary);
+  --cap-line:color-mix(in srgb, var(--pl-fg) 55%, transparent);
+  --cap-node:var(--pl-accent);
+  --cap-plate:color-mix(in srgb, var(--pl-elevated) 86%, transparent);
+  --cap-plate-edge:color-mix(in srgb, var(--pl-elevated) 90%, transparent);
+  --cap-lead:var(--space-6);
+}
+.hero--bleed.caps-ready .hero__caps{ opacity:1; }
+.hero__cap{
+  position:absolute; left:var(--cx, -999px); top:var(--cy, 0);
+  transform:translate(-50%, -100%);
+  display:flex; flex-direction:column; align-items:center;
+  padding-bottom:var(--cap-lead);
+  white-space:nowrap; text-align:center; line-height:1.3;
+}
+.hero__cap-plate{ /* a frosted placard, barely there: no border, no pill */
+  display:flex; flex-direction:column; align-items:center; gap:1px;
+  padding:var(--space-2) var(--space-3);
+  border-radius:var(--radius-sm);
+  background:var(--cap-plate);
+  -webkit-backdrop-filter:blur(10px) saturate(1.2); backdrop-filter:blur(10px) saturate(1.2);
+  box-shadow:0 1px 0 0 var(--cap-plate-edge) inset, 0 6px 20px -10px rgb(0 0 0 / 0.25);
+}
+.hero__cap::after{ /* the leader: a hairline from the placard down to the head */
+  content:""; position:absolute; bottom:4px; left:50%; width:1px; height:calc(var(--cap-lead) - 4px);
+  background:var(--cap-line); box-shadow:1px 0 0 var(--cap-plate-edge);
+}
+.hero__cap::before{ /* the node on the head: accent core in an ivory ring */
+  content:""; position:absolute; bottom:0; left:50%; width:9px; height:9px; transform:translate(-50%, 50%);
+  border-radius:var(--radius-full); background:var(--cap-node);
+  box-shadow:0 0 0 2px var(--pl-elevated), 0 1px 4px rgb(0 0 0 / 0.25);
+}
+.hero__cap-tag{ font-weight:700; font-size:var(--text-sm); letter-spacing:-0.005em; color:var(--cap-ink); }
+.hero__cap-role{ font-weight:400; font-size:var(--text-caption); letter-spacing:0.02em; color:var(--cap-ink-soft); }
+
 /* mobile: text on the calm wall at the top, the scene across the bottom (contained,
-   bottom-anchored, on the wall's own value so the seam disappears) */
+   bottom-anchored, on the wall's own value so the seam disappears); captions = tag only */
 @media (max-width:760px){
   .hero--bleed{
     min-height:calc(100vh - var(--nav-h-mobile)); min-height:calc(100svh - var(--nav-h-mobile));
@@ -1712,6 +1758,9 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
   .hero__lede{ margin-top:var(--space-4); font-size:var(--text-body); max-width:none; }
   .hero--bleed .hero__cta{ margin-top:var(--space-5); }
   .hero--bleed .hero__cta .btn{ width:100%; }
+  .hero__caps{ --cap-lead:var(--space-5); }
+  .hero__cap-tag{ font-size:var(--text-caption); }
+  .hero__cap-role{ display:none; }
 }
 /* >=21:9 screens: the Marketing Designer's 21:9 cut (screen top sits near the image top),
    so anchor to the top and drop the inline shift - only desk/floor ever crops. */
@@ -1721,9 +1770,10 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
 }
 /* first-paint lift as the brand curtain goes up (same class intro.js already sets) */
 .hero__bg, .hero__copy{ transition:opacity .6s var(--ease-pl), transform .9s var(--ease-pl); }
+.hero__caps{ transition:opacity .6s var(--ease-pl); }
 html.pl-zoom-park .hero__bg{ opacity:0; transform:translateY(12px); }
 html.pl-zoom .hero__bg{ opacity:1; transform:none; }
-@media (prefers-reduced-motion: reduce){ .hero__bg, .hero__copy{ transition:none; } }
+@media (prefers-reduced-motion: reduce){ .hero__bg, .hero__caps, .hero__copy{ transition:none; } }
 
 .btn--accent{ background:var(--pl-accent); color:var(--pl-accent-fg); border-color:transparent; box-shadow:var(--shadow-pl-md); }
 .btn--accent:hover{ background:var(--pl-accent-hover); }
