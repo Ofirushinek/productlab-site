@@ -56,16 +56,16 @@
   <meta name="twitter:title" content="מרעיון למציאות. עולם חדש של עבודה עם סוכני AI." />
   <meta name="twitter:description" content="סדנה של 3 שעות: בונים עם Claude וצוות סוכנים אתר משלכם, ויוצאים איתו באוויר. ₪300, חצי מחיר." />
   <meta name="twitter:image" content="https://productlab.studio/assets/og-card.png" />
-  <link rel="preload" as="image" href="assets/hero-cast-designer.webp?v=1" type="image/webp" fetchpriority="high" />
-  <link rel="preload" as="image" href="assets/hero-cast-strategist.webp?v=1" type="image/webp" fetchpriority="high" />
-  <link rel="preload" as="image" href="assets/hero-cast-architect.webp?v=1" type="image/webp" fetchpriority="high" />
+  <!-- LCP: the full-bleed hero image, one per breakpoint (same media query as the <picture>). -->
+  <link rel="preload" as="image" href="assets/hero-v2-desktop.webp?v=3" type="image/webp" media="(min-width: 761px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/hero-v2-mobile.webp?v=3" type="image/webp" media="(max-width: 760px)" fetchpriority="high" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- Fredoka is the brand wordmark face and is used ONLY by the intro curtain.
        Kept as its own request so the site's own font URL stays byte-identical. -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20261004c" />
+  <link rel="stylesheet" href="styles.css?v=20261004e" />
   <!-- Site intro (once per session, and again on every refresh). Nothing here hides the site: the veil is
        created by assets/intro.js and by nothing else, so if the script or these
        stylesheets fail the visitor simply gets the page. intro-keyframes.css is
@@ -90,7 +90,7 @@
   <!-- Launch config (PAYMENT_LINK, PIXEL_ID) — ONE place to swap live values;
        thanks/index.html loads the same file. MUST load before app.js. -->
   <script src="config.js?v=20261004c"></script>
-  <script src="app.js?v=20261004c"></script>
+  <script src="app.js?v=20261004e"></script>
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "95ea9cd222ad40c99328d07e4430db84"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>

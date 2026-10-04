@@ -1271,35 +1271,34 @@ function render(lang) {
   ${navHeader(t, lang)}
 
   <main id="top">
-  <!-- 1 HERO — "Daylight Studio" stage (2026-10-04, revival). Text block at
-       reading-start, the three agent puppets (cutouts) on an ivory stage panel.
-       Title = the LIVE one verbatim (Ofir). Facts row = dates + price only. -->
-  <section class="hero hero--stage">
+  <!-- 1 HERO — full-bleed "Daylight Studio" (2026-10-04, revival v2).
+       The scene IS the hero background (edge to edge, no panel): ONE
+       swappable asset per breakpoint (assets/hero-v2-desktop.webp 16:9 /
+       hero-v2-mobile.webp 2:3, Marketing Designer hero-v2 2026-10-04 - the
+       three agents building a site on a wall screen). Text block at
+       reading-start over the calm wall; each agent gets a credits-style role
+       caption anchored to its head. Head anchors = image-fraction pairs in
+       data-caps-* (swap the asset -> update six numbers); placeHeroCaps()
+       below turns them into px for whatever crop object-fit produced.
+       Title = the LIVE one verbatim (Ofir). No kicker, no facts row. -->
+  <section class="hero hero--bleed"
+    data-caps-desktop="architect:0.154,0.558;strategist:0.325,0.498;designer:0.432,0.532"
+    data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
+    <picture class="hero__bg" aria-hidden="true">
+      <source media="(max-width: 760px)" srcset="assets/hero-v2-mobile.webp?v=3" type="image/webp" width="1200" height="1800" />
+      <img src="assets/hero-v2-desktop.webp?v=3" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
+    </picture>
+    <div class="hero__caps" aria-hidden="true">
+      <span class="hero__cap hero__cap--designer"><span class="hero__cap-tag">${t.agents[0].tag}</span><span class="hero__cap-role">${t.agents[0].role}</span></span>
+      <span class="hero__cap hero__cap--strategist"><span class="hero__cap-tag">${t.agents[1].tag}</span><span class="hero__cap-role">${t.agents[1].role}</span></span>
+      <span class="hero__cap hero__cap--architect"><span class="hero__cap-tag">${t.agents[2].tag}</span><span class="hero__cap-role">${t.agents[2].role}</span></span>
+    </div>
     <div class="wrap hero__grid">
       <div class="hero__copy">
-        <span class="hero__kicker"><span class="dot"></span>${t.hero_chip}</span>
         <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
         <p class="hero__lede">${t.hero_sub}</p>
         <div class="hero__cta">
           ${checkoutCta(t.hero_cta)}
-        </div>
-        <ul class="hero__facts">
-          <li>${t.session2.where_value[0]}</li>
-          <li><strong>${t.session2.when_value[0].replace(/^יום ד׳, /, "רביעי ")}</strong>${t.session2.when_value[1]}</li>
-          <li><strong>${t.session3.when_value[0].replace(/^יום ד׳, /, "רביעי ")}</strong>${t.session3.when_value[1]}</li>
-          <li><s class="ss-price__was">${t.session2.price_was}</s><strong>${t.session2.price_value[0]}</strong>${t.session2.price_value[1]}</li>
-        </ul>
-      </div>
-      <div class="hero__stage" aria-hidden="true">
-        <span class="hero__stage-label">${t.crew_label}</span>
-        <div class="hero__floor"></div>
-        <img class="hero__puppet hero__puppet--architect" src="assets/hero-cast-architect.webp?v=1" alt="" width="825" height="845" fetchpriority="high" decoding="async" />
-        <img class="hero__puppet hero__puppet--strategist" src="assets/hero-cast-strategist.webp?v=1" alt="" width="771" height="867" fetchpriority="high" decoding="async" />
-        <img class="hero__puppet hero__puppet--designer" src="assets/hero-cast-designer.webp?v=1" alt="" width="631" height="960" fetchpriority="high" decoding="async" />
-        <div class="hero__tags">
-          <span class="hero__tag"><b>01</b>${t.agents[2].tag}</span>
-          <span class="hero__tag"><b>02</b>${t.agents[1].tag}</span>
-          <span class="hero__tag"><b>03</b>${t.agents[0].tag}</span>
         </div>
       </div>
     </div>
@@ -4256,4 +4255,47 @@ function withTimeout(promise, ms) {
   } else {
     setLang(lang);
   }
+})();
+
+/* HERO CAPTIONS — maps head anchors (image fractions, data-caps-* on .hero--bleed)
+   to px for the crop object-fit actually produced, so the role tags sit on the
+   heads at every viewport and after any asset swap. Runs on load/resize/lang. */
+function placeHeroCaps() {
+  const hero = document.querySelector(".hero--bleed"); if (!hero) return;
+  const pic = hero.querySelector(".hero__bg"), img = pic && pic.querySelector("img");
+  if (!img || !img.naturalWidth) return;
+  const hb = hero.getBoundingClientRect(), bb = pic.getBoundingClientRect();
+  const cs = getComputedStyle(img);
+  const nw = img.naturalWidth, nh = img.naturalHeight;
+  const s = cs.objectFit === "contain" ? Math.min(bb.width / nw, bb.height / nh) : Math.max(bb.width / nw, bb.height / nh);
+  const w = nw * s, h = nh * s;
+  const pos = cs.objectPosition.split(" ").map(parseFloat);
+  const px = isNaN(pos[0]) ? 50 : pos[0], py = isNaN(pos[1]) ? 50 : pos[1];
+  const bx = bb.left - hb.left, by = bb.top - hb.top;
+  const ox = bx + (bb.width - w) * px / 100, oy = by + (bb.height - h) * py / 100;
+  const mirrored = cs.transform && cs.transform !== "none";
+  const set = (/mobile/.test(img.currentSrc) ? hero.dataset.capsMobile : hero.dataset.capsDesktop) || "";
+  set.split(";").forEach((e) => {
+    const [k, v] = e.split(":"); if (!v) return;
+    const [fx, fy] = v.split(",").map(Number);
+    const cap = hero.querySelector(".hero__cap--" + k); if (!cap) return;
+    let x = ox + fx * w; if (mirrored) x = bx + bb.width - (x - bx);
+    cap.style.setProperty("--cx", Math.round(x) + "px");
+    cap.style.setProperty("--cy", Math.round(oy + fy * h) + "px");
+  });
+  hero.classList.add("caps-ready");
+}
+(function wireHeroCaps() {
+  const run = () => placeHeroCaps();
+  const arm = () => {
+    const img = document.querySelector(".hero--bleed .hero__bg img");
+    if (!img) return;
+    if (img.complete) run(); else img.addEventListener("load", run, { once: true });
+  };
+  arm();
+  window.addEventListener("resize", run);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+  // the app re-renders #app on language/route changes: re-arm after each render
+  const app = document.getElementById("app");
+  if (app && window.MutationObserver) new MutationObserver(() => arm()).observe(app, { childList: true });
 })();

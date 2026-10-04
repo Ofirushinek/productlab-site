@@ -1626,113 +1626,126 @@ body.modal-open { overflow: hidden; }
 .modal__close svg { width: 18px; height: 18px; }
 
 /* ============================================================================
-   HERO — "Daylight Studio" stage (2026-10-04, workshop revival, direction A).
-   Replaces the full-bleed living-room photo hero (2026-08-20 .. 2026-10-04):
-   the peach photo fought the ivory ground the reskin brought in, and a cosy
-   room read "cute", not "studio". Same idea kept (the puppets ARE the hero),
-   new frame: two columns on desktop — text block at reading-start, the cast
-   on a calm ivory STAGE panel (bg-alt + grain + a soft key light + a hairline
-   floor, credits-style tags). Stacked on mobile, text first.
-   Everything is tokens: no raw hex, no raw shadow. Cutouts =
-   assets/hero-cast-*.webp (Marketing Designer, brand-premium step 1).
+   HERO — full-bleed "Daylight Studio" (2026-10-04, workshop revival v2).
+   Ofir on the stage-panel version: "my agents inside some stupid box ... the
+   image should be part of the whole background". So: the scene IS the section
+   background, edge to edge, no panel/border/radius. The photo (Marketing
+   Designer hero-v2: the three agents building a site on a wall screen, pale
+   oak desk, ivory wall) is ONE swappable asset per breakpoint. Text block at
+   reading-start over the calm wall; captions = credits-style role tags with a
+   hairline tick down to each head, placed by placeHeroCaps() (app.js) from
+   image-fraction anchors, so they survive any crop, width and asset swap.
+   Section ground = --pl-bg-alt (the wall's value) so nothing the photo does
+   not cover reads as a seam; the page grain lays over everything via ::after.
    ============================================================================ */
-.hero--stage{ position:relative; overflow:hidden; background:transparent; padding-top:0 !important; }
-.hero__grid{
-  display:grid; grid-template-columns:minmax(0,1fr); gap:var(--space-5);
-  padding-top:var(--space-5); padding-bottom:var(--space-6);
+.hero--bleed{
+  position:relative; overflow:hidden; isolation:isolate; padding-top:0 !important;
+  background:var(--pl-bg-alt);
+  min-height:calc(100vh - var(--nav-h)); min-height:calc(100svh - var(--nav-h));
+  display:grid; align-items:center;
+  /* desktop: push the scene a little past the inline-end edge so the cast clears the title */
+  --hero-shift:8%;
+}
+.hero__bg{
+  position:absolute; inset-block:0; z-index:-1; display:block;
+  inset-inline-start:0; inset-inline-end:calc(-1 * var(--hero-shift)); width:calc(100% + var(--hero-shift));
+}
+.hero__bg img{
+  display:block; width:100%; height:100%; object-fit:cover; object-position:left 80%;
+}
+/* EN reads left-to-right: text takes the left, so the scene flips to put the cast on the right. */
+html[dir="ltr"] .hero__bg img{ transform:scaleX(-1); }
+/* page grain over everything so the photo and the ivory are one surface */
+.hero--bleed::after{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none; background:var(--pl-grain); }
+
+.hero--bleed .hero__grid{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:minmax(0,1fr);
+  padding-top:var(--space-6); padding-bottom:var(--space-7);
 }
 @media (min-width:761px){
-  .hero__grid{
-    grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);
-    align-items:center; gap:clamp(var(--space-6), 4vw, 72px);
-    min-height:calc(100vh - var(--nav-h)); min-height:calc(100svh - var(--nav-h));
-    padding-top:var(--space-6); padding-bottom:var(--space-6);
+  .hero--bleed .hero__grid{
+    grid-template-columns:minmax(0,1.12fr) minmax(0,0.88fr); /* col 2 = air for the cast; col 1 wide enough for the 3-line title */
+    align-items:center; padding-top:var(--space-7); padding-bottom:calc(var(--space-7) + var(--space-6));
   }
 }
 .hero__copy{ text-align:start; }
-.hero__kicker{
-  display:inline-flex; align-items:center; gap:var(--space-2);
-  font-size:var(--text-sm); font-weight:600; color:var(--pl-fg-secondary); letter-spacing:0.02em;
-}
-.hero__kicker .dot{ width:8px; height:8px; border-radius:var(--radius-full); background:var(--pl-accent); flex:none; }
-
 /* Two-tone title: the opening sentence sits back (secondary ink), the promise
    lands in full ink, the mark in accent. ONE size for both so they read as a
    single poster line. 800 is the sanctioned hero-only weight (Ofir 2026-09-07). */
-.hero--stage .hero__title{
-  margin:var(--space-4) 0 0; max-width:100%; text-align:start;
+.hero--bleed .hero__title{
+  margin:0; max-width:100%; text-align:start;
   font-weight:800; letter-spacing:-0.03em; line-height:1.02;
-  font-size:clamp(2.5rem, 4.3vw, 4rem); overflow-wrap:break-word;
+  font-size:clamp(2.5rem, 4.4vw, 4.25rem); overflow-wrap:break-word;
 }
-.hero--stage .ht1{ display:block; color:var(--pl-fg-secondary); font-size:inherit; line-height:inherit; font-weight:inherit; }
-.hero--stage .ht2{ display:block; color:var(--pl-fg); font-size:inherit; line-height:inherit; font-weight:inherit; margin-top:0; }
-.hero--stage .mark{ color:var(--pl-accent); }
-/* HE mark is two words ("סוכני AI") that must not split; EN mark is a whole clause and must wrap. */
-html[dir="rtl"] .hero--stage .mark{ white-space:nowrap; }
-html[dir="ltr"] .hero--stage .hero__title{ font-size:clamp(2.25rem, 3.6vw, 3.4rem); letter-spacing:-0.035em; }
+.hero--bleed .ht1{ display:block; color:var(--pl-fg-secondary); font-size:inherit; line-height:inherit; font-weight:inherit; }
+.hero--bleed .ht2{ display:block; color:var(--pl-fg); font-size:inherit; line-height:inherit; font-weight:inherit; margin-top:0; }
+.hero--bleed .mark{ color:var(--pl-accent); }
+html[dir="rtl"] .hero--bleed .mark{ white-space:nowrap; }
+html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6rem); letter-spacing:-0.035em; }
 
 .hero__lede{
   margin:var(--space-5) 0 0; color:var(--pl-fg-body); font-weight:500;
   font-size:var(--text-body-lg); line-height:1.55; max-width:34ch; text-wrap:pretty;
 }
-.hero--stage .hero__cta{ margin-top:var(--space-6); display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:center; }
-.hero--stage .hero__cta .btn{ height:var(--ctl-lg); padding-inline:var(--space-6); font-size:var(--text-body-lg); border-radius:var(--radius-md); white-space:nowrap; }
-/* facts row under the button: dates + price, plain, no chips (Ofir: accessible) */
-.hero__facts{
-  margin:var(--space-5) 0 0; padding:0; list-style:none;
-  display:flex; flex-wrap:wrap; gap:var(--space-2) var(--space-4);
-  font-size:var(--text-sm); font-weight:600; color:var(--pl-fg-secondary);
-}
-.hero__facts li{ display:inline-flex; align-items:center; gap:var(--space-2); }
-.hero__facts li + li::before{ content:""; width:4px; height:4px; border-radius:var(--radius-full); background:var(--pl-border-strong); }
-.hero__facts strong{ color:var(--pl-fg); font-weight:700; }
+.hero--bleed .hero__cta{ margin-top:var(--space-6); display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:center; }
+.hero--bleed .hero__cta .btn{ height:var(--ctl-lg); padding-inline:var(--space-6); font-size:var(--text-body-lg); border-radius:var(--radius-md); white-space:nowrap; }
 
-/* THE STAGE. Square panel; everything inside is % of the panel so the cast
-   keeps its blocking at every width. */
-.hero__stage{
-  position:relative; aspect-ratio:1/1; width:100%;
-  background:var(--pl-grain), var(--pl-bg-alt);
-  border:1px solid var(--pl-border); border-radius:var(--radius-2xl); overflow:hidden;
-  box-shadow:var(--shadow-pl-sm);
+/* CAPTIONS: name-tags, one per agent, a hairline tick down to the head.
+   A tag sits on whatever the photo puts behind the head (wall, screen, code),
+   so it carries its own surface: the system's elevated surface + hairline, pill
+   radius, like the chips elsewhere on the page. --cx/--cy are set per caption by
+   placeHeroCaps(); hidden until placed. */
+.hero__caps{ position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; }
+.hero--bleed.caps-ready .hero__caps{ opacity:1; }
+.hero__cap{
+  position:absolute; left:var(--cx, -999px); top:var(--cy, 0);
+  transform:translate(-50%, -100%);
+  display:inline-flex; align-items:center; gap:var(--space-2);
+  margin-bottom:var(--space-4); padding:var(--space-1) var(--space-3);
+  background:color-mix(in srgb, var(--pl-elevated) 94%, transparent);
+  border:1px solid var(--pl-border); border-radius:var(--radius-full); box-shadow:var(--shadow-pl-sm);
+  white-space:nowrap; font-size:var(--text-caption); line-height:1.4; letter-spacing:0.01em; color:var(--pl-fg-secondary);
 }
-.hero__stage::before{ /* key light */
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(60% 55% at 50% 36%, var(--pl-surface) 0%, color-mix(in srgb, var(--pl-surface) 0%, transparent) 70%);
+.hero__cap::after{ /* the tick, from the pill down to the head */
+  content:""; position:absolute; top:100%; left:50%; width:1px; height:var(--space-4);
+  background:var(--pl-border-strong);
 }
-.hero__floor{ position:absolute; left:0; right:0; bottom:22%; border-top:1px solid var(--pl-border); }
-.hero__stage-label{
-  position:absolute; top:var(--space-4); inset-inline-end:var(--space-5);
-  font-size:var(--text-caption); font-weight:600; letter-spacing:0.04em; color:var(--pl-fg-secondary);
+.hero__cap-role::before{ /* the system's dot separator (same as .hero__facts / .meta) */
+  content:""; display:inline-block; width:3px; height:3px; border-radius:var(--radius-full);
+  background:var(--pl-border-strong); margin-inline-end:var(--space-2); vertical-align:middle;
 }
-.hero__puppet{
-  position:absolute; bottom:14%; width:auto; max-width:none;
-  filter:drop-shadow(0 18px 18px color-mix(in srgb, var(--pl-fg) 18%, transparent));
-}
-.hero__puppet--architect{ height:44%; inset-inline-start:4%; }
-.hero__puppet--strategist{ height:48%; inset-inline-start:35%; }
-.hero__puppet--designer{ height:52%; inset-inline-end:5%; }
-.hero__tags{ position:absolute; bottom:5.5%; inset-inline:9%; display:flex; justify-content:space-between; gap:var(--space-3); }
-.hero__tag{
-  display:inline-flex; gap:var(--space-2); align-items:baseline; white-space:nowrap;
-  font-size:var(--text-caption); font-weight:500; letter-spacing:0.04em; color:var(--pl-fg-secondary);
-}
-.hero__tag b{ font-weight:700; color:var(--pl-fg); font-variant-numeric:tabular-nums; }
+.hero__cap-tag{ font-weight:700; color:var(--pl-fg); }
+.hero__cap-role{ font-weight:500; }
 
-/* mobile: a wider-than-tall panel so the fold still shows the whole cast */
+/* mobile: text on the calm wall at the top, the scene across the bottom (contained,
+   bottom-anchored, on the wall's own value so the seam disappears); captions = tag only */
 @media (max-width:760px){
-  .hero__stage{ aspect-ratio:5/4; border-radius:var(--radius-xl); }
-  .hero__stage-label{ display:none; }
-  .hero--stage .hero__title{ margin-top:var(--space-3); font-size:clamp(2.25rem, 10.5vw, 3rem); }
+  .hero--bleed{
+    min-height:calc(100vh - var(--nav-h-mobile)); min-height:calc(100svh - var(--nav-h-mobile));
+    align-items:start; --hero-shift:0%;
+  }
+  .hero__bg img{ object-fit:contain; object-position:center bottom; }
+  html[dir="ltr"] .hero__bg img{ transform:none; }
+  .hero__bg::after{ /* soften the top edge of the contained photo into the section ground */
+    content:""; position:absolute; left:0; right:0; top:0; height:40%;
+    background:linear-gradient(180deg, var(--pl-bg-alt) 0%, var(--pl-bg-alt) 55%, color-mix(in srgb, var(--pl-bg-alt) 0%, transparent) 100%);
+  }
+  .hero--bleed .hero__grid{ padding-top:var(--space-6); padding-bottom:0; }
+  .hero--bleed .hero__title{ font-size:clamp(2.25rem, 10.5vw, 3rem); }
   .hero__lede{ margin-top:var(--space-4); font-size:var(--text-body); max-width:none; }
-  .hero--stage .hero__cta{ margin-top:var(--space-5); }
-  .hero--stage .hero__cta .btn{ width:100%; }
-  .hero__facts{ margin-top:var(--space-4); }
+  .hero--bleed .hero__cta{ margin-top:var(--space-5); }
+  .hero--bleed .hero__cta .btn{ width:100%; }
+  .hero__cap{ margin-bottom:var(--space-3); }
+  .hero__cap::after{ height:var(--space-3); }
+  .hero__cap-role{ display:none; }
 }
 /* first-paint lift as the brand curtain goes up (same class intro.js already sets) */
-.hero__stage, .hero__copy{ transition:opacity .6s var(--ease-pl), transform .9s var(--ease-pl); }
-html.pl-zoom-park .hero__stage{ opacity:0; transform:translateY(12px); }
-html.pl-zoom .hero__stage{ opacity:1; transform:none; }
-@media (prefers-reduced-motion: reduce){ .hero__stage, .hero__copy{ transition:none; } }
+.hero__bg, .hero__copy{ transition:opacity .6s var(--ease-pl), transform .9s var(--ease-pl); }
+.hero__caps{ transition:opacity .6s var(--ease-pl); }
+html.pl-zoom-park .hero__bg{ opacity:0; transform:translateY(12px); }
+html.pl-zoom .hero__bg{ opacity:1; transform:none; }
+@media (prefers-reduced-motion: reduce){ .hero__bg, .hero__caps, .hero__copy{ transition:none; } }
 
 .btn--accent{ background:var(--pl-accent); color:var(--pl-accent-fg); border-color:transparent; box-shadow:var(--shadow-pl-md); }
 .btn--accent:hover{ background:var(--pl-accent-hover); }
