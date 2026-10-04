@@ -7,25 +7,38 @@
 
 /* ---- TOKENS (verbatim from Product Lab system) --------------------------- */
 :root {
-  --pl-bg: #f6f5f2;
-  --pl-bg-alt: #efeae2;
-  --pl-surface: #ffffff;
-  --pl-elevated: #ffffff;
+  /* DAYLIGHT STUDIO reskin (DSL, 2026-10-04): Ofir picked direction A's
+     colours, no redesign. Ivory ground, ink text, ONE violet accent.
+     Old values: memory/design-system-lead-memory.md 2026-10-04. */
+  --pl-bg: #F3EFE7;
+  --pl-bg-alt: #E9E3D8;
+  --pl-surface: #FBF9F4;
+  --pl-elevated: #FBF9F4;
 
-  --pl-fg: #0a0a0a;
-  --pl-fg-body: #26262b;
-  --pl-fg-secondary: #6b6b73;
-  --pl-fg-muted: #9a9aa3;
+  --pl-fg: #16131C;
+  --pl-fg-body: #2A2631;
+  --pl-fg-secondary: #5C5664;
+  --pl-fg-muted: #6B6572;
 
-  --pl-border: rgb(10 10 10 / 0.16);
-  --pl-border-strong: rgb(10 10 10 / 0.26);
+  --pl-border: rgb(22 19 28 / 0.14);
+  --pl-border-strong: rgb(22 19 28 / 0.24);
 
-  --pl-accent: #7c3aed;
-  --pl-accent-hover: #6d28d9;
+  --pl-accent: #6D28D9;
+  --pl-accent-hover: #5B21B6;
   --pl-accent-fg: #ffffff;
 
-  --pl-grid-dot: rgb(10 10 10 / 0.05);
-  --pl-illo-bg: #ece8f5;
+  --pl-grid-dot: rgb(22 19 28 / 0.05);
+  --pl-illo-bg: #E9E3D8;
+
+  /* 5% paper grain (direction A). One 160px SVG noise tile painted as a
+     background layer on body + .section--alt only: no overlay, no blend mode,
+     no fixed layer, never on top of text or photos. */
+  --pl-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .086 0 0 0 0 .075 0 0 0 0 .11 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* WhatsApp CTA: was raw #25D366 green, a competing accent. Now ink. */
+  --pl-wa-bg: var(--pl-fg);
+  --pl-wa-bg-hover: #2A2631;
+  --pl-wa-fg: #ffffff;
 
   /* Brand cream — the logo spec's brand ground. Was defined only in the intro
      overlay's own stylesheet (assets/intro.css); promoted into the core
@@ -34,11 +47,11 @@
   --pl-brand-cream: #FBEAD9;
 
   /* tooltip — dark bubble for icon-only controls (design-system token) */
-  --pl-tooltip-bg: #1a1a1a;
+  --pl-tooltip-bg: #16131C;
   --pl-tooltip-fg: #ffffff;
 
   /* modal/overlay scrim — was a raw rgb() literal with no token (DSL, 2026-09-07) */
-  --pl-scrim: rgb(10 8 6 / 0.55);
+  --pl-scrim: rgb(22 19 28 / 0.55);
 
   /* crew palette — the felt-puppet character colors, for playful accents */
   --pl-crew-orange: #e0763c;
@@ -57,10 +70,10 @@
   --pl-stage-attended: var(--pl-crew-teal);  /* teal: showed up */
   --pl-stage-dropped: #b4443a;               /* muted red: went cold */
 
-  --shadow-pl-sm: 0 1px 2px 0 rgb(10 10 10 / 0.06);
-  --shadow-pl-md: 0 8px 24px -10px rgb(10 10 10 / 0.12);
-  --shadow-pl-lg: 0 24px 60px -20px rgb(10 10 10 / 0.18);
-  --shadow-pl-glow: 0 18px 50px -18px rgb(10 10 10 / 0.20);
+  --shadow-pl-sm: 0 1px 2px 0 rgb(22 19 28 / 0.06);
+  --shadow-pl-md: 0 8px 24px -10px rgb(22 19 28 / 0.12);
+  --shadow-pl-lg: 0 24px 60px -20px rgb(22 19 28 / 0.18);
+  --shadow-pl-glow: 0 18px 50px -18px rgb(22 19 28 / 0.20);
 
   /* radius grid */
   --radius-sm: 4px;
@@ -133,7 +146,7 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--pl-bg);
+  background: var(--pl-grain), var(--pl-bg);
   color: var(--pl-fg-body);
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   font-weight: 500;                 /* base is MEDIUM — no thin text */
@@ -251,7 +264,7 @@ button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .narrow { max-width: var(--maxw-narrow); }
 
 .section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
-.section--alt { background: var(--pl-bg-alt); }
+.section--alt { background: var(--pl-grain), var(--pl-bg-alt); }
 
 .eyebrow {
   display: inline-flex; align-items: center; gap: var(--space-2);
@@ -1796,7 +1809,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
    instances since 2026-08-31: current cohort (closed, .session-strip--closed)
    + cohort #2 (active, price column shown — see .btn--disabled below). */
 .session-strip-band {
-  background: color-mix(in srgb, var(--pl-accent) 6%, var(--pl-bg));
+  background: var(--pl-grain), var(--pl-bg-alt);   /* was a 6% violet tint = mauve mid-tone; DSL 2026-10-04 */
   border-block: 1px solid var(--pl-border);
 }
 /* Upcoming/past toggle above the strip (2026-09-14, spec item #4, direction A
@@ -1912,14 +1925,16 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
 }
 
 /* WhatsApp = the single primary action, in the sticky header (booking funnel removed).
-   Green WhatsApp-brand button with the logo. */
-.btn--wa-solid { background: #25D366; color: #ffffff; border-color: transparent; box-shadow: var(--shadow-pl-md); }
-.btn--wa-solid:hover { background: #1eb455; }
+   Ink button with the WhatsApp logo (was brand green; DSL 2026-10-04,
+   direction A = one accent, so the green was retired). */
+.btn--wa-solid { background: var(--pl-wa-bg); color: var(--pl-wa-fg); border-color: transparent; box-shadow: var(--shadow-pl-md); }
+.btn--wa-solid:hover { background: var(--pl-wa-bg-hover); }
 /* WhatsApp glyph is PERSISTENT: one fixed size in every wa button, every
    breakpoint, regardless of button proportion. Do not size the icon per-location. */
-.btn--wa-solid svg { color: #ffffff; width: 20px; height: 20px; }
-.ctaband .btn--wa-solid { background: #25D366; color: #ffffff; }
-.ctaband .btn--wa-solid:hover { background: #1eb455; }
+.btn--wa-solid svg { color: var(--pl-wa-fg); width: 20px; height: 20px; }
+.ctaband .btn--wa-solid { background: var(--on-ink-fg); color: var(--pl-fg); }
+.ctaband .btn--wa-solid svg { color: var(--pl-fg); }
+.ctaband .btn--wa-solid:hover { background: var(--pl-bg-alt); }
 
 /* ---- TESTIMONIALS — clean, premium cards: big photo + bold high-contrast quote
    Grid spans the full section width so the cards' outer edges line up with the
@@ -2036,7 +2051,7 @@ html.pl-zoom .hero__bg{ animation: hero-zoom 1200ms cubic-bezier(0.22, 0.61, 0.3
   background:
     radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0) 48%),
     var(--pl-accent);
-  box-shadow: 0 3px 7px -1px rgb(10 10 10 / 0.40), 0 10px 12px -6px rgb(10 10 10 / 0.30);
+  box-shadow: 0 3px 7px -1px rgb(22 19 28 / 0.40), 0 10px 12px -6px rgb(22 19 28 / 0.30);
 }
 
 /* SPLIT — text column, then the photograph. In RTL the grid flips on its own
