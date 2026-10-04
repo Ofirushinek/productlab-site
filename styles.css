@@ -21,8 +21,12 @@
   --pl-fg-secondary: #5C5664;
   --pl-fg-muted: #6B6572;
 
-  --pl-border: rgb(22 19 28 / 0.14);
-  --pl-border-strong: rgb(22 19 28 / 0.24);
+  /* Borders retuned 2026-10-04 (Ofir: "washed out"). Ink alpha keeps the warm hue.
+     --pl-border 0.28 = 1.83-1.86:1 on bg / bg-alt / surface (decorative cards, strips, tiles).
+     --pl-border-strong 0.52 = 3.47-3.66:1 on all three grounds (WCAG 1.4.11 inputs/controls).
+     Was 0.14 (1.33:1) and 0.24 (1.67:1). */
+  --pl-border: rgb(22 19 28 / 0.28);
+  --pl-border-strong: rgb(22 19 28 / 0.52);
 
   --pl-accent: #6D28D9;
   --pl-accent-hover: #5B21B6;
