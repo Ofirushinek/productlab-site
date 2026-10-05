@@ -4284,41 +4284,67 @@ function withTimeout(promise, ms) {
   }
 })();
 
-/* HERO CAPTIONS — maps head anchors (image fractions, data-caps-* on .hero--bleed)
-   to px for the crop object-fit actually produced, so the role tags sit on the
-   heads at every viewport and after any asset swap. Runs on load/resize/lang. */
+/* HERO CAPTIONS — each tag is anchored to its puppet's head in IMAGE coordinates
+   (fractions of the source image, data-caps-* on .hero--bleed) and projected through
+   the exact object-fit transform (scale = max/min(W/iw, H/ih), offset by object-position,
+   mirrored in LTR) of whichever source is showing. Anchor set is chosen by the loaded
+   image's own aspect, so a <source> swap mid-resize can never pair one image's anchors
+   with another's crop. Recomputed on hero/picture resize (ResizeObserver), on every img
+   load (source swaps), fonts and re-render. Labels stay inside the hero: flip below the
+   dot if they would hit the top, slide sideways at the edges; a cap is hidden only when
+   its head is cropped out. Layout boxes (offset*) are used, not rects, so the intro
+   lift transform can't skew the measurement. */
 function placeHeroCaps() {
   const hero = document.querySelector(".hero--bleed"); if (!hero) return;
   const pic = hero.querySelector(".hero__bg"), img = pic && pic.querySelector("img");
-  if (!img || !img.naturalWidth) return;
-  const hb = hero.getBoundingClientRect(), bb = pic.getBoundingClientRect();
+  if (!img || !img.complete || !img.naturalWidth) return;
+  const W = hero.clientWidth, H = hero.clientHeight;
+  const bx = pic.offsetLeft, by = pic.offsetTop, bw = pic.offsetWidth, bh = pic.offsetHeight;
+  if (!W || !H || !bw || !bh) return;
   const cs = getComputedStyle(img);
-  const nw = img.naturalWidth, nh = img.naturalHeight;
-  const s = cs.objectFit === "contain" ? Math.min(bb.width / nw, bb.height / nh) : Math.max(bb.width / nw, bb.height / nh);
+  const nw = img.naturalWidth, nh = img.naturalHeight, ar = nw / nh;
+  const s = cs.objectFit === "contain" ? Math.min(bw / nw, bh / nh) : Math.max(bw / nw, bh / nh);
   const w = nw * s, h = nh * s;
   const pos = cs.objectPosition.split(" ").map(parseFloat);
   const px = isNaN(pos[0]) ? 50 : pos[0], py = isNaN(pos[1]) ? 50 : pos[1];
-  const bx = bb.left - hb.left, by = bb.top - hb.top;
-  const ox = bx + (bb.width - w) * px / 100, oy = by + (bb.height - h) * py / 100;
-  const mirrored = cs.transform && cs.transform !== "none";
-  const src = img.currentSrc;
-  const set = (/mobile/.test(src) ? hero.dataset.capsMobile : /21x9/.test(src) ? hero.dataset.capsWide : hero.dataset.capsDesktop) || "";
+  const ox = bx + (bw - w) * px / 100, oy = by + (bh - h) * py / 100;
+  const mirrored = /matrix\(-1/.test(cs.transform);
+  const set = (ar < 1 ? hero.dataset.capsMobile : ar > 2.1 ? hero.dataset.capsWide : hero.dataset.capsDesktop) || "";
+  const pad = 8;
   set.split(";").forEach((e) => {
     const [k, v] = e.split(":"); if (!v) return;
     const [fx, fy] = v.split(",").map(Number);
     const cap = hero.querySelector(".hero__cap--" + k); if (!cap) return;
-    let x = ox + fx * w; if (mirrored) x = bx + bb.width - (x - bx);
+    let x = ox + fx * w; if (mirrored) x = 2 * bx + bw - x;
+    const y = oy + fy * h;
+    const off = x < pad || x > W - pad || y < pad || y > H - pad;
+    cap.classList.toggle("is-off", off);
     cap.style.setProperty("--cx", Math.round(x) + "px");
-    cap.style.setProperty("--cy", Math.round(oy + fy * h) + "px");
+    cap.style.setProperty("--cy", Math.round(y) + "px");
+    if (off) return;
+    const plate = cap.querySelector(".hero__cap-plate");
+    const pw = plate.offsetWidth, ph = plate.offsetHeight;
+    const lead = cap.offsetHeight - ph; // padding that carries the leader
+    cap.classList.toggle("is-below", y - lead - ph < pad);
+    const left = x - pw / 2, right = x + pw / 2;
+    const shift = left < pad ? pad - left : right > W - pad ? (W - pad) - right : 0;
+    cap.style.setProperty("--cap-shift", Math.round(shift) + "px");
   });
   hero.classList.add("caps-ready");
 }
 (function wireHeroCaps() {
-  const run = () => placeHeroCaps();
+  let raf = 0;
+  const run = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(placeHeroCaps); };
+  let ro = null, seen = null;
   const arm = () => {
-    const img = document.querySelector(".hero--bleed .hero__bg img");
-    if (!img) return;
-    if (img.complete) run(); else img.addEventListener("load", run, { once: true });
+    const hero = document.querySelector(".hero--bleed");
+    const img = hero && hero.querySelector(".hero__bg img");
+    if (!img || img === seen) { run(); return; }
+    seen = img;
+    img.addEventListener("load", run); // fires again on every <source> swap
+    if (ro) ro.disconnect();
+    if (window.ResizeObserver) { ro = new ResizeObserver(run); ro.observe(hero); ro.observe(img.parentNode); }
+    run();
   };
   arm();
   window.addEventListener("resize", run);

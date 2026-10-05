@@ -1771,6 +1771,13 @@ html[dir="ltr"] .hero--bleed .hero__title{ font-size:clamp(2.25rem, 3.8vw, 3.6re
   border-radius:var(--radius-full); background:var(--cap-node);
   box-shadow:0 0 0 2px var(--pl-elevated), 0 1px 4px rgb(0 0 0 / 0.25);
 }
+/* placement states set by placeHeroCaps(): flip under the dot near the top edge,
+   slide the placard (not the dot) at the side edges, hide when the head is cropped out */
+.hero__cap-plate{ transform:translateX(var(--cap-shift, 0px)); }
+.hero__cap.is-below{ transform:translate(-50%, 0); padding-bottom:0; padding-top:var(--cap-lead); }
+.hero__cap.is-below::after{ bottom:auto; top:4px; }
+.hero__cap.is-below::before{ bottom:auto; top:0; transform:translate(-50%, -50%); }
+.hero__cap.is-off{ visibility:hidden; }
 .hero__cap-tag{ font-weight:700; font-size:var(--text-sm); letter-spacing:-0.005em; color:var(--cap-ink); }
 .hero__cap-role{ font-weight:400; font-size:var(--text-caption); letter-spacing:0.02em; color:var(--cap-ink-soft); }
 
