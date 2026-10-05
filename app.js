@@ -62,9 +62,14 @@ function loadPixel() {
 }
 loadPixel();
 /* `Lead` (Meta) + generate_lead (GA4), once per successful form submit. */
-function trackLead(cohort) {
+// Analytics slugs for the two open cohorts, index-aligned with reg_cohorts.
+const GA_COHORTS = ["evening-28-10", "morning-4-11"];
+let LEAD_TRACKED = false; // generate_lead/Lead fire at most once per page load
+function trackLead(cohort, slug) {
+  if (LEAD_TRACKED) return;
+  LEAD_TRACKED = true;
   fbqSafe("track", "Lead", { value: PRICE_ILS, currency: CURRENCY, content_name: PRODUCT_NAME, content_category: cohort || "" });
-  ga("generate_lead", { value: PRICE_ILS, currency: CURRENCY, cohort: cohort || "" });
+  ga("generate_lead", { value: PRICE_ILS, currency: CURRENCY, cohort: slug || cohort || "" });
 }
 
 // When a gated redirect bounces a signed-out visitor home, this asks wireStudent
@@ -115,9 +120,11 @@ function ga(name, params) {
   try { if (typeof gtag === "function") gtag("event", name, params || {}); } catch (e) {}
 }
 let GA_LAST_PATH = null;
+let GA_SCROLL_SENT = {};
 function gaPageview(path, title) {
   if (GA_LAST_PATH === path) return;
   GA_LAST_PATH = path;
+  GA_SCROLL_SENT = {};
   ga("page_view", { page_path: path, page_title: title || document.title });
 }
 
@@ -876,7 +883,7 @@ const ctaRow = (t) => `
   </div>`;
 
 const ctaBand = (t, title, sub, opts = {}) => `
-  <section class="section"><div class="wrap">
+  <section class="section"${opts.section ? ` data-ga-section="${opts.section}"` : ""}><div class="wrap">
     <div class="ctaband reveal">
       <h2>${title}</h2>
       <p>${sub}</p>
@@ -1053,7 +1060,7 @@ const registerModal = (t) => `
           <div class="field" data-register-cohorts>
             <span class="field__label" id="reg-cohort-label">${t.reg_cohort_label}</span>
             <div class="tabs tabs--seg" role="radiogroup" aria-labelledby="reg-cohort-label">
-              ${t.reg_cohorts.map((c, i) => `<button type="button" class="tabs__btn" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-cohort="${escapeAttr(`${c.day} ${c.time}`)}"><span class="tabs__seg-main">${c.day.replace(/^(\S+) /, "$1\u00a0").replace(" · ", "\u00a0· ")}</span><span class="tabs__seg-sub" dir="ltr">${c.time}</span></button>`).join("")}
+              ${t.reg_cohorts.map((c, i) => `<button type="button" class="tabs__btn" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-cohort="${escapeAttr(`${c.day} ${c.time}`)}" data-ga-cohort="${GA_COHORTS[i] || ""}"><span class="tabs__seg-main">${c.day.replace(/^(\S+) /, "$1\u00a0").replace(" · ", "\u00a0· ")}</span><span class="tabs__seg-sub" dir="ltr">${c.time}</span></button>`).join("")}
             </div>
           </div>
           <div class="field">
@@ -1274,7 +1281,7 @@ function render(lang) {
        data-caps-* (swap the asset -> update six numbers); placeHeroCaps()
        below turns them into px for whatever crop object-fit produced.
        Title = the LIVE one verbatim (Ofir). No kicker, no facts row. -->
-  <section class="hero hero--bleed"
+  <section data-ga-section="hero" class="hero hero--bleed"
     data-caps-desktop="architect:0.154,0.558;strategist:0.325,0.498;designer:0.432,0.532"
     data-caps-wide="architect:0.113,0.43;strategist:0.292,0.347;designer:0.40,0.393"
     data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
@@ -1302,7 +1309,7 @@ function render(lang) {
   <!-- 6 PROOF OF CRAFT — moved up to right after the hero (conversion-spec item
        #5, 2026-09-14: proof + "what you leave with" move near the top). Markup
        unchanged, position only. -->
-  <section class="section section--alt"><div class="wrap">
+  <section data-ga-section="proof" class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.proof_eyebrow}</span>
       <h2 class="section-title">${t.proof_title}</h2>
@@ -1327,7 +1334,7 @@ function render(lang) {
 
   <!-- 3 WALK AWAY — moved up to right after PROOF (conversion-spec item #5,
        2026-09-14). Markup unchanged, position only. -->
-  <section class="section"><div class="wrap">
+  <section data-ga-section="walkthrough" class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.walk_eyebrow}</span>
       <h2 class="section-title">${t.walk_title}</h2>
@@ -1356,7 +1363,7 @@ function render(lang) {
        Default tab "upcoming" shows only the open cohort (session2); "past"
        reveals the closed one (session), same disabled/sold-out card as before —
        just hidden until picked, not deleted. No new component/token. -->
-  <section class="session-strip-band">
+  <section data-ga-section="sessions" class="session-strip-band">
     <div class="wrap sessions-tabsrow">
       <div class="tabs tabs--pill" role="tablist" data-sessions-tabs>
         <button type="button" class="tabs__btn" role="tab" data-sessions-tab="upcoming" aria-selected="true">${t.sessions_tab_upcoming}</button>
@@ -1380,7 +1387,7 @@ function render(lang) {
        characters"): crew-*.webp are the felt-puppet portraits again (restored
        from commit 3191be2; the 2026-09-20 line-icon pattern swap is reversed).
        ?v=3 so no CDN serves the cached pattern under the same filename. -->
-  <section class="section"><div class="wrap">
+  <section data-ga-section="crew" class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.ofir_eyebrow}</span>
       <h2 class="section-title">${t.roster_title}</h2>
@@ -1416,7 +1423,7 @@ function render(lang) {
   </div></section>
 
   <!-- 2 WHY NOW — three rounded tiles (bold numeral on top) -->
-  <section class="section section--alt why-section">
+  <section data-ga-section="why" class="section section--alt why-section">
     ${whyCursorsMarkup()}
     <div class="wrap why">
     <div class="reveal">
@@ -1440,7 +1447,7 @@ function render(lang) {
   <!-- 4 WHO — three tiles (puppet illustration on top, like Three-hats cards).
        Puppets were cut here on 2026-10-01 and brought BACK 2026-10-04 (Ofir,
        revival brief: the felt puppets are the workshop's characters). -->
-  <section class="section section--alt"><div class="wrap">
+  <section data-ga-section="who_for" class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.who_eyebrow}</span>
       <h2 class="section-title">${t.who_for_title}</h2>
@@ -1457,7 +1464,7 @@ function render(lang) {
   </div></section>
 
   <!-- 5 AGENDA -->
-  <section class="section"><div class="wrap">
+  <section data-ga-section="agenda" class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.agenda_eyebrow}</span>
       <h2 class="section-title">${t.agenda_title}</h2>
@@ -1484,7 +1491,7 @@ function render(lang) {
 
   <!-- 8 TESTIMONIALS — shown as intentional PLACEHOLDER cards (dashed) so people
        reviewing the page see where their quote will go. Swap q/n/m in I18N for real. -->
-  <section class="section section--alt"><div class="wrap">
+  <section data-ga-section="quotes" class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.quotes_eyebrow}</span>
       <h2 class="section-title">${t.quotes_title}</h2>
@@ -1508,7 +1515,7 @@ function render(lang) {
        Same --pl-bg-alt band as the section above it and NO top padding, so the two
        read as one continuous band rather than two stacked stripes.
        The photograph is the FULL 3:2 frame at every width — never cropped. -->
-  <section class="section section--alt grad-section"><div class="grad-wrap">
+  <section data-ga-section="graduates" class="section section--alt grad-section"><div class="grad-wrap">
     <div class="grad">
       <div class="grad__text reveal">
         <span class="eyebrow">${t.grad_kicker}</span>
@@ -1527,7 +1534,7 @@ function render(lang) {
   </div></section>
 
   <!-- 9 DETAILS — ONE unified accordion (logistics + FAQ), icon on every row -->
-  <section class="section"><div class="wrap narrow">
+  <section data-ga-section="included" class="section"><div class="wrap narrow">
     <div class="reveal">
       <span class="eyebrow">${t.incl_eyebrow}</span>
       <h2 class="section-title">${t.incl_title}</h2>
@@ -1542,7 +1549,7 @@ function render(lang) {
   </div></section>
 
   <!-- 10 FINAL CTA -->
-  ${ctaBand(t, t.final_title, t.final_sub, { checkout: true })}
+  ${ctaBand(t, t.final_title, t.final_sub, { checkout: true, section: "final_cta" })}
 
   </main>
 
@@ -3869,6 +3876,7 @@ function afterRender() {
   wireSignout();
   wirePrompts();
   wireWhyCursors();
+  wireSectionViews();
   fitHeroSub();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeroSub);
 }
@@ -4027,6 +4035,7 @@ function wireRegister() {
   // Roving tabindex; arrows move + select (wraps), mirrored in RTL.
   const cohortBtns = [...modal.querySelectorAll("[data-cohort]")];
   const pickCohort = (b, focus) => {
+    if (b.getAttribute("aria-checked") !== "true") ga("cohort_select", { cohort: b.getAttribute("data-ga-cohort") || "" });
     cohortBtns.forEach((o) => {
       o.setAttribute("aria-checked", o === b ? "true" : "false");
       o.tabIndex = o === b ? 0 : -1;
@@ -4056,6 +4065,10 @@ function wireRegister() {
     e.preventDefault();
     if (submitting) return;                         // hard guard against double-submit
     if (errorEl) errorEl.hidden = true;
+    {
+      const cb = modal.querySelector('[data-cohort][aria-checked="true"]');
+      ga("form_submit_attempt", { cohort: cb ? cb.getAttribute("data-ga-cohort") || "" : "" });
+    }
 
     // One visible "full name" field (Ofir, 2026-09-08: merge first+last into
     // one input); register_lead still wants them split, so split on the
@@ -4098,7 +4111,7 @@ function wireRegister() {
         });
         if (error) throw error;
       }
-      trackLead(cohort);
+      trackLead(cohort, cohortBtn.getAttribute("data-ga-cohort"));
       // Hand off to the standalone /thanks/ page (same folder as index.html;
       // trailing slash — static host, /thanks is a folder).
       location.href = new URL("thanks/", location.href.split("#")[0]).href;
@@ -4202,6 +4215,85 @@ function wireReveal() {
     entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
   }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
   els.forEach((e) => io.observe(e));
+}
+
+/* ---- Click / scroll / section analytics (GA4, 2026-10-05) ----------------
+   Everything goes through ga() (no-ops on localhost / when gtag is blocked).
+   Click + focus tracking is ONE delegated, capture-phase listener installed
+   once at boot, so it survives every innerHTML re-render and reads state
+   (e.g. the current language) BEFORE the element's own handler changes it.
+   Events: cta_click, whatsapp_click, student_login_click, lang_toggle,
+   outbound_click, form_start, scroll_depth, section_view. cohort_select,
+   form_submit_attempt and generate_lead live in wireRegister/trackLead. */
+function gaLocation(el) {
+  if (el.closest("[data-student-modal]")) return "student_modal";
+  if (el.closest("[data-register-modal]")) return "register_modal";
+  if (el.closest("[data-notice]")) return "notice";
+  if (el.closest(".nav, header")) return "nav";
+  if (el.closest("footer")) return "footer";
+  const sec = el.closest("[data-ga-section]");
+  if (sec) return sec.getAttribute("data-ga-section");
+  return currentRoute();
+}
+const gaLabel = (el) => (el.textContent || el.getAttribute("aria-label") || "").replace(/\s+/g, " ").trim().slice(0, 100);
+let GA_FORM_STARTED = false;
+document.addEventListener("click", (e) => {
+  const el = e.target && e.target.closest ? e.target.closest("a, button") : null;
+  if (!el) return;
+  try {
+    if (el.matches("[data-register-open]")) {
+      // position = 1-based order among register CTAs in the same block (tells the two session strips apart).
+      const block = el.closest("[data-ga-section], header, footer, .modal") || document;
+      ga("cta_click", { location: gaLocation(el), label: gaLabel(el), position: [...block.querySelectorAll("[data-register-open]")].indexOf(el) + 1 });
+      return;
+    }
+    if (el.matches("[data-student-open], .nav__student")) { ga("student_login_click", { location: gaLocation(el) }); return; }
+    if (el.matches("[data-toggle-lang]")) { ga("lang_toggle", { to: document.documentElement.lang === "he" ? "en" : "he" }); return; }
+    if (el.matches("[data-set-lang]")) { const to = el.getAttribute("data-set-lang"); if (to !== document.documentElement.lang) ga("lang_toggle", { to }); return; }
+    if (el.tagName === "A" && el.href) {
+      const u = new URL(el.href, location.href);
+      if (u.hostname === "wa.me" || u.hostname.endsWith("whatsapp.com")) { ga("whatsapp_click", { location: gaLocation(el) }); return; }
+      if (/^https?:$/.test(u.protocol) && u.hostname !== location.hostname) ga("outbound_click", { url: u.href, location: gaLocation(el) });
+    }
+  } catch (err) {}
+}, true);
+document.addEventListener("focusin", (e) => {
+  if (GA_FORM_STARTED || !e.target || !e.target.closest || !e.target.closest("[data-register-form]")) return;
+  GA_FORM_STARTED = true;
+  ga("form_start", { form: "register" });
+}, true);
+// Scroll depth: % of the scrollable distance, each threshold once per route.
+let GA_SCROLL_RAF = 0;
+window.addEventListener("scroll", () => {
+  if (GA_SCROLL_RAF) return;
+  GA_SCROLL_RAF = requestAnimationFrame(() => {
+    GA_SCROLL_RAF = 0;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (max <= 0) return;
+    const pct = (window.scrollY / max) * 100;
+    [25, 50, 75, 90].forEach((p) => {
+      if (pct >= p && !GA_SCROLL_SENT[p]) { GA_SCROLL_SENT[p] = true; ga("scroll_depth", { percent: p }); }
+    });
+  });
+}, { passive: true });
+// section_view: a main section first enters the top 60% of the viewport.
+// Once per section per page load; re-observed after every render.
+const GA_SECTIONS_SEEN = new Set();
+let GA_SECTION_IO = null;
+function wireSectionViews() {
+  if (!("IntersectionObserver" in window)) return;
+  if (GA_SECTION_IO) GA_SECTION_IO.disconnect();
+  GA_SECTION_IO = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      const name = en.target.getAttribute("data-ga-section");
+      GA_SECTION_IO.unobserve(en.target);
+      if (GA_SECTIONS_SEEN.has(name)) return;
+      GA_SECTIONS_SEEN.add(name);
+      ga("section_view", { section: name });
+    });
+  }, { rootMargin: "0px 0px -40% 0px", threshold: 0 });
+  document.querySelectorAll("[data-ga-section]").forEach((s) => GA_SECTION_IO.observe(s));
 }
 
 /* ---- Boot ---------------------------------------------------------------- */
