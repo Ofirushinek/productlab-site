@@ -10,7 +10,7 @@ window.PL_CONFIG = {
   PAYMENT_LINK: "",
 
   // TODO(CSO/Ofir): Meta Pixel ID (digits only). EMPTY = Pixel never loads.
-  PIXEL_ID: "",
+  PIXEL_ID: "2106291883319667",
 
   // Value attached to the Meta `Lead` event (fired once on a successful form submit).
   PRICE_ILS: 290,
