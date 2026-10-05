@@ -23,15 +23,17 @@
   inset: 0;
   z-index: 9999;               /* the site's ceiling is 100 */
 
-  --pl-intro-cream: #FBEAD9;   /* brand ground  — logo spec.json */
-  --pl-intro-ink:   #402D1F;   /* wordmark ink  — logo spec.json */
+  /* Warm brand ground: logo spec.json pair #FBEAD9 / #402D1F. Restored
+     2026-10-04 after Ofir rejected the cool pass (was #F2F3F4 / #16131C). */
+  --pl-intro-ground: #FBEAD9;
+  --pl-intro-ink:    #402D1F;
   --stage: clamp(112.5px, 19.5vh, 210px);  /* 75% of the previous 150/26vh/280 —
      Ofir, 2026-08-24: the loader read too big. Scaled the size itself, not a
      transform, so the choreography (which is %-translate + unitless-scale,
      entirely relative to --stage) and the wordmark (font-size: calc(var(--stage)
      * 0.1583)) stay in the exact proportion they were designed at. */
 
-  background: var(--pl-intro-cream);
+  background: var(--pl-intro-ground);
   color: var(--pl-intro-ink);
 
   display: flex;

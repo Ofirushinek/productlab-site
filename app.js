@@ -22,6 +22,51 @@ const WA_URL   = "https://wa.me/972542259730";                    // Ofir: 054-2
 // Ofir — see shared/shared-brain.md, 2026-09-10.
 const KIT_ZIP_URL = "assets/product-lab-2fd8ad517d75.zip";
 
+/* ---- Launch config (config.js, loaded before this file) -------------------
+   PAYMENT_LINK / PIXEL_ID live in ONE place (config.js) so swapping them is a
+   one-line change and thanks/index.html reads the very same values. */
+const CFG = window.PL_CONFIG || {};
+const PAYMENT_LINK = CFG.PAYMENT_LINK || ""; // unused for the 2026-10 cohorts (see config.js)
+const PIXEL_ID = CFG.PIXEL_ID || "";
+const PRICE_ILS = CFG.PRICE_ILS || 290;
+const CURRENCY = CFG.CURRENCY || "ILS";
+const PRODUCT_NAME = CFG.PRODUCT_NAME || "Build with Claude";
+
+/* The ONE registration CTA (hero, both session strips, final band).
+   CPO 2026-10-04: no Stripe (doesn't serve Israel). The PRIMARY path is the
+   site's own register form (Supabase register_lead) -> /thanks/ -> Ofir calls
+   within 24h -> ₪290 by invoice after the call. */
+const checkoutCta = (label, cls = "btn btn--accent") =>
+  `<button class="${cls}" type="button" data-register-open>${label}</button>`;
+
+/* ---- Meta Pixel (CTO spec publish-and-pixel-v1, 2026-10-04) -------------
+   Standard base snippet, loaded ONLY when PIXEL_ID is set; every call goes
+   through fbqSafe() so a blocked/missing fbq can never throw. IS_LOCAL traffic
+   is skipped like GA4 (see ga() below). Events: PageView on load, `Lead` once
+   on a successful register-form submit (wireRegister). No checkout events. */
+function fbqSafe() {
+  try { if (typeof window.fbq === "function") window.fbq.apply(null, arguments); } catch (e) {}
+}
+function loadPixel() {
+  if (!PIXEL_ID || typeof location === "undefined") return;
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") return;
+  if (window.fbq) return;
+  const n = (window.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); });
+  if (!window._fbq) window._fbq = n;
+  n.push = n; n.loaded = true; n.version = "2.0"; n.queue = [];
+  const sc = document.createElement("script");
+  sc.async = true; sc.src = "https://connect.facebook.net/en_US/fbevents.js";
+  document.head.appendChild(sc);
+  fbqSafe("init", PIXEL_ID);
+  fbqSafe("track", "PageView");
+}
+loadPixel();
+/* `Lead` (Meta) + generate_lead (GA4), once per successful form submit. */
+function trackLead(cohort) {
+  fbqSafe("track", "Lead", { value: PRICE_ILS, currency: CURRENCY, content_name: PRODUCT_NAME, content_category: cohort || "" });
+  ga("generate_lead", { value: PRICE_ILS, currency: CURRENCY, cohort: cohort || "" });
+}
+
 // When a gated redirect bounces a signed-out visitor home, this asks wireStudent
 // to auto-open the sign-in modal on the next render.
 let pendingStudentOpen = false;
@@ -34,7 +79,16 @@ let pendingStudentOpen = false;
    NEVER put the service_role key or the DB password here.                     */
 const SUPABASE_URL = "https://qyeacmmfrbqimjpbgcal.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5ZWFjbW1mcmJxaW1qcGJnY2FsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDczNjQsImV4cCI6MjEwMjAyMzM2NH0.WNLCixQe1XRnzddtjDtcWks4BnSVbIYZHStBiDBX8ho";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Guarded (2026-10-04): if the supabase-js CDN is blocked (offline preview,
+// strict CSP, ad blocker) the public page must still render. Every auth/rpc
+// call already sits in a try/catch and falls back to signed-out; this stub
+// just makes those calls reject instead of throwing at parse time.
+const sb = (window.supabase && typeof window.supabase.createClient === "function")
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : (() => {
+      const rej = () => Promise.reject(new Error("supabase-js not loaded"));
+      return { auth: { getSession: rej, signOut: rej, signInWithOAuth: rej, onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }) }, rpc: rej, from: () => ({ select: rej, insert: rej, update: rej, delete: rej }) };
+    })();
 
 /* Admin is gated by EMAIL — the same forge-proof gate RLS uses (it reads the
    signed JWT email), so the UI and the data gate always agree. This is NOT a
@@ -167,17 +221,17 @@ const I18N = {
     nav_student: "כניסת תלמידים",
     nav_signout: "יציאה",
     nav_account: "התפריט שלך",
-    hero_chip: "בהזמנה בלבד. בקבוצות קטנות.",
+    hero_chip: "בקבוצות קטנות. שיחה אישית לפני המפגש.",
     hero_title_a: "מרעיון למציאות. עולם חדש של עבודה עם ",
     hero_title_mark: "סוכני AI",
     hero_title_b: ".",
-    hero_sub: "ב-3 שעות תקימו עם Claude צוות סוכני AI, עם זיכרון משותף, ותתחילו לבנות איתו. בזמן אמת.",
+    hero_sub: "ב-3 שעות תקימו עם Claude צוות סוכני AI, ותבנו איתו אתר משלכם, מעוצב. עד סוף המפגש הוא כבר באוויר.",
     hero_points: ["זיכרון משותף", "בלי קוד", "צוות שנשאר איתכם"],
     /* new one-view hero (2026-08-20): headline split into its two sentences,
        sub split into line units the design controls, register CTA */
     hero_t1: "מרעיון למציאות.",
     hero_t2a: "עולם חדש של עבודה עם ",
-    hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "עם זיכרון משותף, ותתחילו לבנות איתו.", "בזמן אמת."],
+    hero_sub_lines: ["ב-3 שעות תקימו עם Claude צוות סוכני AI,", "ותבנו איתו אתר משלכם, מעוצב.", "עד סוף המפגש הוא כבר באוויר."],
     hero_cta: "הרשמה למחזור הבא",
     hero_cta2: "איזה סוכנים מתאימים לי?",
     // Ofir's own words, 2026-09-14 spec item #4 (סווג לסדנאות עבר/הבאות) — used
@@ -197,14 +251,27 @@ const I18N = {
     // Cohort #2, added 2026-08-31 (date+price decided by Ofir/CMO, shared-brain
     // IN FLIGHT 2026-08-31 [cmo]). Same shape as `session` above + a price column,
     // rendered directly beneath it — the ONLY place price appears on the page.
+    // Revival 2026-10 (Copywriter site-copy-v3-minimal, dates/price locked by Ofir
+    // 2026-10-04): TWO open cohorts, same strip component rendered twice.
     session2: {
-      badge: "המחזור הבא",
+      badge: "מחזור ערב",
       when_label: "מתי?",
-      when_value: ["יום ה׳, 15 באוקטובר", "17:30-20:30", "מפגש יחיד, 3 שעות"],
+      when_value: ["יום ד׳, 28 באוקטובר", "19:00-22:00", "מפגש יחיד, 3 שעות"],
       where_label: "איפה?",
-      where_value: ["אונליין בזום", "מכל מקום בעולם"],
+      where_value: ["אונליין בזום", "על המחשב שלכם"],
       price_label: "מחיר",
-      price_value: ["₪600", "לאדם"],
+      price_value: ["₪290"],
+      cta: "הרשמה",
+      limited_note: "מקומות מוגבלים",
+    },
+    session3: {
+      badge: "מחזור בוקר",
+      when_label: "מתי?",
+      when_value: ["יום ד׳, 4 בנובמבר", "09:00-12:00", "מפגש יחיד, 3 שעות"],
+      where_label: "איפה?",
+      where_value: ["אונליין בזום", "על המחשב שלכם"],
+      price_label: "מחיר",
+      price_value: ["₪290"],
       cta: "הרשמה",
       limited_note: "מקומות מוגבלים",
     },
@@ -212,17 +279,17 @@ const I18N = {
     why_eyebrow: "למה עכשיו",
     why_heading: "אדם אחד, יותר מעבודה אחת.",
     why_tiles: [
-      { t: "הכול עליך", b: "מוצר, עיצוב והוצאה לאוויר, הכול עובר דרכך. צוות סוכנים הוא הדרך שבה אדם אחד מכסה עבודה של כמה אנשים, בלי להעביר שום דבר הלאה." },
-      { t: "מיומנות, לא טריק", b: "עובדים ישירות מול Claude, עם היתרונות והמגבלות על השולחן. יוצאים עם שיטה עובדת לתזמור צוות סוכנים על עבודת מוצר ועיצוב אמיתית, לא עוד פרומפטים גנריים." },
-      { t: "יתרון ההתחלה", b: "עולם הסטארטאפים נע לכיוון של אנשים וסוכנים שבונים זה לצד זה. כדאי להתרגל לעבוד ככה עכשיו, כל עוד זה עדיין יתרון ולא ברירת המחדל של כולם." },
+      { t: "הכול עליך", b: "הרעיון, העיצוב והעלייה לאוויר, הכול עובר דרכך. צוות סוכנים הוא הדרך שבה אדם אחד מכסה עבודה של כמה אנשים, בלי להעביר שום דבר הלאה." },
+      { t: "מיומנות, לא טריק", b: "עובדים ישירות מול Claude, עם היתרונות והמגבלות על השולחן. יוצאים עם שיטה עובדת לתזמור צוות סוכנים על העבודה שלכם, לא עוד פרומפטים גנריים." },
+      { t: "יתרון ההתחלה", b: "עולם העבודה נע לכיוון של אנשים וסוכנים שבונים זה לצד זה. כדאי להתרגל לעבוד ככה עכשיו, כל עוד זה עדיין יתרון ולא ברירת המחדל של כולם." },
     ],
 
     walk_eyebrow: "מה לוקחים הביתה",
     walk_title: "עם מה יוצאים מפה",
     walk_items: [
-      { t: "צוות סוכני AI אישי, מותאם בדיוק אליכם", b: "יוצאים עם צוות שכבר מכיר את הפרויקט שלכם, ועם חבר צוות אחד שהגדרתם בעצמכם מאפס." },
+      { t: "צוות סוכני AI אישי, מותאם בדיוק אליכם", b: "יוצאים עם צוות שכבר מכיר את הפרויקט שלכם." },
       { t: "זיכרון משותף שכל הצוות עובד ממנו", b: "כל הסוכנים עובדים מאותו מקור ידע, מכירים את הפרויקט ומשתפים ביניהם הקשר ומידע לאורך כל העבודה." },
-      { t: "הפרויקט הראשון שכבר התחלתם לבנות", b: "כבר במהלך הסדנה תתחילו לעבוד עם הצוות שבניתם על הפרויקט שלכם, במקום לצאת רק עם ידע תיאורטי." },
+      { t: "אתר משלכם, כבר באוויר", b: "כבר במהלך הסדנה תבנו עם הצוות אתר משלכם, מעוצב, ותעלו אותו לאוויר בכתובת חינמית שאפשר לשלוח. במקום לצאת רק עם ידע תיאורטי." },
       { t: "שיטת עבודה שתמשיך איתכם גם אחרי הסדנה", b: "תצאו עם צוות, זיכרון ותהליך עבודה שתוכלו להמשיך לפתח ולהשתמש בהם גם בפרויקטים הבאים." },
     ],
 
@@ -235,21 +302,21 @@ const I18N = {
 
     who_eyebrow: "למי זה מתאים",
     who_for_title: "אם אתם רוצים לבנות בעצמכם, אבל לא לבד.",
-    who_intro: "לא משנה אם אתם אנשי מוצר ועיצוב, יזמים, בוני מוצרים או אנשי מקצוע שרוצים לעבוד אחרת. אם אתם רוצים להפוך את ה-AI לשותף אמיתי בתהליך העבודה שלכם, אתם במקום הנכון.",
+    who_intro: "לא משנה אם אתם עצמאים או שכירים, ומאיזה תחום, ולא צריך רקע טכני. אם אתם רוצים להפוך את ה-AI לשותף אמיתי בתהליך העבודה שלכם, אתם במקום הנכון.",
     who_tiles: [
-      { t: "אנשי מוצר ועיצוב", b: "בין אם אתם מעצבי מוצר, מובילי עיצוב או מנהלי מוצר, הסדנה תראה לכם איך לעבוד עם צוות סוכני AI שמרחיב את היכולות שלכם ומשאיר אתכם להתמקד במה שאף כלי לא עושה: לחשוב, להחליט ולהוביל." },
+      { t: "עצמאים ושכירים", b: "יש לכם שירות, עסק או רעיון שאתם רוצים להראות לעולם. בסדנה תבנו עם צוות סוכני AI אתר משלכם, ותצאו עם דרך עבודה שתשמש אתכם גם בדבר הבא." },
       { t: "בונים ויזמים", b: "יש לכם רעיון, מוצר או עסק שאתם רוצים לבנות או לקדם. בסדנה תבנו צוות סוכני AI שחושב איתכם, מתכנן, מאתגר רעיונות ועוזר להפוך אותם למוצר אמיתי." },
       { t: "מרחיבי אופקים", b: "אם אתם מרגישים שהדרך שבה עובדים משתנה, ורוצים להבין איך באמת עובדים עם AI, לא רק לשאול שאלות אלא לבנות תהליך עבודה שלם, הסדנה הזו בשבילכם." },
     ],
     who_not: "מתאים פחות למי שמחפש כפתור קסם. אם בא לך להפשיל שרוולים ולבנות בעצמך, יש לך מקום סביב השולחן.",
 
     agenda_eyebrow: "שלושה שלבים",
-    agenda_title: "שלוש שעות. בסוף הסדנה תצאו עם צוות סוכני AI שעובד איתכם.",
-    agenda_intro: "בשלושה שלבים נבנה יחד את מערכת העבודה החדשה שלכם, מהיכרות עם השיטה, דרך הקמת צוות סוכני AI אישי ועד לבניית הפרויקט הראשון שלכם.",
+    agenda_title: "שלוש שעות. בסוף הסדנה תצאו עם צוות סוכני AI שעובד איתכם, ועם אתר משלכם באוויר.",
+    agenda_intro: "בשלושה שלבים נבנה יחד את מערכת העבודה החדשה שלכם, מהיכרות עם השיטה, דרך הקמת צוות סוכני AI אישי ועד לאתר הראשון שלכם.",
     agenda_phases: [
       { time: "שלב ראשון", t: "מתחילים", b: "מבינים את שיטת העבודה, מכירים את הכלים שנשתמש בהם ומניחים את היסודות לצוות שנבנה בהמשך." },
       { time: "שלב שני", t: "פוגשים את הצוות", b: "פותחים את הערכה ומגלים שהצוות כבר בפנים, מחובר לזיכרון משותף ומוכן לעבוד. משם בונים יחד." },
-      { time: "שלב שלישי", t: "בונים עם הצוות", b: "מפעילים את הצוות שבניתם ומתחילים לעבוד יחד על הפרויקט הראשון שלכם." },
+      { time: "שלב שלישי", t: "בונים עם הצוות", b: "מפעילים את הצוות שבניתם ובונים יחד את האתר שלכם, עד שהוא באוויר." },
     ],
     agenda_toggle: "מה יש בפנים",
     agenda_p1_items: [
@@ -269,8 +336,7 @@ const I18N = {
     agenda_p3_items: [
       { t: "נותנים בריף", b: "מסבירים למנהל המוצר מה רוצים לבנות, והוא מתחיל לתעדף, לכוון ולתזמר את העבודה." },
       { t: "רואים את הצוות בפעולה", b: "כל שותף בצוות עובד בשיחה משלו, אבל קורא קודם מה שהאחרים כתבו בזיכרון המשותף וממשיך משם." },
-      { t: "בונים את הפרויקט הראשון", b: "הופכים את הרעיון שלכם לעמוד נחיתה עובד, יחד עם צוות סוכני ה-AI שכבר איתכם." },
-      { t: "מוסיפים שותף משלכם", b: "עונים בהודעה אחת מי הוא, מה התפקיד שלו ומה האופי שלו, והמשימה הראשונה שלו היא לחוות דעה על העמוד שכבר בניתם." },
+      { t: "בונים את האתר שלכם", b: "הופכים את מה שאתם עושים לאתר מעוצב, יחד עם צוות סוכני ה-AI שכבר איתכם, ומעלים אותו לאוויר בכתובת חינמית." },
       { t: "ממשיכים גם אחרי הסדנה", b: "יוצאים עם צוות סוכני AI אישי שתוכלו להמשיך להתייעץ איתו, לבנות איתו ולהרחיב אותו גם אחרי שהמפגש מסתיים." },
     ],
 
@@ -295,9 +361,9 @@ const I18N = {
     ofir_name: "אופיר רושינק",
     ofir_role: "ראש הצוות",
     agents: [
-      { img: "crew-designer", tag: "המעצב", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
-      { img: "crew-strategist", tag: "האסטרטג", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
-      { img: "crew-architect", tag: "הארכיטקט", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
+      { img: "crew-designer", tag: "המעצב", cap: "סוכן עיצוב מוצר", role: "מעצב המוצר", b: "כשמגיע הזמן לעצב, הוא השותף הראשון שלי. הוא עובד מתוך ה-Design System, שומר על עקביות, מציע פתרונות UX ומוודא שכל מסך ברור, שימושי ומוכן לבנייה." },
+      { img: "crew-strategist", tag: "האסטרטג", cap: "סוכן ניהול מוצר", role: "מנהל המוצר", b: "כשאני לא בטוח מה לבנות קודם, אני מתייעץ איתו. הוא עוזר לחדד רעיונות, לתעדף משימות, לאתגר הנחות יסוד ולשמור שכל החלטה מקדמת את המוצר בכיוון הנכון." },
+      { img: "crew-architect", tag: "הארכיטקט", cap: "סוכן פיתוח", role: "המהנדס הראשי", b: "כשיש לי דילמה טכנית, אני מתחיל איתו. הוא עוזר לי לבחור את הגישה הנכונה, לחשוב על הארכיטקטורה ולוודא שכל פתרון שנבחר באמת ניתן למימוש, יציב ומוכן לגדול יחד עם המוצר." },
     ],
     ofir_bio: "במשך שנים בניתי מוצרים דיגיטליים והובלתי צוותי Product Design. אבל השינוי המשמעותי ביותר שעברתי לא היה תפקיד חדש, אלא דרך עבודה חדשה.\n\nהיום אני כבר לא בונה מוצרים לבד. אני עובד עם צוות סוכני AI שבניתי לעצמי - שותפים לחשיבה, לתכנון, לעיצוב ולבנייה. יחד בנינו את Product Lab, את Glimps, את האתר שאתם נמצאים בו עכשיו, ואפילו חלקים מהסדנה עצמה.",
     ofir_why: "עכשיו אני רוצה לעזור גם לכם לבנות לעצמכם צוות כזה.",
@@ -337,19 +403,20 @@ const I18N = {
     incl_title: "כל מה שצריך לדעת",
     // ONE unified accordion. `open:true` = logistics facts shown by default.
     detail_items: [
-      { ico: "video",    q: "איפה ואיך זה מתנהל?", a: "מפגש חי בזום, בקבוצה קטנה, כדי שלכל אחד תהיה תשומת לב אישית." },
-      { ico: "clock",    q: "כמה זמן זה לוקח?", a: "כשלוש שעות רצופות עם הפסקה אחת. מגיעים בלי צוות סוכני AI, יוצאים עם אחד." },
-      { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונה לאורך כל הדרך, לא צופה מהצד. יוצאים עם משהו אמיתי שבנית בעצמך." },
+      { ico: "video",    q: "איפה ואיך זה מתנהל?", a: "מפגש חי בזום, בקבוצה קטנה, כדי שלכל אחד תהיה תשומת לב אישית. עובדים על המחשב שלכם, באפליקציית Claude, עם ערכה מוכנה." },
+      { ico: "clock",    q: "כמה זמן זה לוקח?", a: "כשלוש שעות רצופות עם הפסקה אחת. מגיעים בלי צוות סוכני AI, יוצאים עם אחד, ועם אתר משלכם באוויר." },
+      { ico: "hand",     q: "אני בונה בעצמי או צופה?", a: "בונה לאורך כל הדרך, לא צופה מהצד. יוצאים עם אתר שבנית בעצמך." },
       { ico: "laptop",   q: "צריך לדעת לתכנת?", a: "לא. אם יודעים לכתוב בריף ברור, אפשר לעשות את זה. בונים על Claude, בשפה רגילה, בלי קוד." },
-      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ, חשבון Claude, וחיבור אינטרנט יציב. כדאי גם פינה שקטה שבה תוכלו להתרכז. נגיד לכם מה עוד להכין לפני המפגש." },
-      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם צוות סוכני AI עובד ועם משהו אמיתי שבניתם. לאן לוקחים את זה משם, כבר תלוי בכם." },
+      { ico: "box",      q: "מה צריך להביא?", a: "לפטופ עם אפליקציית Claude למחשב, חשבון Claude בתשלום וחיבור אינטרנט יציב. כדאי גם פינה שקטה שבה תוכלו להתרכז. את ההתקנה בודקים יחד בשיחה לפני המפגש." },
+      { ico: "spark",    q: "זה באמת מפגש אחד?", a: "כן. יוצאים עם צוות סוכני AI עובד ועם אתר משלכם באוויר. לאן לוקחים את זה משם, כבר תלוי בכם." },
       { ico: "users",    q: "זה לצוותים או ליחידים?", a: "לשניהם. אפשר לבוא לבד, או להביא כמה אנשים מהצוות." },
       { ico: "calendar", q: "ומה אם התאריך לא מתאים לי?", a: "נדבר על זה בשיחה. הקבוצות קטנות והמפגשים חוזרים על עצמם, אז נמצא מועד שמתאים לכם." },
+      { ico: "calendar", q: "מה קורה אחרי ההרשמה?", a: "אחזור אליכם תוך 24 שעות לשיחה קצרה. מכירים, בודקים שהסדנה מתאימה לכם ומוודאים שהכול מותקן. התשלום, ₪290, בחשבונית אחרי השיחה. אם מתברר שזה לא מתאים, לא משלמים." },
     ],
 
-    final_chip: "בהזמנה בלבד. בקבוצות קטנות.",
+    final_chip: "בקבוצות קטנות. שיחה אישית לפני המפגש.",
     final_title: "בואו נבנה ביחד",
-    final_sub: "אחר צהריים אחד, קבוצה קטנה, וצוות משלכם שבונה איתכם את הפרויקט הראשון שלכם, ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
+    final_sub: "מפגש אחד, קבוצה קטנה, וצוות משלכם שבונה איתכם את האתר הראשון שלכם עד שהוא באוויר, ונשאר שלכם גם אחרי. הצעד הראשון הוא שיחה איתי.",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER HE copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -364,10 +431,14 @@ const I18N = {
     denied_body: "האזור הזה פתוח למשתתפי הסדנה שאושרו. נכנסתם עם Google אבל החשבון עדיין לא רשום. אם נרשמתם וזה לא עובד, דברו איתי ואפתח לכם גישה.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
     reg_title: "לשמור מקום במפגש הקרוב",
-    reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים כדי לשמור מקום במפגש הקרוב, ואחזור אליכם באופן אישי עם כל מה שצריך לדעת.",
+    reg_sub: "המקומות מוגבלים והמפגשים בקבוצות קטנות. השאירו פרטים, ואחזור אליכם תוך 24 שעות לשיחה קצרה.",
     reg_name_label: "שם מלא",
     reg_first_label: "שם פרטי",
     reg_last_label: "שם משפחה",
+    reg_phone_label: "טלפון",
+    reg_phone_ph: "050-0000000",
+    reg_cohort_label: "איזה מחזור?",
+    reg_cohorts: [{ day: "רביעי 28.10 · ערב", time: "19:00–22:00" }, { day: "רביעי 4.11 · בוקר", time: "09:00–12:00" }],
     reg_email_label: "אימייל",
     reg_email_ph: "you@email.com",
     reg_note_label: "משהו שתרצו לשתף (לא חובה)",
@@ -464,14 +535,15 @@ const I18N = {
 
     // ---- Legal: Terms (terms_*) — copy Copywriter 2026-08-05
     terms_title: "תנאי שימוש",
-    terms_intro: "בקצרה: זו סדנה בהזמנה בלבד, החומרים שלכם לשימוש אישי אבל לא להעברה, והתוכן הוא שלי. הנה הפירוט.",
+    terms_intro: "בקצרה: אזור התלמידים פתוח למשתתפים בלבד, החומרים שלכם לשימוש אישי אבל לא להעברה, והתוכן הוא שלי. הנה הפירוט.",
     terms_items: [
-      { t: "בהזמנה בלבד", b: "הגישה לסדנה ולאזור התלמידים היא בהזמנה. אל תשתפו את פרטי הכניסה שלכם." },
+      { t: "למשתתפים בלבד", b: "הגישה לאזור התלמידים פתוחה למשתתפי הסדנה. אל תשתפו את פרטי הכניסה שלכם." },
+      { t: "תשלום וביטול", b: "לפני המפגש נקבע שיחה קצרה, והתשלום בחשבונית אחריה. אם בשיחה מתברר שהסדנה לא מתאימה לכם, לא משלמים." },
       { t: "החומרים", b: "הפרומפטים, התבניות והחומרים שנשתף הם לשימוש אישי שלכם. אל תפיצו, תמכרו או תפרסמו אותם מחדש." },
       { t: "התוכן", b: "כל תוכן הסדנה הוא © אופיר רושינק / Product Lab." },
       { t: "יצירת קשר", b: "משהו לא ברור? כתבו לי בוואטסאפ." },
     ],
-    terms_updated: "עודכן לאחרונה: 5 באוגוסט 2026",
+    terms_updated: "עודכן לאחרונה: 4 באוקטובר 2026",
 
     // ---- #/kit — "here's your kit" landing page (branded, public, no auth).
     // Final copy, Copywriter pass 2026-08-31.
@@ -483,25 +555,27 @@ const I18N = {
     footer_privacy: "מדיניות פרטיות",
     footer_terms: "תנאי שימוש",
 
-    footer_line: "סדנאות בהזמנה על עיצוב מוצר בהובלת AI.",
+    footer_line: "סדנאות בקבוצות קטנות לבנייה עם סוכני AI.",
     footer_contact: "יצירת קשר",
   },
+
 
   en: {
     cta_wa: "Talk to me",
     nav_student: "Student entrance",
     nav_signout: "Sign out",
     nav_account: "Your menu",
-    hero_chip: "Invite-only. Small groups.",
-    hero_title_a: "From idea to reality. A new world of working with ",
-    hero_title_mark: "AI agents",
-    hero_title_b: ".",
-    hero_sub: "In 3 hours, create your own AI agent team with Claude, and start building your first product with it. Live.",
-    hero_points: ["Shared memory", "No code", "A team that stays with you"],
-    hero_t1: "From idea to reality.",
-    hero_t2a: "A new world of working with ",
-    hero_sub_lines: ["In 3 hours, set up your own AI agent team with Claude,", "and start building your first product with it.", "In real time."],
-    hero_cta: "Register for the next cohort",
+    // EN = INTERIM PD translation of the HE v2 facts (Copywriter has not written EN v2).
+    hero_chip: "Small group. A personal call before the session.",
+    hero_title_a: "A lot of things stay in your head. Now you have ",
+    hero_title_mark: "someone to build them with.",
+    hero_title_b: "",
+    hero_sub: "A 3-hour workshop, on your own computer, with Claude and a team of agents. By the end you have your own site, designed and live. And the team stays with you for the next thing.",
+    hero_points: ["No code", "Your own site, live", "The team stays with you"],
+    hero_t1: "A lot of things stay in your head.",
+    hero_t2a: "Now you have ",
+    hero_sub_lines: ["A 3-hour workshop, on your own computer, with Claude and a team of agents.", "By the end you have your own site, designed and live.", "And the team stays with you for the next thing."],
+    hero_cta: "Save a seat",
     hero_cta2: "See which agents fit you",
     // EN equivalent of Ofir's own HE toggle labels above (2026-09-14 spec item #4).
     sessions_tab_upcoming: "Upcoming workshops",
@@ -519,15 +593,26 @@ const I18N = {
     // as `session` above + a price column, rendered directly beneath it — the
     // ONLY place price appears on the page.
     session2: {
-      badge: "Next cohort",
+      badge: "Evening cohort",
       when_label: "When?",
-      when_value: ["Thursday, 15 October", "17:30-20:30", "One session, 3 hours"],
+      when_value: ["Wed 28.10", "19:00-22:00", "One session, 3 hours"],
       where_label: "Where?",
-      where_value: ["Online, over Zoom", "From anywhere"],
+      where_value: ["Online on Zoom", "On your own computer"],
       price_label: "Price",
-      price_value: ["₪600", "per person"],
-      cta: "Sign up",
-      limited_note: "Spots are limited",
+      price_value: ["₪290"],
+      cta: "Save a seat",
+      limited_note: "Limited seats per cohort",
+    },
+    session3: {
+      badge: "Morning cohort",
+      when_label: "When?",
+      when_value: ["Wed 4.11", "09:00-12:00", "One session, 3 hours"],
+      where_label: "Where?",
+      where_value: ["Online on Zoom", "On your own computer"],
+      price_label: "Price",
+      price_value: ["₪290"],
+      cta: "Save a seat",
+      limited_note: "Limited seats per cohort",
     },
 
     why_eyebrow: "Why now",
@@ -565,7 +650,7 @@ const I18N = {
     who_not: "Less of a fit for anyone after a magic button. If you'd rather roll up your sleeves and build it yourself, there's a chair at the table.",
 
     agenda_eyebrow: "Three stages",
-    agenda_title: "Three hours. By the end you'll walk out with a team of AI agents that works with you.",
+    agenda_title: "Three hours. By the end, your site is live.",
     agenda_intro: "In three stages we'll build your new way of working together, from learning the method, through setting up your own team of AI agents, to building your first project.",
     agenda_phases: [
       { time: "Stage one", t: "Getting started", b: "You'll understand the method, get to know the tools we'll use, and lay the foundations for the team you'll build next." },
@@ -577,21 +662,15 @@ const I18N = {
       { t: "See the big picture", b: "What's changed in the AI world, why AI agents became a real working tool, and how that shifts the way products get built." },
       { t: "Get to know the tools", b: "When to use Claude, when ChatGPT, when Gemini, and how each one fits into your workflow." },
       { t: "Think like a team", b: "Why you start from a clear role, move on to skills and tools, and only then build the shared memory." },
-      { t: "Set up the shared brain", b: "You'll create a shared knowledge base that lets every agent work from the same context and improve along the way." },
-      { t: "See the path ahead", b: "Get to know the stages of the workshop and how each part connects into one way of working." },
     ],
     agenda_p2_items: [
       { t: "Meet the team", b: "Three teammates already inside: a technical partner, a product manager, and a product designer, each with a clear role and their own tools." },
       { t: "See the shared brain", b: "All the knowledge, decisions, and insights live in one place, and the whole team already reads and writes to it." },
       { t: "Open the kit", b: "Point Claude at the kit folder that stays with you after the workshop, no extra install needed." },
-      { t: "See how they stay in sync", b: "Each teammate works in their own conversation, and reads what the others wrote in shared memory first. That's how they stay aligned without talking directly." },
-      { t: "Run the setup check", b: "Run `/check`, and the system confirms the team is installed and live on your machine." },
     ],
     agenda_p3_items: [
       { t: "Give the brief", b: "Tell your product manager what you want to build, and it starts prioritizing, steering, and orchestrating the work." },
-      { t: "See the team at work", b: "Each teammate works in their own conversation, but reads what the others already wrote in the shared memory first, and builds from there." },
       { t: "Build your first project", b: "Turn your idea into a working landing page, together with the team of AI agents already with you." },
-      { t: "Add your own agent", b: "Answer who it is, its one job, and its character, all in one message, and its first task is to weigh in on the page you just built." },
       { t: "Keep going after the workshop", b: "Walk out with your own team of AI agents you can keep consulting, building with, and expanding long after the session ends." },
     ],
 
@@ -616,9 +695,9 @@ const I18N = {
     ofir_name: "Ofir Rushinek",
     ofir_role: "The operator",
     agents: [
-      { img: "crew-designer", tag: "The Designer", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
-      { img: "crew-strategist", tag: "The Strategist", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
-      { img: "crew-architect", tag: "The Architect", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
+      { img: "crew-designer", tag: "The Designer", cap: "Product design agent", role: "The product designer", b: "When it's time to design, he's my first partner. He works from the Design System, keeps things consistent, suggests UX solutions, and makes sure every screen is clear, usable, and ready to build." },
+      { img: "crew-strategist", tag: "The Strategist", cap: "Product management agent", role: "The product manager", b: "When I'm not sure what to build first, I check with him. He helps sharpen ideas, prioritize, challenge assumptions, and keep every decision moving the product in the right direction." },
+      { img: "crew-architect", tag: "The Architect", cap: "Development agent", role: "The lead engineer", b: "When I hit a technical dilemma, I start with him. He helps me choose the right approach, think through the architecture, and make sure every solution we pick is actually buildable, stable, and ready to grow with the product." },
     ],
     ofir_bio: "For years I built digital products and led Product Design teams. But the biggest shift I went through wasn't a new title, it was a new way of working.\n\nToday I don't build products alone anymore. I work with a team of AI agents I built for myself - partners in thinking, planning, design, and building. Together we built Product Lab, Glimps, the site you're on right now, and even parts of the workshop itself.",
     ofir_why: "Now I want to help you build a team like that for yourself too.",
@@ -652,9 +731,9 @@ const I18N = {
       { ico: "calendar", q: "What if I can't make the date?", a: "Tell me on the call. The groups are small and sessions run regularly, so we'll find one that fits." },
     ],
 
-    final_chip: "Invite-only. Small groups.",
+    final_chip: "Small group. A personal call before the session.",
     final_title: "Let's build together",
-    final_sub: "One afternoon, a small group, and a team of your own that builds your first project with you, and stays yours long after. The first step is a call with me.",
+    final_sub: "One session, a small group, and your own site live by the end. From there, the next thing you wanted to build no longer looks so far away.",
 
     // Student area - real Google sign-in (Supabase). PLACEHOLDER EN copy 2026-08-11,
     // Copywriter to refine. The old access-code strings were retired with the gate.
@@ -669,10 +748,14 @@ const I18N = {
     denied_body: "This area is for approved workshop participants. You're signed in with Google, but your account isn't registered yet. If you registered and it isn't working, talk to me and I'll open it up for you.",
     // Register-your-interest FORM (writes to register_lead). Copy from Copywriter 2026-08-13.
     reg_title: "Save your spot in the next session",
-    reg_sub: "Spots are limited and go in small groups. Leave your details to hold your place in the next session, and I'll reach out personally with everything you need to know.",
+    reg_sub: "Spots are limited and sessions run in small groups. Leave your details and I'll call you within 24 hours for a short chat.",
     reg_name_label: "Full name",
     reg_first_label: "First name",
     reg_last_label: "Last name",
+    reg_phone_label: "Phone",
+    reg_phone_ph: "050-0000000",
+    reg_cohort_label: "Which session?",
+    reg_cohorts: [{ day: "Wed 28.10 · evening", time: "19:00–22:00" }, { day: "Wed 4.11 · morning", time: "09:00–12:00" }],
     reg_email_label: "Email",
     reg_email_ph: "you@email.com",
     reg_note_label: "Anything you'd like to share (optional)",
@@ -780,7 +863,7 @@ const I18N = {
     footer_privacy: "Privacy Policy",
     footer_terms: "Terms of Use",
 
-    footer_line: "Invite-only workshops on AI-led product design.",
+    footer_line: "Small-group workshops. Building with Claude and a team of agents, no code.",
     footer_contact: "Get in touch",
   },
 };
@@ -792,12 +875,15 @@ const ctaRow = (t) => `
     <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
   </div>`;
 
-const ctaBand = (t, title, sub) => `
+const ctaBand = (t, title, sub, opts = {}) => `
   <section class="section"><div class="wrap">
     <div class="ctaband reveal">
       <h2>${title}</h2>
       <p>${sub}</p>
-      ${ctaRow(t)}
+      <div class="cta-row">
+        ${opts.checkout ? checkoutCta(t.hero_cta) : ""}
+        <a class="btn btn--wa-solid" href="${WA_URL}" target="_blank" rel="noopener">${I.wa} ${t.cta_wa}</a>
+      </div>
     </div>
   </div></section>`;
 
@@ -954,8 +1040,21 @@ const registerModal = (t) => `
             <input class="input" id="reg-name" name="fullname" type="text" autocomplete="name" required />
           </div>
           <div class="field">
+            <label class="field__label" for="reg-phone">${t.reg_phone_label}</label>
+            <input class="input ltr-iso" id="reg-phone" name="phone" type="tel" inputmode="tel" dir="ltr" autocomplete="tel" placeholder="${t.reg_phone_ph}" required />
+          </div>
+          <div class="field">
             <label class="field__label" for="reg-email">${t.reg_email_label}</label>
             <input class="input ltr-iso" id="reg-email" name="email" type="email" inputmode="email" dir="ltr" autocomplete="email" placeholder="${t.reg_email_ph}" required />
+          </div>
+          <!-- Cohort picker = ONE segmented toggle (Ofir, 2026-10-04: side by side,
+               none pressed at first, then exactly one). .tabs--seg = two bordered
+               tiles with a radio ring each (radio semantics). -->
+          <div class="field" data-register-cohorts>
+            <span class="field__label" id="reg-cohort-label">${t.reg_cohort_label}</span>
+            <div class="tabs tabs--seg" role="radiogroup" aria-labelledby="reg-cohort-label">
+              ${t.reg_cohorts.map((c, i) => `<button type="button" class="tabs__btn" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-cohort="${escapeAttr(`${c.day} ${c.time}`)}"><span class="tabs__seg-main">${c.day.replace(/^(\S+) /, "$1\u00a0").replace(" · ", "\u00a0· ")}</span><span class="tabs__seg-sub" dir="ltr">${c.time}</span></button>`).join("")}
+            </div>
           </div>
           <div class="field">
             <label class="field__label" for="reg-note">${t.reg_note_label}</label>
@@ -1128,9 +1227,9 @@ function wireWhyCursors() {
 function sessionStripHtml(s, opts = {}) {
   const cta = opts.disabled
     ? `<span class="btn btn--accent btn--disabled" aria-disabled="true">${s.cta}</span>`
-    : `<button class="btn btn--accent" type="button" data-register-open>${s.cta}</button>`;
+    : checkoutCta(s.cta);
   const price = opts.price
-    ? `<div class="ss-price"><strong>${s.price_value[0]}</strong><span>${s.price_value[1]}</span></div>`
+    ? `<div class="ss-price"><strong>${s.price_value[0]}</strong>${s.price_value[1] ? `<span>${s.price_value[1]}</span>` : ""}</div>`
     : "";
   return `
       <div class="session-strip reveal${opts.disabled ? " session-strip--closed" : ""}">
@@ -1165,22 +1264,39 @@ function render(lang) {
   ${navHeader(t, lang)}
 
   <main id="top">
-  <!-- 1 HERO — full-bleed COZY CAFE SCENE as the background (the visual IS the bg).
-       Title sits over it, no separate graphic. Background photo is a PLACEHOLDER
-       (warm gradient) until the generated cafe image lands (OpenAI billing gate). -->
-  <section class="hero hero--oneview">
-    <div class="hero__content">
-      <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
-      <p class="hero__sub">${t.hero_sub_lines.map((l) => `<span class="sd">${l}</span>`).join("")}</p>
-      <div class="hero__cta">
-        <button class="btn btn--accent" type="button" data-register-open>${t.hero_cta}</button>
+  <!-- 1 HERO — full-bleed "Daylight Studio" (2026-10-04, revival v2).
+       The scene IS the hero background (edge to edge, no panel): ONE
+       swappable asset per breakpoint (assets/hero-v2-desktop.webp 16:9 /
+       hero-v2-mobile.webp 2:3, hero-v2-desktop-21x9.webp for >=21:9 screens, Marketing Designer hero-v2 warm 2026-10-04 - the
+       three agents building a site on a wall screen). Text block at
+       reading-start over the calm wall; each agent gets a credits-style role
+       caption anchored to its head. Head anchors = image-fraction pairs in
+       data-caps-* (swap the asset -> update six numbers); placeHeroCaps()
+       below turns them into px for whatever crop object-fit produced.
+       Title = the LIVE one verbatim (Ofir). No kicker, no facts row. -->
+  <section class="hero hero--bleed"
+    data-caps-desktop="architect:0.154,0.558;strategist:0.325,0.498;designer:0.432,0.532"
+    data-caps-wide="architect:0.113,0.43;strategist:0.292,0.347;designer:0.40,0.393"
+    data-caps-mobile="architect:0.16,0.59;strategist:0.60,0.56;designer:0.84,0.585">
+    <picture class="hero__bg" aria-hidden="true">
+      <source media="(max-width: 760px)" srcset="assets/hero-v2-mobile.webp?v=4" type="image/webp" width="1200" height="1800" />
+      <source media="(min-aspect-ratio: 21/9)" srcset="assets/hero-v2-desktop-21x9.webp?v=2" type="image/webp" width="3360" height="1440" />
+      <img src="assets/hero-v2-desktop.webp?v=4" alt="" width="3200" height="1800" fetchpriority="high" decoding="async" />
+    </picture>
+    <div class="hero__caps" aria-hidden="true">
+      <span class="hero__cap hero__cap--designer"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[0].tag}</span><span class="hero__cap-role">${t.agents[0].cap}</span></span></span>
+      <span class="hero__cap hero__cap--strategist"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[1].tag}</span><span class="hero__cap-role">${t.agents[1].cap}</span></span></span>
+      <span class="hero__cap hero__cap--architect"><span class="hero__cap-plate"><span class="hero__cap-tag">${t.agents[2].tag}</span><span class="hero__cap-role">${t.agents[2].cap}</span></span></span>
+    </div>
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <h1 class="hero__title"><span class="ht1">${t.hero_t1}</span><span class="ht2">${t.hero_t2a}<span class="mark">${t.hero_title_mark}</span>${t.hero_title_b}</span></h1>
+        <p class="hero__lede">${t.hero_sub}</p>
+        <div class="hero__cta">
+          ${checkoutCta(t.hero_cta)}
+        </div>
       </div>
     </div>
-    <picture class="hero__bg">
-      <source type="image/webp" media="(max-width: 760px)" srcset="assets/hero-room-mobile.webp?v=3" />
-      <source type="image/webp" srcset="assets/hero-room.webp?v=1" />
-      <img class="hero__img is-loaded" src="assets/hero-room.webp?v=1" alt="" width="2560" height="1440" fetchpriority="high" decoding="async" />
-    </picture>
   </section>
 
   <!-- 6 PROOF OF CRAFT — moved up to right after the hero (conversion-spec item
@@ -1194,7 +1310,7 @@ function render(lang) {
     </div>
     <div class="proof" style="margin-top:2rem">
       <div class="proof__block reveal">
-        <div class="proof__shot"><img src="assets/thispage-3.jpg" alt="" /></div>
+        <div class="proof__shot"><img src="assets/thispage-5.jpg" alt="" /></div>
         <div class="proof__body">
           <h3>${t.proof_self_t}</h3><p>${t.proof_self_b}</p>
         </div>
@@ -1250,6 +1366,8 @@ function render(lang) {
     <div class="wrap">
       <div class="tabpanel" data-sessions-panel="upcoming">
         ${sessionStripHtml(t.session2, { price: true })}
+        <div class="ss-divider-full"></div>
+        ${sessionStripHtml(t.session3, { price: true })}
       </div>
       <div class="tabpanel" data-sessions-panel="past" hidden>
         ${sessionStripHtml(t.session, { disabled: true })}
@@ -1257,7 +1375,11 @@ function render(lang) {
     </div>
   </section>
 
-  <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath -->
+  <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath.
+       2026-10-04 (revival brief, Ofir: "bring the felt puppets back as the agent
+       characters"): crew-*.webp are the felt-puppet portraits again (restored
+       from commit 3191be2; the 2026-09-20 line-icon pattern swap is reversed).
+       ?v=3 so no CDN serves the cached pattern under the same filename. -->
   <section class="section"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.ofir_eyebrow}</span>
@@ -1280,7 +1402,7 @@ function render(lang) {
         <div class="team__agents">
           ${t.agents.map((a) => `
             <div class="agentcard">
-              <div class="agentcard__illo"><img src="assets/${a.img}.webp?v=2" alt="" /></div>
+              <div class="agentcard__illo"><img src="assets/hero-cast-${a.img.replace("crew-", "")}.webp?v=1" alt="" width="771" height="867" loading="lazy" /></div>
               <div class="agentcard__body">
                 <span class="agentcard__tag">${a.tag}</span>
                 <div class="agentcard__role">${a.role}</div>
@@ -1310,32 +1432,14 @@ function render(lang) {
     </div>
   </div></section>
 
-  <!-- 3b FLEET RECOMMENDER TEASER — moved out of the hero (CPO conversion-spec
-       item #3, 2026-09-14). Minimal by design (Ofir's own words): icon +
-       headline + one line + one button into the SAME #/fleet flow the old
-       hero button used. Rung 1/2 reuse only, no new component: .wrap (plain,
-       not .narrow — headline needs full desktop width, see styles.css),
-       .noacct__ico (icon badge, already used in modals), .section-title/
-       .section-lead typography and .cta-row/.btn--ghost verbatim. Originally
-       placed right after "what you leave with"; that section moved up near
-       the hero per conversion-spec item #5 (2026-09-14), and per Ofir's scoped
-       instruction ("only about moving those two blocks up") this teaser kept
-       its relative position among the other sections rather than following it.
-       Revised 2026-09-14 per Ofir's review: widened container + title
-       max-width:none so the HE headline stops wrapping to an orphan word on
-       desktop, and swapped the CTA to secondary/.btn--ghost instead of primary. -->
-  <section class="section fleet-teaser"><div class="wrap">
-    <div class="reveal">
-      <div class="noacct__ico">${I.users}</div>
-      <h2 class="section-title">${t.fleet_teaser_title}</h2>
-      <p class="section-lead">${t.fleet_teaser_body}</p>
-      <div class="cta-row">
-        <a class="btn btn--ghost" href="#/fleet">${t.fleet_teaser_cta}</a>
-      </div>
-    </div>
-  </div></section>
+  <!-- 3b FLEET RECOMMENDER TEASER — REMOVED from the main path on broad-market-v1
+       (2026-10-01): insider tool for agent builders, not the business-owner
+       journey. Route #/fleet and renderFleet() stay alive; markup in git history
+       (main, section "3b"). -->
 
-  <!-- 4 WHO — three tiles (icon on top, like Three-hats cards) -->
+  <!-- 4 WHO — three tiles (puppet illustration on top, like Three-hats cards).
+       Puppets were cut here on 2026-10-01 and brought BACK 2026-10-04 (Ofir,
+       revival brief: the felt puppets are the workshop's characters). -->
   <section class="section section--alt"><div class="wrap">
     <div class="reveal">
       <span class="eyebrow">${t.who_eyebrow}</span>
@@ -1344,9 +1448,9 @@ function render(lang) {
     </div>
     <div class="grid grid--3" style="margin-top:2rem">
       ${t.who_tiles.map((x, i) => `
-        <div class="tilecard reveal">
-          <div class="tilecard__illo"><img src="assets/${["who-designer", "who-builder", "who-horizon"][i]}.webp?v=2" alt="" /></div>
-          <div class="tilecard__body"><h3>${x.t}</h3><p>${x.b}</p></div>
+        <div class="card reveal">
+          <div class="card__ico">${[I.user, I.spark, I.globe][i] || I.check}</div>
+          <h3>${x.t}</h3><p>${x.b}</p>
         </div>`).join("")}
     </div>
     <p class="who__not reveal">${t.who_not}</p>
@@ -1438,7 +1542,7 @@ function render(lang) {
   </div></section>
 
   <!-- 10 FINAL CTA -->
-  ${ctaBand(t, t.final_title, t.final_sub)}
+  ${ctaBand(t, t.final_title, t.final_sub, { checkout: true })}
 
   </main>
 
@@ -3919,6 +4023,27 @@ function wireRegister() {
       open();
     }));
   modal.querySelectorAll("[data-register-close]").forEach((b) => b.addEventListener("click", close));
+  // Cohort segmented toggle: radio group, none checked until the user picks.
+  // Roving tabindex; arrows move + select (wraps), mirrored in RTL.
+  const cohortBtns = [...modal.querySelectorAll("[data-cohort]")];
+  const pickCohort = (b, focus) => {
+    cohortBtns.forEach((o) => {
+      o.setAttribute("aria-checked", o === b ? "true" : "false");
+      o.tabIndex = o === b ? 0 : -1;
+    });
+    if (focus) b.focus();
+    modal.querySelector("[data-register-cohorts]").classList.remove("is-missing");
+  };
+  cohortBtns.forEach((b, i) => {
+    b.addEventListener("click", () => pickCohort(b, false));
+    b.addEventListener("keydown", (e) => {
+      const rtl = getComputedStyle(b).direction === "rtl";
+      const fwd = { ArrowDown: 1, ArrowUp: -1, ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+      if (!fwd) return;
+      e.preventDefault();
+      pickCohort(cohortBtns[(i + fwd + cohortBtns.length) % cohortBtns.length], true);
+    });
+  });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) close(); });
 
   const setLoading = (on) => {
@@ -3942,12 +4067,20 @@ function wireRegister() {
     const first = nameParts[0] || "";
     const last = nameParts.slice(1).join(" ") || first;
     const email = form.email.value.trim();
-    const note = form.note.value.trim();
+    const phone = form.phone.value.trim();
+    const cohortBtn = modal.querySelector('[data-cohort][aria-checked="true"]');
+    const cohort = cohortBtn ? cohortBtn.getAttribute("data-cohort") : "";
+    const freeNote = form.note.value.trim();
+    // register_lead's signature is first/last/email/note (CTO-owned). Phone +
+    // cohort ride inside `note` until the CTO adds real columns — Ofir reads
+    // them in the lead email either way.
+    const note = [`מחזור: ${cohort}`, `טלפון: ${phone}`, freeNote].filter(Boolean).join(" · ");
 
-    // Client-side: require a name + a valid-looking email (note optional).
-    if (!first || !EMAIL_RE.test(email)) {
-      const missing = !first ? form.fullname : form.email;
-      missing.focus();
+    // Client-side: name, phone, valid-looking email, a cohort picked.
+    if (!first || !phone || !EMAIL_RE.test(email) || !cohort) {
+      const missing = !first ? form.fullname : !phone ? form.phone : !EMAIL_RE.test(email) ? form.email : modal.querySelector("[data-cohort]");
+      if (missing) missing.focus();
+      if (!cohort) modal.querySelector("[data-register-cohorts]").classList.add("is-missing");
       return;
     }
 
@@ -3965,6 +4098,10 @@ function wireRegister() {
         });
         if (error) throw error;
       }
+      trackLead(cohort);
+      // Hand off to the standalone /thanks/ page (same folder as index.html;
+      // trailing slash — static host, /thanks is a folder).
+      location.href = new URL("thanks/", location.href.split("#")[0]).href;
       formView.hidden = true;
       successView.hidden = false;
     } catch (err) {
@@ -4145,4 +4282,48 @@ function withTimeout(promise, ms) {
   } else {
     setLang(lang);
   }
+})();
+
+/* HERO CAPTIONS — maps head anchors (image fractions, data-caps-* on .hero--bleed)
+   to px for the crop object-fit actually produced, so the role tags sit on the
+   heads at every viewport and after any asset swap. Runs on load/resize/lang. */
+function placeHeroCaps() {
+  const hero = document.querySelector(".hero--bleed"); if (!hero) return;
+  const pic = hero.querySelector(".hero__bg"), img = pic && pic.querySelector("img");
+  if (!img || !img.naturalWidth) return;
+  const hb = hero.getBoundingClientRect(), bb = pic.getBoundingClientRect();
+  const cs = getComputedStyle(img);
+  const nw = img.naturalWidth, nh = img.naturalHeight;
+  const s = cs.objectFit === "contain" ? Math.min(bb.width / nw, bb.height / nh) : Math.max(bb.width / nw, bb.height / nh);
+  const w = nw * s, h = nh * s;
+  const pos = cs.objectPosition.split(" ").map(parseFloat);
+  const px = isNaN(pos[0]) ? 50 : pos[0], py = isNaN(pos[1]) ? 50 : pos[1];
+  const bx = bb.left - hb.left, by = bb.top - hb.top;
+  const ox = bx + (bb.width - w) * px / 100, oy = by + (bb.height - h) * py / 100;
+  const mirrored = cs.transform && cs.transform !== "none";
+  const src = img.currentSrc;
+  const set = (/mobile/.test(src) ? hero.dataset.capsMobile : /21x9/.test(src) ? hero.dataset.capsWide : hero.dataset.capsDesktop) || "";
+  set.split(";").forEach((e) => {
+    const [k, v] = e.split(":"); if (!v) return;
+    const [fx, fy] = v.split(",").map(Number);
+    const cap = hero.querySelector(".hero__cap--" + k); if (!cap) return;
+    let x = ox + fx * w; if (mirrored) x = bx + bb.width - (x - bx);
+    cap.style.setProperty("--cx", Math.round(x) + "px");
+    cap.style.setProperty("--cy", Math.round(oy + fy * h) + "px");
+  });
+  hero.classList.add("caps-ready");
+}
+(function wireHeroCaps() {
+  const run = () => placeHeroCaps();
+  const arm = () => {
+    const img = document.querySelector(".hero--bleed .hero__bg img");
+    if (!img) return;
+    if (img.complete) run(); else img.addEventListener("load", run, { once: true });
+  };
+  arm();
+  window.addEventListener("resize", run);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
+  // the app re-renders #app on language/route changes: re-arm after each render
+  const app = document.getElementById("app");
+  if (app && window.MutationObserver) new MutationObserver(() => arm()).observe(app, { childList: true });
 })();
