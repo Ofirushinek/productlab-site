@@ -36,6 +36,12 @@ const PRODUCT_NAME = CFG.PRODUCT_NAME || "Build with Claude";
    CPO 2026-10-04: no Stripe (doesn't serve Israel). The PRIMARY path is the
    site's own register form (Supabase register_lead) -> /thanks/ -> Ofir calls
    within 24h -> ₪290 by invoice after the call. */
+/* Workshop dates are OFF the site (Ofir 2026-10-18: the 28.10 + 4.11 cohorts
+   won't run). One switch hides the home "upcoming / past" sessions band, the
+   cohort picker in the register modal, and the cohort strip on the /fleet
+   result. Markup + copy stay in place so turning it back on is one line. */
+const SHOW_SESSIONS = false;
+
 const checkoutCta = (label, cls = "btn btn--accent") =>
   `<button class="${cls}" type="button" data-register-open>${label}</button>`;
 
@@ -1057,12 +1063,12 @@ const registerModal = (t) => `
           <!-- Cohort picker = ONE segmented toggle (Ofir, 2026-10-04: side by side,
                none pressed at first, then exactly one). .tabs--seg = two bordered
                tiles with a radio ring each (radio semantics). -->
-          <div class="field" data-register-cohorts>
+          ${SHOW_SESSIONS ? `<div class="field" data-register-cohorts>
             <span class="field__label" id="reg-cohort-label">${t.reg_cohort_label}</span>
             <div class="tabs tabs--seg" role="radiogroup" aria-labelledby="reg-cohort-label">
               ${t.reg_cohorts.map((c, i) => `<button type="button" class="tabs__btn" role="radio" aria-checked="false" tabindex="${i === 0 ? 0 : -1}" data-cohort="${escapeAttr(`${c.day} ${c.time}`)}" data-ga-cohort="${GA_COHORTS[i] || ""}"><span class="tabs__seg-main">${c.day.replace(/^(\S+) /, "$1\u00a0").replace(" · ", "\u00a0· ")}</span><span class="tabs__seg-sub" dir="ltr">${c.time}</span></button>`).join("")}
             </div>
-          </div>
+          </div>` : ""}
           <div class="field">
             <label class="field__label" for="reg-note">${t.reg_note_label}</label>
             <textarea class="reg__note" id="reg-note" name="note" rows="3" placeholder="${escapeAttr(t.reg_note_ph)}"></textarea>
@@ -1363,7 +1369,7 @@ function render(lang) {
        Default tab "upcoming" shows only the open cohort (session2); "past"
        reveals the closed one (session), same disabled/sold-out card as before —
        just hidden until picked, not deleted. No new component/token. -->
-  <section data-ga-section="sessions" class="session-strip-band">
+  ${SHOW_SESSIONS ? `<section data-ga-section="sessions" class="session-strip-band">
     <div class="wrap sessions-tabsrow">
       <div class="tabs tabs--pill" role="tablist" data-sessions-tabs>
         <button type="button" class="tabs__btn" role="tab" data-sessions-tab="upcoming" aria-selected="true">${t.sessions_tab_upcoming}</button>
@@ -1380,7 +1386,7 @@ function render(lang) {
         ${sessionStripHtml(t.session, { disabled: true })}
       </div>
     </div>
-  </section>
+  </section>` : ""}
 
   <!-- 7 THE TEAM ROSTER — Ofir (operator) on top, his 3 AI agents beneath.
        2026-10-04 (revival brief, Ofir: "bring the felt puppets back as the agent
@@ -3356,14 +3362,14 @@ function fleetDone(f, t) {
   return fleetCard(`
     <div class="noacct__ico reg__success-ico">${I.check}</div>
     <h1 class="login__title">${f.done_title}</h1>
-    <p class="login__sub">${f.done_sub}</p>`) + `
+    <p class="login__sub">${f.done_sub}</p>`) + (SHOW_SESSIONS ? `
   <div class="wrap fleet-done-cohort reveal">
     <span class="eyebrow">${f.done_cohort_eyebrow}</span>
     <h2 class="section-title">${f.done_cohort_title}</h2>
   </div>
   <section class="session-strip-band"><div class="wrap">
     ${sessionStripHtml(t.session2, { price: true })}
-  </div></section>`;
+  </div></section>` : "");
 }
 
 function fleetLimited(f) {
@@ -4087,13 +4093,13 @@ function wireRegister() {
     // register_lead's signature is first/last/email/note (CTO-owned). Phone +
     // cohort ride inside `note` until the CTO adds real columns — Ofir reads
     // them in the lead email either way.
-    const note = [`מחזור: ${cohort}`, `טלפון: ${phone}`, freeNote].filter(Boolean).join(" · ");
+    const note = [cohort && `מחזור: ${cohort}`, `טלפון: ${phone}`, freeNote].filter(Boolean).join(" · ");
 
     // Client-side: name, phone, valid-looking email, a cohort picked.
-    if (!first || !phone || !EMAIL_RE.test(email) || !cohort) {
+    if (!first || !phone || !EMAIL_RE.test(email) || (SHOW_SESSIONS && !cohort)) {
       const missing = !first ? form.fullname : !phone ? form.phone : !EMAIL_RE.test(email) ? form.email : modal.querySelector("[data-cohort]");
       if (missing) missing.focus();
-      if (!cohort) modal.querySelector("[data-register-cohorts]").classList.add("is-missing");
+      if (SHOW_SESSIONS && !cohort) modal.querySelector("[data-register-cohorts]").classList.add("is-missing");
       return;
     }
 
@@ -4111,7 +4117,7 @@ function wireRegister() {
         });
         if (error) throw error;
       }
-      trackLead(cohort, cohortBtn.getAttribute("data-ga-cohort"));
+      trackLead(cohort, cohortBtn ? cohortBtn.getAttribute("data-ga-cohort") : "");
       // Hand off to the standalone /thanks/ page (same folder as index.html;
       // trailing slash — static host, /thanks is a folder).
       location.href = new URL("thanks/", location.href.split("#")[0]).href;
